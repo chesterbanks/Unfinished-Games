@@ -1,0 +1,633 @@
+/** Gift Getter
+ * Chester Banks
+ * December 2015
+ * 
+ * 
+ * Instructions:
+    - You will learn about what the avatars like as you go along.
+    - Collect the right gifts with the right avatar.
+    - You get a point for every right gift.
+    - You lose a point for every wrong gift.
+    - Get to the mint portal to exit the level.
+
+>>>>>>>>>>>>>>>>>>>>>>>> |||  T O  D O  |||  <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ * @Settings - Complete page
+ X @Play - Make tutorial for first level
+ X @AvatarsArray - Add all avatars + user-made characters
+ * @LevelsArray - Add more levels
+ * @GiftDrawPrototype - Add more gifts
+ X @Information - Other text if first level
+ * @Play - Make new portal
+ * @Play - Create a new background
+ * @Play - Enable multiple avatars
+ * @Play - Determine when to go to Finish scene
+ * @Finish - Complete page
+ X @How - Change text size
+
+>>>>>>>>>>>>>>>>>>>>>>>>  P L A N N I N G  <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ * 
+ * || > Khan Academy Avatars < ||
+ * @HOPPER loves programming, but has an old computer.
+ * @OJ_SQUID would like to get a fish for a pet.
+ * @WINSTON loves eating and baking donuts.
+ * @MARCIMUS enjoys building stuff with wood.
+ * @ROBOT_DONALD likes new gadgets, blasters, and weapons.
+ * @OLD_SPICE loves reading all sorts of books.
+ * @SPUNKY_SAM is very athletic. He once participated in the KA Olympics!
+ * @BABY_WINSTON. No one knows what he likes - you'll have to figure it out.
+ * @MR_PANTS would like some new clothes for Christmas.
+ * @OH_NOES likes cool programs on Khan.
+ * @LEAFERS loves camping and the outdoors in general.
+ * @MR_PINK likes anything that is pink. In fact, he is colorblind except for that color!
+ * @PICERATOPS really likes vehicles.
+ * @PURPLE_PI loves digging, which is very odd.
+ * @ROBOT_GRACE would love flowers for Christmas.
+ 
+ || > User-made characters < ||
+ * @TEENY absolutly loves balloons.
+ * @BLOBBY has always wanted a skateboard since he was a Baby Blob.
+ * @STIC enjoys dressing up as royalty.
+ * @SMILEY loves cold treats...even in the winter!
+ * @SPEEDY feels he needs to get speedier this Christmas season.
+*/
+
+getImage("cute/None");
+
+rectMode(CENTER);
+textAlign(CENTER, CENTER);
+imageMode(CENTER);
+var font1 = createFont("Impact");
+var font2 = createFont("Courier New");
+
+var levelPlan = ["Hopper", "OJ Squid", "Hopper", "Winston", "OJ Squid", "Donald", "Old Spice", "Baby-Winston", "Donald", "Sam", "Marcimus", "Mr. Pants", "OJ Squid", "Leafers", "Mr. Pink", "Piceratops", "Grace", "Purple Pi"];
+var avatars = [
+    {
+        name: "Hopper",
+        info: "Hopper loves programming, but has an old computer.",
+        img: getImage("creatures/Hopper-Happy"),
+    },
+    {
+        name: "OJ Squid",
+        info: "This unique squid is hoping for a pet fish this Christmas.",
+        img: getImage("avatars/orange-juice-squid"),
+    },
+    {
+        name: "Winston",
+        info: "Winston loves eating and baking donuts.",
+        img: getImage("creatures/Winston"),
+    },
+    {
+        name: "Marcimus",
+        info: "He enjoys building things with wood.",
+        img: getImage("avatars/marcimus"),
+    },
+    {
+        name: "Robot Donald",
+        info: "Donald likes all the new gadgets, blasters, and weapons.",
+        img: getImage("avatars/robot_male_2"),
+    },
+    {
+        name: "Old Spice Man",
+        info: "This green guy loves reading books.",
+        img: getImage("avatars/old-spice-man"),
+    },
+    {
+        name: "Spunky Sam",
+        info: "Sam is very athletic. He once competed in the KA olympics!",
+        img: getImage("avatars/spunky-sam"),
+    },
+    {
+        name: "Baby Winston",
+        info: "Nobody knows what Winston & Winnifer's baby likes. You'll have to figure it out!",
+        img: getImage("creatures/BabyWinston"),
+    },
+    {
+        name: "Mr. Pants",
+        info: "He would like some new clothes so he can finally live up to his name.",
+        img: getImage("avatars/mr-pants"),
+    },
+    {
+        name: "Oh Noes aka Error Buddy",
+        info: "This slightly annoying guy loves to see cool programs on KA.",
+        img: getImage("creatures/OhNoes"),
+    },
+    {
+        name: "Leafers",
+        info: "He loves camping and just going outdoors in general.",
+        img: getImage("avatars/leafers-ultimate"),
+    },
+    {
+        name: "Mr. Pink",
+        info: "This red guy likes anything and everything that is the color pink, hence his name.",
+        img: getImage("avatars/mr-pink"),
+    },
+    {
+        name: "Piceratops",
+        info: "This red dragon really likes vehicles.",
+        img: getImage("avatars/piceratops-ultimate"),
+    },
+    {
+        name: "Purple Pi",
+        info: "This odd-looking creature has a weird love of digging.",
+        img: getImage("avatars/purple-pi"),
+    },
+    {
+        name: "Robot Grace",
+        info: "Even though she's a robot, she still loves flowers.",
+        img: getImage("avatars/robot_female_3"),
+    },
+    {
+        name: "Teeny",
+        info: "This happy orange guy loves balloons.",
+        img: getImage("avatars/marcimus"),
+    },
+    {
+        name: "Blobby",
+        info: "Blobby has wanted a skateboard since he was a Baby Blob.",
+        img: getImage("avatars/robot_male_2"),
+    },
+    {
+        name: "Smiley",
+        info: "He loves cold treats...even the winter!",
+        img: getImage("avatars/old-spice-man"),
+    },
+];
+
+var thePlayerIs;
+var playerX = 200;
+var playerY = 15;
+var score = 0;
+
+var scene = "Home";
+
+var keys = [];
+var keyPressed = function(){keys[keyCode] = true;};
+var keyReleased = function(){keys[keyCode] = false;};
+ 
+var giftBtn = function(x, y, sz, txt, nextSc, giftColor, ribbonColor){
+    pushMatrix();
+    translate(x,y+sz*35);
+    scale(sz,sz);
+    scale(1.0, 0.6);
+    fill(255);
+    textSize(40);
+    text(txt, 0, 0);
+    fill(25);
+    textSize(35);
+    text(txt, 0, 0);
+    popMatrix();
+    pushMatrix();
+    if(mouseX > x - sz*50 && mouseX < x + sz*50 && mouseY > y - sz*35 && mouseY < y+sz*50){
+        translate(x, y-25);
+        if(mouseIsPressed){
+            scene = nextSc;
+        }
+    } else {
+        translate(x, y);
+    }
+    scale(sz, sz);
+    noStroke();
+    fill(giftColor);
+    quad(0, 0, 0, 50, -50, 30, -50, -20);
+    quad(0, 0, 0, 50, 50, 30, 50, -20);
+    quad(0, 0, 50, -20, 0, -35, -50, -20);
+    fill(0, 0, 0, 30);
+    quad(0, 0, 0, 50, 50, 30, 50, -20);
+    fill(0, 0, 0, 50);
+    quad(0, 0, 50, -20, 0, -35, -50, -20);
+    fill(ribbonColor);
+    quad(20, -7, 20, 41, 33, 36, 33, -13);
+    quad(-20, -7, -20, 41, -33, 36, -33, -13);
+    quad(-20, -7, 27, -27, 12, -31, -33, -13);
+    quad(20, -7, -27, -27, -12, -31, 33, -13);
+    beginShape();
+    noFill();
+    stroke(ribbonColor);
+    strokeWeight(6);
+    vertex(0, -20);
+    bezierVertex(-55, -10, -50, -80, 0, -20);
+    endShape(CLOSE);
+    beginShape();
+    vertex(0, -20);
+    bezierVertex(55, -10, 50, -80, 0, -20);
+    endShape(CLOSE);
+    popMatrix();
+};
+var candycaneBG = function(x){
+    pushMatrix();
+        translate(200, 200);
+        rotate(10);
+        for(var i = -230 + x; i < 250; i += 60){
+            strokeWeight(30);
+            stroke(204, 66, 66);
+            line(i, -240, i, 240);
+            stroke(230);
+            line(i+30, -240, i+30, 240);
+            stroke(0, 0, 0, 30);
+            strokeWeight(10);
+            line(i+40, -240, i+40, 240);
+            line(i+10, -240, i+10, 240);
+        }
+    popMatrix();
+};
+
+var gift = function(which, who){
+    this.x = random(20, 380);
+    this.y = random(60, 350);
+    this.which = which;
+    this.who = who;
+    this.deleteMe = false;
+};
+var Gifts = [
+    [new gift("Laptop", "Hopper"),
+     new gift("Ball", "Sam"),
+     new gift("Laptop", "Hopper"),
+     new gift("Shirt", "Mr. Pants"),], // Level 1
+     
+    [new gift("Fishbowl", "OJ Squid"),
+     new gift("Ball", "Sam"),
+     new gift("Puffball", "Mr. Pink"),
+     new gift("Donut", "Winston"),
+     new gift("Laptop", "Hopper"),
+     new gift("Shirt", "Mr. Pants"),
+     new gift("Shirt", "Mr. Pants")], // Level 2
+     
+    [new gift("Diamond", "Nobody"),
+     new gift("Program", "OhNoes"),
+     new gift("Puffball", "Mr. Pink"),
+     new gift("Stick", "Leafers"),
+     new gift("Ice Cream", "Smiley"),
+     new gift("Skateboard", "Blobby"),
+     new gift("Flower", "Grace"),
+     new gift("Balloon", "Teeny"),
+     new gift("Hammer", "Marcimus"),], // Level 3
+     
+    [], // Level 4
+    [], // Level 5
+    [], // Level 6
+    [], // Level 7
+    [], // Level 8
+    [], // Level 9
+    [], // Level 10
+    [], // Level 11
+    [], // Level 12
+    [], // Level 13
+    [], // Level 14
+    [], // Level 15
+    [], // Level 16
+    [], // Level 17
+    [], // Level 18
+];
+gift.prototype.draw = function() {
+    if(!this.deleteMe){
+        pushMatrix();
+        translate(this.x, this.y);
+        switch(this.which){
+            case "Laptop":
+                noStroke();
+                fill(25);
+                rect(0, 0, 30, 20);
+                fill(45);
+                quad(-15, 10, 15, 10, 18, 15, -18, 15);
+                fill(64, 96, 110);
+                rect(0, 0, 26, 17);
+                break;
+            case "Ball":
+                image(getImage("pixar/luxoball"), 0, 0, 30, 30);
+                break;
+            case "Shirt":
+                noStroke();
+                fill(207, 60, 60);
+                rect(0, 0, 25, 30);
+                rect(16, -10, 8, 10);
+                rect(-16, -10, 8, 10);
+                fill(0, 0, 0, 30);
+                rect(0, -5, 25, 10);
+                break;
+            case "Donut":
+                noFill();
+                strokeWeight(10);
+                stroke(143, 84, 17);
+                ellipse(0, 0, 20, 20);
+                break;
+            case "Fishbowl":
+                strokeWeight(1);
+                stroke(255);
+                fill(255, 255, 255, 100);
+                ellipse(0, 0, 30, 30);
+                noStroke();
+                fill(143, 231, 255);
+                arc(0, 0, 30, 30, 0, 180);
+                stroke(255, 255, 255);
+                noFill();
+                strokeWeight(5);
+                arc(0, -15, 15, 5, -180, 0);
+                stroke(245);
+                arc(0, -15, 15, 5, 0, 180);
+                break;
+            case "Hammer":
+                noStroke();
+                fill(150, 109, 14);
+                rect(0, 0, 5, 30, 2);
+                fill(71, 71, 71);
+                rect(0, -13, 15, 7,
+                10, 0, 0, 10);
+                triangle(7.5, -10, 7.5, -15, 10, -16);
+                triangle(7.5, -10, 7.5, -15, 10, -9);
+                break;
+            case "Diamond":
+                break;
+            case "Mint":
+                pushMatrix();
+                scale(0.3);
+                noStroke();
+                fill(255);
+                ellipse(0, 0, 60, 60);
+                for(var i = 0; i < 360; i += 90){
+                    rotate(i);
+                    fill(224, 27, 27);
+                    beginShape();
+                    vertex(0, 0);
+                    bezierVertex(-43, -4, -20, -28, -4, -29);
+                    bezierVertex(-11, -11, -9, -10, 0, 0);
+                    endShape(CLOSE);
+                }
+                popMatrix();
+                break;
+            case "Program":
+                stroke(255);
+                strokeWeight(1);
+                fill(118, 187, 237);
+                rect(0, 0, 30, 30);
+                fill(0, 255, 106);
+                rect(0, 10, 30, 10);
+                image(getImage("creatures/Winston"), -3, 5, 10, 10);
+                break;
+            case "Stick":
+                strokeWeight(7);
+                stroke(148, 103, 12);
+                line(0, -15, 0, 15);
+                strokeWeight(4);
+                stroke(105, 73, 8);
+                line(-1, -15, -1, 15);
+                break;
+            case "Puffball":
+                strokeWeight(3);
+                stroke(255, 82, 220);
+                for(var i = 0; i < 360; i += 10){
+                    rotate(i);
+                    line(0, 0, 15, 0);
+                }
+                break;
+            case "Truck":
+                break;
+            case "Shovel":
+                break;
+            case "Flower":
+                break;
+            case "Balloon":
+                stroke(199, 93, 0);
+                strokeWeight(1);
+                fill(255, 119, 0);
+                ellipse(0, 0, 20, 20);
+                triangle(0, 10, -3, 13, 3, 13);
+                stroke(255);
+                line(0, 14, 0, 20);
+                noFill();
+                stroke(255, 255, 255, 50);
+                arc(0, 0, 18, 18, -135, 90);
+                break;
+            case "Skateboard":
+                break;
+            case "Ice Cream":
+                noStroke();
+                fill(255, 255, 255);
+                ellipse(0, -5, 20, 20);
+                fill(120, 86, 22);
+                ellipse(0, -19, 20, 20);
+                fill(255, 197, 122);
+                triangle(-8, 0, 8, 0, 0, 20);
+                break;
+        }
+        popMatrix();
+    }
+};
+gift.prototype.collect = function(){
+    if(!this.deleteMe){
+        if(dist(playerX, playerY, this.x, this.y) < 30){
+            if(this.who === thePlayerIs){
+                score++;
+            } else {
+                if(score > 0){
+                    score--;
+                }
+            }
+            this.deleteMe = true;
+        }
+    }
+};
+
+var level = 0; // Important variable!!
+
+var congratsText = ["Nice!", "Good job!", "You did it!", "Well done!", "Nicely done.", "Not bad!", "Wow, you did it.", "Most impressive!", "Nicely executed.", "Nice job!", "Good job.", "Surprising, you made it..."];
+//var woodBG = get(0, 0, 400, 400);
+ 
+var draw = function() {
+    if(scene === "Home"){
+        textFont(font1);
+        candycaneBG(0);
+        textSize(70);
+        fill(0, 0, 0, 30);
+        text("GIFT GITTER", 210, 210);
+        fill(255);
+        text("GIFT GETTER", 200, 200);
+        textSize(30);
+        fill(45);
+        text("A CHRISTMAS ADVENTURE", 200, 255);
+        giftBtn(200, 345, 1.0, "\u25B6", "Information", color(34, 204, 68), color(51, 154, 222));
+        giftBtn(100, 345, 1.0, "?", "How", color(51, 154, 222), color(34, 204, 68));
+        giftBtn(300, 345, 1.0, "\u2699", "Settings", color(51, 154, 222), color(34, 204, 68));
+    }
+    if(scene === "How"){
+        candycaneBG(-30);
+        textFont(font1);
+        textSize(60);
+        fill(0, 0, 0, 30);
+        text("INSTRUCTIONS.", 210, 60);
+        fill(255, 255, 255);
+        text("INSTRUCTIONS.", 200, 50);
+        textFont(font2);
+        fill(0, 0, 0);
+        textSize(15);
+        text("Each level you'll find out a little\nmore about each of your neighbors.\nBased on the information you get each\ntime, get each avatar the gift that\nis best for them.", 200, 220);
+        giftBtn(50, 300, 0.8, "\u2190", "Home", color(255, 255, 255), color(32, 146, 199));
+    }
+    if(scene === "Settings"){
+        candycaneBG(-30);
+        textFont(font1);
+        textSize(60);
+        fill(0, 0, 0, 30);
+        text("SETTINGS.", 210, 60);
+        fill(255, 255, 255);
+        text("SETTINGS.", 200, 50);
+        giftBtn(50, 255, 0.8, "\u2190", "Home", color(255, 255, 255), color(32, 146, 199));
+    }
+    
+    if(scene === "Information"){
+        for(var i = 0; i < height; i ++){
+            stroke(lerpColor(color(89, 3, 3), color(156, 12, 12), i/height));
+            line(0, i, 400, i);
+        }
+        fill(255);
+        textFont(font2, 13);
+        text(congratsText[level], 290, 232, 100, 100);
+        image(getImage("creatures/Hopper-Cool"), 340, 345, 70, 70);
+        textSize(20);
+        fill(255);
+        text("- New information!! -", 200, 145);
+        textSize(15);
+        textAlign(LEFT, BASELINE);
+        text("NAME: " + avatars[level].name + "\nINFO: " + avatars[level].info, 150, 200, 250, 500);
+        textAlign(CENTER, CENTER);
+        fill(255, 255, 255, 100);
+        stroke(255, 255, 255, 150);
+        strokeWeight(5);
+        ellipse(80, 220, 100, 100);
+        image(avatars[level].img, 80, 220, 70, 70);
+        textFont(font1, 50);
+        fill(255);
+        if(level >= 1){
+            text("LEVEL " + level +  " FINISHED", 200, 70);
+            fill(194, 194, 194);
+            textSize(20);
+            text("Your score at the end of the round - " + score, 200, 100);
+        } else {
+            text("LET'S GET STARTED", 200, 70);
+            fill(194, 194, 194);
+            textSize(20);
+            text("Learn info about neighbors below", 200, 100);
+        }
+        textSize(30);
+        text("SPACE TO CONTINUE", 145, 335);
+        if(keyIsPressed && key.toString() === " "){
+            level++;
+            playerX = 200;
+            playerY = 20;
+            thePlayerIs = levelPlan[level-1];
+            scene = "Play";
+        }
+    }
+    if(scene === "Play"){
+        for(var i = 0; i < 400; i += 288){
+            for(var j = 0; j < 400; j += 125){
+                image(getImage("pixar/floorplanes"), i, j);
+            }
+        }
+        
+        // Draw the gifts
+        for(var i = 0; i < Gifts[level-1].length; i++){
+            Gifts[level-1][i].draw();
+            Gifts[level-1][i].collect();
+        }
+        
+        // Mint portal
+        noStroke();
+        pushMatrix();
+        translate(365, 365);
+        rotate(frameCount*5);
+        fill(255);
+        ellipse(0, 0, 60, 60);
+        for(var i = 0; i < 360; i += 90){
+            rotate(i);
+            fill(224, 27, 27);
+            beginShape();
+            vertex(0, 0);
+            bezierVertex(-43, -4, -20, -28, -4, -29);
+            bezierVertex(-11, -11, -9, -10, 0, 0);
+            endShape(CLOSE);
+        }
+        popMatrix();
+        if(dist(playerX, playerY, 365, 365) < 60){
+            scene = "Information";
+        }
+        
+        // Player + key movement
+        if(keys[UP]){
+            playerY -= 2;
+        }
+        if(keys[DOWN]){
+            playerY += 2;
+        }
+        if(keys[LEFT]){
+            playerX -= 2;
+        }
+        if(keys[RIGHT]){
+            playerX += 2;
+        }
+        switch(thePlayerIs){
+            case "Hopper":
+                image(getImage("creatures/Hopper-Happy"),playerX,playerY,40,40);
+                break;
+            case "OJ Squid":
+                image(getImage("avatars/orange-juice-squid"),playerX,playerY,40,40);
+                break;
+            case "Winston":
+                image(getImage("creatures/Winston"),playerX,playerY,40,40);
+                break;
+            case "Marcimus":
+                image(getImage("avatars/marcimus"),playerX,playerY,40,40);
+                break;
+            case "Donald":
+                image(getImage("avatars/robot_male_2"),playerX,playerY,40,40);
+                break;
+            case "Old Spice":
+                image(getImage("avatars/old-spice-man"),playerX,playerY,40,40);
+                break;
+            case "Sam":
+                image(getImage("avatars/spunky-sam"),playerX,playerY,40,40);
+                break;
+            case "Baby-Winston":
+                image(getImage("creatures/BabyWinston"),playerX,playerY,40,40);
+                break;
+            case "Mr. Pants":
+                image(getImage("avatars/mr-pants"),playerX,playerY,40,40);
+                break;
+            case "OhNoes":
+                image(getImage("creatures/OhNoes"),playerX,playerY,40,40);
+                break;
+            case "Leafers":
+                image(getImage("avatars/leafers-ultimate"),playerX,playerY,40,40);
+                break;
+            case "Mr. Pink":
+                image(getImage("avatars/mr-pink"),playerX,playerY,40,40);
+                break;
+            case "Piceratops":
+                image(getImage("avatars/piceratops-ultimate"),playerX,playerY,40,40);
+                break;
+            case "Purple Pi":
+                image(getImage("avatars/purple-pi"),playerX,playerY,40,40);
+                break;
+            case "Grace":
+                image(getImage("avatars/robot_female_3"),playerX,playerY,40,40);
+                break;
+        }
+        textFont(font2, 15);
+        fill(255); 
+        text("Score: " + score + "\nLevel: " + level, 60, 30);
+        if(level === 1){
+            textFont(font1, 15);
+            fill(25);
+            pushMatrix();
+            translate(295, 80);
+            rotate(-10);
+            text("This is the person you\nare shopping for. Based\non what you just learned,\nget the gift(s) best for\nthem.", 0, 0);
+            textSize(30);
+            text("\u2190", 0, -65);
+            popMatrix();
+            textSize(15);
+            text("This is the portal.\nEnter it when you're done shopping.", 220, 380);
+            textSize(30);
+            text("\u2192", 300, 365);
+        }
+    }
+};
