@@ -1,0 +1,511 @@
+/** Programmer: The Game
+ * By Chester Banks
+ * November 10 2015
+ * 
+ * BED              Click to rest (+50 Stamina)
+ * KITCHEN          Click to buy food (+25 Health, -10 Money)
+ * DOOR             Click to play basketball (+50 Happiness, -10 Stamina)
+ * LAPTOP           Click to enter Khan
+ * 
+ * KHAN
+    Make program (+5 Votes, +1 Popularity, +5 Skill)
+    Watch tutorial (+10 Skill)
+    Comment on someone's program (+2 Popularity)
+
+ 20 CHARACTERS
+        {1. Green leaf
+        2. Blue leaf
+        3. Leafers Seed
+        4. Leafers Seedling
+        5. Spunky Sam
+        6. Mr. Pink
+        7. Winston
+        8. OJ Squid
+        9. Purple Pi
+        10. Marcimus
+        11. Oh Noes
+        12. Mr. Pants
+        13. Old Spice
+        14. Piceratops Ultimate
+        15. Aqualine Tree
+        16. Hal
+        17. Donald
+        18. Happy Hopper
+        19. Jumping Hopper
+        20. Cool Hopper}
+*/
+
+textAlign(CENTER, CENTER);
+textFont(createFont("Century"));
+rectMode(CENTER);
+imageMode(CENTER);
+
+var scene = "Menu";
+
+var you = {
+    stamina: 100,
+    health: 100,
+    money: 50,
+    skill: 0,
+    votes: 0,
+    popularity: 0,
+    
+    avatar: getImage("avatars/leaf-green"),
+    name: "Chester Banks",
+};
+
+var popup = "None";
+
+var house = function(interactive){
+    // Basic house outline
+    fill(255, 255, 255);
+    stroke(255);
+    strokeWeight(5);
+    fill(199, 199, 199);
+    rect(200, 250, 200, 160);
+    triangle(200, 60, 80, 170, 320, 170);
+    noStroke();
+    fill(184, 184, 184);
+    rect(200, 242, 170, 140);
+    triangle(100, 165, 300, 165, 200, 70);
+    
+    // Floors
+    fill(255);
+    rect(200, 250, 200, 10);
+    rect(200, 175, 200, 10);
+    rect(200, 327, 200, 10);
+    fill(245);
+    quad(115, 310, 285, 310, 300, 325, 100, 325);
+    quad(115, 235, 285, 235, 300, 245, 100, 245);
+    quad(100, 165, 300, 165, 320, 170, 80, 170);
+    
+    // Desk
+    fill(235, 189, 134);
+    rect(252, 220, 45, 5);
+    rect(265, 233, 20, 20);
+    rect(245, 228, 20, 10);
+    rect(232, 233, 5, 20);
+    fill(212, 178, 123);
+    quad(230, 219, 275, 219, 270, 215, 235, 215);
+    
+    if(interactive === true){
+        if(mouseX > 110 && mouseX < 200 && mouseY > 155 && mouseY < 170){
+            // Bed
+            fill(255, 255, 0);
+            rect(155, 163, 93, 13);
+            rect(120, 155, 22, 8, 5);
+        }
+        if(mouseX > 175 && mouseX < 295 && mouseY > 260 && mouseY < 325){
+            // Kitchen table
+            fill(255, 255, 0);
+            rect(210, 303, 73, 8);
+            ellipse(210, 305, 73, 13);
+            arc(185, 300, 9, 48, 0, 180);
+            arc(235, 300, 9, 48, 0, 180);
+            ellipse(210, 300, 73, 13);
+            
+            // Fridge
+            rect(265, 295, 33, 53);
+            rect(265, 275, 33, 23, 3);
+            rect(255, 295, 5, 18);
+            rect(255, 280, 5, 11);
+        }
+        if(mouseX > 240 && mouseX < 265 && mouseY > 205 && mouseY < 225){
+            // Laptop
+            fill(255, 255, 0);
+            quad(239, 221, 266, 221, 260, 217, 245, 217);
+            rect(252, 211, 19, 17);
+        }
+        if(mouseX > 120 && mouseX < 150 && mouseY > 275 && mouseY< 330){
+            // Door
+            noFill();
+            strokeWeight(4);
+            stroke(255, 255, 0);
+            rect(135, 300, 30, 50);
+            arc(140, 305, 6, 6, -180, 0);
+            noStroke();
+        }
+    }
+    
+    // Bed
+    fill(224, 117, 117);
+    rect(155, 163, 90, 10);
+    fill(255);
+    rect(165, 162, 70, 8);
+    rect(120, 155, 20, 6, 5);
+    
+    // Desk and lamp
+    fill(112, 62, 24);
+    ellipse(240, 153, 30, 5);
+    rect(240, 151, 30, 3);
+    rect(230, 158, 3, 15);
+    rect(250, 158, 3, 15);
+    fill(140, 77, 28);
+    ellipse(240, 150, 30, 5);
+    fill(255, 255, 255);
+    arc(240, 151, 10, 10, -180, 0);
+    rect(240, 142, 4, 10);
+    fill(186, 78, 78);
+    quad(233, 142, 247, 142, 243, 130, 237, 130);
+    
+    // Kitchen table
+    fill(212, 170, 123);
+    rect(210, 303, 70, 5);
+    ellipse(210, 305, 70, 10);
+    arc(185, 300, 6, 45, 0, 180);
+    arc(235, 300, 6, 45, 0, 180);
+    fill(235, 189, 134);
+    ellipse(210, 300, 70, 10);
+    
+    // Fridge
+    fill(235, 235, 235);
+    rect(265, 295, 27, 50);
+    fill(255, 255, 255);
+    rect(265, 275, 30, 20, 3);
+    rect(265, 302, 30, 30, 3);
+    fill(201, 201, 201);
+    rect(255, 295, 2, 15);
+    rect(255, 280, 2, 8);
+    
+    // Couch
+    fill(209, 42, 42);
+    rect(160, 235, 70, 5);
+    rect(130, 228, 10, 10);
+    rect(190, 228, 10, 10);
+    fill(194, 39, 39);
+    rect(160, 230, 50, 5);
+    fill(173, 38, 38);
+    rect(160, 225, 50, 5);
+    arc(160, 223, 50, 20, -180, 0);
+    
+    // Laptop
+    fill(77, 77, 77);
+    quad(242, 220, 263, 220, 260, 217, 245, 217);
+    fill(43, 43, 43);
+    rect(252, 211, 15, 12);
+    
+    // Door
+    noFill();
+    strokeWeight(3);
+    stroke(255, 255, 255);
+    rect(135, 300, 30, 50);
+    strokeWeight(1);
+    arc(140, 305, 6, 6, -180, 0);
+    noStroke();
+};
+var tiltTextBtn = function(x, y, rot, txt, next){
+    pushMatrix();
+    translate(x, y);
+    rotate(rot);
+    fill(245);
+    if(mouseX > x-25 && mouseX < x+25 && mouseY < y+10 && mouseY > y-10){
+        textSize(23);
+        text(txt, 0, 0);
+        if(mouseIsPressed){
+            scene = next;
+        }
+    } else {
+        textSize(20);
+        text(txt, 0, 0);
+    }
+    popMatrix();
+};
+var tiltText = function(txt, x, y, rot){
+    pushMatrix();
+    translate(x, y);
+    rotate(rot);
+    text(txt, 0, 0);
+    popMatrix();
+};
+var bg = function(){
+    background(58, 128, 166);
+    noStroke();
+    fill(0, 0, 0, 30);
+    rect(200, 375, 400, 50);
+    fill(245);
+    textSize(32);
+    text("programmer", 110, 370);
+    textSize(12);
+    text("the game", 113, 388);
+};
+var pop_up = function(which){
+    fill(0, 0, 0, 30);
+    rect(200, 205, 215, 220);
+    fill(255, 255, 255);
+    rect(200, 200, 220, 220);
+    if(which === "Kitchen"){
+        if(mouseX > 90 && mouseX < 310){
+            fill(230, 230, 230);
+            if(mouseY > 140 && mouseY < 180){
+                rect(200, 160, 220, 40);
+            } else if (mouseY > 180 && mouseY < 220){
+                rect(200, 200, 220, 40);
+            } else if (mouseY > 220 && mouseY < 260){
+                rect(200, 240, 220, 40);
+            } else if (mouseY > 260 && mouseY < 300){
+                rect(200, 280, 220, 40);
+            }
+        }
+        fill(58, 128, 166);
+        textSize(15);
+        text("what would you like to eat?", 200, 115);
+        textSize(17);
+        text("pizza\n\nsandwich\n\ncrackers\n\nbread", 200, 210);
+        textSize(12);
+        text("$20", 200, 165);
+        text("$10", 200, 205);
+        text("$2", 200, 245);
+        text("$5", 200, 285);
+    }
+    fill(0, 0, 0, 30);
+    rect(95, 303, 35, 25);
+    fill(255);
+    if(mouseX > 75 && mouseX < 115 && mouseY > 287.5 && mouseY < 312.5){
+        rect(95, 300, 45, 30);
+    } else {
+        rect(95, 300, 40, 25);
+    }
+    textSize(14);
+    fill(58, 128, 166);
+    text("back", 95, 300);
+};
+var avatarSettings = function(minSkill, maxSkill, newAvatar){
+    if(you.skill >= minSkill && you.skill <= maxSkill){
+        you.avatar = newAvatar;
+    }
+};
+var avatarChanges = function(){
+    avatarSettings(0, 4, getImage("avatars/leaf-green"));
+    avatarSettings(5, 9, getImage("avatars/leaf-blue"));
+    avatarSettings(10, 14, getImage("avatars/leafers-seed"));
+    avatarSettings(15, 19, getImage("avatars/leafers-seedling"));
+    avatarSettings(20, 24, getImage("avatars/spunky-sam"));
+    avatarSettings(25, 29, getImage("avatars/mr-pink"));
+    avatarSettings(30, 34, getImage("creatures/Winston"));
+    avatarSettings(35, 39, getImage("avatars/orange-juice-squid"));
+    avatarSettings(40, 44, getImage("avatars/purple-pi"));
+    avatarSettings(45, 49, getImage("avatars/marcimus"));
+    avatarSettings(50, 54, getImage("creatures/OhNoes"));
+    avatarSettings(55, 59, getImage("avatars/mr-pants"));
+    avatarSettings(60, 64, getImage("avatars/old-spice-man"));
+    avatarSettings(65, 69, getImage("avatars/piceratops-ultimate"));
+    avatarSettings(70, 74, getImage("avatars/aqualine-tree"));
+    avatarSettings(75, 79, getImage("avatars/robot_male_3"));
+    avatarSettings(80, 84, getImage("avatars/robot_male_2"));
+    avatarSettings(85, 89, getImage("creatures/Hopper-Happy"));
+    avatarSettings(90, 94, getImage("creatures/Hopper-Jumping"));
+    avatarSettings(95, 100, getImage("creatures/Hopper-Cool"));
+};
+
+var loadingBar = function(speed, text){
+    this.speed = speed;
+    this.text = text;
+    this.barLength = 0;
+    this.deleteMe = false;
+};
+loadingBar.prototype.draw = function() {
+    if(!this.deleteMe){
+        stroke(0, 255, 17);
+        strokeWeight(30);
+        strokeCap(SQUARE);
+        line(50, 200, this.barLength, 200);
+        this.barLength += this.speed;
+        textSize(14);
+        fill(245);
+        text(this.barLength/100, 200, 150);
+        text(this.text, 200, 250);
+        if(this.barLength > 350){
+            this.deleteMe = true;
+        }
+    }
+};
+
+var loadingBars = [
+    new loadingBar(3, "Watching tutorial..."), // Tutorial
+    new loadingBar(), // Program
+    new loadingBar(), // Comment
+    new loadingBar(),
+];
+
+
+draw = function() {
+    if(scene === "Menu"){
+        background(58, 128, 166);
+        fill(0, 0, 0, 30);
+        textSize(12);
+        text(house, 75, 200);
+        text(house, 288, 100);
+        textSize(45);
+        fill(0, 0, 0, 30);
+        text("programmer", 200, 205);
+        textSize(20);
+        text("t h e   g a m e", 230, 233);
+        textSize(45);
+        fill(245);
+        text("programmer", 200, 200);
+        textSize(20);
+        text("t h e   g a m e", 230, 230);
+        tiltTextBtn(200, 330, 0, "start", "Home");
+        tiltTextBtn(200, 355, 0, "how to", "How To");
+    }
+    if(scene === "How To"){
+        bg();
+        house(false);
+        fill(245);
+        textSize(12);
+        text("The goal of the game is to become the best programmer on\nKA, without running out of stamina, health, or money.", 200, 35);
+        fill(25);
+        tiltText("BED gives you\n+50 stamina.", 54, 141, -10);
+        tiltText("Your LAPTOP takes\nyou to KA.", 320, 218, 10);
+        tiltText("You can buy food\nin your KITCHEN,\nwhich adds to your\nhealth.", 72, 275, -10);
+        tiltText("Click the DOOR\nto go to work and\ngain money.", 206, 310, 10);
+        tiltTextBtn(350, 350, 5, "Got it!", "Menu");
+    }
+    if(scene === "Home"){
+        bg();
+        house(true);
+        // Health, Stamina, Money, Popularity, Votes & Skill
+        stroke(245);
+        strokeWeight(2);
+        noFill();
+        arc(20, 20, 15, 15, -215, -50);
+        arc(30, 20, 15, 15, -135, 30);
+        line(35, 25, 25, 35);
+        line(15, 25, 25, 35);
+        fill(245);
+        textSize(12);
+        text(you.health, 65, 25);
+        text(you.stamina, 65, 50);
+        text(you.money, 65, 80);
+        text(you.popularity, 345, 25);
+        text(you.votes, 345, 50);
+        text(you.skill, 345, 80);
+        textSize(35);
+        text("+", 25, 50);
+        textSize(30);
+        text("$", 25, 80);
+        text("!", 375, 80);
+        textSize(25);
+        text("\u2606", 375, 25);
+        noStroke();
+        triangle(385, 60, 365, 60, 375, 47);
+        if(frameCount % 60 === 15){
+            you.stamina--;
+            you.health--;
+        }
+        if(popup === "Kitchen"){
+            pop_up("Kitchen");
+        }
+    }
+    if(scene === "Khan"){
+        background(58, 128, 166);
+        noStroke();
+        image(getImage("landscapes/clouds-from-plane"), 200, 130, 400, 259);
+        fill(35);
+        rect(200, 235, 400, 100);
+        fill(245);
+        rect(200, 331, 400, 90);
+        textAlign(LEFT, CENTER);
+        textSize(20);
+        text(you.name, 15, 210);
+        textSize(13);
+        text("skill level: " + you.skill, 20, 230);
+        text("votes: " + you.votes, 20, 245);
+        text("popularity: " + you.popularity, 20, 260);
+        textAlign(CENTER, CENTER);
+        fill(255, 255, 255, 150);
+        ellipse(300, 185, 150, 150);
+        image(you.avatar, 300, 185);
+        tiltTextBtn(35, 388, 0, "back", "Home");
+        fill(45);
+        textSize(14);
+        text("watch a\ntutorial", 101, 317);
+        text("make a\nprogram", 129, 353);
+        text("view other\nprograms", 277, 322);
+        if(dist(mouseX, mouseY, 190, 330) <= 35){
+            image(getImage("creatures/Winston"), 190, 330, 80, 80);
+        } else {
+            image(getImage("creatures/Winston"), 190, 330, 70, 70);
+        }
+        
+        if(dist(mouseX, mouseY, 45, 330) <= 35){
+            image(getImage("creatures/Hopper-Jumping"), 45, 330, 80, 90);
+        } else {
+            image(getImage("creatures/Hopper-Happy"), 45, 330, 70, 70);
+        }
+        
+        if(dist(mouseX, mouseY, 350, 330) <= 35){
+            image(getImage("space/planet"), 350, 330, 110, 110);
+        } else {
+            image(getImage("space/planet"), 350, 330, 100, 100);
+        }
+    }
+    avatarChanges();
+};
+
+var mouseClicked = function(){
+    if(scene === "Home"){
+        if(mouseX > 110 && mouseX < 200 && mouseY > 155 && mouseY < 170){
+            // Bed
+            if(you.stamina <= 50){
+                you.stamina += 50;
+            } else {
+                you.stamina = 100;
+            }
+        }
+        if(mouseX > 175 && mouseX < 295 && mouseY > 260 && mouseY < 325){
+            // Kitchen
+            popup = "Kitchen";
+        }
+        if(mouseX > 240 && mouseX < 265 && mouseY > 205 && mouseY < 225){
+            // Laptop
+            scene = "Khan";
+        }
+        if(mouseX > 120 && mouseX < 150 && mouseY > 275 && mouseY< 330){
+            // Door
+        }
+        if(popup === "Kitchen"){
+            // Buy food
+            if(mouseX > 90 && mouseX < 310){
+                fill(230, 230, 230);
+                if(mouseY > 140 && mouseY < 180){
+                    rect(200, 160, 220, 40);
+                    if(you.health <= 80){
+                        you.health += 20;
+                    } else {
+                        you.health = 100;
+                    }
+                    you.money -= 20;
+                    popup = "None";
+                } else if (mouseY > 180 && mouseY < 220){
+                    rect(200, 200, 220, 40);
+                    if(you.health <= 90){
+                        you.health += 10;
+                    } else {
+                        you.health = 100;
+                    }
+                    you.money -= 10;
+                    popup = "None";
+                } else if (mouseY > 220 && mouseY < 260){
+                    rect(200, 240, 220, 40);
+                    if(you.health <= 98){
+                        you.health += 2;
+                    } else {
+                        you.health = 100;
+                    }
+                    you.money -= 2;
+                    popup = "None";
+                } else if (mouseY > 260 && mouseY < 300){
+                    rect(200, 280, 220, 40);
+                    if(you.health <= 95){
+                        you.health += 5;
+                    } else {
+                        you.health = 100;
+                    }
+                    you.money -= 5;
+                    popup = "None";
+                }
+            }
+        }
+    }
+};
