@@ -1,0 +1,335 @@
+/** La Banana
+ * By Chester Banks
+ *
+ @TO_DO 
+  1. Add banana to home screen
+  2. Add buttons to more games screen
+*/
+
+textAlign(CENTER, CENTER);
+textFont(createFont("AppleGothic"));
+rectMode(CENTER);
+
+var scene = "Screen1";
+var rank = "Rookie";
+var skinColor = color(255, 208, 150);
+var shirtColor = color(87, 189, 240);
+var shoeColor = color(255, 255, 255);
+
+var bg = function(){
+    background(207, 139, 67);
+    for(var i = 25; i < 400; i += 100){
+        for(var j = 25; j < 400; j += 100){
+            noStroke();
+            fill(0, 0, 0, 10);
+            rect(i, j, 50, 50);
+            rect(i + 50, j + 50, 50, 50);
+        }
+    }
+};
+var banana = function(x, y){
+    pushMatrix();
+    translate(x, y);
+    noStroke();
+    fill(235, 224, 14);
+    beginShape();
+    vertex(226, 321);
+    bezierVertex(113, 299, 113, 166, 220, 117);
+    bezierVertex(186, 224, 185, 248, 227, 320);
+    endShape(CLOSE);
+    fill(0, 0, 0, 20);
+    beginShape();
+    vertex(226, 321);
+    bezierVertex(113, 298, 113, 166, 220, 117);
+    bezierVertex(132, 224, 137, 248, 227, 320);
+    endShape(CLOSE);
+    popMatrix();
+};
+var circleButton = function(x, y, sz, txt, n, txtSize){ // x, y, size, text, next page
+    strokeWeight(5);
+    stroke(255, 255, 255, 150);
+    if(dist(mouseX, mouseY, x, y) <= (sz/2)){
+            fill(255, 255, 255, 150);
+            if(mouseIsPressed && n !== "None"){
+                scene = n;
+            }
+    } else {
+        fill(255, 255, 255, 100);
+    }
+    ellipse(x, y, sz, sz);
+    fill(0, 0, 0);
+    textSize(txtSize);
+    text(txt, x, y);
+};
+var back = function(){
+    textSize(12);
+    fill(255, 255, 255, 200 + sin(frameCount * 10) * 55);
+    text("Press a key to return to the menu", 110, 385);
+    if(keyIsPressed){
+        scene = "Home";
+    }
+};
+
+var customer = function(shirt, shoe, skin, order){
+    this.shirt = shirt;
+    this.shoe = shoe;
+    this.skin = skin;
+    this.order = order;
+    this.deleted = false;
+    this.x = 400;
+    this.time = 0;
+};
+
+var People = [new customer (color(255, 255, 255), color(69, 69, 69), color(128, 100, 28), "CC")];
+
+customer.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, 80);
+    noStroke();
+    fill(this.shirt);
+    beginShape(); // body begins
+    vertex(95, 174);
+    bezierVertex(34, 276, 170, 282, 108, 174);
+    endShape(CLOSE); // body ends
+    fill(0, 0, 0); // pants begin
+    beginShape();
+    vertex(79, 234);
+    bezierVertex(87, 257, 115, 261, 124, 234);
+    endShape(CLOSE);
+    beginShape();
+    vertex(74, 296);
+    bezierVertex(80, 239, 88, 229, 94, 237);
+    bezierVertex(100, 263, 93, 237, 90, 300);
+    endShape(CLOSE);
+    beginShape();
+    vertex(126, 294);
+    bezierVertex(120, 239, 112, 229, 106, 237);
+    bezierVertex(100, 263, 107, 237, 110, 300);
+    endShape(CLOSE); // pants end
+    fill(this.shoe);
+    beginShape(); // left shoe begin
+    vertex(90, 300);
+    bezierVertex(43, 323, 52, 269, 74, 294);
+    endShape(CLOSE); // left shoe end
+    beginShape();
+    vertex(110, 300);
+    bezierVertex(157, 323, 148, 269, 126, 293);
+    endShape(CLOSE);
+    fill(this.skin);
+    ellipse(100, 150, 50, 50); // head
+    ellipse(60, 210, 20, 20); // left hand
+    ellipse(140, 210, 20, 20); // right hand
+    fill(0);
+    ellipse(90, 150, 12, 12); // eye
+    ellipse(110, 150, 12, 12); // eye 2
+    fill(255);
+    ellipse(88, 148, 3, 3);
+    ellipse(108, 148, 3, 3);
+    popMatrix();
+    if(this.x > 115){
+        this.x-=2;
+    }
+};
+
+var badges = [
+    false, // Started: 1st day completed!
+    false, // Pressing On: 1st week completed!
+    false, // Mini Master: 5 minigames won
+    false, // Hotspot: 10+ customers in one day
+    false, // Ranker: Rank 5 or over
+];
+
+var draw = function() {
+    if(scene === "Screen1"){
+        bg();
+        banana(0, -88);
+        fill(255);
+        textSize(60);
+        text("La Banana", 200, 264);
+        textSize(12);
+        text("- a game by chester banks -", 200, 305);
+        fill(255, 255, 255, 200 + sin(frameCount * 10) * 55);
+        textSize(21);
+        text("Click to enter", 200, 364);
+        if(mouseIsPressed){
+            scene = "How";
+        }
+    }
+    if(scene === "How"){
+        bg();
+        fill(255);
+        textSize(25);
+        text("La Banana  |  instructions", 200, 33);
+        stroke(255);
+        strokeWeight(1);
+        line(5, 60, 395, 60);
+        textSize(12.5);
+        text("Hello! You've been hired to work at La Banana, the newest restaurant in town!\n\nHere at La Banana, we serve everything banana - chocolate covered bananas, sprinkled bananas, ice cream bananas, tie-dye bananas - well, you get the point.\n\nYour job is to listen to the costumers that come in, take their orders, make what they want, and give it to them in a short amount of time. If you do especially good, you might get to play a game with Mr. King!\n\nPayday is at the end of every week. With your money you can buy clothes, accesories, and stuff to improve the shop!\n\nWell, that's about it. Press a key to go to the menu.", 40, -30, 320, 500);
+        if(keyIsPressed){
+            scene = "Home";
+        }
+    }
+    if(scene === "Home"){
+        bg();
+        textSize(44);
+        fill(255, 255, 255);
+        pushMatrix();
+        translate(66, 376);
+        rotate(0);
+        text("Home", 0, 0);
+        textSize(11);
+        text("La Banana", 0, -13);
+        popMatrix();
+        circleButton(200, 200, 140, "Get\nWorking", "Work1", 26);
+        circleButton(200, 70, 90, "Shop", "Shop", 16);
+        circleButton(330, 200, 90, "You", "You", 16);
+        circleButton(70, 200, 90, "Settings", "Settings", 16);
+        circleButton(200, 330, 90, "Mini\nGames", "Minigames", 16);
+        circleButton(90, 90, 90, "How To\nPlay", "How", 14);
+        circleButton(310, 90, 90, "Credits", "Creds", 14);
+        circleButton(310, 310, 90, "Badge\nRoom", "Badge Room", 14);
+        circleButton(90, 310, 90, "More\nGames from\nChester", "More games", 12);
+    }
+    
+    if(scene === "You"){
+        bg();
+        fill(255);
+        textSize(70);
+        text("You", 200, 60);
+        textSize(15);
+        text("La Banana", 225, 40);
+        strokeWeight(10);
+        fill(255, 255, 255, 100);
+        stroke(255, 255, 255, 100);
+        rect(100, 215, 130, 210, 10);
+        noStroke();
+        fill(shirtColor);
+        beginShape(); // body begins
+        vertex(95, 174);
+        bezierVertex(34, 276, 170, 282, 108, 174);
+        endShape(CLOSE); // body ends
+        fill(0, 0, 0); // pants begin
+        beginShape();
+        vertex(79, 234);
+        bezierVertex(87, 257, 115, 261, 124, 234);
+        endShape(CLOSE);
+        beginShape();
+        vertex(74, 296);
+        bezierVertex(80, 239, 88, 229, 94, 237);
+        bezierVertex(100, 263, 93, 237, 90, 300);
+        endShape(CLOSE);
+        beginShape();
+        vertex(126, 294);
+        bezierVertex(120, 239, 112, 229, 106, 237);
+        bezierVertex(100, 263, 107, 237, 110, 300);
+        endShape(CLOSE); // pants end
+        fill(shoeColor);
+        beginShape(); // left shoe begin
+        vertex(90, 300);
+        bezierVertex(43, 323, 52, 269, 74, 295);
+        endShape(CLOSE); // left shoe end
+        beginShape();
+        vertex(112, 300);
+        bezierVertex(157, 323, 148, 269, 126, 295);
+        endShape(CLOSE);
+        fill(skinColor);
+        ellipse(100, 150, 50, 50); // head
+        ellipse(60, 210, 20, 20); // left hand
+        ellipse(140, 210, 20, 20); // right hand
+        fill(0);
+        ellipse(90, 150, 12, 12); // eye
+        ellipse(110, 150, 12, 12); // eye 2
+        fill(255);
+        ellipse(88, 148, 3, 3);
+        ellipse(108, 148, 3, 3);
+        textSize(18);
+        fill(255);
+        text("Your rank: " + rank, 278, 365);
+        textSize(15);
+        text("Skin color: ", 225, 145);
+        text("Shirt color: ", 226, 170);
+        text("Shirt type: ", 225, 195);
+        text("Shoe color: ", 227, 220);
+        back();
+    }
+    if(scene === "Shop"){
+        bg();
+        fill(255);
+        textSize(70);
+        text("Shop", 200, 60);
+        textSize(15);
+        text("La Banana", 215, 40);
+        back();
+    }
+    if(scene === "Creds"){
+        bg();
+        fill(255);
+        textSize(70);
+        text("Credits", 200, 60);
+        textSize(15);
+        text("La Banana", 182, 40);
+        back();
+    }
+    if(scene === "Badge Room"){
+        bg();
+        fill(255);
+        textSize(70);
+        text("Badges", 200, 60);
+        textSize(15);
+        text("La Banana", 249, 40);
+        back();
+    }
+    if(scene === "More games"){
+        bg();
+        fill(255);
+        textSize(70);
+        text("More", 200, 60);
+        textSize(15);
+        text("La Banana", 220, 40);
+        text("Jewel Catcher\n\nSolid\n\nPolar Opposites\n\nPress It!\n\nTiny Pixel", 200, 215);
+        back();
+    }
+    if(scene === "Minigames"){
+        bg();
+        fill(255);
+        textSize(70);
+        text("Minigames", 200, 60);
+        textSize(15);
+        text("La Banana", 203, 40);
+        text("", 200, 215);
+        back();
+    }
+    
+    if(scene === "Work1"){
+        background(230, 229, 200);
+        noStroke();
+        fill(0, 255, 157, 100);
+        rect(200, 110, 400, 36);
+        rect(200, 82, 400, 8);
+        rect(200, 137, 400, 8);
+        fill(50, 184, 86);
+        rect(200, 325, 400, 150);
+        fill(158, 118, 32);
+        rect(200, 245, 400, 10);
+        fill(0, 0, 0, 30);
+        rect(200, 246, 400, 5);
+        fill(44, 163, 76);
+        quad(100, 200, 150, 200, 125, 400, 20, 400);
+        fill(40, 143, 66);
+        quad(152, 207, 150, 200, 125, 400, 135, 400);
+        fill(117, 93, 21);
+        quad(152, 207, 154, 283, 146, 400, 135, 400);
+        fill(25);
+        textSize(13);
+        text("Since you're new at this, let me show you around. This is the counter, where you'll take your customer's orders.\n\nHere comes one now! Click above him to take his order.", 30, -178, 340, 500);
+        People[0].draw();
+        back();
+    }
+    if(scene === "?"){
+       bg();
+       textSize(30);
+       fill(255);
+       text("Page not functional", 200, 200);
+    }
+};
+
