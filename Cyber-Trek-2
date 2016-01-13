@@ -1,0 +1,925 @@
+var secret = false; // If you change this to false, do not vote this program up.
+
+var scene = "Menu";
+
+/** Maps */
+var maps = {
+    UF1: [
+        'GGGGGGGGGG',
+        'GGGGWWWWWW',
+        'TGGGWWWWWW',
+        'TTGGWWWWWW',
+        'TTGGWWWWWW',
+        'TGGGGWWWWW',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'RGGGGGGGGG',
+        'RRGGGGGGGG'],
+    UF2: [
+        'GGGGGGGGGG',
+        'WGGGGGGGGG',
+        'WWGGGGGGGG',
+        'WWGGGGGGGG',
+        'WWWGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGT',
+        'GGGGGGGTTT',
+        'GGGGGGTTTT'],
+    UF3: [
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'TGGGGGGGGG',
+        'TTGGGGGGGG',
+        'TTTTGGGGGG'],
+    UF4: [
+        'RRGGGGGGGG',
+        'RGGGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGW',
+        'GGGGGGGGGW',
+        'GGGGGGGGGW',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG'],
+    UF5: [
+        'GGGGGGGTTT',
+        'GGGGGGGGGT',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG',
+        'WWGGGGGGGG',
+        'WWWGGGGGGG',
+        'WWWGGGGGGG',
+        'GGGGGGGGGG',
+        'GGGGGGGGGG'],
+    UF6: [
+        'TTTGGGGGGG',
+        'TTGGGGGGGG',
+        'TGGGGGGGGG',
+        'GGGGTTTGGGG',
+        'GGGTTTTTGG',
+        'GGGTTTTTTT',
+        'GGTTTTTTTT',
+        'GGTTTTTTTT',
+        'GGGGTTTTTT',
+        'GGGGGGTTTT'],
+        
+    IV1: [
+        'IIIIIIIIII',
+        'IIIIIIIIII',
+        'IIIIIIIIII',
+        'IIIIIIIIII',
+        'IIIIIIIIII',
+        'SIIIIIIIII',
+        'SSIIIIIIII',
+        'SSSSIIIIII',
+        'SSSSSIIIII',
+        'SSSSSSIII'],
+    IV2: [
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII'],
+    IV3: [
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII'],
+    IV4: [
+    'SSSSSSIIII',
+    'SSSSSSIIII',
+    'SSSSSIIIII',
+    'SSIIIIIIII',
+    'SIIIIIIIII',
+    'SIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII'],
+    IV5: [
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII'],
+    IV6: [
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII',
+    'IIIIIIIIII'],
+};
+
+/** Key Functions */
+var keys = [];
+var keyPressed = function(){
+    keys[keyCode] = true;
+};
+var keyReleased = function(){
+    keys[keyCode] = false;
+};
+
+var coins = 0;
+var isTalkieUp = false;
+
+var name = "";
+var hat = "Baseball";
+
+var characterColor = color(255, 111, 0);
+
+var awesomeText = function(x, y, size, word, color){
+    textFont(createFont("Consolas Bold"));
+    textAlign(CENTER, CENTER);
+    textSize(size);
+    fill(0, 0, 0, 30);
+    text(word, x + size/24 + 5, y+3);
+    text(word, x - size/24 + 5, y+3);
+    text(word, x + 5, y - size/24+3);
+    text(word, x + 5, y + size/24+3);
+    fill(color);
+    text(word, x + size/24, y);
+    text(word, x - size/24, y);
+    text(word, x, y - size/24);
+    text(word, x, y + size/24);
+    fill(0, 0, 0, 10);
+    text(word, x + size/24, y);
+    text(word, x - size/24, y);
+    text(word, x, y - size/24);
+    text(word, x, y + size/24);
+};
+var circleButton = function(x, y, sz, txt, n, txtSize){ // x, y, size, text, next page
+    if(dist(mouseX, mouseY, x, y) <= (sz/2)){
+            fill(245);
+            if(mouseIsPressed){
+                scene = n;
+            }
+    } else {
+        fill(245,245, 245, 100);
+    }
+    strokeWeight(2);
+    stroke(245);
+    ellipse(x, y, sz, sz);
+    fill(41, 41, 41);
+    if(txtSize !== 0){
+        textSize(txtSize);
+    } else {
+        textSize(sz/4);
+    }
+    text(txt, x, y);
+};
+var hatButton = function(name, x, y){
+    strokeWeight(3);
+    stroke(255);
+    if(mouseX > x - 10 && mouseX < x + 10 && mouseY > y - 10 && mouseY < y + 10){
+        fill(255);
+        if(mouseIsPressed){
+            hat = name;
+        }
+    } else {
+        fill(255, 255, 255, 100);
+    }
+    rect(x, y, 20, 20, 7);
+    textSize(15);
+    fill(245);
+    textAlign(LEFT, TOP);
+    text(name, x + 20, y - 7);
+    textAlign(CENTER, CENTER);
+};
+var cyberBG = function(){
+    background(0);
+    for(var i = 4; i < 400; i += 10){
+        for(var j = frameCount % 20; j < 400; j += 10){
+            fill(0, 255, 0, (j*(i%7)) % (i * 0.3));
+            noStroke();
+            rectMode(CENTER);
+            textSize(11);
+            rect(i, j, 5, 5);
+        }
+    }
+};
+
+/** Talkie Functions */
+var TalkieButton = function(x, y, w, h, txt, n, txtSize, info){
+    rectMode(LEFT);
+    noStroke();
+    fill(255, 255, 255);
+    rect(x-2, y+2, w, h, 2);
+    stroke(255, 255, 255);
+    strokeWeight(1);
+    fill(36, 36, 36);
+    if(mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h){
+        fill(0, 255, 0);
+        rect(x-2, y+2, w, h, 2);
+        textSize(txtSize);
+        fill(24);
+        text(txt, (x + (w/2)) - 2, (y + (h/2)) + 2);
+        textSize(13);
+        stroke(0, 255, 255, random(10, 30));
+        for(var i = 74; i < 257; i+= 3){
+            line(119, i, 281, i);
+        }
+        fill(0, 166, 255, random(100, 255));
+        text(info, 123, 3, 160, 300);
+        if(mouseIsPressed){
+            //scene = n;
+        }
+    } else {
+        rect(x, y, w, h, 2);
+        textSize(txtSize);
+        fill(0, 255, 0);
+        text(txt, x + (w/2), y + (h/2));
+    }
+    rectMode(CENTER);
+};
+var TalkieIcon = function(){
+    //if(!isTalkieUp){
+        strokeWeight(2);
+        stroke(255, 255, 255, 200);
+        fill(0, 143, 179);
+        rect(375, 375, 23, 35);
+        noStroke();
+        fill(0);
+        rect(375, 371, 17, 20);
+        fill(255, 255, 255, 150);
+        rect(375, 386, 15, 8);
+        stroke(0, 179, 12);
+        strokeWeight(1);
+        line(375, 382, 375, 389);
+        line(365, 385, 383, 385);
+        strokeWeight(3);
+        stroke(255, 255, 255, 100);
+        line(370, 377, 370, 364);
+        if(mouseX > 375-12 && mouseX < 375+12 && mouseY > 375-18 && mouseY < 375+18 && mouseIsPressed){ // I was too lazy to do the math :P
+            isTalkieUp = true;
+        }
+    //}
+    if(isTalkieUp){
+        fill(0, 0, 0, 100);
+        rect(200, 200, 500, 500);
+        noStroke();
+        rect(209, 210, 184, 280);
+        strokeWeight(5);
+        stroke(255, 255, 255, 200);
+        fill(0, 143, 179);
+        rect(200, 200, 184, 280);
+        noStroke();
+        fill(24, 24, 24, 240);
+        rect(200, 164, 165, 185);
+        TalkieButton(130, 265, 70, 30, "$", "T_Coins", 20, "See how many coins you have left and what you have been buying and selling recently.");
+        TalkieButton(205, 300, 70, 30, "+", "T_Stuff", 20, "View all the stuff you have collected during your time here in Digitaland.");
+        TalkieButton(130, 300, 70, 30, "@", "T_Quest", 20, "Get the details on your current Trek from The Digital King.");
+        TalkieButton(205, 265, 70, 30, "&", "T_Char", 20, "Customize your character some more!");
+        fill(245, 245, 245, random(100, 255));
+        textSize(13);
+        textFont(createFont("Consolas"));
+        text("Press a key to go back", 200, 385);
+        textFont(createFont("Consolas Bold"));
+        if(keyIsPressed){
+            isTalkieUp = false;
+        }
+    }
+};
+var TalkieBG = function(){
+    fill(0, 0, 0, 10);
+    rect(200, 200, 500, 500);
+    stroke(0, 247, 255, 30);
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    line(0, random(-100, 500), 400, random(0, 400));
+    fill(0, 225, 255, random(100, 200));
+    textSize(30);
+    text("Trek Details: ", sin(frameCount) + 200, sin(frameCount*20) + 35);
+};
+
+/** Map Functions */
+var Block = function(x, y, c1, c2){
+    strokeWeight(1);
+    stroke(0, 0, 0, 20);
+    fill(c1);
+    rect(x, y, 40, 40);
+    fill(0, 0, 0, 15);
+    noStroke();
+    triangle(x-20, y-20, x-20, y+20, x+20, y-20);
+};
+var drawSquare = function(x, y, block){
+    stroke(0, 0, 0, 30);
+    switch(block){
+        case 'G':
+            Block(x, y, color(0, 255, 17));
+            break;
+        case 'S':
+            Block(x, y, color(245, 245, 245));
+            break;
+        case 'W':
+            Block(x, y, color(0, 187, 255));
+            break;
+        case 'M':
+            Block(x, y, color(125, 92, 0));
+            break;
+        case 'R':
+            Block(x, y, color(110, 110, 110));
+            break;
+        case 'L':
+            Block(x, y, color(255, 81, 0));
+            break;
+        case 'T':
+            Block(x, y, color(17, 158, 62));
+            break;
+        case 'I':
+            Block(x, y, color(127, 225, 255));
+            break;
+    }
+    // G = Grass, S = Snow, W = Water, M = Mud, R = Rock, L = Lava, T = Tree, I = Ice
+};
+var drawMap = function(which){
+    for(var i = 0; i < which.length; i ++){
+        for(var j = 0; j < which.length; j++){
+            var blockType = which[j][i];
+            var x = i*40;
+            var y = j*40;
+            drawSquare(x + 20, y + 20, blockType);
+        }
+    }
+    TalkieIcon();
+};
+var portal = function(x, y) {
+    for(var i = 100; i > 0; i -= 5){
+        noStroke();
+        fill(255, 0, 247, 20);
+        ellipse(x, y, i + sin(frameCount * 50) * 3, i + sin(frameCount * 50) * 3);
+    }
+};
+
+/** Player Functions */
+var X = 200;
+var Y = 200;
+var moving = false;
+var player = function(L, R, U, D){
+    fill(characterColor);
+    strokeWeight(2);
+    stroke(0, 0, 0, 50);
+    ellipse(X, Y, 50, 50);
+    fill(0);
+    noStroke();
+    ellipse(X-7, Y-5, 7, 7);
+    ellipse(X+7, Y-5, 7, 7);
+    noFill();
+    stroke(255, 255, 255, 100);
+    arc(X, Y, 45, 45, -180, -90);
+    arc(X-7, Y-5, 4, 4, -180, -90);
+    arc(X+7, Y-5, 4, 4, -180, -90);
+    if(hat === "Baseball"){
+        fill(0, 78, 161);
+        noStroke();
+        arc(X, Y-15, 40, 30, -180, 0);
+        fill(0, 0, 0, 50);
+        arc(X, Y-15, 30, 30, -180, 0);
+        fill(179, 179, 179, 50);
+        arc(X, Y-15, 16, 30, -180, 0);
+        fill(0, 48, 92);
+        arc(X, Y-15, 40, 15, -180, 0);
+    }
+    if(hat === "Party"){
+        noStroke();
+        fill(0, 145, 255);
+        triangle(X-15, Y-20, X+15, Y-20, X, Y-40);
+        fill(0, 0, 0, 50);
+        triangle(X-15, Y-20, X-4, Y-20, X, Y-40);
+        for(var i = 0; i < 355; i+=30){
+            stroke(255);
+            strokeWeight(1);
+            pushMatrix();
+            translate(X, Y-40);
+            rotate(i);
+            line(0, 0, 4, 0);
+            popMatrix();
+        }
+    }
+    if(hat === "Top Hat"){
+        noStroke();
+        fill(0, 0, 0);
+        rect(X, Y-18, 50, 5);
+        rect(X, Y-29, 40, 24, 5);
+        stroke(255, 255, 255, 100);
+        line(X-18, Y-36, X-18, Y-23);
+        line(X-23, Y-19, X-23, Y-18);
+    }
+    
+    /* Moving feet */
+    if(moving){
+        stroke(0, 0, 0, 50);
+        fill(characterColor);
+        arc(X+20, Y+25 + sin(frameCount * 20), 20, 20, -180, 0);
+        arc(X-20, Y+25 + sin(frameCount * 20), 20, 20, -180, 0);
+        arc(X+20, Y+24 + sin(frameCount * 20), 20, 10, 0, 180);
+        arc(X-20, Y+24 + sin(frameCount * 20), 20, 10, 0, 180);
+        noFill();
+        stroke(255, 255, 255, 100);
+        arc(X-20, Y+25 + sin(frameCount * 20), 15, 15, -180, -90);
+        arc(X+20, Y+25 + sin(frameCount * 20), 15, 15, -180, -90);
+    }
+    if(!moving){
+        stroke(0, 0, 0, 50);
+        fill(characterColor);
+        arc(X+20, Y+25, 20, 20, -180, 0);
+        arc(X-20, Y+25, 20, 20, -180, 0);
+        arc(X+20, Y+25, 20, 10, 0, 180);
+        arc(X-20, Y+25, 20, 10, 0, 180);
+        noFill();
+        stroke(255, 255, 255, 100);
+        arc(X-20, Y+25, 15, 15, -180, -90);
+        arc(X+20, Y+25, 15, 15, -180, -90);
+    }
+    
+    /* Movement stuff */
+    if(keys[UP]){
+        Y-=3;
+    }
+    if(keys[DOWN]){
+        Y+=3;
+    }
+    if(keys[LEFT]){
+        X-=3;
+    }
+    if(keys[RIGHT]){
+        X+=3;
+    }
+    if(keys[UP] || keys[DOWN] || keys[LEFT]|| keys[RIGHT]){
+        moving = true;
+    } else {
+        moving = false;
+    }
+    
+    /* Is there another square on the edge? */
+    if(L !== 0){
+        if(X < 20){
+            X = 370;
+            scene = L;
+        }
+    }
+    if(R !== 0){
+        if(X > 380){
+            X = 30;
+            scene = R;
+        }
+    }
+    if(U !== 0){
+        if(Y < 20){
+            scene = U;
+            Y = 370;
+        }
+    }
+    if(D !== 0){
+        if(Y > 380){
+            scene = D;
+            Y = 30;
+        }
+    }
+};
+
+/** Coin Functions */
+var Coin = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.deleteMe = false;
+    this.w = 25;
+    this.wSpeed = +2;
+};
+Coin.prototype.draw = function(){
+    if(!this.deleteMe){
+        strokeWeight(4);
+        stroke(227, 227, 0);
+        fill(255, 255, 0);
+        ellipse(this.x, this.y, this.w, 25);
+        this.w-=this.wSpeed;
+        if(this.w <= -25){
+            this.wSpeed = -1;
+        }
+        if(this.w >= 25){
+            this.wSpeed = +1;
+        }
+    }
+};
+Coin.prototype.grab = function(){
+    if(!this.deleteMe){
+        if(dist(X, Y, this.x, this.y) < 40){
+            this.deleteMe = true;
+            coins++;
+        }
+    }
+};
+
+var Coins = [new Coin(100, 300), new Coin(350, 50), new Coin(25, 275), new Coin(50, 275), new Coin(75, 275), new Coin (100, 275), new Coin(125, 275), new Coin(150, 275), new Coin(175, 275), new Coin(200, 275), new Coin(225, 275), new Coin(250, 275), new Coin(275, 275), new Coin(300, 275), new Coin(325, 275), new Coin(350, 275), new Coin(375, 275), new Coin(400, 275)];
+
+var pointer = function(x, y, num, c, name, price, N){
+    noStroke();
+    fill(c);
+    ellipse(x, y, 20, 20);
+    triangle(x - 10, y + 3,x + 10,y+3, x, y + 16);
+    fill(245);
+    textSize(14);
+    text(num, x, y);
+    fill(c);
+    textSize(11);
+    textAlign(LEFT, TOP);
+    text(name, x + 15, y-4);
+    textAlign(CENTER, CENTER);
+    if(mouseX > x-10 && mouseX < x+10 && mouseY > y-10 && mouseY < y + 20){
+        strokeWeight(2);
+        stroke(c);
+        fill(245, 245, 245);
+        rect(x, y-30, 100, 25, 5);
+        fill(c);
+        textSize(10);
+        text("Cost: " + price + " coins", x, y-30);
+        if(mouseIsPressed){
+            scene = N;
+        }
+    }
+}; // For the map
+
+// logo functions
+var loadVar = -33;
+var loadSz = 1.6;
+var loadTr = [182, 200];
+
+var logo = function(){
+    textAlign(CENTER, CENTER);background(245, 245, 245);strokeCap(ROUND);for(var i = 0; i < 1487; i += 38){strokeWeight(frameCount % 500);stroke(0, 0, 0, 30);line(0, i, 404, i / 3);line(i, 0, i / 3, 400);}noFill();pushMatrix();strokeCap(SQUARE);translate(loadTr[0], loadTr[1]);scale(loadSz);strokeWeight(6);stroke(255, 0, 0);arc(0, 0, 300, 300, loadVar, -34);stroke(255, 183, 0);arc(0, 0, 280, 280, loadVar, -34);stroke(255, 255, 0);arc(0, 0, 260, 260, loadVar, -34);stroke(85, 255, 0);arc(0, 0, 240, 240, loadVar, -34);stroke(0, 145, 255);arc(0, 0, 220, 220, loadVar, -34);stroke(191, 0, 255);arc(0, 0, 200, 200, loadVar, -34);popMatrix();if(loadVar > -325){loadVar--;}if(loadVar < -324 && loadSz > 0.3){loadSz-=0.01;}if(loadSz < 0.4 && loadTr[0] > 65){loadTr[0]--;}if(loadTr[0] < 66){colorMode(HSB);awesomeText(215, 200, 66, "HESTER", color(frameCount % 255, 255, 255));awesomeText(235, 255, 66, "BANKS", color(frameCount % 255, 255, 255));colorMode(RGB);}if(frameCount > 700){scene = "Menu";}noStroke();textSize(11);fill(255);text("Up to Skip", 350, 383);if(keyIsPressed && keyCode === UP){scene="Menu";}
+};
+
+var draw = function() {
+    if(!secret){
+        if(scene === "Load"){
+            logo();
+    }
+        if(scene === "Menu"){
+            textAlign(CENTER, CENTER);
+            cyberBG();
+            fill(0, 255, 255, 230);
+            textFont(createFont("Consolas Bold"));
+            textSize(77);
+            text("CYBER", 200, 165);
+            text("TREK", 223, 218);
+            textSize(20);
+            text("\u2606", 111, 225);
+            fill(0, 255, 0, 230);
+            textSize(82);
+            text("CYBER", 200, 165);
+            text("TREK", 223, 218);
+            textSize(40);
+            text("\u2606", 111, 225);
+            textSize(13);
+            text("Chester Banks | Press Space | v2.0", 200, 265);
+            textSize(20);
+            fill(0, 255, 0, random(100, 255));
+            //text("CLICK TO BEGIN", 200, 339);
+        //background(189, 0, 0);
+    }
+        if(scene === "Customize"){
+            cyberBG();
+            fill(0, 255, 0);
+            strokeWeight(5);
+            textSize(35);
+            awesomeText(125, 16, 50, "CUSTOMIZE", color(0, 255, 0, 100));
+            stroke(255, 255, 255, 100);
+            fill(255, 255, 255, 30);
+            rect(200, 200, 100, 100, 20);
+            fill(characterColor);
+            for(var i = 70; i < 325; i+=1){
+                strokeWeight(1);
+                colorMode(HSB);
+                stroke(i%255, 255, 255);
+                line(100, i, 115, i);
+                colorMode(RGB);
+            }
+            if(mouseY > 70 && mouseY < 325 && mouseX > 100 && mouseX < 115 && mouseIsPressed){
+                characterColor = get(mouseX, mouseY);
+            }
+            strokeWeight(2);
+            stroke(0, 0, 0, 50);
+            ellipse(200, 200, 50, 50);
+            arc(220, 225, 20, 20, -180, 0);
+            arc(180, 225, 20, 20, -180, 0);
+            arc(220, 225, 20, 10, 0, 180);
+            arc(180, 225, 20, 10, 0, 180);
+            fill(0);
+            noStroke();
+            ellipse(193, 195, 7, 7);
+            ellipse(207, 195, 7, 7);
+            noFill();
+            stroke(255, 255, 255, 100);
+            arc(200, 200, 45, 45, -180, -90);
+            arc(180, 225, 15, 15, -180, -90);
+            arc(220, 225, 15, 15, -180, -90);
+            arc(193, 195, 4, 4, -180, -90);
+            arc(207, 195, 4, 4, -180, -90);
+            if(hat === "Baseball"){
+                fill(0, 78, 161);
+                noStroke();
+                arc(200, 185, 40, 30, -180, 0);
+                fill(0, 0, 0, 50);
+                arc(200, 185, 30, 30, -180, 0);
+                fill(179, 179, 179, 50);
+                arc(200, 185, 16, 30, -180, 0);
+                fill(0, 48, 92);
+                arc(200, 185, 40, 15, -180, 0);
+            }
+            if(hat === "Party"){
+                noStroke();
+                fill(0, 145, 255);
+                triangle(185, 180, 215, 180, 200, 160);
+                fill(0, 0, 0, 50);
+                triangle(185, 180, 196, 180, 200, 160);
+                for(var i = 0; i < 355; i+=30){
+                    stroke(255);
+                    strokeWeight(1);
+                    pushMatrix();
+                    translate(200, 160);
+                    rotate(i);
+                    line(0, 0, 4, 0);
+                    popMatrix();
+                }
+            }
+            if(hat === "Top Hat"){
+                noStroke();
+                fill(0, 0, 0);
+                rect(200, 183, 50, 5);
+                rect(200, 171, 40, 24, 5);
+                stroke(255, 255, 255, 50);
+                line(182, 164, 182, 177);
+                line(177, 182, 177, 184);
+            }
+            hatButton("None", 275, 160);
+            hatButton("Baseball", 275, 185);
+            hatButton("Party", 275, 210);
+            hatButton("Top Hat", 275, 235);
+            stroke(255, 255, 255, 200);
+            strokeWeight(2);
+            line(230, 175, 240, 175);
+            line(241, 175, 250, 145);
+            line(241, 175, 250, 255);
+            line(250, 145, 260, 145);
+            line(250, 255, 260, 255);
+            line(130, 200, 160, 200);
+            line(161, 200, 155, 196);
+            line(161, 200, 155, 204);
+            circleButton(345, 345, 80, "Continue", "Customize2", 15);
+            //background(255, 0, 0);
+    }
+        if(scene === "Customize2"){
+            cyberBG();
+            fill(0, 255, 0);
+            strokeWeight(5);
+            textSize(35);
+            awesomeText(125, 16, 50, "CUSTOMIZE", color(0, 255, 0, 100));
+            stroke(255, 255, 255, 100);
+            fill(255, 255, 255, 30);
+            rect(200, 200, 100, 100, 20);
+            fill(characterColor);
+            strokeWeight(2);
+            stroke(0, 0, 0, 50);
+            ellipse(200, 200, 50, 50);
+            arc(220, 225, 20, 20, -180, 0);
+            arc(180, 225, 20, 20, -180, 0);
+            arc(220, 225, 20, 10, 0, 180);
+            arc(180, 225, 20, 10, 0, 180);
+            fill(0);
+            noStroke();
+            ellipse(193, 195, 7, 7);
+            ellipse(207, 195, 7, 7);
+            noFill();
+            stroke(255, 255, 255, 100);
+            arc(200, 200, 45, 45, -180, -90);
+            arc(180, 225, 15, 15, -180, -90);
+            arc(220, 225, 15, 15, -180, -90);
+            arc(193, 195, 4, 4, -180, -90);
+            arc(207, 195, 4, 4, -180, -90);
+            if(hat === "Baseball"){
+                fill(0, 78, 161);
+                noStroke();
+                arc(200, 185, 40, 30, -180, 0);
+                fill(0, 0, 0, 50);
+                arc(200, 185, 30, 30, -180, 0);
+                fill(179, 179, 179, 50);
+                arc(200, 185, 16, 30, -180, 0);
+                fill(0, 48, 92);
+                arc(200, 185, 40, 15, -180, 0);
+            }
+            if(hat === "Party"){
+                noStroke();
+                fill(0, 145, 255);
+                triangle(185, 180, 215, 180, 200, 160);
+                fill(0, 0, 0, 50);
+                triangle(185, 180, 196, 180, 200, 160);
+                for(var i = 0; i < 355; i+=30){
+                    stroke(255);
+                    strokeWeight(1);
+                    pushMatrix();
+                    translate(200, 160);
+                    rotate(i);
+                    line(0, 0, 4, 0);
+                    popMatrix();
+                }
+            }
+            if(hat === "Top Hat"){
+                noStroke();
+                fill(0, 0, 0);
+                rect(200, 183, 50, 5);
+                rect(200, 171, 40, 24, 5);
+                stroke(255, 255, 255, 50);
+                line(182, 164, 182, 177);
+                line(177, 182, 177, 184);
+            }
+            stroke(0, 255, 0, 100);
+            strokeWeight(5);
+            fill(0, 255, 0, 50);
+            rect(200, 125, 250, 30, 10);
+            fill(0, 255, 0);
+            textSize(29);
+            text(name + "_", 200, 124);
+            fill(0, 255, 0);
+            textSize(14);
+            text("Type your character's name below!", 200, 88);
+            textSize(12);
+            text("Press 1 to clear.", 200, 100);
+            circleButton(65, 345, 80, "Continue", "Map", 15);
+    }
+        if(scene === "Map"){
+            background(18, 18, 18);
+            strokeWeight(1);
+            for(var i = 0; i < 400; i += 25){
+                stroke(0, 255, 0, 60);
+                line(i, 0, i, 400);
+                line(0, i, 400, i);
+            }
+            fill(0, 255, 0);
+            textSize(13);
+            text("Welcome, " + name + ", to The Cyber Station! You can go\nplaces from here. Just hover over one of the icons\nto see how much the tickets cost. Click it to buy\na ticket and go there!", 200, 50);
+            fill(245);
+            textSize(11);
+            text("You have " + coins + " coins.", 61, 385);
+            pointer(296, 347, 5, color(214, 0, 0), "Bizzopolis" , 5);
+            pointer(73, 293, 4, color(146, 0, 179), "Plum Bay", 10);
+            pointer(282, 126, 3, color(0, 113, 179), "Ice Valley", 3, "IV1");
+            pointer(59, 107, 2, color(219, 117, 0), "Mega City", 5);
+            pointer(134, 181, 1, color(0, 179, 57), "Underwood Forest", 0, "UF1");
+            noStroke();
+            fill(0, 255, 0, 100);
+            ellipse(225, 225, 30, 30);
+            fill(0, 255, 9);
+            textSize(20);
+            text("★", 225, 225);
+            X = 200;
+            Y = 200;
+        }
+        
+        if(scene === "UF1"){
+            drawMap(maps.UF1);
+            player(0, "UF2", 0, "UF4");
+            TalkieIcon();
+            portal(60, 60);
+            if(dist(X, Y, 60, 60) < 50){
+                scene = "Map";
+            }
+            fill(255);
+            textSize(11);
+            text("<<<< \nThis is a portal.\nEnter it to go back\nto the Cyber Station.", 185, 62);
+        }
+        if(scene === "UF2"){
+            drawMap(maps.UF2);
+            player("UF1", "UF3", 0, "UF5");
+        }
+        if(scene === "UF3"){
+            drawMap(maps.UF3);
+            player("UF2", 0, 0, "UF6");
+            Coins[0].draw();
+            Coins[0].grab();
+        }
+        if(scene === "UF4"){
+            drawMap(maps.UF4);
+            player(0, "UF5", "UF1", 0);
+        }
+        if(scene === "UF5"){
+            drawMap(maps.UF5);
+            player("UF4", "UF6", "UF2", 0);
+        }
+        if(scene === "UF6"){
+            drawMap(maps.UF6);
+            player("UF5", 0, "UF3", 0);
+            Coins[1].draw();
+            Coins[1].grab();
+        }
+        
+        if(scene === "IV1"){
+            drawMap(maps.IV1);
+            player(0, "IV2", 0, "IV4");
+            TalkieIcon();
+            portal(60, 60);
+            if(dist(X, Y, 60, 60) < 50){
+                scene = "Map";
+            }
+            fill(255);
+            textSize(11);
+            text("<<<< \nThis is a portal.\nEnter it to go back\nto the Cyber Station.", 185, 62);
+        }
+        if(scene === "IV2"){
+            drawMap(maps.IV2);
+            player("IV1", "IV3", 0, "IV5");
+            for(var i = 2; i < 16; i++){Coins[i].draw();Coins[i].grab();}
+        }
+        if(scene === "IV3"){
+            drawMap(maps.IV3);
+            player("IV2", 0, 0, "IV6");
+            Coins[0].draw();
+            Coins[0].grab();
+        }
+        if(scene === "IV4"){
+            drawMap(maps.IV4);
+            player(0, "IV5", "IV1", 0);
+        }
+        if(scene === "IV5"){
+            drawMap(maps.IV5);
+            player("IV4", "IV6", "IV2", 0);
+        }
+        if(scene === "IV6"){
+            drawMap(maps.IV6);
+            player("IV5", 0, "IV3", 0);
+            Coins[1].draw();
+            Coins[1].grab();
+        }
+        
+        /* Talkie Scenes */
+        if(scene === "T_Quest"){
+            TalkieBG();
+        }
+        if(scene === "T_Coins"){
+            
+        }
+        if(scene === "T_Stuff"){
+            
+        }
+        if(scene === "T_Char"){
+            
+        }
+    } else {
+        background(217, 0, 0);
+    }
+};
+
+var mouseClicked = function(){
+    if(scene === "Menu"){
+        scene = "Customize";
+    }
+};
+var keyTyped = function(){
+    if(scene === "Customize2" && keyCode !== 20 && keyCode !== SHIFT){
+        name += key.toString();
+    }
+    if(scene === "Customize2" && key.toString() === '1'){
+        name = "";
+    }
+};
