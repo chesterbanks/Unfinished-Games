@@ -1,0 +1,628 @@
+background(255, 249, 186);
+var change = 10;
+
+stroke(255, 0, 0);
+line(35, 0, 35, 400);
+
+while(change < 410){
+    stroke(161, 217, 255);
+    line(0, change, 400, change);
+    change = change + 21;
+}
+fill(0, 0, 0);
+stroke(0, 0, 0);
+rect(0, 0, 400, 30);
+
+/**
+ * Please save your vote for the release!
+ * Title may change.
+ * 
+ * 15 levels (30 seconds for each):
+        1. Grapes & Bombs
+        2. Grapes, Bombs and Oranges
+        3. Grapes, Oranges, and Bananas
+        4. 
+        5.
+        6.
+        7.
+        8.
+        9.
+        10.
+        11.
+        12.
+        13.
+        14.
+        15.
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var votes = "0";
+var voteThing = "Rhymes with hero";
+var reviews = ["","","",];
+
+var score = 0;
+var lives = 5;
+var money = 0;
+var page = "Menu";
+
+textAlign(CENTER, CENTER);
+
+var title = {
+    name : "FRUIT",
+    size : 105,
+    color1: color(132, 0, 255),
+    name2 : "SMASH",
+    size2 : 93,
+    color2: color(255, 140, 0),
+};
+
+var f = "Chalkboard";
+
+var bg = function(){
+    strokeWeight(1);
+    background(133, 103, 27);
+    stroke(0, 0, 0, 30);
+    for(var i = 9; i < 400; i += 20){
+        line(i, 0, i, 400);
+    }
+};
+var button2 = function(x, y, w, h, txt, n, txtSize){
+    rectMode(LEFT);
+    noStroke();
+    fill(255, 255, 255);
+    rect(x-2, y+2, w, h, 15);
+    stroke(255, 255, 255);
+    strokeWeight(1);
+    fill(168, 168, 168);
+    if(mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h){
+        fill(158, 158, 158);
+        rect(x-2, y+2, w, h, 15);
+        //textFont(createFont("Impact"));
+        textSize(txtSize);
+        fill(0, 0, 0);
+        text(txt, (x + (w/2)) - 2, (y + (h/2)) + 2);
+        if(mouseIsPressed){
+            page = n;
+        }
+    } else {
+        rect(x, y, w, h, 15);
+        //textFont(createFont("Impact"));
+        textSize(txtSize);
+        fill(0, 0, 0);
+        text(txt, x + (w/2), y + (h/2));
+    }
+    rectMode(CENTER);
+};
+var fontButton = function(x, y, w, h, fo){
+    rectMode(LEFT);
+    textFont(createFont(fo));
+    noStroke();
+    fill(255, 255, 255);
+    rect(x-2, y+2, w, h, 5);
+    stroke(255, 255, 255);
+    strokeWeight(1);
+    fill(168, 168, 168);
+    if(mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h){
+        fill(158, 158, 158);
+        rect(x-2, y+2, w, h, 5);
+        textSize(12);
+        if(f === fo){
+            fill(0, 255, 0);
+        } else {
+            fill(0, 0, 0);
+        }
+        text(fo, (x + (w/2)) - 2, (y + (h/2)) + 2);
+        if(mouseIsPressed){
+            f = fo;
+        }
+    } else {
+        rect(x, y, w, h, 5);
+        textSize(12);
+        if(f === fo){
+            fill(0, 255, 0);
+        } else {
+            fill(0, 0, 0);
+        }
+        text(fo, x + (w/2), y + (h/2));
+    }
+    rectMode(CENTER);
+    textFont(createFont(f));
+};
+
+var Grape = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.deleteMe = false;
+    this.transparent = true;
+    this.trans = 0;
+    this.timer = 0;
+};
+Grape.prototype.draw = function() {
+    if(!this.deleteMe){
+        fill(162, 0, 255, this.trans);
+        stroke(110, 0, 179, this.trans);
+        strokeWeight(2);
+        ellipse(this.x, this.y, 20, 20);
+        this.trans+=3;
+        this.timer++;
+        if(this.timer > 300){
+            this.deleteMe = true;
+        }
+        if(this.trans > 255){
+            this.transparent = false;
+        }
+    }
+};
+Grape.prototype.collide = function(){
+    if(!this.deleteMe){
+        if(!this.transparent){
+            if(dist(mouseX, mouseY, this.x, this.y) < 20 && mouseIsPressed){
+                this.deleteMe = true;
+                score++;
+            }
+        }
+    }
+};
+Grape.prototype.splash = function(){
+    if(this.deleteMe){
+        noStroke();
+        fill(136, 0, 255);
+    }
+};
+
+var Bomb = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.deleteMe = false;
+    this.transparent = true;
+    this.trans = 0;
+    this.timer = 0;
+};
+Bomb.prototype.draw = function() {
+    if(!this.deleteMe){
+        fill(46, 46, 46, this.trans);
+        stroke(0, 0, 0, this.trans);
+        strokeWeight(2);
+        ellipse(this.x, this.y, 20, 20);
+        this.trans+=3;
+        if(this.trans > 255){
+            this.transparent = false;
+        }
+        this.timer++;
+        if(this.timer > 300){
+            this.deleteMe = true;
+        }
+    }
+};
+Bomb.prototype.collide = function(){
+    if(!this.deleteMe){
+        if(!this.transparent){
+            if(dist(mouseX, mouseY, this.x, this.y) < 20){
+                this.deleteMe = true;
+                lives--;
+            }
+        }
+    }
+};
+
+var Banana = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.deleteMe = false;
+};
+Banana.prototype.draw = function() {
+    if(!this.deleteMe){
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(-26);
+        fill(255, 255, 0);
+        stroke(255, 255, 0);
+        arc(0, 0, 20, 25, -270, -89);
+        fill(133, 103, 27);
+        noStroke();
+        ellipse(0, 0, 10, 25);
+        popMatrix();
+    }
+};
+Banana.prototype.collide = function() {
+    if(!this.deleteMe){
+        if(dist(mouseX, mouseY, this.x, this.y) < 20 && mouseIsPressed){
+            this.deleteMe = true;
+            money++;
+        }
+    }
+};
+
+var Orange = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.deleteMe = false;
+};
+Orange.prototype.draw = function() {
+    if(!this.deleteMe){
+        fill(255, 179, 0);
+        stroke(207, 159, 0);
+        strokeWeight(2);
+        ellipse(this.x, this.y, 20, 20);
+    }
+};
+Orange.prototype.collide = function(){
+    if(!this.deleteMe){
+        if(dist(mouseX, mouseY, this.x, this.y) < 20 && mouseIsPressed){
+            this.deleteMe = true;
+            score+=5;
+        }
+    }
+};
+
+var Lime = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.deleteMe = false;
+    this.transparent = true;
+    this.trans = 0;
+};
+Lime.prototype.draw = function() {
+    if(!this.deleteMe){
+        fill(0, 255, 77, this.trans);
+        stroke(0, 217, 22, this.trans);
+        strokeWeight(2);
+        ellipse(this.x, this.y, 20, 20);
+        this.trans+=3;
+        if(this.trans > 255){
+            this.transparent = false;
+        }
+    }
+};
+Lime.prototype.collide = function(){
+    if(!this.deleteMe){
+        if(!this.transparent){
+            if(dist(mouseX, mouseY, this.x, this.y) < 20){
+                this.deleteMe = true;
+                score = 0;
+            }
+        }
+    }
+};
+
+var Watermelon = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.deleteMe = false;
+};
+Watermelon.prototype.draw = function() {
+    if(!this.deleteMe){
+        fill(0, 219, 7);
+        stroke(0, 179, 48);
+        ellipse(this.x, this.y, 20, 20); // watermelon
+        strokeWeight(2);
+        noFill();
+        arc(this.x, this.y, 14, 20, -360, 0);
+        arc(this.x, this.y, 5, 20, -360, 0);
+    }
+};
+Watermelon.prototype.collide = function(){
+    if(!this.deleteMe){
+        if(dist(mouseX, mouseY, this.x, this.y) < 20 && mouseIsPressed){
+            this.deleteMe = true;
+            money+=5;
+        }
+    }
+};
+
+var Cranberry = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.deleteMe = false;
+};
+Cranberry.prototype.draw = function() {
+    if(!this.deleteMe){
+        fill(240, 0, 0);
+        stroke(194, 0, 0);
+        ellipse(this.x, this.y, 20, 20); // watermelon
+    }
+};
+Cranberry.prototype.collide = function(){
+    if(!this.deleteMe){
+        if(dist(mouseX, mouseY, this.x, this.y) < 20 && mouseIsPressed){
+            this.deleteMe = true;
+            lives++;
+        }
+    }
+};
+
+var Grapes = [];
+var Bombs = [];
+var Bananas = [];
+var Oranges = [];
+var Limes = [];
+var Watermelons = [];
+var Cranberries = [];
+
+var HighScores = [
+    "Piceratops (14)",
+    "Winston (9)",
+    "Hopper (4)",
+    "OhNoes (3)",
+    "Mr. Pants (1)",
+];
+var Credits = [
+    "Chester Banks (for coding the game)",
+    "BenR and Kevin23 (Their programs helped me\nunderstand OOP)",
+    "GameMaker (Inspired the game)",
+    "",
+];
+
+var spaceBarThing = 0;
+
+var draw = function() {
+    textFont(createFont(f));
+    if(page === "Menu"){
+        bg();
+        textSize(title.size-3);
+        fill(255, 255, 255);
+        text(title.name, 200, 85);
+        textSize(title.size);
+        fill(title.color1);
+        text(title.name, 200, 85);
+        fill(255, 255, 255);
+        textSize(title.size2);
+        text(title.name2, 200, 166);
+        fill(title.color2);
+        textSize(title.size2-3);
+        text(title.name2, 200, 166);
+        colorMode(HSB);
+        pushMatrix();
+        fill(frameCount % 255, 255, 255);
+        translate(325, 35);
+        rotate(sin(frameCount * 8) + 10);
+        textSize(24);
+        text(votes + "+ votes!", 2, 0);
+        popMatrix();
+        colorMode(RGB);
+        fill(25);
+        textSize(13);
+        pushMatrix();
+        translate(190, 30);
+        rotate(-5);
+        text(voteThing, 0, 0);
+        popMatrix();
+        textSize(20);
+        text("\u2192", 257, 30);
+        button2(75, 240, 240, 30, "Play", "How", 17);
+        //button2(10, 290, 380, 30, "Bonus (not functional)", "Bonus", 17);
+        button2(75, 270, 240, 30, "High Scores", "Scores", 17);
+        button2(75, 300, 240, 30, "Credits", "Credits", 17);
+        button2(75, 330, 240, 30, "Settings", "Settings", 17);
+        button2(75, 360, 240, 30, "Update Log", "Updates", 17);
+    }
+    if(page === "How"){
+        strokeWeight(1);
+        bg();
+        fill(0, 0, 0, 100);
+        rect(200, 200, 400, 400);
+        fill(162, 0, 255);
+        stroke(110, 0, 179);
+        strokeWeight(5);
+        ellipse(40, 100, 30, 30);
+        fill(28, 28, 28);
+        stroke(0, 0, 0);
+        ellipse(40, 150, 30, 30);
+        fill(255, 162, 0);
+        stroke(217, 152, 0);
+        ellipse(40, 200, 30, 30);
+        pushMatrix();
+        translate(42, 250);
+        rotate(-26);
+        fill(255, 255, 0);
+        stroke(255, 255, 0);
+        arc(0, 0, 30, 30, -270, -89);
+        fill(87, 59, 0);
+        noStroke();
+        ellipse(0, 0, 17, 30);
+        popMatrix();
+        fill(0, 255, 77);
+        stroke(0, 217, 22);
+        ellipse(40, 310, 30, 30);
+        textSize(50);
+        fill(0, 0, 0, 100);
+        text("instructions", 205, 39);
+        fill(245);
+        text("instructions", 200, 39);
+        fill(245);
+        textSize(16);
+        textAlign(LEFT, TOP);
+        text("Click grapes to get a point", 75, 90);
+        text("If you touch a bomb, you lose a life", 75, 140);
+        text("Click oranges to get 5 points", 75, 190);
+        text("Click bananas to get money", 75, 240);
+        text("If you touch a poison lime, you lose all\nyour points", 75, 290);
+        textAlign(CENTER, CENTER);
+        button2(270, 355, 100, 30, "Next", "How2", 16);
+    }
+    if(page === "How2"){
+        strokeWeight(1);
+        bg();
+        fill(0, 0, 0, 100);
+        rect(200, 200, 400, 400);
+        fill(162, 0, 255);
+        fill(0, 0, 0, 100);
+        textSize(50);
+        text("instructions", 205, 39);
+        fill(245);
+        text("instructions", 200, 39);
+        fill(245);
+        textSize(16);
+        textAlign(LEFT, TOP);
+        text("Click cranberries to gain a life", 75, 90);
+        text("Watermelons give you 5 money", 75, 140);
+        textAlign(CENTER, CENTER);
+        text("Press SPACE for an in-game menu", 200, 246);
+        textSize(30);
+        text("\u27F6", 200, 303);
+        fill(255, 0, 0);
+        stroke(179, 0, 0);
+        strokeWeight(5);
+        ellipse(40, 100, 30, 30); // cranberry
+        fill(0, 219, 7);
+        stroke(0, 179, 48);
+        ellipse(40, 150, 30, 30); // watermelon
+        strokeWeight(2);
+        noFill();
+        arc(40, 150, 18, 30, -360, 0);
+        arc(40, 150, 7, 30, -360, 0);
+        stroke(196, 196, 196);
+        fill(245);
+        strokeWeight(5);
+        rect(100, 300 + spaceBarThing % 5, 100, 50); // spacebar
+        noStroke();
+        fill(0, 0, 0, 20);
+        triangle(53, 278, 150, 278, 53, 325); // spacebar shading
+        fill(212, 212, 212);
+        rect(280, 305, 75, 70);
+        fill(219, 0, 0);
+        rect(280, 275, 75, 10);
+        button2(150, 355, 100, 30, "I'm ready!", "Play", 16);
+        spaceBarThing += 0.1;
+    }
+    if(page === "Play"){
+        bg();
+        Grapes.push(new Grape(random(0, 400), random(40, 400)));
+        Bombs.push(new Bomb(random(0, 400), random(40, 400)));
+        Bananas.push(new Banana(random(0, 400), random(40, 400)));
+        Oranges.push(new Orange(random(0, 400), random(40, 400)));
+        Limes.push(new Lime(random(0, 400), random(40, 400)));
+        Watermelons.push(new Watermelon(random(0, 400), random(40, 400)));
+        Cranberries.push(new Cranberry(random(0, 400), random(40, 400)));
+        for(var i = 0; i < Grapes.length / 40; i++){
+            Grapes[i].draw();
+            Grapes[i].collide();
+        }
+        for(var i = 0; i < Bombs.length / 50; i++){
+            Bombs[i].draw();
+            Bombs[i].collide();
+        }
+        for(var i = 0; i < Bananas.length / 120; i++){
+            Bananas[i].draw();
+            Bananas[i].collide();
+        }
+        for(var i = 0; i < Oranges.length / 200; i++){
+            Oranges[i].draw();
+            Oranges[i].collide();
+        }
+        for(var i = 0; i < Limes.length / 500; i++){
+            Limes[i].draw();
+            Limes[i].collide();
+        }
+        for(var i = 0; i < Watermelons.length / 200; i++){
+            Watermelons[i].draw();
+            Watermelons[i].collide();
+        }
+        for(var i = 0; i < Cranberries.length / 800; i++){
+            Cranberries[i].draw();
+            Cranberries[i].collide();
+        }
+        fill(245);
+        textSize(11);
+        text("Score: " + score, 100, 23);
+        text("Lives: " + lives, 300, 23);
+        text("Money: " + money, 200, 23);
+        if(lives < 0){
+            page = "Lose";
+        }
+        if(keyIsPressed && key.toString() === " "){
+            page = "GameMenu";
+        }
+    }
+    if(page === "GameMenu"){
+        bg();
+        stroke(225);
+        strokeWeight(5);
+        fill(245, 245, 245);
+        //rect(200, 200, 250, 260);
+        textSize(15);
+        fill(245);
+        text("- To go to the shop, press S\n\n- To go back to the game, press G\n\n - To go to the main menu, press M", 200, 200);
+        textAlign(CENTER, CENTER);
+        if(keyIsPressed && key.toString() === "s" || key.toString() === "S"){
+            page = "Shop";
+        }
+        if(keyIsPressed && key.toString() === "g" || key.toString() === "G"){
+            page = "Play";
+        }
+        if(keyIsPressed && key.toString() === "m" || key.toString() === "M"){
+            page = "Menu";
+        }
+    }
+    if(page === "Lose"){
+        bg();
+        fill(255, 255, 255);
+        textSize(50);
+        text("GAME OVER", 200, 100);
+        text("Score: " + score + "\nMoney: " + money, 200, 235);
+    }
+    if(page === "Scores"){
+        bg();
+        button2(10, 10, 50, 30, "Back", "Menu", 15);
+        fill(245);
+        textSize(39);
+        text("High Scores", 200, 50);
+        textSize(20);
+        text("1. " + HighScores[0] +"\n2. " + HighScores[1] + "\n3. " + HighScores[2] + "\n4. " + HighScores[3] + "\n5. " + HighScores[4], 200, 200);
+        textSize(12);
+        text("These are temporary fake scores while I wait for people\nto submit scores. Be the first to be on the high score list!", 200, 300);
+        //background(0);
+    }
+    if(page === "Credits"){
+        bg();
+        button2(10, 10, 50, 30, "Back", "Menu", 15);
+        fill(245);
+        textSize(39);
+        text("Credits", 200, 50);
+        textSize(15);
+        text("- " + Credits[0] +"\n\n- " + Credits[1] + "\n\n- " + Credits[2] + "\n\n- " + Credits[3], 200, 200);
+    }
+    if(page === "Settings"){
+        bg();
+        button2(10, 10, 50, 30, "Back", "Menu", 15);
+        fill(245);
+        textSize(39);
+        text("Settings", 200, 50);
+        fontButton(77, 111, 89, 30, "Chalkboard");
+        fontButton(180, 110, 70, 30, "Impact");
+        fontButton(260, 110, 97, 30, "Century Gothic");
+        fontButton(77, 150, 89, 30, "Times");
+        fontButton(180, 150, 70, 30, "Tahoma");
+        fontButton(260, 150, 97, 30, "Futura");
+        textSize(15);
+        fill(255);
+        text("Font:", 40, 127);
+    }
+    if(page === "Updates"){
+        bg();
+        button2(10, 10, 50, 30, "Back", "Menu", 15);
+        fill(255, 255, 255);
+        textSize(13);
+        text("Version 1.0: First version. Basic gameplay with decent\ngraphics.", 200, 200);
+    }
+    if(page === "Shop"){
+        
+    }
+    //background(0);
+};
