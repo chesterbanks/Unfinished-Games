@@ -1,0 +1,142 @@
+var keys=[];
+var keyPressed=function() {keys[keyCode]=true;};
+var keyReleased=function(){keys[keyCode]=false;};
+
+var Player = function(x, y, w, h){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.xVel = 0;
+    this.yVel = 0;
+    this.falling = true;
+    
+    this.gravity = 0.5;
+    this.jumpMax = 10;
+    this.maxFall = 12;
+    
+    this.moveSpeed = 0.5;
+    this.maxMoveSpeed = 5;
+    
+    this.update = function(platforms){
+        if(keys[LEFT]){
+            this.xVel -= this.moveSpeed;
+        }
+        if(keys[RIGHT]){
+            this.xVel += this.moveSpeed;
+        }
+        
+        if(!keys[LEFT] && !keys[RIGHT]){
+            if(this.xVel > 0){
+                this.xVel -= this.moveSpeed;
+            }
+            if(this.xVel < 0){
+                this.xVel += this.moveSpeed;
+            }
+            
+            if(this.xVel < 0.1 && this.xVel > 0){
+               this.xVel = 0; 
+            }
+            if(this.xVel > -0.1 && this.xVel < 0){
+                this.xVel = 0;
+            }
+        }
+        if(keys[UP] && !this.falling){
+            this.yVel = -this.jumpMax;
+        }
+        this.yVel += this.gravity;
+        
+        if(this.yVel > this.maxFallSpeed){
+            this.yVel = this.maxFallSpeed;
+        }
+        if(this.xVel > this.maxMoveSpeed){
+            this.xVel = this.maxMoveSpeed;
+        }
+        if(this.xVel < -this.maxMoveSpeed){
+            this.xVel = -this.maxMoveSpeed;
+        }
+        
+        this.x += this.xVel;
+        this.collideWith(this.xVel, 0, platforms);
+        
+        this.falling = true;
+        
+        this.y += this.yVel;
+        this.collideWith(0, this.yVel, platforms);
+    };
+    this.collideWith = function(xv, yv, platforms){
+        for(var i in platforms){
+            var p = platforms[i];
+            if(this.y+this.h > p.y && this.y < p.y+p.h && this.x+this.w > p.x && this.x < p.x+p.w){
+                
+                if(yv > 0){
+                    this.yVel = 0;
+                    this.falling = false;
+                    this.y = p.y -this.h;
+                }
+                if(yv < 0){
+                    this.yVel = 0;
+                    this.falling = true;
+                    this.y = p.y+p.h;
+                }
+                if(xv > 0){
+                    this.xVel = 0;
+                    this.x = p.x-this.w;
+                }
+                if(xv < 0){
+                    this.xVel = 0;
+                    this.x = p.x+p.w;
+                }
+            }
+        }
+    };
+    
+    this.draw = function() {
+        noStroke();
+        fill(0, 0, 0);
+        rect(this.x, this.y, this.w, this.h, 5);
+    };
+};
+
+
+var Block = function(x, y, w, h, color){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.color = color;
+};
+Block.prototype.draw = function() {
+    fill(this.color);
+    rect(this.x, this.y, this.w, this.h);
+};
+
+var platforms = [];
+platforms.add = function(x, y, w, h, colo){
+    platforms.push(new Block(x, y, w, h, colo));
+};
+platforms.draw = function(){
+    for(var i = 0; i < platforms.length; i++){
+        platforms[i].draw();
+    }
+};
+
+platforms.add(0,0,10,400, color(0, 0, 0));
+platforms.add(400-12,0,12,400, color(0, 0, 0));
+platforms.add(0,390,400,12, color(0, 0, 0));
+platforms.add(0,0,400,12, color(0, 0, 0));
+
+platforms.add(100,330,300,15, color(0, 0, 0));
+platforms.add(0,250,300,15, color(0, 0, 0));
+platforms.add(100,165,300,15, color(0, 0, 0));
+platforms.add(0,80,300,15, color(0, 0, 0));
+
+var player = new Player(350, 350, 30, 30);
+
+draw = function() {
+    background(63, 127, 161);
+    
+    player.update(platforms);
+    player.draw();
+    platforms.draw();
+};
