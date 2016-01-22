@@ -1,0 +1,58 @@
+var keys = [];
+var keyPressed = function(){keys[keyCode]=true;};
+var keyReleased = function(){keys[keyCode]=false;};
+
+var checkCollision = function(a, b){
+    if(a.x+a.w > b.x && a.x < b.x+b.w && a.y+a.h > b.y && a.y < b.y+b.h){
+        return true;
+    } else {
+        return false;
+    }
+};
+
+var player = {x: 320, y: 300, w: 40, h: 40, speed: 5, jumping: false, fall: 10, maxY: 300};
+var block = {x: 200, y: 300, w: 40, h: 40};
+
+var draw = function() {
+    
+    background(237, 237, 237);
+    fill(45);
+    rect(0, 340, 400, 60);
+    noStroke();
+    if(checkCollision(player, block)){
+        fill(27, 219, 39);
+    } else {
+        fill(217, 48, 48);
+    }
+    rect(block.x, block.y, block.w, block.h);
+    rect(player.x,player.y, player.w, player.h);
+    
+    if(keys[RIGHT]){
+        player.x += player.speed;
+    }
+    if(keys[LEFT]){
+        player.x -= player.speed;
+    }
+    if(keys[UP]){
+       player.jumping = true; 
+    }
+    if(player.jumping){
+        player.y -= player.fall;
+        player.fall--;
+    }
+    if(player.y >= player.maxY){
+        player.jumping = false;
+        player.fall = 10;
+    }
+    
+    if(checkCollision(player, block) && player.x+player.w > block.x && player.x+player.w < block.x+block.w/2){
+        player.x = block.x-player.w;
+    }
+    if(checkCollision(player, block) && player.x < block.x+block.w && player.x > block.x+block.w/2){
+        player.x = block.x+player.w;
+    }
+    if(checkCollision(player, block) && player.y+player.h > block.y){
+        player.y = block.y-player.h;
+        player.maxY = block.y;
+    }
+};
