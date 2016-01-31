@@ -23,9 +23,11 @@ var keys = [];
 var keyPressed = function(){keys[keyCode] = true;};
 var keyReleased = function(){keys[keyCode] = false;};
 
-var playerX = 200;
-var playerY = 200;
-var playerSz = 15;
+var player = {
+    x: 200,
+    y: 200,
+    sz: 15
+};
 
 var textureRects = [];
 for(var i = 5; i < width; i += 20){
@@ -106,13 +108,44 @@ var bg1 = function(){
     }
 };
 var bg2 = function(){
-    background(20, 186, 76);
+    background(25, 191, 64);
     noStroke();
     for(var i in textureRects){
         fill(0, 0, 0, textureRects[i].br*2);
         rect(textureRects[i].x, textureRects[i].y, 18, 18,
         20, 20, 20, 0);
     }
+};
+
+var rectCollide = function(one, two){
+    if( one.x+one.sz > two.x &&
+        one.y+one.sz > two.y &&
+        one.x < two.x+two.sz &&
+        one.y < two.y+two.sz){
+        return true;
+    }
+};
+
+var enemy1 = function(x, y, sz){
+    this.x = x;
+    this.y = y;
+    this.sz = sz;
+};
+var enemies1 = [new enemy1(30, 30, 30), new enemy1(300, 30, 30), new enemy1(300, 300, 30), new enemy1(350, 30, 10), new enemy1(30, 30, 30), new enemy1(300, 30, 10), new enemy1(300, 300, 40), new enemy1(350, 30, 10)];
+enemy1.prototype.draw = function() {
+    rectMode(LEFT);
+    if(this.sz > player.sz){
+        fill(209, 50, 50);
+        this.x = (player.x-this.x)/35 + this.x;
+        this.y = (player.y-this.y)/35 + this.y;
+        if(rectCollide(this, player)){
+            scene = "Stage Two";
+        }
+    } else {
+        fill(40, 141, 219);
+    }
+    rect(this.x, this.y, this.sz, this.sz);
+    rectMode(CENTER);
 };
 
 draw = function() {
@@ -150,16 +183,29 @@ draw = function() {
     }
     
     if(scene === "Stage One"){
+        rectMode(LEFT);
         bg2();
         noStroke();
         fill(212, 212, 212);
-        rect(playerX, playerY+3, playerSz, playerSz);
+        rect(player.x, player.y+3, player.sz, player.sz);
         fill(255, 255, 255);
-        rect(playerX, playerY, playerSz, playerSz);
+        rect(player.x, player.y, player.sz, player.sz);
+        rectMode(CENTER);
         
-        if(keys[UP]){playerY-=3;}
-        if(keys[DOWN]){playerY+=3;}
-        if(keys[LEFT]){playerX-=3;}
-        if(keys[RIGHT]){playerX+=3;}
+        for(var i in enemies1){
+            enemies1[i].draw();
+            if(enemies1[i].sz <= player.sz && rectCollide(enemies1[i], player)){
+                player.sz += 20;
+                enemies1.splice(i, 1);
+            }
+        }
+        
+        if(keys[UP] && player.y > 0){player.y-=3;}
+        if(keys[DOWN] && player.y+player.sz < 400){player.y+=3;}
+        if(keys[LEFT] && player.x > 0){player.x-=3;}
+        if(keys[RIGHT] && player.x+player.sz < 400){player.x+=3;}
+    }
+    if(scene === "Stage Two"){
+        background(255, 0, 0);
     }
 };
