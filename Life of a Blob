@@ -1,0 +1,165 @@
+/** Life of a Blob
+ * Chester Banks
+ * February 1 2016
+ * 
+ * An entry to the "Minimalistic Design Contest".
+*/
+
+var high_scores = [
+    ["Winston", "78"],
+    ["Hopper", "71"],
+    ["Purple Pi", "59"],
+    ["Oh Noes", "58"],
+    ["Mr. Pants", "50"],
+    ["OJ Squid", "49"],
+    ["Mr. Pink", "41"],
+];
+
+rectMode(CENTER);
+textAlign(CENTER, CENTER);
+textFont(createFont("helveticaneue-light"));
+
+var keys = [];
+var keyPressed = function(){keys[keyCode] = true;};
+var keyReleased = function(){keys[keyCode] = false;};
+
+var playerX = 200;
+var playerY = 200;
+var playerSz = 15;
+
+var textureRects = [];
+for(var i = 5; i < width; i += 20){
+    for(var j = -20; j < height+20; j += 20){
+        textureRects.push({x: i, y: j, br: random(0, 10)});
+    }
+}
+
+var scene = "Menu";
+
+var shadowTxt = function(txt, x, y, colo){
+    fill(0, 0, 0, 30);
+    text(txt, x, y+5);
+    fill(colo);
+    text(txt, x, y);
+};
+var button = function(x, y, sz, txt, next){
+    stroke(222, 222, 222);
+    fill(222, 222, 222);
+    ellipse(x, y, sz, sz);
+    if(dist(mouseX, mouseY, x, y) < sz/2){
+        fill(255);
+        ellipse(x, y, sz, sz);
+        fill(25, 191, 64);
+        if(txt === "."){
+            noStroke();
+            fill(25, 191, 64);
+            rect(x, y, 10, 25);
+            rect(x+11, y+5, 10, 15);
+            rect(x-11, y+3, 10, 20);
+            fill(255);
+            textSize(10);
+            text("1", x, y-5);
+            text("2", x-11, y+1);
+            text("3", x+11, y+3);
+        } else { 
+            text(txt, x, y);
+        }
+        if(mouseIsPressed){
+            scene = next;
+        }
+    } else {
+        fill(255, 255, 255);
+        ellipse(x, y - 6, sz, sz);
+        fill(25, 191, 64);
+        if(txt === "."){
+            noStroke();
+            fill(25, 191, 64);
+            rect(x, y-6, 10, 25);
+            rect(x+11, y-1, 10, 15);
+            rect(x-11, y-3, 10, 20);
+            fill(255);
+            textSize(10);
+            text("1", x, y-11);
+            text("2", x-11, y-5);
+            text("3", x+11, y-2);
+        } else { 
+            text(txt, x, y-6);
+        }
+    }
+};
+var menuSqr = function(x, y, colo){
+    fill(colo);
+    quad(x, y+5, x-20, y+10, x, y+15, x+20, y+10);
+    quad(x, y+15, x, y+20, x+20, y+15, x+20, y+10);
+    quad(x, y+15, x, y+20, x-20, y+15, x-20, y+10);
+    fill(0, 0, 0, 50);
+    quad(x, y+15, x, y+20, x+20, y+15, x+20, y+10);
+    fill(0, 0, 0, 90);
+    quad(x, y+15, x, y+20, x-20, y+15, x-20, y+10);
+};
+var bg1 = function(){
+    background(255, 255, 255);
+    noStroke();
+    for(var i in textureRects){
+        fill(0, 0, 0, textureRects[i].br);
+        rect(textureRects[i].x, textureRects[i].y, 20, 20, -15);
+    }
+};
+var bg2 = function(){
+    background(20, 186, 76);
+    noStroke();
+    for(var i in textureRects){
+        fill(0, 0, 0, textureRects[i].br*2);
+        rect(textureRects[i].x, textureRects[i].y, 18, 18,
+        20, 20, 20, 0);
+    }
+};
+
+draw = function() {
+    if(scene === "Menu"){
+        bg1();
+        textSize(35);
+        shadowTxt("life of a square", 200, 200, color(25, 191, 64));
+        textSize(15);
+        shadowTxt("t h e   t h r e e   s t a g e   g a m e   o f", 200, 170, color(25, 191, 64));
+        shadowTxt("c r e a t e d  b y  c h e s t e r  b a n k s", 200, 230, color(25, 191, 64));
+        textSize(30);
+        button(200, 320, 80, "\u25B6", "Stage One");
+        button(280, 320, 50, "?", "Instructions");
+        button(120, 320, 50, ".", "High Scores");
+    }
+    if(scene === "High Scores"){
+        bg1();
+        textSize(40);
+        shadowTxt("h i g h   s c o r e s", 200, 50, color(25, 191, 64));
+        textSize(25);
+        for(var i in high_scores){
+            shadowTxt(high_scores[i][0] + " | " + high_scores[i][1], 200, 130 + (i*30), color(25, 191, 64));
+        }
+        button(45, 365, 60, "\u2190", "Menu");
+    }
+    if(scene === "Instructions"){
+        bg1();
+        textSize(40);
+        shadowTxt("i n s t r u c t i o n s", 200, 40, color(25, 191, 64));
+        
+        textSize(16);
+        shadowTxt("In the first stage, use the arrow keys to move\naround. You can eat smaller squares, but\nbigger squares can eat you. The more you eat,\nthe bigger you get.\n\nIn the second stage, use the up arrow key\nto jump, and the down arrow key to slide.\nAvoid getting hit by blocks.\n\nIn the third stage, click the falling green squares\nand avoid the red squares.\n\nYour final score is determined by how well\nyou did in all of the stages.", 200, 215, color(25, 191, 64));
+        textSize(25);
+        button(45, 365, 60, "\u2190", "Menu");
+    }
+    
+    if(scene === "Stage One"){
+        bg2();
+        noStroke();
+        fill(212, 212, 212);
+        rect(playerX, playerY+3, playerSz, playerSz);
+        fill(255, 255, 255);
+        rect(playerX, playerY, playerSz, playerSz);
+        
+        if(keys[UP]){playerY-=3;}
+        if(keys[DOWN]){playerY+=3;}
+        if(keys[LEFT]){playerX-=3;}
+        if(keys[RIGHT]){playerX+=3;}
+    }
+};
