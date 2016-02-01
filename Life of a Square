@@ -1,8 +1,26 @@
-/** Life of a Blob
+/** Life of a Square
  * Chester Banks
  * February 1 2016
  * 
  * An entry to the "Minimalistic Design Contest".
+*/
+
+/** INSTRUCTIONS
+    @StageOne
+        - Use arrow keys to move
+        - Avoid bigger (red) squares
+        - Eat smaller (blue) squares
+        - The more you eat, the bigger you get
+        
+    @StageTwo
+        - Up arrow key to jump
+        - Down arrow key to slide
+        - Jump over low blocks
+        - Slide under high blocks
+        
+    @StageThree
+        - Click the falling blue squares
+        - Avoid the falling red squares
 */
 
 var high_scores = [
@@ -36,7 +54,8 @@ for(var i = 5; i < width; i += 20){
     }
 }
 
-var scene = "Menu";
+var scene = "How1";
+var scores = [0, 0, 0, 0];
 
 var shadowTxt = function(txt, x, y, colo){
     fill(0, 0, 0, 30);
@@ -116,6 +135,15 @@ var bg2 = function(){
         20, 20, 20, 0);
     }
 };
+var howPage = function(title, txt, next){
+    bg1();
+    textSize(35);
+    shadowTxt(title, 200, 50, color(25, 191, 64));
+    textSize(18);
+    shadowTxt(txt, 200, 200, color(25, 191, 64));
+    textSize(30);
+    button(200, 345, 80, "\u25B6", next);
+};
 
 var rectCollide = function(one, two){
     if( one.x+one.sz > two.x &&
@@ -131,15 +159,33 @@ var enemy1 = function(x, y, sz){
     this.y = y;
     this.sz = sz;
 };
-var enemies1 = [new enemy1(30, 30, 30), new enemy1(300, 30, 30), new enemy1(300, 300, 30), new enemy1(350, 30, 10), new enemy1(30, 30, 30), new enemy1(300, 30, 10), new enemy1(300, 300, 40), new enemy1(350, 30, 10)];
+var enemies1 = [
+    new enemy1(30, 30, 10), 
+    new enemy1(370, 30, 10), 
+    new enemy1(370, 370, 10), 
+    new enemy1(30, 370, 10), 
+    new enemy1(200, 250, 10),
+    new enemy1(150, 200, 10),
+    new enemy1(250, 200, 10),
+    new enemy1(200, 250, 10),
+    new enemy1(150, 200, 10),
+    new enemy1(250, 200, 10),
+    new enemy1(30, 30, 25), 
+    new enemy1(370, 30, 30), 
+    new enemy1(370, 370, 35), 
+    new enemy1(200, 30, 40), 
+    new enemy1(200, 370, 45), 
+    new enemy1(30, 200, 50), 
+    new enemy1(370, 200, 55), 
+];
 enemy1.prototype.draw = function() {
     rectMode(LEFT);
-    if(this.sz > player.sz){
+    if(this.sz > player.sz && dist(this.x, this.y, player.x, player.y) < 150){
         fill(209, 50, 50);
         this.x = (player.x-this.x)/35 + this.x;
         this.y = (player.y-this.y)/35 + this.y;
         if(rectCollide(this, player)){
-            scene = "Stage Two";
+            scene = "How2";
         }
     } else {
         fill(40, 141, 219);
@@ -157,11 +203,11 @@ draw = function() {
         shadowTxt("t h e   t h r e e   s t a g e   g a m e   o f", 200, 170, color(25, 191, 64));
         shadowTxt("c r e a t e d  b y  c h e s t e r  b a n k s", 200, 230, color(25, 191, 64));
         textSize(30);
-        button(200, 320, 80, "\u25B6", "Stage One");
-        button(280, 320, 50, "?", "Instructions");
-        button(120, 320, 50, ".", "High Scores");
+        button(200, 320, 80, "\u25B6", "How1");
+        //button(280, 320, 50, "?", "Instructions");
+        //button(120, 320, 50, ".", "High Scores");
     }
-    if(scene === "High Scores"){
+    /*if(scene === "High Scores"){
         bg1();
         textSize(40);
         shadowTxt("h i g h   s c o r e s", 200, 50, color(25, 191, 64));
@@ -180,8 +226,11 @@ draw = function() {
         shadowTxt("In the first stage, use the arrow keys to move\naround. You can eat smaller squares, but\nbigger squares can eat you. The more you eat,\nthe bigger you get.\n\nIn the second stage, use the up arrow key\nto jump, and the down arrow key to slide.\nAvoid getting hit by blocks.\n\nIn the third stage, click the falling green squares\nand avoid the red squares.\n\nYour final score is determined by how well\nyou did in all of the stages.", 200, 215, color(25, 191, 64));
         textSize(25);
         button(45, 365, 60, "\u2190", "Menu");
-    }
+    }*/
     
+    if(scene === "How1"){
+        howPage("Stage One", "1. Use the arrow keys to move\n\n2. Avoid bigger squares\n\n3. Eat smaller squares\n\n4. The more you eat, the bigger you get", "Stage One");
+    }
     if(scene === "Stage One"){
         rectMode(LEFT);
         bg2();
@@ -195,17 +244,38 @@ draw = function() {
         for(var i in enemies1){
             enemies1[i].draw();
             if(enemies1[i].sz <= player.sz && rectCollide(enemies1[i], player)){
-                player.sz += 20;
+                player.sz += 5;
                 enemies1.splice(i, 1);
             }
+        }
+        
+        if(enemies1.length === 0){
+            scene = "How2";
         }
         
         if(keys[UP] && player.y > 0){player.y-=3;}
         if(keys[DOWN] && player.y+player.sz < 400){player.y+=3;}
         if(keys[LEFT] && player.x > 0){player.x-=3;}
         if(keys[RIGHT] && player.x+player.sz < 400){player.x+=3;}
+        
+        fill(255);
+        textSize(11);
+        text("enemies1.length: " + enemies1.length, 50, 10);
+    }
+    if(scene === "How2"){
+        
     }
     if(scene === "Stage Two"){
         background(255, 0, 0);
     }
+    if(scene === "How3"){
+        
+    }
+    if(scene === "Stage Three"){
+        
+    }
+    if(scene === "Final"){
+        
+    }
 };
+
