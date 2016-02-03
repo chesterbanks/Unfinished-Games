@@ -1,0 +1,53 @@
+var possibleWords = [
+    "attack",
+    "charge",
+    "fall",
+    "type",
+    "lose",
+    "win",
+    "enemy",
+];
+
+var word = function(whichWord){
+    this.x = random(50, 350);
+    this.y = random(-10, -50);
+    this.whichWord = whichWord;
+};
+var words = [];
+word.prototype.draw = function() {
+    fill(0, 255, 0);
+    textSize(18);
+    text(this.whichWord, this.x, this.y);
+    
+    this.y += 2;
+};
+
+var typedWord = "";
+
+var keyTyped = function(){
+    typedWord += key.toString();
+    if(key.toString() === " "){
+        typedWord = "";
+    }
+};
+
+textAlign(CENTER, CENTER);
+textFont(createFont("courier"));
+
+var draw = function() {
+    background(0, 0, 0);
+    fill(0, 255, 0);
+    textSize(30);
+    text(typedWord, 200, 370);
+    
+    if(frameCount % 100 === 25){
+        words.push(new word(possibleWords[round(random(0, possibleWords.length-1))]));
+    }
+    for(var i in words){
+        words[i].draw();
+        if(typedWord.toLowerCase() === words[i].whichWord.toLowerCase()){
+            typedWord = "";
+            words.splice(i, 1);
+        }
+    }
+};
