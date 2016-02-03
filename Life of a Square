@@ -1,41 +1,18 @@
 /** Life of a Square
  * Chester Banks
- * February 1 2016
+ * February 3 2016
  * 
  * An entry to the "Minimalistic Design Contest".
+ * 
+ * This is my first three-stage game. I always thought they were cool, so I tried making one myself! I hope you liked it!
+ * 
+ * Thanks to my subscribers! Subscribe here: _____
+ * This program's lucky subscriber is __________! If you want to see his _____ and other cool programs, go here: khanacademy.org/profile/_______!
 */
-
-/** INSTRUCTIONS
-    @StageOne
-        - Use arrow keys to move
-        - Avoid bigger (red) squares
-        - Eat smaller (blue) squares
-        - The more you eat, the bigger you get
-        
-    @StageTwo
-        - Up arrow key to jump
-        - Down arrow key to slide
-        - Jump over low blocks
-        - Slide under high blocks
-        
-    @StageThree
-        - Click the falling blue squares
-        - Avoid the falling red squares
-*/
-
-var high_scores = [
-    ["Winston", "78"],
-    ["Hopper", "71"],
-    ["Purple Pi", "59"],
-    ["Oh Noes", "58"],
-    ["Mr. Pants", "50"],
-    ["OJ Squid", "49"],
-    ["Mr. Pink", "41"],
-];
 
 rectMode(CENTER);
 textAlign(CENTER, CENTER);
-textFont(createFont("helveticaneue-light"));
+textFont(createFont("Trebuchet MS"));
 
 var keys = [];
 var keyPressed = function(){keys[keyCode] = true;};
@@ -54,7 +31,24 @@ for(var i = 5; i < width; i += 20){
     }
 }
 
-var scene = "How1";
+background(255, 255, 255);
+/*noStroke();
+for(var i in textureRects){
+    fill(0, 0, 0, textureRects[i].br);
+    rect(textureRects[i].x, textureRects[i].y, 20, 20, -15);
+}*/
+var bg1 = get(0, 0, 400, 400);
+
+background(25, 191, 64);
+noStroke();
+for(var i in textureRects){
+    fill(0, 0, 0, textureRects[i].br*2);
+    rect(textureRects[i].x, textureRects[i].y, 18, 18,
+    20, 20, 20, 0);
+}
+var bg2 = get(0, 0, 400, 400);
+
+var scene = "Menu";
 var scores = [0, 0, 0, 0];
 
 var shadowTxt = function(txt, x, y, colo){
@@ -64,6 +58,7 @@ var shadowTxt = function(txt, x, y, colo){
     text(txt, x, y);
 };
 var button = function(x, y, sz, txt, next){
+    strokeWeight(1);
     stroke(222, 222, 222);
     fill(222, 222, 222);
     ellipse(x, y, sz, sz);
@@ -72,16 +67,12 @@ var button = function(x, y, sz, txt, next){
         ellipse(x, y, sz, sz);
         fill(25, 191, 64);
         if(txt === "."){
-            noStroke();
-            fill(25, 191, 64);
-            rect(x, y, 10, 25);
-            rect(x+11, y+5, 10, 15);
-            rect(x-11, y+3, 10, 20);
-            fill(255);
-            textSize(10);
-            text("1", x, y-5);
-            text("2", x-11, y+1);
-            text("3", x+11, y+3);
+            noFill();
+            strokeCap(SQUARE);
+            stroke(25, 191, 64);
+            strokeWeight(3);
+            ellipse(x-5, y-3, 18, 18);
+            line(x+3, y+6, x+11, y+14);
         } else { 
             text(txt, x, y);
         }
@@ -93,56 +84,26 @@ var button = function(x, y, sz, txt, next){
         ellipse(x, y - 6, sz, sz);
         fill(25, 191, 64);
         if(txt === "."){
-            noStroke();
-            fill(25, 191, 64);
-            rect(x, y-6, 10, 25);
-            rect(x+11, y-1, 10, 15);
-            rect(x-11, y-3, 10, 20);
-            fill(255);
-            textSize(10);
-            text("1", x, y-11);
-            text("2", x-11, y-5);
-            text("3", x+11, y-2);
+            noFill();
+            strokeCap(SQUARE);
+            stroke(25, 191, 64);
+            strokeWeight(3);
+            ellipse(x-5, y-9, 18, 18);
+            line(x+3, y, x+11, y+8);
         } else { 
             text(txt, x, y-6);
         }
     }
 };
-var menuSqr = function(x, y, colo){
-    fill(colo);
-    quad(x, y+5, x-20, y+10, x, y+15, x+20, y+10);
-    quad(x, y+15, x, y+20, x+20, y+15, x+20, y+10);
-    quad(x, y+15, x, y+20, x-20, y+15, x-20, y+10);
-    fill(0, 0, 0, 50);
-    quad(x, y+15, x, y+20, x+20, y+15, x+20, y+10);
-    fill(0, 0, 0, 90);
-    quad(x, y+15, x, y+20, x-20, y+15, x-20, y+10);
-};
-var bg1 = function(){
-    background(255, 255, 255);
-    noStroke();
-    for(var i in textureRects){
-        fill(0, 0, 0, textureRects[i].br);
-        rect(textureRects[i].x, textureRects[i].y, 20, 20, -15);
-    }
-};
-var bg2 = function(){
-    background(25, 191, 64);
-    noStroke();
-    for(var i in textureRects){
-        fill(0, 0, 0, textureRects[i].br*2);
-        rect(textureRects[i].x, textureRects[i].y, 18, 18,
-        20, 20, 20, 0);
-    }
-};
+
 var howPage = function(title, txt, next){
-    bg1();
+    image(bg1, 0, 0);
     textSize(35);
     shadowTxt(title, 200, 50, color(25, 191, 64));
     textSize(18);
     shadowTxt(txt, 200, 200, color(25, 191, 64));
-    textSize(30);
-    button(200, 345, 80, "\u25B6", next);
+    textSize(20);
+    button(350, 365, 50, "\u25B6", next);
 };
 
 var rectCollide = function(one, two){
@@ -154,6 +115,7 @@ var rectCollide = function(one, two){
     }
 };
 
+/** Stage One Enemies */
 var enemy1 = function(x, y, sz){
     this.x = x;
     this.y = y;
@@ -194,46 +156,76 @@ enemy1.prototype.draw = function() {
     rectMode(CENTER);
 };
 
+/** Stage Two Enemies */
+var enemy2 = function(x, y, type){
+    this.x = x;
+    this.y = y;
+    this.sz = 20;
+    this.type = type;
+};
+var enemies2 = [];
+enemy2.prototype.draw = function() {
+    noStroke();
+    if(this.type === 0){ // Enemy blocks
+        fill(232, 23, 23);
+        rect(this.x, this.y, this.sz, this.sz);
+    } else { // Good blocks
+        fill(27, 165, 224);
+        rect(this.x, this.y, this.sz, this.sz);
+        if(this.y > 415){
+            scene = "How3";
+        }
+    }
+    
+    this.y += 3;
+};
+
+/** Stage Three Falling Words */
+var goodWords = ["Rectangle", "Corners", "Blue", "Square", "Aqua", "Cobalt", "Cyan", "Indigo"];
+var enemyWords = ["Radius", "Circumference", "Round", "Pi", "Red", "Crimson", "Winston", "Circle", "Diameter", "Scarlet"];
+
+var word = function(whichWord, good){
+    this.x = random(50, 350);
+    this.y = random(-10, -50);
+    this.whichWord = whichWord;
+    this.good = good;
+};
+var words = [];
+word.prototype.draw = function() {
+    fill(255, 255, 255);
+    textSize(18);
+    text(this.whichWord, this.x, this.y);
+    
+    this.y += 2;
+};
+
+var typedWord = "";
+
+var keyTyped = function(){
+    typedWord += key.toString();
+    if(key.toString() === "z" || key.toString() === "Z"){
+        typedWord = "";
+    }
+};
+
 draw = function() {
     if(scene === "Menu"){
-        bg1();
+        image(bg1, 0, 0);
         textSize(35);
         shadowTxt("life of a square", 200, 200, color(25, 191, 64));
         textSize(15);
         shadowTxt("t h e   t h r e e   s t a g e   g a m e   o f", 200, 170, color(25, 191, 64));
-        shadowTxt("c r e a t e d  b y  c h e s t e r  b a n k s", 200, 230, color(25, 191, 64));
+        shadowTxt("c r e a t e d   b y   c h e s t e r   b a n k s", 200, 230, color(25, 191, 64));
         textSize(30);
         button(200, 320, 80, "\u25B6", "How1");
-        //button(280, 320, 50, "?", "Instructions");
-        //button(120, 320, 50, ".", "High Scores");
     }
-    /*if(scene === "High Scores"){
-        bg1();
-        textSize(40);
-        shadowTxt("h i g h   s c o r e s", 200, 50, color(25, 191, 64));
-        textSize(25);
-        for(var i in high_scores){
-            shadowTxt(high_scores[i][0] + " | " + high_scores[i][1], 200, 130 + (i*30), color(25, 191, 64));
-        }
-        button(45, 365, 60, "\u2190", "Menu");
-    }
-    if(scene === "Instructions"){
-        bg1();
-        textSize(40);
-        shadowTxt("i n s t r u c t i o n s", 200, 40, color(25, 191, 64));
-        
-        textSize(16);
-        shadowTxt("In the first stage, use the arrow keys to move\naround. You can eat smaller squares, but\nbigger squares can eat you. The more you eat,\nthe bigger you get.\n\nIn the second stage, use the up arrow key\nto jump, and the down arrow key to slide.\nAvoid getting hit by blocks.\n\nIn the third stage, click the falling green squares\nand avoid the red squares.\n\nYour final score is determined by how well\nyou did in all of the stages.", 200, 215, color(25, 191, 64));
-        textSize(25);
-        button(45, 365, 60, "\u2190", "Menu");
-    }*/
     
     if(scene === "How1"){
         howPage("Stage One", "1. Use the arrow keys to move\n\n2. Avoid bigger squares\n\n3. Eat smaller squares\n\n4. The more you eat, the bigger you get", "Stage One");
     }
     if(scene === "Stage One"){
         rectMode(LEFT);
-        bg2();
+        image(bg2, 0, 0);
         noStroke();
         fill(212, 212, 212);
         rect(player.x, player.y+3, player.sz, player.sz);
@@ -245,6 +237,7 @@ draw = function() {
             enemies1[i].draw();
             if(enemies1[i].sz <= player.sz && rectCollide(enemies1[i], player)){
                 player.sz += 5;
+                scores[0] ++;
                 enemies1.splice(i, 1);
             }
         }
@@ -263,19 +256,91 @@ draw = function() {
         text("enemies1.length: " + enemies1.length, 50, 10);
     }
     if(scene === "How2"){
-        
+        howPage("Stage Two", "1. Arrow keys to move\n\n2. Touch the blue squares\n\n3. Avoid the red squares\n\n4. Don't let any blue squares get by", "Stage Two");
+        player.x = 200;
+        player.y = 200;
+        player.sz = 15;
     }
     if(scene === "Stage Two"){
-        background(255, 0, 0);
+        image(bg2, 0, 0);
+        noStroke();
+        fill(212, 212, 212);
+        rect(player.x, player.y+3, player.sz, player.sz);
+        fill(255, 255, 255);
+        rect(player.x, player.y, player.sz, player.sz);
+        
+        if(keys[UP] && player.y > 0){player.y-=5;}
+        if(keys[DOWN] && player.y+player.sz < 400){player.y+=5;}
+        if(keys[LEFT] && player.x > 0){player.x-=5;}
+        if(keys[RIGHT] && player.x+player.sz < 400){player.x+=5;}
+        
+        if(frameCount % 30 === 15){
+            enemies2.push(new enemy2(random(10, 390), random(-10, -50), round(random(0, 1))));
+        }
+        for(var i in enemies2){
+            enemies2[i].draw();
+            if(rectCollide(enemies2[i], player)){
+                if(enemies2[i].type === 0){
+                    scene = "How3";
+                } else {
+                    scores[1] += 2;
+                    enemies2.splice(i, 1);
+                }
+            }
+        }
     }
     if(scene === "How3"){
-        
+        howPage("Stage Three", "1. Type the falling words that\nhave to do with squares and blue\n\n2. Don't type falling words that\nhave to do with circles and red\n\n3. Don't let any square/blue words\nget to the bottom\n\n4. Z to clear", "Stage Three");
     }
     if(scene === "Stage Three"){
+        background(0, 0, 0);
+        fill(240, 240, 240);
+        textSize(30);
+        text(typedWord, 200, 370);
         
+        if(frameCount % 200 === 25){
+            words.push(new word(goodWords[round(random(0, goodWords.length-1))], true));
+        }
+        if(frameCount % 200 === 90 || frameCount % 200 === 10){
+            words.push(new word(enemyWords[round(random(0, enemyWords.length-1))], false));
+        }
+        for(var i in words){
+            words[i].draw();
+            if(typedWord.toLowerCase() === words[i].whichWord.toLowerCase()){
+                typedWord = "";
+                if(!words[i].good){
+                    scene = "Final";
+                } else {
+                    scores[2] ++;
+                }
+                words.splice(i, 1);
+            }
+            if(words[i].good && words[i].y > 410){
+                scene = "Final";
+            }
+        }
     }
     if(scene === "Final"){
+        image(bg1, 0, 0);
+        textSize(15);
+        shadowTxt("Y O U R   F I N A L   S C O R E   W A S :", 200, 100, color(25, 194, 64));
+        shadowTxt("C L I C K   T O   P L A Y   A G A I N", 200, 300, color(25, 194, 64));
+        textSize(160);
+        shadowTxt(scores[3], 200, 200, color(25, 194, 64));
         
+        if(scores[3] <= (scores[0] + scores[1] + scores[2])){
+            scores[3] ++;
+        }
     }
 };
 
+var mouseClicked = function(){
+    if(scene === "Final"){
+        scores[0] = 0; scores[1] = 0; scores[2] = 0; scores[3] = 0;
+        player.x = 200; player.y = 200; player.sz = 200;
+        typedWord = "";
+        words = []; enemies2 = []; enemies1 = [];
+        
+        scene = "Menu";
+    }
+};
