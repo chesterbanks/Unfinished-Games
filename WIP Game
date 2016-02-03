@@ -1,0 +1,125 @@
+var keys = [];
+var keyPressed = function(){keys[keyCode]=true;};
+var keyReleased = function(){keys[keyCode]=false;};
+
+var level = 0;
+
+var textureRects = [];
+for(var i = 5; i < width; i += 20){
+    for(var j = -20; j < height+20; j += 20){
+        textureRects.push({x: i, y: j, br: random(0, 45)});
+    }
+}
+
+var rectCollide = function(one, two){
+    if( one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h){
+        return true;
+    }
+};
+
+var player = {
+    x: 20,
+    y: 350,
+    w: 30,
+    h: 30
+};
+
+var portal = {
+    x: 335,
+    y: 340,
+    w: 30,
+    h: 30
+};
+
+var block = function(x, y, w, h){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+};
+var blocks = [
+    [new block(0, 390, 400, 10), 
+    new block(0, 0, 400, 10), 
+    new block(0, 0, 10, 400),
+    new block(390, 0, 10, 400),
+    new block(60, 80, 10, 320),
+    new block(120, 0, 10, 320),
+    new block(180, 80, 10, 320),
+    new block(240, 0, 10, 320),
+    new block(300, 80, 10, 320)],
+];
+block.prototype.draw = function() {
+    noStroke();
+    fill(0, 0, 0, 30);
+    rect(this.x+10, this.y+10, this.w, this.h);
+    fill(255, 255, 255);
+    rect(this.x, this.y, this.w, this.h);
+};
+
+background(39, 150, 80);
+strokeWeight(10);
+stroke(0, 0, 0, 10);
+for(var i in textureRects){
+    fill(0, 0, 0, textureRects[i].br);
+    ellipse(textureRects[i].x, textureRects[i].y, 15, 15);
+}
+//filter(BLUR, 2);
+//var BG1 = get(0, 0, 400, 400);
+
+var draw = function() {
+    smooth();
+    
+    background(39, 150, 80);
+    
+    if(keys[LEFT]){
+        player.x -= 3;
+    }
+    if(keys[RIGHT]){
+        player.x += 3;
+    }
+    if(keys[UP]){
+        player.y -= 3;
+    }
+    if(keys[DOWN]){
+        player.y += 3;
+    }
+    
+    for(var i in blocks[level]){
+        blocks[level][i].draw();
+        
+        // Collision code
+        if(keys[LEFT] && rectCollide(blocks[level][i], player) && player.x > blocks[level][i].x){
+            player.x += 3;
+        }
+        if(keys[RIGHT] && rectCollide(blocks[level][i], player) && player.x+player.w < blocks[level][i].x+blocks[level][i].w){
+            player.x -= 3;
+        }
+        if(keys[UP] && rectCollide(blocks[level][i], player) && player.y > blocks[level][i].y){
+            player.y += 3;
+        }
+        if(keys[DOWN] && rectCollide(blocks[level][i], player) && player.y+player.h < blocks[level][i].y+blocks[level][i].h){
+            player.y -= 3;
+        }
+    }
+    
+    // Player
+    fill(0, 0, 0, 30);
+    rect(player.x+10, player.y+10, player.w, player.h);
+    fill(235, 162, 17);
+    rect(player.x, player.y, player.w, player.h);
+    
+    // Portal
+    fill(0, 0, 0, 30);
+    rect(345, 350, 30, 30, 10);
+    fill(0, 255, 0);
+    rect(335, 340, 30, 30, 10);
+    
+    if(rectCollide(player, portal)){
+        level++;
+        player.x = 20;
+        player.y = 350;
+    }
+};
