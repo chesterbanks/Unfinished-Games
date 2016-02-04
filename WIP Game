@@ -5,8 +5,8 @@ var keyReleased = function(){keys[keyCode]=false;};
 var level = 0;
 
 var textureRects = [];
-for(var i = 5; i < width; i += 20){
-    for(var j = -20; j < height+20; j += 20){
+for(var i = 5; i < width; i += 45){
+    for(var j = -20; j < height+20; j += 45){
         textureRects.push({x: i, y: j, br: random(0, 45)});
     }
 }
@@ -50,6 +50,12 @@ var blocks = [
     new block(180, 80, 10, 320),
     new block(240, 0, 10, 320),
     new block(300, 80, 10, 320)],
+    
+    [new block(0, 390, 400, 10), 
+    new block(0, 0, 438, 10), 
+    new block(0, 0, 10, 400),
+    new block(390, 0, 10, 400),
+    new block(100, 100, 200, 300),],
 ];
 block.prototype.draw = function() {
     noStroke();
@@ -59,20 +65,14 @@ block.prototype.draw = function() {
     rect(this.x, this.y, this.w, this.h);
 };
 
-background(39, 150, 80);
+var draw = function() {
+    background(39, 150, 80);
 strokeWeight(10);
 stroke(0, 0, 0, 10);
 for(var i in textureRects){
     fill(0, 0, 0, textureRects[i].br);
-    ellipse(textureRects[i].x, textureRects[i].y, 15, 15);
+    ellipse(textureRects[i].x, textureRects[i].y, 70, 70);
 }
-//filter(BLUR, 2);
-//var BG1 = get(0, 0, 400, 400);
-
-var draw = function() {
-    smooth();
-    
-    background(39, 150, 80);
     
     if(keys[LEFT]){
         player.x -= 3;
