@@ -1,0 +1,52 @@
+textAlign(CENTER, CENTER);
+textFont(createFont("Perpetua Titling MT"));
+
+var rects = [];
+for(var i = 0; i < 400; i += 20){
+    for(var j = 0; j < 400; j += 20){
+        rects.push({x: i, y: j, br: random(0, 30)});
+    }
+}
+
+//Draws a background
+background(237, 207, 151);
+strokeWeight(5);
+for(var i = 0; i < 400; i += 5){
+    stroke(lerpColor(color(237, 207, 151), color(82, 57, 10), i/height));
+    line(0, i, 400, i);
+}
+
+var Colorful = get(0, 0, width, height); //Gets the image of the spectrum
+
+background(0); //Black. This means that the corresponding pixels will be fully transparent in the colored image.
+
+noStroke();
+fill(255); //White. The corresponding pixels will be fully opaque.
+textSize(30);
+text("I S L A N D S   O F", 200, 140);
+textSize(13);
+text("C H E S T E R   B A N K S   |  F E B R U A R Y   2 0 1 6", 200, 260);
+textSize(120);
+text("TANA", 200, 200);
+
+var Gray = get(0, 0, width, height); //Get the grayscale image and store it in a variable.
+
+draw = function() {
+    Colorful.mask(Gray); //Mask the image.
+    
+    background(115, 13, 13);
+    noStroke();
+    for(var i in rects){
+        fill(0, 0, 0, rects[i].br);
+        rect(rects[i].x, rects[i].y, 20, i%30);
+    }
+    fill(0, 0, 0, 30);
+    textSize(30);
+    text("I S L A N D S   O F", 205, 145);
+    textSize(13);
+    text("C H E S T E R   B A N K S   |  F E B R U A R Y   2 0 1 6", 205, 265);
+    textSize(120);
+    text("TANA", 210, 210);
+    image(Colorful, 0, 0); //Draw the image. As you can see, the pixels where the black background was in the grayscale image are now fully transparent. The bottom two circles are faint, and the top two are opaque.
+
+};
