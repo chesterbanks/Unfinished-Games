@@ -1,0 +1,90 @@
+var player = {x: 200, spin: false, rotation: 0};
+
+textFont(createFont("Arial Bold"));
+textAlign(CENTER, CENTER);
+
+var fieldY = -600;
+var fieldNums = [null, 10, 20, 30, 40, 50, 40, 30, 20, 10, null];
+
+var keys = [];
+var keyPressed = function(){
+    keys[keyCode] = true;
+};
+var keyReleased = function(){
+    keys[keyCode] = false;
+};
+
+var enemy = function(x, y){
+    this.x = x;
+    this.y = y;
+};
+var enemies = [];
+enemy.prototype.draw = function() {
+    fill(217, 46, 46);
+    stroke(0, 0, 0, 30);
+    strokeWeight(6);
+    rect(this.x, this.y, 30, 30);
+    
+    this.y += 3;
+};
+
+rectMode(CENTER);
+
+draw = function() {
+    background(40, 191, 68);
+    
+    stroke(255);
+    strokeWeight(6);
+    textSize(40);
+    for(var i in fieldNums){
+        fill(255, 255, 255, 20);
+        rect(200, i*100 + fieldY, 330, 100);
+        fill(255);
+        pushMatrix();
+        translate(50, i*100 + fieldY + 50);
+        rotate(90);
+        text(fieldNums[i], 0, -10);
+        popMatrix();
+    }
+    if(frameCount % 60 === 30){
+        //enemies.push(new enemy(random(50, 350), random(-20, -100)));
+    }
+    for(var i in enemies){
+        //enemies[i].draw();
+    }
+    
+    stroke(0, 71, 107);
+    strokeWeight(3);
+    fill(0, 166, 255);
+    pushMatrix();
+    translate(player.x, 350);
+    rotate(player.rotation);
+    rect(0, 5, 40, 12);
+    rect(0, 5, 20, 20, 5);
+    rect(0, 0, 20, 20); // Player
+    noStroke();
+    fill(0, 0, 0, 50);
+    rect(0, 0, 10, 20);
+    popMatrix();
+    
+    if(keys[UP]){
+        fieldY += 3;
+    }
+    if(keys[LEFT]){
+        player.x -= 3;
+    }
+    if(keys[RIGHT]){
+        player.x += 3;
+    }
+    if(keys[DOWN]){
+        player.spin = true;
+    }
+    
+    if(player.spin){
+        player.rotation += 20;
+        if(player.rotation > 360){
+            player.rotation = 0;
+            player.spin = false;
+        }
+    }
+};
