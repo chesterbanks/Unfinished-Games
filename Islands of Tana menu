@@ -1,5 +1,25 @@
+/** Islands of Tana
+ * By Chester Banks
+ * February 16 2016
+ * 
+ * Thanks to Jake (of the fancy username text) for teaching me how to use mask().
+ * 
+    SCENES
+        SCENE NAME          SCENE ID        LINKS TO        LINKS FROM
+        - Logo              A112
+        - Splash Page       B113
+        - Map               114C
+        - Tierra            11D5
+        - Tellus            E116
+        - Terreno           1F17
+        - Royal Court       G118
+*/
+
+var menuXs = [0, 200];
+var move = false;
+
 textAlign(CENTER, CENTER);
-textFont(createFont("Perpetua Titling MT"));
+textFont(createFont("Times New Roman"));
 
 var rects = [];
 for(var i = 0; i < 400; i += 20){
@@ -8,7 +28,6 @@ for(var i = 0; i < 400; i += 20){
     }
 }
 
-//Draws a background
 background(237, 207, 151);
 strokeWeight(5);
 for(var i = 0; i < 400; i += 5){
@@ -16,12 +35,12 @@ for(var i = 0; i < 400; i += 5){
     line(0, i, 400, i);
 }
 
-var Colorful = get(0, 0, width, height); //Gets the image of the spectrum
+var Colorful = get(0, 0, width, height);
 
-background(0); //Black. This means that the corresponding pixels will be fully transparent in the colored image.
+background(0);
 
 noStroke();
-fill(255); //White. The corresponding pixels will be fully opaque.
+fill(255);
 textSize(30);
 text("I S L A N D S   O F", 200, 140);
 textSize(13);
@@ -29,24 +48,39 @@ text("C H E S T E R   B A N K S   |  F E B R U A R Y   2 0 1 6", 200, 260);
 textSize(120);
 text("TANA", 200, 200);
 
-var Gray = get(0, 0, width, height); //Get the grayscale image and store it in a variable.
+var Gray = get(0, 0, width, height);
+
+Colorful.mask(Gray);
+    
+background(115, 13, 13);
+noStroke();
+for(var i in rects){
+    fill(0, 0, 0, rects[i].br);
+    rect(rects[i].x, rects[i].y, 20, i%30);
+}
+fill(0, 0, 0, 30);
+textSize(30);
+text("I S L A N D S   O F", 205, 145);
+textSize(13);
+text("C H E S T E R   B A N K S   |  F E B R U A R Y   2 0 1 6", 205, 265);
+textSize(120);
+text("TANA", 210, 210);
+image(Colorful, 0, 0);
+    
+var menu1 = get(0, 0, 200, 400);
+var menu2 = get(200, 0, 200, 400);
+
 
 draw = function() {
-    Colorful.mask(Gray); //Mask the image.
-    
-    background(115, 13, 13);
-    noStroke();
-    for(var i in rects){
-        fill(0, 0, 0, rects[i].br);
-        rect(rects[i].x, rects[i].y, 20, i%30);
+    background(0);
+    image(menu1, menuXs[0], 0);
+    image(menu2, menuXs[1], 0);
+    if(move){
+        menuXs[0] -= 3;
+        menuXs[1] += 3;
     }
-    fill(0, 0, 0, 30);
-    textSize(30);
-    text("I S L A N D S   O F", 205, 145);
-    textSize(13);
-    text("C H E S T E R   B A N K S   |  F E B R U A R Y   2 0 1 6", 205, 265);
-    textSize(120);
-    text("TANA", 210, 210);
-    image(Colorful, 0, 0); //Draw the image. As you can see, the pixels where the black background was in the grayscale image are now fully transparent. The bottom two circles are faint, and the top two are opaque.
+};
 
+var mouseClicked = function(){
+    move = true;
 };
