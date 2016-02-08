@@ -1,0 +1,232 @@
+/** Mini Super Bowl 50
+ * Chester Banks
+ * February 7 2016
+ * 
+ * Made for Super Bowl 50
+*/
+
+var rectCollide = function(one, two){
+    if( (one.x-(one.w/2))+one.w > (two.x-(two.w/2)) &&
+        (one.y-(one.h/2))+one.h > (two.y-(two.h/2)) &&
+        (one.x-(one.w/2)) < (two.x-(two.w/2))+two.w &&
+        (one.y-(one.h/2)) < (two.y-(two.h/2))+two.h){
+        return true;
+    }
+};
+
+var scene = "Home";
+
+var player = {
+    x: 200, 
+    w: 40,
+    h: 20,
+    spinTimer: 200,
+    spin: false, 
+    rotation: 0,
+    team: "Broncos"
+};
+
+textFont(createFont("Arial Bold"));
+textAlign(CENTER, CENTER);
+
+var fieldY = -600;
+var fieldNums = [null, 10, 20, 30, 40, 50, 40, 30, 20, 10, null];
+
+var keys = [];
+var keyPressed = function(){
+    keys[keyCode] = true;
+};
+var keyReleased = function(){
+    keys[keyCode] = false;
+};
+
+var button = function(x, y, w, h, txt, next){
+    fill(245);
+    rect(x, y, w, h);
+    if(mouseX > x-(w/2) && mouseX < x+(w/2) && mouseY > y-(h/2) && mouseY < y+(h/2)){
+        fill(255);
+        rect(x, y, w, h);
+        textSize(20);
+        fill(40, 191, 68);
+        text(txt, x, y);
+        if(mouseIsPressed){
+            if(txt === "Panthers"){
+                
+            }
+            scene = next;
+        }
+    } else {
+        fill(255);
+        rect(x, y - 6, w, h);
+        textSize(20);
+        fill(35, 166, 59);
+        text(txt, x, y-6);
+    }
+};
+
+var enemy = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.w = 40;
+    this.h = 20;
+    this.colorz = [];
+};
+var enemies = [];
+enemy.prototype.draw = function() {
+    stroke(0, 0, 0);
+    strokeWeight(3);
+    if(player.team === "Panthers"){
+        this.colorz = [color(11, 63, 115), color(251, 79, 20)]; 
+    } else {
+        this.colorz = [color(0, 136, 206), color(165,172,175)];
+    }
+    fill(this.colorz[0]);
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(180);
+    rect(0, 5, 40, 12);
+    rect(0, 5, 20, 20, 5);
+    rect(0, 0, 20, 20); // Player
+    noStroke();
+    fill(this.colorz[1]);
+    rect(0, 0, 10, 16);
+    popMatrix();
+    
+    this.y += 5;
+};
+
+rectMode(CENTER);
+
+draw = function() {
+    if(scene === "Home"){
+        background(44, 189, 70);
+        stroke(255);
+        strokeWeight(6);
+        textSize(40);
+        for(var i in fieldNums){
+            fill(255, 255, 255, 20);
+            rect(200, i*100 + fieldY + sin(frameCount*3)*100 + 100, 330, 100);
+            fill(255);
+            pushMatrix();
+            translate(50, i*100 + fieldY + 50 + sin(frameCount*3)*100 + 100);
+            rotate(90);
+            text(fieldNums[i], 0, -10);
+            popMatrix();
+        }
+        
+        noStroke();
+        fill(0, 0, 0, 100);
+        rect(200, 200, 400, 400);
+        
+        fill(0, 0, 0, 50);
+        textSize(70);
+        textLeading(55);
+        text("MINI\nSUPER\nBOWL\n50", 200, 165);
+        fill(255);
+        textSize(85);
+        textLeading(65);
+        text("MINI\nSUPER\nBOWL\n50", 200, 165);
+        
+        button(200, 350, 100, 40, "Start", "Team");
+    }
+    if(scene === "Team"){
+         background(44, 189, 70);
+        stroke(255);
+        strokeWeight(6);
+        textSize(40);
+        for(var i in fieldNums){
+            fill(255, 255, 255, 20);
+            rect(200, i*100 + fieldY + sin(frameCount*3)*100 + 100, 330, 100);
+            fill(255);
+            pushMatrix();
+            translate(50, i*100 + fieldY + 50 + sin(frameCount*3)*100 + 100);
+            rotate(90);
+            text(fieldNums[i], 0, -10);
+            popMatrix();
+        }
+        
+        noStroke();
+        fill(0, 0, 0, 100);
+        rect(200, 200, 400, 400);
+        
+        button(200, 130, 300, 100, "Broncos", "Game");
+        button(200, 270, 300, 100, "Panthers", "Game");
+    }
+    if(scene === "Game"){
+        background(40, 191, 68);
+        
+        stroke(255);
+        strokeWeight(6);
+        textSize(40);
+        for(var i in fieldNums){
+            fill(255, 255, 255, 20);
+            rect(200, i*100 + fieldY, 330, 100);
+            fill(255);
+            pushMatrix();
+            translate(50, i*100 + fieldY + 50);
+            rotate(90);
+            text(fieldNums[i], 0, -10);
+            popMatrix();
+        }
+        if(frameCount % 40 === 20){
+            enemies.push(new enemy(random(50, 350), random(-20, -100)));
+        }
+        for(var i in enemies){
+            enemies[i].draw();
+            if(rectCollide(player, enemies[i])){
+                scene = "Lose";
+            }
+        }
+        
+        stroke(0, 0, 0);
+        strokeWeight(3);
+        if(player.team === "Panthers"){
+            player.colorz = [color(0, 136, 206), color(165,172,175)];
+        } else {
+            player.colorz = [color(11, 63, 115), color(251, 79, 20)]; 
+        }
+        fill(player.colorz[0]);
+        pushMatrix();
+        translate(player.x, 350);
+        rotate(player.rotation);
+        rect(0, 5, 40, 12);
+        rect(0, 5, 20, 20, 5);
+        rect(0, 0, 20, 20); // Player
+        noStroke();
+        fill(player.colorz[1]);
+        rect(0, 0, 10, 16);
+        popMatrix();
+        
+        if(keys[UP]){
+            fieldY += 3;
+        }
+        if(keys[LEFT]){
+            player.x -= 3;
+        }
+        if(keys[RIGHT]){
+            player.x += 3;
+        }
+        if(keys[DOWN] && player.spinTimer >= 200){
+            player.spin = true;
+        }
+        
+        if(player.spin){
+            player.spinTimer = 0;
+            player.rotation += 20;
+            if(player.rotation > 360){
+                player.rotation = 0;
+                player.spin = false;
+            }
+        }
+        
+        player.spinTimer += 2.5;
+        if(player.spinTimer > 200){player.spinTimer = 200;}
+        
+        fill(255);
+        textSize(14);
+        text("player.spintimer:" + player.spinTimer + "\nfieldY: " + fieldY, 200, 30);
+    }
+    if(scene === "Lose"){
+        background(255, 0, 0);
+    }
+};
