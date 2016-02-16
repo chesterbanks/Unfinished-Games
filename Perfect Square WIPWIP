@@ -1,0 +1,197 @@
+/** Perfect Square
+ * Chester Banks
+ * February 2016
+ * 
+ * Inspiration from Perfect Square by BoomBit.
+ * 
+ * INSTRUCTIONS:
+    - Touch to grow
+    - Release to drop
+*/
+
+/** //Text, rect, etc. settings
+textAlign(CENTER, CENTER);
+textFont(createFont("helveticaneue-light"));
+rectMode(CENTER);
+
+// Score, page, lives, etc. variables
+var score = 0;
+var page = "Game";
+var lives = 0;
+var logoFinish = -250;
+var backgroundColor = random(0, 255);
+
+// Graphics, buttons, etc. functions
+var logo = function(x, y, sz){
+    var logoColors = [
+        color(17, 67, 138),
+        color(87, 156, 217),
+        color(56, 179, 255),
+        color(69, 192, 230),
+    ];
+    
+    pushMatrix();
+    translate(x, y);
+    scale(sz);
+    noFill();
+    strokeCap(SQUARE);
+    stroke(0, 0, 0, 30);
+    strokeWeight(30);
+    arc(10, 20, 160, 160, 30, 330);
+    strokeWeight(11);
+    // Outer layer
+    stroke(logoColors[0]);
+    arc(0, 0, 200, 200, -85, -30);
+    arc(0, 0, 180, 180, -75, -30);
+    arc(0, 0, 200, 200, -300, -240);
+    arc(0, 0, 180, 180, -285, -250);
+    stroke(logoColors[1]);
+    arc(0, 0, 200, 200, -125, -85);
+    arc(0, 0, 180, 180, -115, -75);
+    arc(0, 0, 200, 200, -200, -160);
+    arc(0, 0, 180, 180, -200, -150);
+    stroke(logoColors[2]);
+    arc(0, 0, 200, 200, -160, -125);
+    arc(0, 0, 180, 180, -150, -116);
+    arc(0, 0, 200, 200, -330, -300);
+    arc(0, 0, 180, 180, -330, -286);
+    stroke(logoColors[3]);
+    arc(0, 0, 200, 200, -240, -200);
+    arc(0, 0, 180, 180, -250, -200);
+    
+    // Inner layer
+    stroke(logoColors[0]);
+    arc(0, 0, 160, 160, -200, -160);
+    arc(0, 0, 140, 140, -200, -150);
+    stroke(logoColors[1]);
+    arc(0, 0, 160, 160, -300, -240);
+    arc(0, 0, 140, 140, -285, -250);
+    stroke(logoColors[2]);
+    arc(0, 0, 160, 160, -240, -200);
+    arc(0, 0, 140, 140, -250, -200);
+    arc(0, 0, 160, 160, -125, -85);
+    arc(0, 0, 140, 140, -115, -75);
+    stroke(logoColors[3]);
+    arc(0, 0, 160, 160, -85, -30);
+    arc(0, 0, 140, 140, -75, -30);
+    arc(0, 0, 160, 160, -330, -300);
+    arc(0, 0, 140, 140, -330, -286);
+    arc(0, 0, 160, 160, -160, -125);
+    arc(0, 0, 140, 140, -150, -116);
+    
+    stroke(0, 0, 0, 50);
+    strokeWeight(20);
+    arc(0, 0, 150, 150, 30, 330);
+    popMatrix();
+};
+
+// Square constructor, array & prototype
+var square = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.sz = 10;
+    this.falling = false;
+};
+var squares = [new square(200, 100)];
+square.prototype.draw = function() {
+    noStroke();
+    fill(255);
+    rect(this.x, this.y, this.sz, this.sz);
+    if(mouseIsPressed && !this.falling){
+        this.sz += 2;
+    }
+    if(this.falling){
+        this.y += 5;
+    }
+};
+
+// Square holder constructor, array & prototype
+
+// Draw function start
+draw = function() {
+    // Logo
+    if(page === "Logo"){
+        background(255, 255, 255);
+        for(var i = 0; i < 360; i += 24){
+            for(var j = 0; j < 360; j += 61){
+            pushMatrix();
+            noStroke();
+            translate(200, 200);
+            rotate(frameCount*2);
+            rotate(i);
+            fill(0, 187, 255, -j + 200);
+            arc(0, -325 + j, 100, 77, -307, 16);
+            popMatrix();
+            }
+        }
+        logo(200, 200, 1 + sin(frameCount*20)/40);
+        noStroke();
+        fill(255, 255, 255, logoFinish);
+        rect(200, 200, 405, 405);
+        logoFinish += 7;
+        if(logoFinish > 270){
+            page = "Menu";
+        }
+    }
+    
+    // Menu
+    if(page === "Menu"){
+        // Background
+        background(255);
+        noStroke();
+        fill(37, 184, 172);
+        rect(40, 325, 80, 150);
+        rect(120, 350, 80, 100);
+        rect(280, 350, 80, 100);
+        rect(360, 325, 80, 150);
+        
+        // Title text
+        fill(0, 0, 0, 40);
+        textSize(40);
+        text("P E R F E C T", 200, 103);
+        textSize(60);
+        text("SQUARE", 200, 146);
+        fill(37, 184, 172);
+        textSize(40);
+        text("P E R F E C T", 200, 98);
+        textSize(60);
+        text("SQUARE", 200, 140);
+        
+        // Buttons
+        
+    }
+
+    // Instructions
+    if(page === "How"){
+        
+    }
+
+    // Game
+    if(page === "Game"){
+        // Background
+        colorMode(HSB);
+        background(backgroundColor, 255, 200);
+        colorMode(RGB);
+        
+        // Square holder
+        
+        
+        // Square
+        for(var i in squares){
+            squares[i].draw();
+        }
+    }
+
+    // Lose screen
+    if(page === "Lose"){
+        
+    }
+
+}; // Draw function end
+
+var mouseReleased = function(){
+    for(var i in squares){
+        squares[i].falling = true;
+    }
+};
+*/
