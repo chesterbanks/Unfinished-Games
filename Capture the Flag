@@ -1,6 +1,8 @@
 imageMode(CENTER);
 textFont(createFont("Verdana"));
 
+var theMagicalDebugVariable = false;
+
 var keys = [];
 var keyPressed = function(){keys[keyCode] = true;};
 var keyReleased = function(){keys[keyCode] = false;};
@@ -63,6 +65,10 @@ var Enemy = function(baseX, baseY, baseSz){
 var Enemies = [
     new Enemy(random(0, 550), random(250), 150),
     new Enemy(random(0, 550), random(250), 200),
+    new Enemy(random(0, 550), random(250), 150),
+    new Enemy(random(0, 550), random(250), 200),
+    new Enemy(random(0, 550), random(250), 150),
+    new Enemy(random(0, 550), random(250), 200),
 ];
 Enemy.prototype.draw = function() {
     // (player.x + this.x), (player.y + this.y)
@@ -74,9 +80,11 @@ Enemy.prototype.draw = function() {
     image(getImage("cute/EnemyBug"), 0, -9, 30, 60);
     popMatrix();
     
-    stroke(255, 0, 0, 100);
-    //ellipse(player.x + this.baseX, player.y + this.baseY, 3, 3);
-    ellipse(player.x + this.baseX, player.y + this.baseY, this.baseSz, this.baseSz);
+    if(theMagicalDebugVariable){
+        stroke(255, 0, 0, 100);
+        ellipse(player.x + this.baseX, player.y + this.baseY, 3, 3);
+        ellipse(player.x + this.baseX, player.y + this.baseY, this.baseSz, this.baseSz);
+    }
     
     if(dist(player.x + this.baseX, player.y + this.baseY, 200, 200) < this.baseSz/2){
         this.x += cos(atan2(200 - (player.y + this.y), 200 - (player.x + this.x))) * 2;
@@ -193,6 +201,14 @@ draw = function() {
         }
     }
     
-    fill(25);
-    text("player.x: " + player.x + "\nplayer.y: " + player.y + "\nplayer.side: " + player.side + "\nplayer.hasFlag: " + player.hasFlag + "\nflag.x: " + flag.x + "\nflag.y: " + flag.y + "\nplayer.hasWon: " + player.hasWon + "\nplayer.isTagged: " + player.isTagged, 20, 20);
+    if(theMagicalDebugVariable){
+        fill(25);
+        text("player.x: " + player.x + "\nplayer.y: " + player.y + "\nplayer.side: " + player.side + "\nplayer.hasFlag: " + player.hasFlag + "\nflag.x: " + flag.x + "\nflag.y: " + flag.y + "\nplayer.hasWon: " + player.hasWon + "\nplayer.isTagged: " + player.isTagged, 20, 20);
+    }
+};
+
+var keyTyped = function(){
+    if(key.toString().toUpperCase() === "D"){
+        theMagicalDebugVariable = true;
+    }
 };
