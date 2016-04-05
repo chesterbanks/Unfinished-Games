@@ -32,14 +32,26 @@ var images = {
         
         return get(0, 0, 40, 40);
     },
+    "flag": function(){
+        noStroke();
+        fill(199, 48, 48);
+        rect(10, 5, 5, 30);
+        triangle(15, 5, 15, 19, 30, 12);
+        
+        return get(0, 0, 40, 40);
+    },
 };
 
 var player = {
-    x: 0,
-    y: 0,
+    x: -155,
+    y: -445,
     speed: 5,
     side: "Enemy",
+    hasFlag: false,
+    hasWon: false,
+    isTagged: false,
 };
+var flag = {};
 
 var Enemy = function(baseX, baseY, baseSz){
     this.x = baseX;
@@ -49,8 +61,8 @@ var Enemy = function(baseX, baseY, baseSz){
     this.baseSz = baseSz;
 };
 var Enemies = [
-    new Enemy(random(0, 550), random(280), 150),
-    new Enemy(random(0, 550), random(280), 200),
+    new Enemy(random(0, 550), random(250), 150),
+    new Enemy(random(0, 550), random(250), 200),
 ];
 Enemy.prototype.draw = function() {
     // (player.x + this.x), (player.y + this.y)
@@ -70,10 +82,13 @@ Enemy.prototype.draw = function() {
         this.x += cos(atan2(200 - (player.y + this.y), 200 - (player.x + this.x))) * 2;
         this.y += sin(atan2(200 - (player.y + this.y), 200 - (player.x + this.x))) * 2;
     }
+    if(dist((player.x + this.x), (player.y + this.y), 200, 200) < 15){
+        player.isTagged = true;
+    }
 };
 
 var course = [
-    '                    ',
+    '          F         ',
     '                    ',
     '                    ',
     '                    ',
@@ -104,6 +119,14 @@ var drawMap = function(){
             switch(letter){
                 case 'L':
                     image(images.line, player.x + i*40, player.y + j*40);
+                    break;
+                case 'F':
+                    flag.x = player.x + i*40;
+                    flag.y = player.y + j*40;
+                    image(images.grass, player.x + i*40, player.y + j*40);
+                    if(!player.hasFlag){
+                        image(images.flag, player.x + i*40, player.y + j*40);
+                    }
                     break;
                 default:
                     image(images.grass, player.x + i*40, player.y + j*40);
@@ -153,6 +176,23 @@ draw = function() {
         player.side = "Line";
     }
     
-    fill(255);
-    text("player.x: " + player.x + "\nplayer.y: " + player.y + "\nplayer.side: " + player.side, 20, 20);
+    if(player.x < -180 && player.x > -250 && player.y < 215 && player.y > 145){
+        player.hasFlag = true;
+        
+    }
+    if(player.hasFlag){
+        flag.x = 200;
+        flag.y = 200;
+        pushMatrix();
+        translate(220, 210);
+        rotate(4);
+        image(images.flag, 0, 0);
+        popMatrix();
+        if(player.side === "Home"){
+            player.hasWon = true;
+        }
+    }
+    
+    fill(25);
+    text("player.x: " + player.x + "\nplayer.y: " + player.y + "\nplayer.side: " + player.side + "\nplayer.hasFlag: " + player.hasFlag + "\nflag.x: " + flag.x + "\nflag.y: " + flag.y + "\nplayer.hasWon: " + player.hasWon + "\nplayer.isTagged: " + player.isTagged, 20, 20);
 };
