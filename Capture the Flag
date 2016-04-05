@@ -2,6 +2,7 @@ imageMode(CENTER);
 textFont(createFont("Verdana"));
 
 var theMagicalDebugVariable = false;
+var howManyEnemies = 8;
 
 var keys = [];
 var keyPressed = function(){keys[keyCode] = true;};
@@ -62,14 +63,7 @@ var Enemy = function(baseX, baseY, baseSz){
     this.baseY = baseY;
     this.baseSz = baseSz;
 };
-var Enemies = [
-    new Enemy(random(0, 550), random(250), 150),
-    new Enemy(random(0, 550), random(250), 200),
-    new Enemy(random(0, 550), random(250), 150),
-    new Enemy(random(0, 550), random(250), 200),
-    new Enemy(random(0, 550), random(250), 150),
-    new Enemy(random(0, 550), random(250), 200),
-];
+var Enemies = [];
 Enemy.prototype.draw = function() {
     // (player.x + this.x), (player.y + this.y)
     
@@ -157,6 +151,9 @@ draw = function() {
     
     drawMap();
     
+    if(Enemies.length < howManyEnemies){
+        Enemies.push(new Enemy(random(0, 750), random(250), random(100, 500)));
+    }
     for(var i in Enemies){
         Enemies[i].draw();
     }
