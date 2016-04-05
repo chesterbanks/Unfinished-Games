@@ -1,0 +1,158 @@
+imageMode(CENTER);
+textFont(createFont("Verdana"));
+
+var keys = [];
+var keyPressed = function(){keys[keyCode] = true;};
+var keyReleased = function(){keys[keyCode] = false;};
+
+var images = {
+    "grass": function(){
+        noStroke();
+        fill(48, 201, 112);
+        rect(0, 0, 40, 40);
+        
+        for(var i = 0; i < 40; i ++){
+            stroke(0, 0, 0, i);
+            line(i, 0, i, 40);
+            line(0, i, 40, i);
+        }
+        
+        return get(0, 0, 40, 40);
+    },
+    "line": function(){
+        imageMode(CORNER);
+        image(images.grass, 0, 0);
+        
+        noStroke();
+        fill(199, 48, 48);
+        rect(0, 15, 40, 10);
+        fill(0, 0, 0, 30);
+        rect(0, 15, 40, 5);
+        imageMode(CENTER);
+        
+        return get(0, 0, 40, 40);
+    },
+};
+
+var player = {
+    x: 0,
+    y: 0,
+    speed: 5,
+    side: "Enemy",
+};
+
+var Enemy = function(baseX, baseY, baseSz){
+    this.x = baseX;
+    this.y = baseY;
+    this.baseX = baseX;
+    this.baseY = baseY;
+    this.baseSz = baseSz;
+};
+var Enemies = [
+    new Enemy(random(0, 550), random(280), 150),
+    new Enemy(random(0, 550), random(280), 200),
+];
+Enemy.prototype.draw = function() {
+    // (player.x + this.x), (player.y + this.y)
+    
+    noFill();
+    pushMatrix();
+    translate((player.x + this.x), (player.y + this.y));
+    rotate(atan2(200 - (player.y + this.y), 200 - (player.x + this.x)));
+    image(getImage("cute/EnemyBug"), 0, -9, 30, 60);
+    popMatrix();
+    
+    stroke(255, 0, 0, 100);
+    //ellipse(player.x + this.baseX, player.y + this.baseY, 3, 3);
+    ellipse(player.x + this.baseX, player.y + this.baseY, this.baseSz, this.baseSz);
+    
+    if(dist(player.x + this.baseX, player.y + this.baseY, 200, 200) < this.baseSz/2){
+        this.x += cos(atan2(200 - (player.y + this.y), 200 - (player.x + this.x))) * 2;
+        this.y += sin(atan2(200 - (player.y + this.y), 200 - (player.x + this.x))) * 2;
+    }
+};
+
+var course = [
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    'LLLLLLLLLLLLLLLLLLLL',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+];
+
+var drawMap = function(){
+    for(var i = 0; i < course.length; i ++){
+        for(var j = 0; j < course[i].length; j ++){
+            var letter = course[j][i].charAt();
+            
+            imageMode(CORNER);
+            switch(letter){
+                case 'L':
+                    image(images.line, player.x + i*40, player.y + j*40);
+                    break;
+                default:
+                    image(images.grass, player.x + i*40, player.y + j*40);
+                    break;
+            }
+            imageMode(CENTER);
+        }
+    }
+};
+
+draw = function() {
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    background(245);
+    
+    drawMap();
+    
+    for(var i in Enemies){
+        Enemies[i].draw();
+    }
+    
+    image(getImage("creatures/Winston"), 200, 200, 30, 30);
+    
+    if(keys[RIGHT]){
+        player.x -= player.speed;
+    }
+    if(keys[LEFT]){
+        player.x += player.speed;
+    }
+    if(keys[UP]){
+        player.y += player.speed;
+    }
+    if(keys[DOWN]){
+        player.y -= player.speed;
+    }
+    
+    if(player.y > -125){
+        player.side = "Enemy";
+    } else if(player.y < -195){
+        player.side = "Home";
+    } else {
+        player.side = "Line";
+    }
+    
+    fill(255);
+    text("player.x: " + player.x + "\nplayer.y: " + player.y + "\nplayer.side: " + player.side, 20, 20);
+};
