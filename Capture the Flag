@@ -1,6 +1,8 @@
 imageMode(CENTER);
 textFont(createFont("Verdana"));
+textAlign(CENTER, CENTER);
 
+var scene = "Pick";
 var theMagicalDebugVariable = false;
 var howManyEnemies = 8;
 
@@ -9,6 +11,22 @@ var keyPressed = function(){keys[keyCode] = true;};
 var keyReleased = function(){keys[keyCode] = false;};
 
 var images = {
+    "BG1": function(){
+        background(34, 179, 102);
+        
+        noStroke();
+        for(var i = 0; i < 400; i += 20){
+            for(var j = 0; j < 400; j += 20){
+                fill(0, 0, 0, random(100));
+                rect(i, j, 20, 20);
+            }
+        }
+        
+        filter(BLUR, 5);
+        
+        return get(0, 0, 400, 400);
+    },
+    
     "grass": function(){
         noStroke();
         fill(48, 201, 112);
@@ -53,8 +71,71 @@ var player = {
     hasFlag: false,
     hasWon: false,
     isTagged: false,
+    name: "Winston",
+    img: getImage("creatures/Winston"),
 };
 var flag = {};
+var Line = {};
+
+var playerBtn = function(x, y, name, img, speed){
+    this.x = x;
+    this.y = y;
+    this.w = 80;
+    this.h = 100;
+    this.name = name;
+    this.img = img;
+    this.speed = speed;
+    
+    this.brightness = 30;
+    this.over = false;
+    this.clicked = false;
+};
+var playerBtns = [
+    new playerBtn(50, 70, "Purple Pi", getImage("avatars/purple-pi"), 3),
+    new playerBtn(150, 70, "Winston", getImage("creatures/Winston"), 4),
+    new playerBtn(250, 70, "Hopper", getImage("creatures/Hopper-Happy"), 5),
+    new playerBtn(50, 180, "Donald", getImage("avatars/robot_male_2"), 6),
+    new playerBtn(150, 180, "Old Spice", getImage("avatars/old-spice-man"), 3),
+    new playerBtn(250, 180, "OJ Squid", getImage("avatars/orange-juice-squid"), 7),
+    new playerBtn(50, 290, "Mr. Pink", getImage("avatars/mr-pink"), 5),
+    new playerBtn(150, 290, "Mr. Pants", getImage("avatars/mr-pants"), 15),
+    new playerBtn(250, 290, "Spunky Sam", getImage("avatars/spunky-sam"), 3),
+];
+playerBtn.prototype.draw = function() {
+    this.over = false;
+    
+    if(mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h){
+        this.over = true;
+        if(mouseIsPressed){
+            this.clicked = true;
+        }
+    }
+    if(this.over){
+        this.brightness = 100;
+    } else {
+        this.brightness = 30;
+    }
+    
+    strokeWeight(5);
+    stroke(255, 255, 255, 100);
+    fill(255, 255, 255, this.brightness);
+    rect(this.x, this.y, this.w, this.h);
+    image(this.img, this.x+40, this.y+50, 70, 70);
+    pushMatrix();
+    translate(this.x+90, this.y+47);
+    rotate(90);
+    fill(255);
+    textSize(15);
+    text(this.name, 0, 0);
+    popMatrix();
+    
+    if(this.clicked){
+        player.speed = this.speed;
+        player.img = this.img;
+        player.name = this.name;
+        scene = "Play";
+    }
+};
 
 var Enemy = function(baseX, baseY, baseSz){
     this.x = baseX;
@@ -65,6 +146,7 @@ var Enemy = function(baseX, baseY, baseSz){
 };
 var Enemies = [];
 Enemy.prototype.draw = function() {
+    strokeWeight(1);
     // (player.x + this.x), (player.y + this.y)
     
     noFill();
@@ -81,35 +163,39 @@ Enemy.prototype.draw = function() {
     }
     
     if(dist(player.x + this.baseX, player.y + this.baseY, 200, 200) < this.baseSz/2){
-        this.x += cos(atan2(200 - (player.y + this.y), 200 - (player.x + this.x))) * 2;
-        this.y += sin(atan2(200 - (player.y + this.y), 200 - (player.x + this.x))) * 2;
+        this.x += cos(atan2(200 - (player.y + this.y), 200 - (player.x + this.x))) * 4;
+        this.y += sin(atan2(200 - (player.y + this.y), 200 - (player.x + this.x))) * 4;
     }
-    if(dist((player.x + this.x), (player.y + this.y), 200, 200) < 15){
+    if(dist((player.x + this.x), (player.y + this.y), 200, 200) < 15 && player.side === "Enemy"){
         player.isTagged = true;
     }
 };
 
 var course = [
-    '          F         ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    'LLLLLLLLLLLLLLLLLLLL',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
+    '                        ',
+    '          F             ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    'LLLLLLLLLLLLLLLLLLLLLLLL',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
+    '                        ',
 ];
 
 var drawMap = function(){
@@ -120,6 +206,7 @@ var drawMap = function(){
             imageMode(CORNER);
             switch(letter){
                 case 'L':
+                    Line.y = j*40;
                     image(images.line, player.x + i*40, player.y + j*40);
                     break;
                 case 'F':
@@ -147,65 +234,89 @@ draw = function() {
         }
     }
     
-    background(245);
-    
-    drawMap();
-    
-    if(Enemies.length < howManyEnemies){
-        Enemies.push(new Enemy(random(0, 750), random(250), random(100, 500)));
-    }
-    for(var i in Enemies){
-        Enemies[i].draw();
-    }
-    
-    image(getImage("creatures/Winston"), 200, 200, 30, 30);
-    
-    if(keys[RIGHT]){
-        player.x -= player.speed;
-    }
-    if(keys[LEFT]){
-        player.x += player.speed;
-    }
-    if(keys[UP]){
-        player.y += player.speed;
-    }
-    if(keys[DOWN]){
-        player.y -= player.speed;
-    }
-    
-    if(player.y > -125){
-        player.side = "Enemy";
-    } else if(player.y < -195){
-        player.side = "Home";
-    } else {
-        player.side = "Line";
-    }
-    
-    if(player.x < -180 && player.x > -250 && player.y < 215 && player.y > 145){
-        player.hasFlag = true;
+    if(scene === "Pick"){
+        background(245);
+        image(images.BG1, 200, 200);
         
-    }
-    if(player.hasFlag){
-        flag.x = 200;
-        flag.y = 200;
-        pushMatrix();
-        translate(220, 210);
-        rotate(4);
-        image(images.flag, 0, 0);
-        popMatrix();
-        if(player.side === "Home"){
-            player.hasWon = true;
+        fill(0, 0, 0, 50);
+        textSize(30);
+        text("PICK YOUR PLAYER", 205, 40);
+        fill(245);
+        text("PICK YOUR PLAYER", 200, 35);
+        
+        for(var i in playerBtns){
+            playerBtns[i].draw();
         }
     }
-    
-    if(theMagicalDebugVariable){
-        fill(25);
-        text("player.x: " + player.x + "\nplayer.y: " + player.y + "\nplayer.side: " + player.side + "\nplayer.hasFlag: " + player.hasFlag + "\nflag.x: " + flag.x + "\nflag.y: " + flag.y + "\nplayer.hasWon: " + player.hasWon + "\nplayer.isTagged: " + player.isTagged, 20, 20);
+    if(scene === "Play"){
+        background(245);
+        
+        drawMap();
+        
+        if(Enemies.length < howManyEnemies){
+            Enemies.push(new Enemy(random(0, 550), random(550), random(100, 400)));
+        }
+        for(var i in Enemies){
+            Enemies[i].draw();
+        }
+        
+        image(player.img, 200, 200, 30, 30);
+        
+        if(keys[RIGHT]){
+            player.x -= player.speed;
+        }
+        if(keys[LEFT]){
+            player.x += player.speed;
+        }
+        if(keys[UP]){
+            player.y += player.speed;
+        }
+        if(keys[DOWN]){
+            player.y -= player.speed;
+        }
+        
+        if(abs(player.y) + 150 > Line.y){
+            player.side = "Home";
+        } else if (abs(player.y) + 210 < Line.y){
+            player.side = "Enemy";
+        } else {
+            player.side = "Line";
+        }
+        
+        if(player.x < -180 && player.x > -250 && player.y < 215 && player.y > 145){
+            player.hasFlag = true;
+            
+        }
+        if(player.hasFlag){
+            flag.x = 200;
+            flag.y = 200;
+            pushMatrix();
+            translate(220, 210);
+            rotate(4);
+            image(images.flag, 0, 0);
+            popMatrix();
+            if(player.side === "Home"){
+                player.hasWon = true;
+            }
+        }
+        
+        if(theMagicalDebugVariable){
+            textSize(11);
+            fill(25);
+            text("player.x: " + player.x + "\nplayer.y: " + player.y + "\nplayer.side: " + player.side + "\nplayer.hasFlag: " + player.hasFlag + "\nflag.x: " + flag.x + "\nflag.y: " + flag.y + "\nplayer.hasWon: " + player.hasWon + "\nplayer.isTagged: " + player.isTagged + "\nline.y: " + Line.y, 200, 330);
+        }
+        
+        fill(255);
+        text("Project CTF1\nPage ID CTF_PL\nPress D to debug", 55, 375);
     }
 };
 
 var keyTyped = function(){
     if(key.toString().toUpperCase() === "D"){
-        theMagicalDebugVariable = true;
+        if(theMagicalDebugVariable){
+            theMagicalDebugVariable = false;
+        } else {
+            theMagicalDebugVariable = true;
+        }
     }
 };
