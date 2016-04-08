@@ -1,0 +1,97 @@
+textFont(createFont("Impact"));
+textAlign(CENTER, CENTER);
+rectMode(CENTER);
+
+var page = "Drill";
+var x = 0;
+var y = 0;
+
+var stars = [];
+var dirtSpecks = [];
+for(var i = 0; i < 500; i ++){
+    if(i < 100){
+        stars.push({
+            x: random(width),
+            y: random(189),
+            sz: random(5),
+            rot: random(360),
+        });
+    }
+    dirtSpecks.push({
+        x: random(width),
+        y: random(209, height),
+        sz: random(4),
+        rot: random(360),
+    });
+}
+
+var glowTxt = function(txt, x, y){
+    for(var i = 0; i < 360; i += 40){
+        fill(0, 0, 0, 20);
+        text(txt, x + sin(i)*5, y + cos(i)*5 + 20);
+    }
+    for(var i = 0; i < 360; i += 40){
+        fill(255, 255, 255, 20);
+        text(txt, x + sin(i)*15, y + cos(i)*15);
+    }
+    for(var i = 0; i < 360; i += 40){
+        fill(255, 213, 0);
+        text(txt, x + sin(i)*5, y + cos(i)*5);
+    }
+    for(var i = 0; i < 360; i += 40){
+        fill(0, 0, 0, 8);
+        text(txt, x + sin(i)*5, y + cos(i)*5);
+    }
+};
+
+
+draw = function() {
+    if(page === "Home"){
+        noStroke();
+        for(var i = 0; i < 200; i += 20){
+            fill(lerpColor(color(0, 0, 0), color(0, 57, 87), i/200));
+            rect(300, i, 600, 20);
+        }
+        
+        fill(122, 81, 20);
+        rect(300, 400, 600, 400);
+        fill(112, 184, 64);
+        rect(300, 200, 600, 10);
+        fill(135, 219, 79);
+        rect(300, 190, 600, 10);
+        
+        for(var i in stars){
+            pushMatrix();
+            translate(stars[i].x, stars[i].y);
+            rotate(stars[i].rot);
+            fill(255, 255, 255, stars[i].sz*25);
+            rect(0, 0, stars[i].sz, stars[i].sz);
+            popMatrix();
+        }
+        for(var i in dirtSpecks){
+            pushMatrix();
+            translate(dirtSpecks[i].x, dirtSpecks[i].y);
+            rotate(dirtSpecks[i].rot);
+            fill(0, 0, 0, dirtSpecks[i].sz*15);
+            rect(0, 0, dirtSpecks[i].sz, dirtSpecks[i].sz);
+            popMatrix();
+        }
+        
+        textSize(150);
+        textLeading(130);
+        glowTxt("MEGA  \n  DRILL", 300, 300);
+    }
+    if(page === "Drill"){
+        noStroke();
+        
+        fill(122, 81, 20);
+        rect(300, 300, 600, 600);
+        fill(112, 184, 64);
+        rect(300, y + 10, 600, 10);
+        fill(135, 219, 79);
+        rect(300, y + 0, 600, 10);
+        
+        fill(200);
+        triangle(280, 50, 320, 50, 300, 80);
+    }
+};
