@@ -80,8 +80,8 @@ var Line = {};
 var playerBtn = function(x, y, name, img, speed){
     this.x = x;
     this.y = y;
-    this.w = 80;
-    this.h = 100;
+    this.w = 50;
+    this.h = 50;
     this.name = name;
     this.img = img;
     this.speed = speed;
@@ -91,15 +91,40 @@ var playerBtn = function(x, y, name, img, speed){
     this.clicked = false;
 };
 var playerBtns = [
-    new playerBtn(50, 70, "Purple Pi", getImage("avatars/purple-pi"), 3),
-    new playerBtn(150, 70, "Winston", getImage("creatures/Winston"), 4),
-    new playerBtn(250, 70, "Hopper", getImage("creatures/Hopper-Happy"), 5),
-    new playerBtn(50, 180, "Donald", getImage("avatars/robot_male_2"), 6),
-    new playerBtn(150, 180, "Old Spice", getImage("avatars/old-spice-man"), 3),
-    new playerBtn(250, 180, "OJ Squid", getImage("avatars/orange-juice-squid"), 7),
-    new playerBtn(50, 290, "Mr. Pink", getImage("avatars/mr-pink"), 5),
-    new playerBtn(150, 290, "Mr. Pants", getImage("avatars/mr-pants"), 15),
-    new playerBtn(250, 290, "Spunky Sam", getImage("avatars/spunky-sam"), 3),
+    new playerBtn(25, 70, "Purple Pi", getImage("avatars/leafers-seed"), 3),
+    new playerBtn(85, 70, "Winston", getImage("avatars/piceratops-seed"), 4),
+    new playerBtn(145, 70, "Hopper", getImage("avatars/aqualine-seed"), 5),
+    new playerBtn(205, 70, "Donald", getImage("avatars/duskpin-seed"), 6),
+    new playerBtn(265, 70, "Old Spice", getImage("avatars/primosaur-seed"), 3),
+    new playerBtn(325, 70, "OJ Squid", getImage("avatars/starky-seed"), 7),
+    
+    new playerBtn(25, 130, "Purple Pi", getImage("avatars/leafers-seedling"), 3),
+    new playerBtn(85, 130, "Winston", getImage("avatars/piceratops-seedling"), 4),
+    new playerBtn(145, 130, "Hopper", getImage("avatars/aqualine-seedling"), 5),
+    new playerBtn(205, 130, "Donald", getImage("avatars/duskpin-seedling"), 6),
+    new playerBtn(265, 130, "Old Spice", getImage("avatars/primosaur-seedling"), 3),
+    new playerBtn(325, 130, "OJ Squid", getImage("avatars/starky-seedling"), 7),
+    
+    new playerBtn(25, 190, "Purple Pi", getImage("avatars/leafers-sapling"), 3),
+    new playerBtn(85, 190, "Winston", getImage("avatars/piceratops-sapling"), 4),
+    new playerBtn(145, 190, "Hopper", getImage("avatars/aqualine-sapling"), 5),
+    new playerBtn(205, 190, "Donald", getImage("avatars/duskpin-sapling"), 6),
+    new playerBtn(265, 190, "Old Spice", getImage("avatars/primosaur-sapling"), 3),
+    new playerBtn(325, 190, "OJ Squid", getImage("avatars/starky-sapling"), 7),
+    
+    new playerBtn(25, 250, "Purple Pi", getImage("avatars/leafers-tree"), 3),
+    new playerBtn(85, 250, "Winston", getImage("avatars/piceratops-tree"), 4),
+    new playerBtn(145, 250, "Hopper", getImage("avatars/aqualine-tree"), 5),
+    new playerBtn(205, 250, "Donald", getImage("avatars/duskpin-tree"), 6),
+    new playerBtn(265, 250, "Old Spice", getImage("avatars/primosaur-tree"), 3),
+    new playerBtn(325, 250, "OJ Squid", getImage("avatars/starky-tree"), 7),
+    
+    new playerBtn(25, 310, "Purple Pi", getImage("avatars/leafers-ultimate"), 3),
+    new playerBtn(85, 310, "Winston", getImage("avatars/piceratops-ultimate"), 4),
+    new playerBtn(145, 310, "Hopper", getImage("avatars/aqualine-ultimate"), 5),
+    new playerBtn(205, 310, "Donald", getImage("avatars/duskpin-ultimate"), 6),
+    new playerBtn(265, 310, "Old Spice", getImage("avatars/primosaur-ultimate"), 3),
+    new playerBtn(325, 310, "OJ Squid", getImage("avatars/starky-ultimate"), 7),
 ];
 playerBtn.prototype.draw = function() {
     this.over = false;
@@ -116,18 +141,11 @@ playerBtn.prototype.draw = function() {
         this.brightness = 30;
     }
     
-    strokeWeight(5);
+    strokeWeight(3);
     stroke(255, 255, 255, 100);
     fill(255, 255, 255, this.brightness);
     rect(this.x, this.y, this.w, this.h);
-    image(this.img, this.x+40, this.y+50, 70, 70);
-    pushMatrix();
-    translate(this.x+90, this.y+47);
-    rotate(90);
-    fill(255);
-    textSize(15);
-    text(this.name, 0, 0);
-    popMatrix();
+    image(this.img, this.x+(this.w/2), this.y+(this.h/2), 40, 40);
     
     if(this.clicked){
         player.speed = this.speed;
