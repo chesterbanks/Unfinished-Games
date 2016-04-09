@@ -1,0 +1,208 @@
+/**
+ * Name of the Game
+ * 
+ * Instructions:
+    The point of the game is to survive as long as possible.
+    Hit the space bar or mouse button to switch a ball's direction.
+    Avoid the edges and falling pineapples.
+    Then enjoy!
+    
+    It's THAT easy!
+*/
+
+var scene = "Home";
+var score = 0;
+
+var clicked = false;
+
+textFont(createFont("Futura"));
+textAlign(CENTER, CENTER);
+rectMode(CENTER);
+
+var dirt = [];
+for(var i = 0; i < width+20; i += 20){
+    for(var j = 0; j < height; j += 20){
+        dirt.push({
+            x: i,
+            y: 10 + j, 
+            br: random(30),
+            sz: random(50),
+        });
+    }
+}
+
+var fruit = function(y, type){
+    this.x = random(100, 300);
+    this.y = y;
+    this.type = type;
+    
+    this.possibleSpeeds = [-1, 1];
+    this.speed = this.possibleSpeeds[floor(random(0, this.possibleSpeeds.length))];
+    
+    this.possibleHues = [
+        color(222, 44, 44),
+        color(38, 111, 171),
+        color(119, 24, 196),
+        color(221, 224, 22),
+        color(20, 199, 58),
+        color(230, 134, 25),
+    ];
+    this.hue = this.possibleHues[floor(random(0, this.possibleHues.length))];
+};
+fruit.prototype.draw = function() {
+    strokeWeight(1);
+    stroke(0, 0, 0, 50);
+    noFill();
+    if(mouseY > this.y-40 && mouseY < this.y+40){
+        fill(0, 0, 0, 50);
+    }
+    rect(width/2, this.y, width, 80);
+    
+    pushMatrix();
+    translate(this.x, this.y);
+    pushMatrix();
+    translate(0, 25);
+    rotate(atan2(this.y, this.x - 200));
+    fill(105, 54, 0);
+    for(var i = 0; i < 220; i += 5){
+        strokeCap(SQUARE);
+        strokeWeight(5);
+        stroke(0, 0, 0, 105 - i);
+        line(i, 15, i, -15);
+    }
+    noStroke();
+    popMatrix();
+    colorMode(HSB);
+    fill(this.hue);
+    ellipse(0, 25, 30, 30);
+    colorMode(RGB);
+    fill(0, 0, 0, 30);
+    arc(0, 25, 30, 30, -90, 90);
+    fill(0, 0, 0);
+    if(this.speed < 0){
+        ellipse(-8, 30, 3, 5);
+        ellipse(-2, 30, 3, 5);
+    } else {
+        ellipse(8, 30, 3, 5);
+    ellipse(2, 30, 3, 5);
+    }
+    popMatrix();
+    
+    this.x += this.speed;
+    if(this.x > width - 15 || this.x < 15 || clicked && mouseY > this.y-40 && mouseY < this.y+40){
+        this.speed = -this.speed;
+    }
+};
+
+var fruits = [
+    new fruit(40),
+    new fruit(120),
+    new fruit(200),
+    new fruit(280),
+    new fruit(360),
+];
+
+var button = function(x, y, txt, w, h, n, tSize){
+    this.x = x;
+    this.y = y;
+    this.txt = txt;
+    this.trans = 20;
+    this.tSp = 20;
+    this.txtColor = 255;
+    this.w = w;
+    this.h = h;
+    this.n = n;
+    this.tSize = tSize;
+};
+button.prototype.draw = function() {
+    stroke(255); // White stroke
+    strokeWeight(2); // Thin stroke
+    fill(255, 255, 255, this.trans); // Fill it white with the current transparency (20)
+    rect(this.x, this.y, this.w, this.h,
+    0, 15, 0, 15); // Draw button
+    this.trans += this.tSp; // Transparency rising with the transparency speed (which is -20)
+    fill(this.txtColor, this.txtColor, this.txtColor); // Text color
+    this.txtColor -= this.tSp; // Text color decreasing with the transparency speed (which is -20)
+    textSize(this.tSize); // Text size
+    text(this.txt, this.x, this.y);
+    /* Checks if mouse is in button */
+    if(mouseX > this.x - this.w/2 && mouseX < this.x + this.w/2 && mouseY > this.y - this.h/2 && mouseY < this.y + this.h/2){
+        this.tSp = 10; // If mouse is in button, then set transparency speed to +10
+        if(mouseIsPressed){ // If mouse is pressed,
+            this.trans = 0; // Transparency is zero
+            this.txtColor = 255; // Text color is white
+            scene = this.n; // And we're off the current page.
+        }
+    } else { // If mouse isn't in button
+        this.tSp = -10; // Set transparency speed to -10
+        this.txtColor = 255; // And text color to white
+    }
+    if(this.trans > 255){ // If transparency is any more than 255,
+        this.trans = 255; // Then it will return back to 255.
+    }
+    if(this.trans < 20){ // If transparency is any less than 20,
+        this.trans = 20; // Then it will return back to 20.
+    }
+};
+var buttons = [
+    new button(200, 240, "START", 180, 60, "Play", 30),
+    new button(200, 300, "INSTRUCTIONS", 180, 40, "How", 20),
+    new button(200, 350, "CREDITS", 180, 40, "Creds", 20),
+    new button(60, 370, "BACK", 50, 20, "Menu", 13),
+];
+
+draw = function() {
+    if(scene === "Home"){
+        background(102, 56, 6);
+        for(var i in dirt){
+            noStroke();
+            if(dirt[i].y < 80 || (dirt[i].y > 160 && dirt[i].y < 240) || dirt[i].y > 320){
+                fill(0, 0, 0, dirt[i].br + 20);
+            } else {
+                fill(0, 0, 0, dirt[i].br);
+            }
+            rect(dirt[i].x, dirt[i].y, 20, 20);
+            //rect(dirt[i].x, dirt[i].y, dirt[i].sz + sin(i+frameCount*5)*10, dirt[i].sz+ sin(j+frameCount*5)*10);
+        }
+        
+        textSize(100);
+        textLeading(55);
+        fill(255, 255, 255);
+        for(var angle = 0; angle < 360; angle += 40){
+            text("game \n  name", sin(angle)*2 + 200, cos(angle)*2 + 100);
+        }
+        fill(189, 194, 54);
+        text("game \n  name", width/2, 100);
+        
+        buttons[0].draw();
+        buttons[1].draw();
+        buttons[2].draw();
+    }
+    if(scene === "Play"){
+        background(102, 56, 6);
+        for(var i in dirt){
+            noStroke();
+            if(dirt[i].y < 80 || (dirt[i].y > 160 && dirt[i].y < 240) || dirt[i].y > 320){
+                fill(0, 0, 0, dirt[i].br + 20);
+            } else {
+                fill(0, 0, 0, dirt[i].br);
+            }
+            rect(dirt[i].x, dirt[i].y, 20, 20);
+        }
+        
+        textSize(100);
+        text(score.toFixed(0), 200, 200);
+        
+        for(var i in fruits){
+            fruits[i].draw();
+        }
+        
+        score+=0.01;
+    }
+    
+    clicked = false;
+};
+
+mouseClicked = function(){
+    clicked = true;
+};
