@@ -4,7 +4,7 @@
  * Instructions:
     The point of the game is to survive as long as possible.
     Hit the space bar or mouse button to switch a ball's direction.
-    Avoid the edges and falling pineapples.
+    Avoid the edges and falling pineapples (don't ask).
     Then enjoy!
     
     It's THAT easy!
@@ -89,8 +89,11 @@ fruit.prototype.draw = function() {
     popMatrix();
     
     this.x += this.speed;
-    if(this.x > width - 15 || this.x < 15 || clicked && mouseY > this.y-40 && mouseY < this.y+40){
+    if(/*this.x > width - 15 || this.x < 15 || */clicked && mouseY > this.y-40 && mouseY < this.y+40){
         this.speed = -this.speed;
+    }
+    if(this.x > width - 15 || this.x < 15){
+        scene = "Lose";
     }
 };
 
@@ -148,49 +151,93 @@ var buttons = [
     new button(200, 240, "START", 180, 60, "Play", 30),
     new button(200, 300, "INSTRUCTIONS", 180, 40, "How", 20),
     new button(200, 350, "CREDITS", 180, 40, "Creds", 20),
-    new button(60, 370, "BACK", 50, 20, "Menu", 13),
+    new button(60, 370, "BACK", 50, 20, "Home", 13),
 ];
+
+var BG = function(){
+    background(217, 0, 0);
+    noStroke();
+    fill(255, 0, 0);
+    quad(0, 280, 300, 50, 450, -40, 400, 100); 
+    fill(39, 148, 184);
+    triangle(-150, 400, 400, 400, 400, 120);
+    fill(0, 0, 0, 30);
+    triangle(210, 0, 400, 0, 400, 420);
+    fill(255);
+    quad(400, 50, 400, 150, 0, 340, 0, 280);
+    fill(25);
+    quad(400, 60, 400, 150, 0, 340, 0, 320);
+    fill(255, 255, 255, 20);
+    quad(400, 90, 400, 150, 0, 340, 0, 340);
+    /*background(12, 156, 48);
+    for(var i in dirt){
+        noStroke();
+        if(dirt[i].y < 80 || (dirt[i].y > 160 && dirt[i].y < 240) || dirt[i].y > 320){
+            fill(0, 0, 0, dirt[i].br + 20);
+        } else {
+            fill(0, 0, 0, dirt[i].br);
+        }
+        rect(dirt[i].x, dirt[i].y, 20, 20);
+        //rect(dirt[i].x, dirt[i].y, dirt[i].sz + sin(i+frameCount*5)*10, dirt[i].sz+ sin(j+frameCount*5)*10);
+    }*/
+};
 
 draw = function() {
     if(scene === "Home"){
-        background(102, 56, 6);
-        for(var i in dirt){
-            noStroke();
-            if(dirt[i].y < 80 || (dirt[i].y > 160 && dirt[i].y < 240) || dirt[i].y > 320){
-                fill(0, 0, 0, dirt[i].br + 20);
-            } else {
-                fill(0, 0, 0, dirt[i].br);
-            }
-            rect(dirt[i].x, dirt[i].y, 20, 20);
-            //rect(dirt[i].x, dirt[i].y, dirt[i].sz + sin(i+frameCount*5)*10, dirt[i].sz+ sin(j+frameCount*5)*10);
-        }
+        BG();
         
         textSize(100);
         textLeading(55);
-        fill(255, 255, 255);
         for(var angle = 0; angle < 360; angle += 40){
-            text("game \n  name", sin(angle)*2 + 200, cos(angle)*2 + 100);
+            fill(255, 255, 255, 50);
+            text("game \n  name", sin(angle)*10 + 200, cos(angle)*10 + 100);
+            fill(0, 0, 0);
+            text("game \n  name", sin(angle)*3 + 200, cos(angle)*3 + 100);
         }
-        fill(189, 194, 54);
+        fill(199, 194, 52);
         text("game \n  name", width/2, 100);
         
         buttons[0].draw();
         buttons[1].draw();
         buttons[2].draw();
     }
-    if(scene === "Play"){
-        background(102, 56, 6);
-        for(var i in dirt){
-            noStroke();
-            if(dirt[i].y < 80 || (dirt[i].y > 160 && dirt[i].y < 240) || dirt[i].y > 320){
-                fill(0, 0, 0, dirt[i].br + 20);
-            } else {
-                fill(0, 0, 0, dirt[i].br);
-            }
-            rect(dirt[i].x, dirt[i].y, 20, 20);
-        }
+    if(scene === "How"){
+        BG();
+        
+        fill(25);
+        textSize(40);
+        text("how to play", 200, 50);
+        strokeWeight(2);
+        stroke(25);
+        line(90, 75, 310, 75);
+        textSize(15);
+        text("The point of the game is to survive as long\nas possible.\n\nHit the mouse button or tap the screen to\nchange a ball's direction.\n\nAvoid the edges and the falling pineapples.\n\nThen enjoy!\n\nIt's THAT easy!", 200, 220);
+        buttons[3].draw();
+    }
+    if(scene === "Creds"){
+        BG();
         
         textSize(100);
+        textLeading(55);
+        for(var angle = 0; angle < 360; angle += 40){
+            fill(255, 255, 255, 50);
+            text("game \n  name", sin(angle)*10 + 200, cos(angle)*10 + 100);
+            fill(0, 0, 0);
+            text("game \n  name", sin(angle)*3 + 200, cos(angle)*3 + 100);
+        }
+        fill(255, 255, 255);
+        text("game \n  name", width/2, 100);
+        
+        buttons[0].draw();
+        buttons[1].draw();
+        buttons[2].draw();
+    }
+    
+    if(scene === "Play"){
+        BG();
+        
+        fill(0, 0, 0, 60);
+        textSize(55);
         text(score.toFixed(0), 200, 200);
         
         for(var i in fruits){
@@ -198,6 +245,27 @@ draw = function() {
         }
         
         score+=0.01;
+    }
+    if(scene === "Lose"){
+        BG();
+        
+        fill(255);
+        textSize(30);
+        text("your final score was:", 200, 100);
+        text("click to play again", 200, 300);
+        textSize(150);
+        text(score.toFixed(0), 200, 200);
+        if(clicked){
+            score = 0; 
+            fruits = [
+                new fruit(40),
+                new fruit(120),
+                new fruit(200),
+                new fruit(280),
+                new fruit(360),
+            ];
+            scene = "Play";
+        }
     }
     
     clicked = false;
