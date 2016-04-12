@@ -15,28 +15,15 @@ var score = 0;
 
 var clicked = false;
 
-textFont(createFont("Futura"));
+textFont(createFont("Trebuchet MS"));
 textAlign(CENTER, CENTER);
 rectMode(CENTER);
 
-var dirt = [];
-for(var i = 0; i < width+20; i += 20){
-    for(var j = 0; j < height; j += 20){
-        dirt.push({
-            x: i,
-            y: 10 + j, 
-            br: random(30),
-            sz: random(50),
-        });
-    }
-}
-
-var fruit = function(y, type){
+var dude = function(y){
     this.x = random(100, 300);
     this.y = y;
-    this.type = type;
     
-    this.possibleSpeeds = [-1, 1];
+    this.possibleSpeeds = [-0.5, 0.5];
     this.speed = this.possibleSpeeds[floor(random(0, this.possibleSpeeds.length))];
     
     this.possibleHues = [
@@ -49,7 +36,7 @@ var fruit = function(y, type){
     ];
     this.hue = this.possibleHues[floor(random(0, this.possibleHues.length))];
 };
-fruit.prototype.draw = function() {
+dude.prototype.draw = function() {
     strokeWeight(1);
     stroke(0, 0, 0, 50);
     noFill();
@@ -96,14 +83,22 @@ fruit.prototype.draw = function() {
         scene = "Lose";
     }
 };
-
-var fruits = [
-    new fruit(40),
-    new fruit(120),
-    new fruit(200),
-    new fruit(280),
-    new fruit(360),
+var dudes = [
+    new dude(40),
+    new dude(120),
+    new dude(200),
+    new dude(280),
+    new dude(360),
 ];
+
+var pineapple = function(){
+    this.x = random(400);
+    this.y = random(-400);
+    this.speed = random(1, 3);
+};
+pineapple.prototype.draw = function() {
+    
+};
 
 var button = function(x, y, txt, w, h, n, tSize){
     this.x = x;
@@ -131,9 +126,19 @@ button.prototype.draw = function() {
     /* Checks if mouse is in button */
     if(mouseX > this.x - this.w/2 && mouseX < this.x + this.w/2 && mouseY > this.y - this.h/2 && mouseY < this.y + this.h/2){
         this.tSp = 10; // If mouse is in button, then set transparency speed to +10
-        if(mouseIsPressed){ // If mouse is pressed,
+        if(clicked){ // If mouse is clicked,
             this.trans = 0; // Transparency is zero
             this.txtColor = 255; // Text color is white
+            if(this.txt === "PLAY AGAIN"){
+                score = 0; 
+                dudes = [
+                    new dude(40),
+                    new dude(120),
+                    new dude(200),
+                    new dude(280),
+                    new dude(360),
+                ];
+            }
             scene = this.n; // And we're off the current page.
         }
     } else { // If mouse isn't in button
@@ -152,14 +157,39 @@ var buttons = [
     new button(200, 300, "INSTRUCTIONS", 180, 40, "How", 20),
     new button(200, 350, "CREDITS", 180, 40, "Creds", 20),
     new button(60, 370, "BACK", 50, 20, "Home", 13),
+    
+    new button(200, 325, "PLAY AGAIN", 180, 60, "Home", 20),
 ];
 
 var BG = function(){
-    background(217, 0, 0);
+    for(var i = 0; i < width+5; i += 5){
+        strokeWeight(5);
+        stroke(lerpColor(
+            color(10, 140, 123),
+            color(12, 173, 93),
+            i/height));
+        line(i, 0, i, height);
+    }
+    for(var i = -250; i < 275; i += 100){
+        pushMatrix();
+        translate(width/2, height/2);
+        rotate(15);
+        strokeWeight(10);
+        stroke(255, 255, 255, 60);
+        line(-250, i, 250, i);
+        line(i, -250, i, 250);
+        noStroke();
+        fill(255, 255, 255, 30);
+        for(var j  = -250; j < 250; j += 100){
+            triangle(i, j, i, j+100, i-100, j);
+        }
+        popMatrix();
+    }
+    /*background(158, 6, 6);
     noStroke();
-    fill(255, 0, 0);
+    fill(156, 19, 19);
     quad(0, 280, 300, 50, 450, -40, 400, 100); 
-    fill(39, 148, 184);
+    fill(0, 86, 112);
     triangle(-150, 400, 400, 400, 400, 120);
     fill(0, 0, 0, 30);
     triangle(210, 0, 400, 0, 400, 420);
@@ -168,7 +198,7 @@ var BG = function(){
     fill(25);
     quad(400, 60, 400, 150, 0, 340, 0, 320);
     fill(255, 255, 255, 20);
-    quad(400, 90, 400, 150, 0, 340, 0, 340);
+    quad(400, 90, 400, 150, 0, 340, 0, 340);*/
     /*background(12, 156, 48);
     for(var i in dirt){
         noStroke();
@@ -189,12 +219,12 @@ draw = function() {
         textSize(100);
         textLeading(55);
         for(var angle = 0; angle < 360; angle += 40){
-            fill(255, 255, 255, 50);
+            fill(0, 0, 0, 20);
             text("game \n  name", sin(angle)*10 + 200, cos(angle)*10 + 100);
             fill(0, 0, 0);
-            text("game \n  name", sin(angle)*3 + 200, cos(angle)*3 + 100);
+            //text("game \n  name", sin(angle)*3 + 200, cos(angle)*3 + 100);
         }
-        fill(199, 194, 52);
+        fill(255, 255, 255);
         text("game \n  name", width/2, 100);
         
         buttons[0].draw();
@@ -206,7 +236,7 @@ draw = function() {
         
         fill(25);
         textSize(40);
-        text("how to play", 200, 50);
+        text("How to Play", 200, 50);
         strokeWeight(2);
         stroke(25);
         line(90, 75, 310, 75);
@@ -217,20 +247,7 @@ draw = function() {
     if(scene === "Creds"){
         BG();
         
-        textSize(100);
-        textLeading(55);
-        for(var angle = 0; angle < 360; angle += 40){
-            fill(255, 255, 255, 50);
-            text("game \n  name", sin(angle)*10 + 200, cos(angle)*10 + 100);
-            fill(0, 0, 0);
-            text("game \n  name", sin(angle)*3 + 200, cos(angle)*3 + 100);
-        }
-        fill(255, 255, 255);
-        text("game \n  name", width/2, 100);
-        
-        buttons[0].draw();
-        buttons[1].draw();
-        buttons[2].draw();
+        buttons[3].draw();
     }
     
     if(scene === "Play"){
@@ -240,8 +257,8 @@ draw = function() {
         textSize(55);
         text(score.toFixed(0), 200, 200);
         
-        for(var i in fruits){
-            fruits[i].draw();
+        for(var i in dudes){
+            dudes[i].draw();
         }
         
         score+=0.01;
@@ -252,20 +269,10 @@ draw = function() {
         fill(255);
         textSize(30);
         text("your final score was:", 200, 100);
-        text("click to play again", 200, 300);
         textSize(150);
         text(score.toFixed(0), 200, 200);
-        if(clicked){
-            score = 0; 
-            fruits = [
-                new fruit(40),
-                new fruit(120),
-                new fruit(200),
-                new fruit(280),
-                new fruit(360),
-            ];
-            scene = "Play";
-        }
+        
+        buttons[4].draw();
     }
     
     clicked = false;
