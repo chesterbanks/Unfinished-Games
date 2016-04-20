@@ -5,11 +5,15 @@ var clicked = false;
 
 var data = {
     tools: 0,
-    money: 0,
+    money: 40,
 };
 
 var blockSettings = {
     adding: false,
+    
+    shedPrice: 10,
+    farmPrice: 20,
+    upgradePricesPrice: 10,
 };
 var block = function(x, y, which){
     this.x = x;
@@ -139,7 +143,7 @@ block.prototype.draw = function() {
 };
 var blocks = [];
 
-var buildButton = function(x, y, w, h, whatToBuild){
+var buildButton = function(x, y, w, h, whatToBuild, price){
     strokeWeight(3);
     stroke(153);
     fill(153);
@@ -148,12 +152,25 @@ var buildButton = function(x, y, w, h, whatToBuild){
         fill(209);
         rect(x, y+5, w, h);
         fill(153);
-        textSize(30);
-        text(whatToBuild, x+(w/2), y+(h/2)+5);
+        textSize(20);
+        if(whatToBuild==='Upgrade prices'){textSize(15);}
+        text(whatToBuild + ": $" + price, x+(w/2), y+(h/2)+5);
         if(clicked){
             for(var i in blocks){
-                if(blocks[i].selected){
-                    blocks[i].which = whatToBuild;
+                if(blocks[i].selected && data.money >= price && whatToBuild){
+                    if(whatToBuild !== 'Upgrade prices'){
+                        blocks[i].which = whatToBuild;
+                        data.money -= price;
+                        blocks[i].selected = false;
+                    }
+                } else {
+                    blocks[i].selected = false;
+                }
+                if(whatToBuild === 'Upgrade prices' && data.tools >= price){
+                    blockSettings.shedPrice -= 2;
+                    blockSettings.farmPrice -= 2;
+                    blockSettings.upgradePricesPrice += 10;
+                    data.tools -= price;
                     blocks[i].selected = false;
                 }
             }
@@ -163,8 +180,9 @@ var buildButton = function(x, y, w, h, whatToBuild){
         fill(209);
         rect(x, y, w, h);
         fill(153);
-        textSize(30);
-        text(whatToBuild, x+(w/2), y+(h/2));
+        textSize(20);
+        if(whatToBuild==='Upgrade prices'){textSize(15);}
+        text(whatToBuild + ": $" + price, x+(w/2), y+(h/2));
     }
 };
 
@@ -189,9 +207,10 @@ draw = function() {
         textSize(50);
         text('BUILD A:', 200, 50);
         
-        buildButton(120, 130, 160, 50, 'Shed');
-        buildButton(120, 195, 160, 50, 'Desert');
-        buildButton(120, 260, 160, 50, 'Farm');
+        buildButton(120, 130, 160, 50, 'Shed', blockSettings.shedPrice);
+        buildButton(120, 195, 160, 50, 'Desert', 0);
+        buildButton(120, 260, 160, 50, 'Farm', blockSettings.farmPrice);
+        buildButton(120, 325, 160, 30, 'Upgrade prices', blockSettings.upgradePricesPrice);
     }
     
     fill(255);
