@@ -1,0 +1,206 @@
+textAlign(CENTER, CENTER);
+textFont(createFont("Avenir"));
+
+var clicked = false;
+
+var data = {
+    tools: 0,
+    money: 0,
+};
+
+var blockSettings = {
+    adding: false,
+};
+var block = function(x, y, which){
+    this.x = x;
+    this.y = y;
+    this.which = which;
+    
+    this.br = random(1, 30);
+    this.selected = false;
+    
+    this.shedTimer = 0;
+    this.farmTimer = 0;
+};
+block.prototype.draw = function() {
+    noStroke();
+    switch(this.which){
+        case 'Grass':
+            fill(0, 0, 0, this.br);
+            rect(this.x, this.y, 50, 50);
+            fill(0, 0, 0, this.br/2);
+            triangle(this.x, this.y, this.x + 50, this.y, this.x, this.y + 50);
+            if(mouseX > this.x && mouseX < this.x + 50 && mouseY > this.y && mouseY < this.y + 50 && !blockSettings.adding){
+                strokeWeight(5);
+                stroke(255, 255, 0, 100);
+                fill(255, 255, 255, 30);
+                rect(this.x, this.y, 50, 50);
+                if(clicked){
+                    this.selected = true;
+                    blockSettings.adding = true;
+                }
+            }
+            break;
+        case 'Shed':
+            fill(173, 118, 29);
+            rect(this.x, this.y, 50, 50);
+            fill(0, 0, 0, this.br/2);
+            triangle(this.x, this.y, this.x + 50, this.y, this.x, this.y + 50);
+            pushMatrix();
+            translate(this.x + 25, this.y + 25);
+            rotate(-45);
+            fill(0, 0, 0, 100);
+            textSize(15);
+            text('SHED', 0, 0);
+            popMatrix();
+            this.shedTimer += 0.5;
+            if(this.shedTimer > 100){
+                pushMatrix();
+                translate(this.x + 25, this.y + 25);
+                for(var i = 0; i < 50; i += 5){
+                    fill(255, 255, 255, 10);
+                    ellipse(0, 0, i, i);
+                }
+                rectMode(CENTER);
+                rotate(-15);
+                fill(156, 156, 156);
+                rect(0, 0, 5, 30);
+                fill(201, 201, 201);
+                (rect)(0, -10, 20, 11, 0, 5, 5, 0);
+                rectMode(CORNER);
+                popMatrix();
+                if(mouseX > this.x && mouseX < this.x + 50 && mouseY > this.y && mouseY < this.y + 50 && !blockSettings.adding){
+                    strokeWeight(5);
+                    stroke(255, 255, 0, 100);
+                    fill(255, 255, 255, 60);
+                    rect(this.x, this.y, 50, 50);
+                    if(clicked){
+                        data.tools ++;
+                        this.shedTimer = 0;
+                    }
+                }
+            }
+            break;
+        case 'Desert':
+            fill(214, 219, 70);
+            rect(this.x, this.y, 50, 50);
+            fill(0, 0, 0, this.br/2);
+            triangle(this.x, this.y, this.x + 50, this.y, this.x, this.y + 50);
+            pushMatrix();
+            translate(this.x + 25, this.y + 25);
+            rotate(-45);
+            fill(0, 0, 0, 100);
+            textSize(15);
+            text('DESERT', 0, 0);
+            popMatrix();
+            break;
+        case 'Farm':
+            fill(10, 130, 30);
+            rect(this.x, this.y, 50, 50);
+            fill(0, 0, 0, this.br);
+            triangle(this.x, this.y, this.x + 50, this.y, this.x, this.y + 50);
+            pushMatrix();
+            translate(this.x + 25, this.y + 25);
+            rotate(-45);
+            fill(0, 0, 0, 100);
+            textSize(15);
+            text('FARM', 0, 0);
+            popMatrix();
+            this.farmTimer += 0.5;
+            if(this.farmTimer > 100){
+                pushMatrix();
+                translate(this.x + 25, this.y + 25);
+                for(var i = 0; i < 50; i += 5){
+                    fill(255, 255, 255, 10);
+                    ellipse(0, 0, i, i);
+                }
+                fill(238, 255, 0);
+                ellipse(-10, -5, 15, 15);
+                ellipse(10, 5, 15, 15);
+                ellipse(0, 0, 20, 20);
+                fill(0, 0, 0, 30);
+                arc(-10, -5, 15, 15, -90, 90);
+                arc(10, 5, 15, 15, -90, 90);
+                arc(0, 0, 20, 20, -90, 90);
+                popMatrix();
+                if(mouseX > this.x && mouseX < this.x + 50 && mouseY > this.y && mouseY < this.y + 50 && !blockSettings.adding){
+                    strokeWeight(5);
+                    stroke(255, 255, 0, 100);
+                    fill(255, 255, 255, 60);
+                    rect(this.x, this.y, 50, 50);
+                    if(clicked){
+                        data.money ++;
+                        this.farmTimer = 0;
+                    }
+                }
+            }
+            break;
+    }
+};
+var blocks = [];
+
+var buildButton = function(x, y, w, h, whatToBuild){
+    strokeWeight(3);
+    stroke(153);
+    fill(153);
+    rect(x, y+5, w, h);
+    if(mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h){
+        fill(209);
+        rect(x, y+5, w, h);
+        fill(153);
+        textSize(30);
+        text(whatToBuild, x+(w/2), y+(h/2)+5);
+        if(clicked){
+            for(var i in blocks){
+                if(blocks[i].selected){
+                    blocks[i].which = whatToBuild;
+                    blocks[i].selected = false;
+                }
+            }
+            blockSettings.adding = false;
+        }
+    } else {
+        fill(209);
+        rect(x, y, w, h);
+        fill(153);
+        textSize(30);
+        text(whatToBuild, x+(w/2), y+(h/2));
+    }
+};
+
+for(var i = 0; i < width; i += 50){
+    for(var j = 0; j < height; j += 50){
+        blocks.push(new block(i, j, 'Grass'));
+    }
+}
+
+draw = function() {
+    background(28, 196, 67);
+    
+    for(var i in blocks){
+        blocks[i].draw();
+    }
+    
+    if(blockSettings.adding){
+        fill(0, 0, 0, 30);
+        rect(0, 0, width, height);
+        
+        fill(255);
+        textSize(50);
+        text('BUILD A:', 200, 50);
+        
+        buildButton(120, 130, 160, 50, 'Shed');
+        buildButton(120, 195, 160, 50, 'Desert');
+        buildButton(120, 260, 160, 50, 'Farm');
+    }
+    
+    fill(255);
+    textSize(15);
+    text("Tools: " + data.tools + "\nMoney: " + data.money, 40, 25);
+    
+    clicked = false;
+};
+
+var mouseReleased = function(){
+    clicked = true;
+};
