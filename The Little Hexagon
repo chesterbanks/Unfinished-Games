@@ -1,0 +1,387 @@
+/** 
+ * The Little Hexagon
+ * Proxima Programming
+ * April 10 2016
+ * 
+ * @INSTRUCTIONS
+    Press to duck
+    Release to jump
+    You can jump thrice
+    Avoid buzzsaws and overhangs
+    Grab coins
+    Buy more characters with coins
+    
+ * @CREDITS (listed in order of most work done)
+    Chester Banks
+    17mloges
+    Stargazer
+    Everyone else at TA
+
+ * @CHARACTERS
+    Zipp (0$) - You start out with him. Only single jump, and no powers.
+    Jag (100$) - Double jump
+    Medo (300$) - Double jump, and temporary shield
+    Max (600$) - Triple jump, and temporary shield
+    
+  * @TO_DO
+    - Add a shop page where you can buy Jag, Medo, and Max.
+    - Make instructions page
+    - Make credits page
+*/
+
+textAlign(CENTER, CENTER);
+textFont(createFont("Trebuchet MS"));
+
+var scene = "Home";
+var howManyCoins = 0;
+var distance = 0;
+var distanceRecord = 0;
+
+var colorScheme = [
+    color(255, 255, 255),
+    color(255, 255, 255),
+];
+
+var hexagon = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    rotate(30);
+    beginShape();
+    for(var i = 0; i < 360; i += 60){
+        vertex(sin(i)*sz, cos(i)*sz);
+    }
+    endShape(CLOSE);
+    popMatrix();
+};
+
+var circleCollide = function(a, b){
+    if(dist(a.x, a.y, b.x, b.y) < (a.sz + b.sz)/2){
+        return true;
+    }
+};
+
+var hexButton = function(x, y, sz, txt, next){
+    stroke(255);
+    strokeWeight(5);
+    if(dist(mouseX, mouseY, x, y) < sz){
+        fill(255, 255, 255, 100);
+        hexagon(x, y, sz*1.1);
+        if(mouseIsPressed){
+            scene = next;
+        }
+    } else {
+        noFill();
+        hexagon(x, y, sz);
+    }
+    fill(255);
+    textSize(40);
+    if(txt === "Play"){
+        noStroke();
+        fill(255);
+        triangle(x-10, y - 15, x-10, y + 15, x + 15, y);
+    } else if (txt === "Credits"){
+        noStroke();
+        fill(255);
+        rect(x-15, y-12, 30, 5);
+        rect(x-15, y-2, 30, 5);
+        rect(x-15, y+8, 30, 5);
+    } else {
+        text(txt, x, y);
+    }
+};
+
+var player = function(){
+    this.x = 60; 
+    this.sz = 60;
+    this.y = 350;
+    
+    this.yvel = -10;
+    this.jumping = false;
+    this.howManyJumps = 0;
+    this.possibleJumps = 3;
+    
+    this.particle = function(x){
+        this.x = x;
+        this.y = 375;
+        this.xSpeed = random(-3, -7);
+        this.ySpeed = random(-1);
+        this.sz = random(10);
+    };
+    this.particle.prototype.draw = function() {
+        noStroke();
+        fill(colorScheme[0]);
+        ellipse(this.x, this.y, this.sz, this.sz);
+        
+        this.x += this.xSpeed;
+        this.y += this.ySpeed;
+    };
+    this.particles = [];
+};
+player.prototype.draw = function() {
+    if(frameCount % 5 === 0 && !this.jumping){
+        this.particles.push(new this.particle(this.x));
+    }
+    for(var i in this.particles){
+        this.particles[i].draw();
+        if(this.particles[i].x < -50){
+            this.particles.splice(i, 1);
+        }
+    }
+    
+    pushMatrix();
+    if(!this.ducking){
+        translate(this.x, this.y);
+    } else {
+        translate(this.x, this.y+10);
+        scale(0.6);
+        this.sz = 36;
+    }
+    noStroke();
+    fill(colorScheme[0]);
+    hexagon(0, 0, 30);
+    fill(0);
+    ellipse(0, 0, 8, 8);
+    ellipse(10, 0, 8, 8);
+    popMatrix();
+    
+    if(this.jumping){
+        this.y += this.yvel;
+        this.yvel += 0.5;
+    }
+    if(this.y > 350 && this.jumping){
+        this.y = 350;
+        this.howManyJumps = 0;
+        this.jumping = false;
+    }
+    if(mouseIsPressed && !this.jumping){
+        this.ducking = true;
+    } else {
+        this.ducking = false;
+    }
+};
+var Player = new player();
+
+var coin = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.sz = 20;
+    
+    this.collectible = true;
+    this.trans = 255;
+    this.animate = false;
+};
+coin.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    scale(sin(frameCount*5), 1);
+    noStroke();
+    fill(255, 255, 255, this.trans - 220);
+    for(var i = this.sz; i < this.sz*2; i += 5){
+        ellipse(0, 0, i, i);
+    }
+    strokeWeight(3);
+    stroke(196, 196, 18, this.trans);
+    fill(224, 227, 36, this.trans);
+    ellipse(0, 0, this.sz, this.sz);
+    fill(196, 196, 18, this.trans);
+    textSize(this.sz/1.5);
+    text("$", 0, 0);
+    popMatrix();
+    
+    if(circleCollide(this, Player) && this.collectible){
+        howManyCoins ++;
+        this.collectible = false;
+        this.animate = true;
+    }
+    if(this.animate){
+        this.trans -= 20;
+        this.sz ++;
+    }
+    
+    this.x -= 5;
+};
+var coins = [];
+
+var obstacle = function(x){
+    this.x = x;
+    this.sz = 110;
+    this.type = floor(random(2));
+    
+    if(this.type === 0){
+        this.y = 390;
+    } else {
+        this.y = 0;
+    }
+    
+    this.rot = 0;
+};
+var obstacles = [];
+obstacle.prototype.draw = function() {
+    if(this.type === 0){
+        noStroke();
+        fill(colorScheme[0]);
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(this.rot);
+        ellipse(0, 0, 100, 100);
+        for(var i = 0; i < 360; i += 10){
+            pushMatrix();
+            rotate(i);
+            triangle(-5, -45, 5, -45, 0, -60);
+            popMatrix();
+        }
+        popMatrix();
+        
+        if(circleCollide(this, Player)){
+            scene = "Home";
+        }
+        
+        this.rot -= 2;
+        this.x -= 5;
+    }
+    if(this.type === 1){
+        noStroke();
+        fill(colorScheme[0]);
+        pushMatrix();
+        translate(this.x, this.y);
+        rect(0, 0, 50, 340);
+        popMatrix();
+        
+        if(Player.x + (Player.sz/2) > this.x && Player.x < this.x+50 && !Player.ducking){
+            scene = "Home";
+        }
+        
+        this.x -= 5;
+    }
+};
+
+mouseReleased = function(){
+    if(Player.howManyJumps < Player.possibleJumps){
+        Player.jumping = true;
+        Player.yvel = -10;
+        Player.howManyJumps ++;
+    }
+};
+
+draw = function() {
+    if(scene === "Home"){
+        obstacles = [];
+        if(distance > distanceRecord){
+            distanceRecord = distance;
+        }
+        distance = 0;
+        
+        background(161, 161, 161);
+        
+        noStroke();
+        for(var i = 0; i < width; i += 60){
+            for(var j = 0; j < height; j += 35){
+                fill(0, 0, 0, 50 + sin(j+frameCount*5)*10);
+                hexagon(i, j, 20);
+                hexagon(i+30, j+17.5, 20);
+            }
+        }
+        for(var i = -60; i < 200; i += 30){
+            fill(255, 255, 255, 100 - i/2);
+            beginShape();
+            vertex(0, i);
+            vertex(0, i + 30);
+            vertex(200, i + 90);
+            vertex(400, i + 30);
+            vertex(400, i);
+            vertex(200, i + 60);
+            endShape();
+        }
+        
+        fill(0, 0, 0, 50);
+        textSize(70);
+        textLeading(60);
+        text("the\nlittle\nhexagon", 200, 160);
+        fill(242, 242, 242);
+        textSize(75);
+        textLeading(60);
+        text("the\nlittle\nhexagon", 200, 160);
+        textSize(15);
+        text("a proxima programming production", 200, 275);
+        textSize(20);
+        text("Your distance record: " + distanceRecord, 200, 30);
+        strokeWeight(1);
+        stroke(255);
+        line(15, 260, 385, 260);
+        
+        hexButton(100, 340, 35, "?", "How");
+        hexButton(200, 340, 50, "Play", "Game");
+        hexButton(300, 340, 35, "Credits", "Creds");
+    }
+    if(scene === "Game"){
+        background(colorScheme[1]);
+        
+        noStroke();
+        for(var i = 0; i < width; i += 60){
+            for(var j = 0; j < height; j += 35){
+                fill(0, 0, 0, 50 + sin(j+frameCount*5)*10);
+                hexagon(i, j, 20);
+                hexagon(i+30, j+17.5, 20);
+            }
+        }
+        fill(colorScheme[0]);
+        rect(0, 375, width, 25);
+        for(var i = -60; i < 200; i += 30){
+            fill(0, 0, 0, 100 - i/2);
+            beginShape();
+            vertex(0, i);
+            vertex(0, i + 30);
+            vertex(200, i + 90);
+            vertex(400, i + 30);
+            vertex(400, i);
+            vertex(200, i + 60);
+            endShape();
+        }
+        
+        if(frameCount % 200 === 0){
+            obstacles.push(new obstacle(random(450, 600)));
+        }
+        if(frameCount % 100 === 0){
+            coins.push(new coin(random(450, 600), random(350)));
+        }
+        if(frameCount % 30 === 0){
+            distance ++;
+        }
+        
+        Player.draw();
+        for(var i in coins){
+            coins[i].draw();
+            if(coins[i].x < -150){
+                coins.splice(i, 1);
+            }
+        }
+        for(var i in obstacles){
+            obstacles[i].draw();
+            if(obstacles[i].x < -150){
+                obstacles.splice(i, 1);
+            }
+        }
+        
+        pushMatrix();
+        translate(30, 30);
+        noStroke();
+        fill(255, 255, 255, 20);
+        for(var i = this.sz; i < this.sz*2; i += 5){
+            ellipse(0, 0, i, i);
+        }
+        strokeWeight(3);
+        stroke(196, 196, 18);
+        fill(224, 227, 36);
+        ellipse(0, 0, 20, 20);
+        fill(196, 196, 18);
+        textSize(15);
+        text("$", 0, 0);
+        popMatrix();
+        
+        textSize(15);
+        fill(255);
+        text(howManyCoins, 55, 30);
+        text("\u2192", 30, 50);
+        text(distance, 55, 50);
+    }
+};
