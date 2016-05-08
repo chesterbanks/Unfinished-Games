@@ -37,6 +37,10 @@ var howManyCoins = 0;
 var distance = 0;
 var distanceRecord = 0;
 
+var clicked = false;
+
+var obstacleFactor = 200;
+
 var colorScheme = [
     color(255, 255, 255),
     color(255, 255, 255),
@@ -66,7 +70,7 @@ var hexButton = function(x, y, sz, txt, next){
     if(dist(mouseX, mouseY, x, y) < sz){
         fill(255, 255, 255, 100);
         hexagon(x, y, sz*1.1);
-        if(mouseIsPressed){
+        if(clicked){
             scene = next;
         }
     } else {
@@ -79,12 +83,13 @@ var hexButton = function(x, y, sz, txt, next){
         noStroke();
         fill(255);
         triangle(x-10, y - 15, x-10, y + 15, x + 15, y);
-    } else if (txt === "Credits"){
+    } else if (txt === "Shop"){
         noStroke();
         fill(255);
-        rect(x-15, y-12, 30, 5);
-        rect(x-15, y-2, 30, 5);
-        rect(x-15, y+8, 30, 5);
+        hexagon(x, y, sz/2);
+        fill(135, 135, 135);
+        ellipse(x, y, 5, 5);
+        ellipse(x + 7, y, 5, 5);
     } else {
         text(txt, x, y);
     }
@@ -254,8 +259,32 @@ obstacle.prototype.draw = function() {
         this.x -= 5;
     }
 };
+var shopBtn = function(x, y, name, price){
+    this.x = x;
+    this.y = y;
+    this.name = name;
+    this.price = price;
+};
+shopBtn.prototype.draw = function() {
+    fill(255, 255, 255, 50);
+    strokeWeight(5);
+    stroke(255);
+    rect(this.x, this.y, 360, 80, 20);
+    
+    fill(255);
+    textSize(40);
+    text(this.name, this.x + 120, this.y + 40);
+};
+var shopBtns = [
+    new shopBtn(20, 20, "Zipp", 100),
+    new shopBtn(20, 110, "Jag", 100),
+    new shopBtn(20, 200, "Medo", 100),
+    new shopBtn(20, 290, "Max", 100),
+];
 
 mouseReleased = function(){
+    clicked = true;
+    
     if(Player.howManyJumps < Player.possibleJumps){
         Player.jumping = true;
         Player.yvel = -10;
@@ -265,6 +294,7 @@ mouseReleased = function(){
 
 draw = function() {
     if(scene === "Home"){
+        obstacleFactor = 200;
         obstacles = [];
         if(distance > distanceRecord){
             distanceRecord = distance;
@@ -311,7 +341,7 @@ draw = function() {
         
         hexButton(100, 340, 35, "?", "How");
         hexButton(200, 340, 50, "Play", "Game");
-        hexButton(300, 340, 35, "Credits", "Creds");
+        hexButton(300, 340, 35, "Shop", "Shop");
     }
     if(scene === "Game"){
         background(colorScheme[1]);
@@ -338,7 +368,7 @@ draw = function() {
             endShape();
         }
         
-        if(frameCount % 200 === 0){
+        if(frameCount % obstacleFactor === 0){
             obstacles.push(new obstacle(random(450, 600)));
         }
         if(frameCount % 100 === 0){
@@ -383,5 +413,38 @@ draw = function() {
         text(howManyCoins, 55, 30);
         text("\u2192", 30, 50);
         text(distance, 55, 50);
+        
+        if(frameCount % 15 === 1){
+            obstacleFactor --;
+        }
     }
+    if(scene === "Shop"){
+        background(161, 161, 161);
+        
+        noStroke();
+        for(var i = 0; i < width; i += 60){
+            for(var j = 0; j < height; j += 35){
+                fill(0, 0, 0, 50 + sin(j+frameCount*5)*10);
+                hexagon(i, j, 20);
+                hexagon(i+30, j+17.5, 20);
+            }
+        }
+        for(var i = -60; i < 200; i += 30){
+            fill(255, 255, 255, 100 - i/2);
+            beginShape();
+            vertex(0, i);
+            vertex(0, i + 30);
+            vertex(200, i + 90);
+            vertex(400, i + 30);
+            vertex(400, i);
+            vertex(200, i + 60);
+            endShape();
+        }
+        
+        for(var i in shopBtns){
+            shopBtns[i].draw();
+        }
+    }
+    
+    clicked = false;
 };
