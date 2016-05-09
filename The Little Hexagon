@@ -33,9 +33,11 @@ textAlign(CENTER, CENTER);
 textFont(createFont("Trebuchet MS"));
 
 var scene = "Home";
-var howManyCoins = 0;
+var howManyCoins = 300;
 var distance = 0;
 var distanceRecord = 0;
+
+var character = 'Zipp';
 
 var clicked = false;
 
@@ -264,23 +266,81 @@ var shopBtn = function(x, y, name, price){
     this.y = y;
     this.name = name;
     this.price = price;
+    
+    this.bought = false;
 };
+var shopBtns = [
+    new shopBtn(20, 20, "Zipp", 0),
+    new shopBtn(20, 110, "Jag", 100),
+    new shopBtn(20, 200, "Medo", 300),
+    new shopBtn(20, 290, "Max", 600),
+];
 shopBtn.prototype.draw = function() {
-    fill(255, 255, 255, 50);
+    if(this.name === "Zipp"){
+        this.bought = true;
+    }
+    
+    if(howManyCoins >= this.price || this.bought){
+        fill(255, 255, 255, 50);
+    }
+    if(howManyCoins < this.price && !this.bought){
+        fill(255, 0, 0, 50);
+    }
+    if(character === this.name){
+        fill(0, 255, 0, 50);
+    }
+    
     strokeWeight(5);
     stroke(255);
     rect(this.x, this.y, 360, 80, 20);
     
+    noStroke();
     fill(255);
-    textSize(40);
-    text(this.name, this.x + 120, this.y + 40);
+    hexagon(this.x+35, this.y+40, 25);
+    fill(103);
+    ellipse(this.x+35, this.y+40, 7, 7);
+    ellipse(this.x+45, this.y+40, 7, 7);
+    fill(255);
+    textSize(20);
+    text(this.name, this.x + 100, this.y + 40);
+    textSize(15);
+    if(!this.bought && howManyCoins >= this.price){
+        text("click to buy", this.x + 270 + sin(this.y + frameCount*10)*5, this.y + 40 + cos(this.y + frameCount*10)*5);
+        if(clicked && mouseX > this.x && mouseX < this.x + 360 && mouseY > this.y && mouseY < this.y + 80){
+            howManyCoins -= this.price;
+            this.bought = true;
+        }
+    }
+    if(this.bought && this.name !== character){
+        text("click to equip", this.x + 270 + sin(this.y + frameCount*10)*5, this.y + 40 + cos(this.y + frameCount*10)*5);
+    
+        if(clicked && mouseX > this.x && mouseX < this.x + 360 && mouseY > this.y && mouseY < this.y + 80){
+            character = this.name;
+        }
+    }
+    
+    if(!this.bought){ 
+        pushMatrix();
+        translate(this.x + 149, this.y + 40);
+        noStroke();
+        fill(255, 255, 255, 20);
+        for(var i = this.sz; i < this.sz*2; i += 5){
+            ellipse(0, 0, i, i);
+        }
+        
+        strokeWeight(3);
+        stroke(196, 196, 18);
+        fill(224, 227, 36);
+        ellipse(0, 0, 20, 20);
+        fill(196, 196, 18);
+        textSize(15);
+        text("$", 0, 0);
+        fill(255);
+        textSize(15);
+        text(this.price, this.x + 10, 0);
+        popMatrix();
+    }
 };
-var shopBtns = [
-    new shopBtn(20, 20, "Zipp", 100),
-    new shopBtn(20, 110, "Jag", 100),
-    new shopBtn(20, 200, "Medo", 100),
-    new shopBtn(20, 290, "Max", 100),
-];
 
 mouseReleased = function(){
     clicked = true;
