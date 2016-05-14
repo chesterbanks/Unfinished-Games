@@ -1,0 +1,186 @@
+textAlign(CENTER, CENTER);
+textFont(createFont("Avenir-Black"));
+
+var y = -2652;
+
+var scene = 'Home';
+var cards = "RPYGBO".split("");
+var card = 'B';
+var firstBoard = 'RPYBOGRPYBOGRPYBOGRPYBOGRPYBOGRPYBOGRPYB';
+var board = firstBoard.split(""); // R = red, P = purple, Y = yellow, B = blue, O = orange
+var onBlock = 'B';
+
+var images = {
+    'bg1': function(){
+        var rects = [];
+        for(var i = 0; i < width; i += 20){
+            for(var j = 0; j < height; j += 20){
+                rects.push({x: i, y: j, br: random(205), hue: random(255), w: random(10, 50)});
+            }
+        }
+        
+        background(255, 255, 255);
+        
+        for(var i = 0; i < 1000; i += 35){
+            stroke(232, 21, 21);
+            strokeWeight(15);
+            line(i, 0, 0, i);
+            stroke(0, 0, 0, 30);
+            strokeWeight(5);
+            line(i, 0, 0, i);
+        }
+        
+        var textGradient = get(0, 0, width, height);
+        
+        background(0, 0, 0);
+        fill(255, 255, 255);
+        textSize(80);
+        text("CANDYLAND", width/2, height/2);
+        
+        var Text = get(0, 0, width, height);
+        
+        textGradient.mask(Text);
+            
+        background(255, 255, 255);
+        noStroke();
+        colorMode(HSB);
+        for(var i in rects){
+            fill(rects[i].hue, 255, 255, rects[i].br);
+            rect(rects[i].x, rects[i].y, rects[i].w, 25, 10);
+            fill(0, 0, 0, 10);
+            rect(rects[i].x, rects[i].y, rects[i].w, 10, 10);
+        }
+        filter(BLUR, 2);
+        
+        colorMode(RGB);
+        fill(255, 255, 255, 55);
+        for(var i = 0; i < 360; i += 15){
+            text("CANDYLAND", width/2 + sin(i)*10, height/2 + cos(i)*10);
+        }
+        fill(0, 0, 0);
+        for(var i = 0; i < 360; i += 15){
+            text("CANDYLAND", width/2 + sin(i)*3, height/2 + cos(i)*3);
+        }
+        image(textGradient, 0, 0);
+        
+        fill(45);
+        textSize(20);
+        text("and the missing candy king", 300, 350);
+        
+        return get(0, 0, 600, 600);
+    },
+    'title': function(){
+        
+    },
+};
+
+for(var i in images){
+    images[i]();
+}
+
+var clicked = false;
+mouseReleased = function(){
+    clicked = true;
+};
+
+draw = function() {
+    if(scene === "Home"){
+        image(images.bg1, 0, 0);
+        if(clicked){
+            scene = "Game";
+        }
+    }
+    if(scene === "Game"){
+        background(245);
+        textSize(20);
+        for(var i in board){
+            noStroke();
+            switch(board[i]){
+                case 'R':
+                    fill(255, 0, 0);
+                    break;
+                case 'P':
+                    fill(151, 20, 227);
+                    break;
+                case 'Y':
+                    fill(228, 235, 21);
+                    break;
+                case 'B':
+                    fill(21, 157, 235);
+                    break;
+                case 'O':
+                    fill(235, 134, 33);
+                    break;
+                case 'G':
+                    fill(15, 250, 30);
+                    break;
+            }
+            
+            rect(250, y + i * 80, 100, 80);
+            fill(0, 0, 0, 30);
+            triangle(250, y + i * 80, 250, y + 80 + i * 80, 350,  y + i * 80);
+            fill(255);
+            text(y + i * 80, 300, y + 40 + i * 80);
+        }
+        
+        for(var i in board){
+            if(y + i * 80 < 485 && y + i * 80 > 455){
+                onBlock = board[i];
+            }
+        }
+        
+        fill(255, 255, 255);
+        ellipse(300, 510, 40, 40);
+        
+        if(onBlock !== card){
+            y += 5;
+        }
+        
+        fill(25);
+        text("You are on a " + onBlock + " block.\nYou drew a " + card + " card.", 120, 300);
+        
+        if(clicked && mouseX > 410 && mouseX < 560 && mouseY > 200 && mouseY < 300){
+            card = cards[floor(random(cards.length))];
+        }
+        
+        stroke(163, 163, 163);
+        fill(217, 217, 217);
+        for(var i = 400; i < 415; i += 5){
+            rect(i, i - 200, 150, 100);
+        }
+        fill(255, 255, 255);
+        stroke(212, 212, 212);
+        rect(410, 350, 150, 100, 5);
+        noStroke();
+        switch(card){
+            case 'R':
+                fill(255, 0, 0);
+                break;
+            case 'P':
+                fill(151, 20, 227);
+                break;
+            case 'Y':
+                fill(228, 235, 21);
+                break;
+            case 'B':
+                fill(21, 157, 235);
+                break;
+            case 'O':
+                fill(235, 134, 33);
+                break;
+            case 'G':
+                fill(15, 250, 30);
+                break;
+        }
+        rect(435, 365, 100, 70);
+        textSize(30);
+        fill(194, 194, 194);
+        pushMatrix();
+        translate(485, 260);
+        rotate(-25);
+        text("candyland", 0, 0);
+        popMatrix();
+    }
+    
+    clicked = false;
+};
