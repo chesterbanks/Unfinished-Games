@@ -1,0 +1,54 @@
+strokeWeight(10);
+
+pushMatrix();
+rotate(15);
+for(var i = -70; i < width+55; i += 100){
+    for(var j = -120; j < height; j += 100){
+        fill(56, 56, 56);
+        stroke(71, 71, 71);
+        rect(i, j, 100, 50);
+        rect(i+50, j+50, 100, 50);
+        noStroke();
+        fill(0, 0, 0, 30);
+        triangle(i, j, i + 100, j, i, j + 50);
+        triangle(i + 50, j + 50, i + 150, j + 50, i + 50, j + 100);
+    }
+}
+popMatrix();
+
+stroke(209, 149, 75);
+fill(235, 175, 101);
+ellipse(200, 200, 200, 200);
+stroke(148, 69, 0);
+fill(171, 89, 17);
+ellipse(200, 240, 170, 150);
+fill(0, 0, 0, 30);
+arc(200, 240, 170, 150, -90, 90);
+fill(0);
+stroke(45);
+arc(235, 167, 65, 70, -15, 180);
+stroke(235);
+fill(255);
+ellipse(160, 180, 40, 40);
+stroke(0);
+ellipse(165, 180, 5, 5);
+stroke(209, 149, 75);
+fill(235, 175, 101);
+arc(160, 180, 40, 40, -180, 0);
+noFill();
+stroke(0);
+arc(200, 135, 200, 60, 30, 150);
+stroke(0, 0, 0, 50);
+arc(200, 225, 90, 70, 0, 115);
+stroke(45);
+pushMatrix();
+translate(20, -45);
+rotate(5);
+fill(0);
+beginShape();
+vertex(100, 178);
+bezierVertex(9, 91, 110, 149, 128, 128);
+bezierVertex(200, 66, 200, 67, 279, 132);
+bezierVertex(291, 151, 392, 97, 296, 178);
+endShape(CLOSE);
+popMatrix();
