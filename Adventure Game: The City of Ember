@@ -1,14 +1,27 @@
 /**
- * ADVENTURE GAME
-    I want this game to be based on a story, not a story based on a game.
+ * T H E   C I T Y   O F   E M B E R
     
     CHAPTERS (or LEVELS)
-        1.
-        2.
-        3.
-        4.
-        5.
-        6.
+        1. Looking for The Instructions
+            You have to search through each building in Ember to find the Instructions, without the corrupt government robots catching you.
+            
+        2. Sneaking into the Pipeworks
+            You have to sneak past all the robots into the Pipeworks. Once you get to the River, there will be a cutscene of finding the rock with an 'N'.
+            
+        3. Hiding in the School
+            Racing through town, avoid the robots and officials as you run to the school. Tear off as many notices as you can on your way there.
+            
+        4. Finding Clary
+            Try to get to the Greenhouses without the officials and robots catching you. Also, avoid the tricky traps on the way. Once you get there, try to find Clary.
+            
+        5. Blackout
+            You and your two brothers are trying to get back to the Pipeworks when the lights go out. You can only see by the light of your candle. Robots are still on the search for you.
+        
+        6. Down the River
+            Guiding your small boat down the roaring river, try to keep the boat from tipping, hitting rocks, or the sides.
+            
+        7. The End of the Beginning
+            You arrive out of Ember, amazed by the upper world. You can freely explore and do tricks. 
 */
 
 // Settings
@@ -21,8 +34,15 @@
 }
 
 // Variables & objects
-{
-    var scene = 'Home';
+{   
+    var system = {
+        scene: 'Home',
+        switchingScenes: false,
+        switchingTo: 'Game',
+        trans: 0,
+        transSp: 10,
+    };
+    
     var mouse = {
         get x() { return mouseX; },
         get y() { return mouseY; },
@@ -34,7 +54,7 @@
     var player = {
         which: 0,
         name: 'Rico',
-        info: 'This is ' + player.name + '. He is a young man whose curiosity sometimes puts him in danger. He is a bit of a daredevil, and can do lots of stunts.',
+        info: 'This is ' + this.name + '. He is a young man whose curiosity sometimes puts him in danger. He is a bit of a daredevil, and can do lots of stunts.',
     };
 }
 
@@ -63,7 +83,8 @@
             if(mouse.clicked){
                 switch(this.type){
                     default:
-                        scene = this.next;
+                        system.switchingTo = this.next;
+                        system.switching = true;
                         break;
                     case 'arrow':
                         player.which += (this.txt === '<') ? -1 : +1;
@@ -120,10 +141,10 @@ var images = {
         for(var i = 0; i < width; i ++){
             for(var j = 0; j < height; j ++){
                 if(dist(200, 200, i, j) < 90){
-                    set(i, j, color(237 + (j/5), 168 + (j/5), 90 + (j/5)));
+                    set(i, j, color(lerpColor(color(209, 136, 27),color(255, 224, 173),j/height)));
                 }
                 if(dist(200, 200, i, j) > 89 && dist(200, 200, i, j) < 98){
-                    set(i, j, color(207 + (j/5), 148 + (j/5), 80 + (j/5)));
+                    set(i, j, color(240, 156, 96));
                 }
             }
         }
@@ -164,10 +185,10 @@ var images = {
         for(var i = 0; i < width; i ++){
             for(var j = 0; j < height; j ++){
                 if(dist(200, 200, i, j) < 90){
-                    set(i, j, color(237 + (j/5), 168 + (j/5), 90 + (j/5)));
+                    set(i, j, color(lerpColor(color(209, 136, 27),color(255, 224, 173),j/height)));
                 }
                 if(dist(200, 200, i, j) > 89 && dist(200, 200, i, j) < 98){
-                    set(i, j, color(207 + (j/5), 148 + (j/5), 80 + (j/5)));
+                    set(i, j, color(240, 156, 96));
                 }
             }
         }
@@ -218,10 +239,10 @@ var images = {
         for(var i = 0; i < width; i ++){
             for(var j = 0; j < height; j ++){
                 if(dist(200, 200, i, j) < 90){
-                    set(i, j, color(237 + (j/5), 168 + (j/5), 90 + (j/5)));
+                    set(i, j, color(lerpColor(color(209, 136, 27),color(255, 224, 173),j/height)));
                 }
                 if(dist(200, 200, i, j) > 89 && dist(200, 200, i, j) < 98){
-                    set(i, j, color(207 + (j/5), 148 + (j/5), 80 + (j/5)));
+                    set(i, j, color(240, 156, 96));
                 }
             }
         }
@@ -285,7 +306,7 @@ draw = function() {
         }
     }
     
-    switch(scene){
+    switch(system.scene){
         case 'Home':
             image(images.chooseBG, 0, 0);
             
@@ -297,7 +318,7 @@ draw = function() {
                     break;
                 case 1:
                     player.name = 'Nate';
-                    player.info = 'This is Nate. He is a young man who is always cracking a joke, even in the face of danger. He loves running, and is the fastest of the three.';
+                    player.info = 'This is Nate. He is a funny guy who is always cracking a joke, even in the face of danger. He loves running, and is the fastest of the three.';
                     image(images.nate, 0, 0);
                     break;
                 case 2:
@@ -314,10 +335,30 @@ draw = function() {
             fill(255, 255, 255, 200);
             text(player.info, 20, -145, 360, 380);
             break;
+        case 'Play':
+            background(255, 0, 0);
+            fill(255);
+            text("game here", 200, 200);
+            break;
         default:
-            println('Sorry, I don\'t recognize a scene called "' + scene + '".');
+            println('Sorry, I don\'t recognize a scene called "' + system.scene + '".');
             noLoop();
             break;
+    }
+    
+    /* Scene transitions */
+    noStroke();
+    fill(0, 0, 0, system.trans);
+    rect(0, 0, width, height);
+    if(system.switching){
+        system.trans += system.transSp;
+        if(system.trans > 255){
+            system.scene = system.switchingTo;
+            system.transSp = -system.transSp;
+        }
+        if(system.trans < 0){
+            system.switching = false;
+        }
     }
     
     mouse.clicked = false;
