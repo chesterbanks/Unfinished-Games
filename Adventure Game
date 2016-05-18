@@ -1,0 +1,324 @@
+/**
+ * ADVENTURE GAME
+    I want this game to be based on a story, not a story based on a game.
+    
+    CHAPTERS (or LEVELS)
+        1.
+        2.
+        3.
+        4.
+        5.
+        6.
+*/
+
+// Settings
+{
+    textAlign(CENTER, CENTER);
+    var fonts = {
+        buttons: createFont("HelveticaNeue-light", 20),
+        player_info: createFont("Tahoma", 14),
+    };
+}
+
+// Variables & objects
+{
+    var scene = 'Home';
+    var mouse = {
+        get x() { return mouseX; },
+        get y() { return mouseY; },
+        clicked: false,
+        pressed: false,
+        
+        active: true,
+    };
+    var player = {
+        which: 0,
+        name: 'Rico',
+        info: 'This is ' + player.name + '. He is a young man whose curiosity sometimes puts him in danger. He is a bit of a daredevil, and can do lots of stunts.',
+    };
+}
+
+// Functions
+{
+    var button = function(x, y, w, h, txt, next, type){
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.txt = txt;
+        this.next = next;
+        this.type = type;
+    };
+    button.prototype.draw = function() {
+        textFont(fonts.buttons);
+        strokeWeight(5);
+        stroke(0, 0, 0, 50);
+        fill(255, 255, 255);
+        rect(this.x, this.y + 20, this.w, this.h/1.5, 70);
+        if(mouse.x > this.x && mouse.x < this.x + this.w && mouse.y > this.y && mouse.y < this.y + this.h){
+            rect(this.x, this.y + 5, this.w, this.h, 20);
+            fill(0);
+            textSize(20);
+            text(this.txt, this.x + (this.w/2), this.y + (this.h/2) + 5);
+            if(mouse.clicked){
+                switch(this.type){
+                    default:
+                        scene = this.next;
+                        break;
+                    case 'arrow':
+                        player.which += (this.txt === '<') ? -1 : +1;
+                        break;
+                }
+            }
+        } else {
+            rect(this.x, this.y, this.w, this.h, 20);
+            fill(0);
+            textSize(20);
+            text(this.txt, this.x + (this.w/2), this.y + (this.h/2));
+        }
+    };
+    var buttons = {
+        choose: new button(150, 320, 100, 50, 'choose', 'Play'),
+        pre: new button(80, 320, 50, 50, '<', '', 'arrow'),
+        next: new button(270, 320, 50, 50, '>', '', 'arrow'),
+    };
+}
+
+// Processing events
+{
+    mouseClicked = function(){
+        if(mouse.active){ mouse.clicked = true; }
+    };
+    mousePressed = function(){
+        if(mouse.active){ mouse.pressed = true; }
+    };
+    mouseReleased = function(){
+        if(mouse.active){ mouse.pressed = false; }
+    };
+}
+
+// Images
+var images = {
+    'chooseBG': function(){
+        background(41, 41, 41);
+        noStroke();
+        fill(255, 255, 255, 50);
+        for(var i = 0; i < width+50; i += 20){
+            for(var j = 0; j < height+50; j += 20){
+                pushMatrix();
+                translate(i, j);
+                rotate(random(-15, 15));
+                fill(255, 255, 255, random(25));
+                rect(0, 0, 20, 20);
+                popMatrix();
+            }
+        }
+        
+        return get(0, 0, width, height);
+    },
+    'rico': function(){
+        for(var i = 0; i < width; i ++){
+            for(var j = 0; j < height; j ++){
+                if(dist(200, 200, i, j) < 90){
+                    set(i, j, color(237 + (j/5), 168 + (j/5), 90 + (j/5)));
+                }
+                if(dist(200, 200, i, j) > 89 && dist(200, 200, i, j) < 98){
+                    set(i, j, color(207 + (j/5), 148 + (j/5), 80 + (j/5)));
+                }
+            }
+        }
+        
+        noStroke();
+        fill(0);
+        ellipse(170, 230, 30, 30);
+        ellipse(230, 230, 30, 30);
+        fill(255, 255, 255, 15);
+        for(var i = 20; i > 0; i -= 2){
+            ellipse(170 - (i/4), 230 - (i/4), i, i);
+            ellipse(230 - (i/4), 230 - (i/4), i, i);
+        }
+        
+        noFill();
+        strokeWeight(2);
+        stroke(0, 0, 0);
+        arc(200, 255, 60, 30, 0, 180);
+        arc(200, 253, 60, 15, 0, 180);
+        for(var i = 15; i < 26; i += 2){
+            stroke(215 + i);
+            arc(200, 255, 55, i, 0, 180);
+        }
+        
+        noStroke();
+        fill(189, 109, 23);
+        quad(190, 207, 160, 199, 150, 211, 190, 215);
+        quad(210, 200, 250, 209, 250, 215, 210, 210);
+    
+        strokeWeight(10);
+        stroke(184, 99, 30);
+        fill(222, 127, 49);
+        arc(200, 200, 190, 190, -160, -20);
+    
+        return get(0, 0, width, height);
+    },
+    'nate': function(){
+        for(var i = 0; i < width; i ++){
+            for(var j = 0; j < height; j ++){
+                if(dist(200, 200, i, j) < 90){
+                    set(i, j, color(237 + (j/5), 168 + (j/5), 90 + (j/5)));
+                }
+                if(dist(200, 200, i, j) > 89 && dist(200, 200, i, j) < 98){
+                    set(i, j, color(207 + (j/5), 148 + (j/5), 80 + (j/5)));
+                }
+            }
+        }
+        
+        noStroke();
+        fill(0);
+        ellipse(170, 230, 30, 30);
+        ellipse(230, 230, 30, 30);
+        fill(255, 255, 255, 15);
+        for(var i = 20; i > 0; i -= 2){
+            ellipse(170 - (i/4), 230 - (i/4), i, i);
+            ellipse(230 - (i/4), 230 - (i/4), i, i);
+        }
+        
+        noFill();
+        strokeWeight(2);
+        stroke(0, 0, 0);
+        arc(200, 255, 60, 50, 0, 180);
+        arc(200, 253, 60, 15, 0, 180);
+        for(var i = 15; i < 48; i += 2){
+            stroke(205 + i);
+            arc(200, 255, 55, i, 0, 180);
+        }
+        
+        noStroke();
+        fill(189, 109, 23);
+        quad(190, 192, 160, 199, 150, 211, 190, 200);
+        quad(210, 200, 250, 213, 250, 215, 210, 210);
+        
+        strokeWeight(5);
+        stroke(184, 99, 30);
+        fill(222, 127, 49);
+        ellipse(110, 200, 30, 30);
+        ellipse(290, 200, 30, 30);
+        ellipse(115, 175, 40, 40);
+        ellipse(285, 175, 40, 40);
+        ellipse(125, 150, 50, 50);
+        ellipse(275, 150, 50, 50);
+        ellipse(145, 135, 50, 50);
+        ellipse(255, 135, 50, 50);
+        ellipse(175, 125, 55, 55);
+        ellipse(235, 125, 55, 55);
+        ellipse(205, 115, 55, 55);
+        
+        return get(0, 0, width, height);
+    },
+    'zac': function(){
+        for(var i = 0; i < width; i ++){
+            for(var j = 0; j < height; j ++){
+                if(dist(200, 200, i, j) < 90){
+                    set(i, j, color(237 + (j/5), 168 + (j/5), 90 + (j/5)));
+                }
+                if(dist(200, 200, i, j) > 89 && dist(200, 200, i, j) < 98){
+                    set(i, j, color(207 + (j/5), 148 + (j/5), 80 + (j/5)));
+                }
+            }
+        }
+        
+        noStroke();
+        fill(0);
+        ellipse(170, 230, 30, 30);
+        ellipse(230, 230, 30, 30);
+        fill(255, 255, 255, 15);
+        for(var i = 20; i > 0; i -= 2){
+            ellipse(170 - (i/4), 230 - (i/4), i, i);
+            ellipse(230 - (i/4), 230 - (i/4), i, i);
+        }
+        
+        noFill();
+        strokeWeight(2);
+        stroke(0, 0, 0);
+        arc(200, 255, 60, 25, 0, 130);
+        
+        noStroke();
+        fill(189, 109, 23);
+        quad(190, 192, 160, 199, 150, 211, 190, 200);
+        quad(210, 200, 250, 213, 250, 215, 210, 210);
+        
+        strokeWeight(5);
+        stroke(184, 99, 30);
+        fill(222, 127, 49);
+        beginShape();
+        vertex(100, 200);
+        vertex(100, 140);
+        vertex(115, 150);
+        vertex(130, 120);
+        vertex(145, 125);
+        vertex(160, 90);
+        vertex(175, 100);
+        vertex(190, 90);
+        vertex(210, 100);
+        
+        vertex(240, 90);
+        vertex(265, 125);
+        vertex(270, 120);
+        vertex(285, 150);
+        vertex(300, 140);
+        vertex(300, 200);
+        
+        vertex(250, 160);
+        vertex(200, 150);
+        vertex(150, 160);
+        endShape(CLOSE);
+        
+        return get(0, 0, width, height);
+    },
+};
+
+draw = function() {
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    switch(scene){
+        case 'Home':
+            image(images.chooseBG, 0, 0);
+            
+            switch(abs(player.which) % 3){
+                case 0:
+                    player.name = 'Rico';
+                    player.info = 'This is Rico. He is a young man whose curiosity sometimes puts him in danger. He is a bit of a daredevil, and can do lots of stunts.';
+                    image(images.rico, 0, 0);
+                    break;
+                case 1:
+                    player.name = 'Nate';
+                    player.info = 'This is Nate. He is a young man who is always cracking a joke, even in the face of danger. He loves running, and is the fastest of the three.';
+                    image(images.nate, 0, 0);
+                    break;
+                case 2:
+                    player.name = 'Zac';
+                    player.info = 'This is Zac. Although he isn\'t as fast as Nate, or as agile as Rico, he has an unusual skill - he\'s an inventor. He can make very useful things if he has the right materials.';
+                    image(images.zac, 0, 0);
+                    break;
+            }
+            buttons.choose.draw();
+            buttons.pre.draw();
+            buttons.next.draw();
+            
+            textFont(fonts.player_info);
+            fill(255, 255, 255, 200);
+            text(player.info, 20, -145, 360, 380);
+            break;
+        default:
+            println('Sorry, I don\'t recognize a scene called "' + scene + '".');
+            noLoop();
+            break;
+    }
+    
+    mouse.clicked = false;
+};
