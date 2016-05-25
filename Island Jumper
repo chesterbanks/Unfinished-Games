@@ -18,13 +18,13 @@ var mouse = {
 
 var Player = function(){
     this.x = 50;
-    this.y = 350;
+    this.y = 200;
     this.w = 30;
     this.h = 30;
     
     this.xPower = 0;
     
-    this.maxY = 350;
+    this.maxY = 250;
     this.yvel = -5;
     this.minusYVel = 0.1;
     
@@ -55,14 +55,17 @@ Player.prototype.draw = function() {
         this.yvel += this.minusYVel;
         this.x += this.xPower;
     }
+    if(this.x < 0){
+        this.x = 0;
+    }
 };
 var player = new Player();
 
-var Island = function(x, w, firstPlatform){
+var Island = function(x, firstPlatform){
     this.x = x;
-    this.y = 380;
-    this.w = w;
-    this.h = 20;
+    this.y = 230;
+    this.w = 30;
+    this.h = 170;
     this.xSpeed = -3;
     this.extraX = 100;
     
@@ -72,26 +75,41 @@ var Island = function(x, w, firstPlatform){
     for(var i = 0; i < this.w - 4; i += 4){
         this.grass.push({x: i, y: 5, w: 5, h: random(5)});
     }
+    this.dirt = [];
+    for(var i = 0; i < this.h; i += 15){
+        this.dirt.push({x: random(2.5, 10), y: i + random(-5, 5), w: random(0, 20), h: random(5)});
+    }
 };
-var islands = [new Island(0, 80, true), new Island(random(80, width), random(50, 100), false)];
+var islands = [new Island(50, true), new Island(random(80, width), false)];
 Island.prototype.draw = function() {
     pushMatrix();
     translate(this.x + this.extraX, this.y);
-    fill(107, 43, 0);
-    rect(0, 0, this.w, this.h);
-    fill(30, 214, 98);
-    rect(0, 0, this.w, 5);
+    fill(207, 168, 89);
+    rect(2.5, 0, this.w - 5, this.h);
+    for(var i in this.dirt){
+        fill(0, 0, 0, 30);
+        rect(this.dirt[i].x, this.dirt[i].y + 4, this.dirt[i].w, this.dirt[i].h);
+    }
+    fill(255, 255, 255, 30);
+    rect(2.5, 0, this.w - 5, this.h/2);
+    fill(81, 237, 96);
+    rect(0, 0, this.w, 5, 3);
+    fill(54, 227, 74);
+    rect(0, 4, this.w, 5);
     for(var i in this.grass){
-        rect(this.grass[i].x, this.grass[i].y, this.grass[i].w, this.grass[i].h);
+        rect(this.grass[i].x, this.grass[i].y + 4, this.grass[i].w, this.grass[i].h);
     }
     popMatrix();
     
-    if(rectCollide(this, player) && player.yvel > 1){
+    if(rectCollide(this, player) && player.yvel > 1 && player.y < this.y){
         player.xPower = 0;
         player.yvel = 0;
         player.y = this.y - player.h;
         player.jumping = false;
         completed = true;
+    }
+    if(rectCollide(this, player) && player.yvel > 1 && player.y > this.y){
+        player.xPower = 0;
     }
     if(completed){
         this.x += this.xSpeed;
@@ -99,7 +117,7 @@ Island.prototype.draw = function() {
     }
     if(this.x <= 0 && !this.firstPlatform){
         completed = false;
-        islands.push(new Island(random(80, width), random(50, 100), false));
+        islands.push(new Island(random(80, width), false));
         this.firstPlatform = true;
     }
     this.extraX /= 1.1;
@@ -113,16 +131,50 @@ mouseReleased = function(){
     mouse.released = true;
 };
 
+var mountain = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz/10);
+    noStroke();
+    fill(121, 149, 171);
+    triangle(-50, 350, 75, 230, 200, 350);
+    fill(0, 0, 0, 30);
+    triangle(145, 350, 75, 230, 200, 350);
+    fill(255);
+    beginShape();
+    vertex(43, 260);
+    vertex(43, 268);
+    vertex(55, 257);
+    vertex(62, 262);
+    vertex(66, 255);
+    vertex(77, 263);
+    vertex(82, 255);
+    vertex(85, 261);
+    vertex(91, 255);
+    vertex(103, 260);
+    vertex(107, 260);
+    vertex(75, 230);
+    endShape();
+    popMatrix();
+};
+
 draw = function() {
-    background(235);
+    background(219, 251, 255);
+    mountain(0, 0, 10);
+    mountain(100, -105, 13);
+    mountain(246, 0, 10);
+    fill(132, 230, 76);
+    rect(0, 350, 400, 10);
+    fill(116, 209, 62);
+    rect(0, 360, 400, 50);
     
-    player.draw();
     for(var i in islands){
         islands[i].draw();
         if(islands[i].x < -islands[i].w){
             islands.splice(i, 1);
         }
     }
+    player.draw();
     
     mouse.released = false;
 };
