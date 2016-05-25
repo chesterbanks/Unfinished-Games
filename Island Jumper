@@ -1,0 +1,128 @@
+// Jump from island to island
+// Hold down the mouse to charge up your power boots
+// Let go to jump
+// Will you judge the distance correctly?
+
+var completed = false;
+
+var rectCollide = function(a, b) {
+    return a.x + a.w > b.x && a.y + a.h > b.y && a.x < b.x + b.w && a.y < b.y + b.h;
+};
+
+var mouse = {
+    get x(){ return mouseX; },
+    get y(){ return mouseY; },
+    released: false,
+    pressed: false,
+};
+
+var Player = function(){
+    this.x = 50;
+    this.y = 350;
+    this.w = 30;
+    this.h = 30;
+    
+    this.xPower = 0;
+    
+    this.maxY = 350;
+    this.yvel = -5;
+    this.minusYVel = 0.1;
+    
+    this.jumping = false;
+};
+Player.prototype.draw = function() {
+    noStroke();
+    
+    fill(0, 0, 0, 30);
+    rect(this.x, this.y - 10, 30, 5);
+    fill(0, 255, 0);
+    rect(this.x, this.y - 10, this.xPower * 6.3, 5);
+    fill(23, 161, 235);
+    rect(this.x, this.y, this.w, this.h);
+    
+    if(mouse.pressed && !this.jumping && !completed){
+        this.xPower += 0.15;
+        if(this.xPower > 4.5){
+            this.xPower = 4.5;
+        }
+    }
+    if(mouse.released && !this.jumping && !completed){
+        this.yvel = -5;
+        this.jumping = true;
+    }
+    if(this.jumping){
+        this.y += this.yvel;
+        this.yvel += this.minusYVel;
+        this.x += this.xPower;
+    }
+};
+var player = new Player();
+
+var Island = function(x, w, firstPlatform){
+    this.x = x;
+    this.y = 380;
+    this.w = w;
+    this.h = 20;
+    this.xSpeed = -3;
+    this.extraX = 100;
+    
+    this.firstPlatform = firstPlatform;
+    
+    this.grass = [];
+    for(var i = 0; i < this.w - 4; i += 4){
+        this.grass.push({x: i, y: 5, w: 5, h: random(5)});
+    }
+};
+var islands = [new Island(0, 80, true), new Island(random(80, width), random(50, 100), false)];
+Island.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x + this.extraX, this.y);
+    fill(107, 43, 0);
+    rect(0, 0, this.w, this.h);
+    fill(30, 214, 98);
+    rect(0, 0, this.w, 5);
+    for(var i in this.grass){
+        rect(this.grass[i].x, this.grass[i].y, this.grass[i].w, this.grass[i].h);
+    }
+    popMatrix();
+    
+    if(rectCollide(this, player) && player.yvel > 1){
+        player.xPower = 0;
+        player.yvel = 0;
+        player.y = this.y - player.h;
+        player.jumping = false;
+        completed = true;
+    }
+    if(completed){
+        this.x += this.xSpeed;
+        player.x += this.xSpeed / islands.length;
+    }
+    if(this.x <= 0 && !this.firstPlatform){
+        completed = false;
+        islands.push(new Island(random(80, width), random(50, 100), false));
+        this.firstPlatform = true;
+    }
+    this.extraX /= 1.1;
+};
+
+mousePressed = function(){
+    mouse.pressed = true;
+};
+mouseReleased = function(){
+    mouse.pressed = false;
+    mouse.released = true;
+};
+
+draw = function() {
+    background(235);
+    
+    player.draw();
+    for(var i in islands){
+        islands[i].draw();
+        if(islands[i].x < -islands[i].w){
+            islands.splice(i, 1);
+        }
+    }
+    
+    mouse.released = false;
+};
