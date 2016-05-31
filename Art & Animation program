@@ -7,31 +7,31 @@ var length = 0;
 
 var mouseDragged = function(){
     if(!generate){
-        vertices.push({x: mouseX, y: mouseY, x2: pmouseX, y2: pmouseY, sz: 20});
+        vertices.push({x: mouseX, y: mouseY, x2: pmouseX, y2: pmouseY, sz: 10});
     }
 };
 var keyPressed = function(){
     if(key.toString() === " "){
         generate = true;
     }
-    /*if(key.toString().toLowerCase() === "z"){
+    if(key.toString().toLowerCase() === "z"){
         println("var vertices = [");
         for(var i in vertices){
-            println("{x:" + vertices[i].x + ", y:" + vertices[i].y + ", x2:" + vertices[i].x2 + ", y2:" + vertices[i].y2 + "},");
+            println("   {x:" + vertices[i].x + ", y:" + vertices[i].y + ", x2:" + vertices[i].x2 + ", y2:" + vertices[i].y2 + ", sz:" + vertices[i].sz + "},");
         }
-        println("]\nvar length = 0;\ncolorMode(HSB);\ndraw = function(){\nbackground(255, 0, 255);\nstrokeWeight(50);\nfor(var i = 0; i < length; i++){\nstroke((frameCount+(i%255)) %255, 255, 255);\nline(vertices[i].x, vertices[i].y, vertices[i].x2, vertices[i].y2);\n}\nif(length < vertices.length-1){\nlength+=2;\n}");
-    }*/
+        println("];\n\nvar length = 0;\n\ndraw = function(){\n    background(245);\n    for(var i = 0; i < length; i++){\n        stroke(196, 24, 24);\n        strokeWeight(vertices[i].sz);\n        line(vertices[i].x, vertices[i].y, vertices[i].x2, vertices[i].y2);\n    }\n    if(length < vertices.length-1){\n       length+=2;\n    }\n};");
+    }
 };
 
 var draw = function() {
-    background(255, 255, 255);
-    stroke(40, 107, 214);
+    background(245);
+    stroke(196, 24, 24);
     if(keyIsPressed && key.toString() === "1"){
         vertices[vertices.length-1].sz += 2;
     }
     if(!generate){
         for(var i in vertices){
-            strokeWeight(vertices[i].sz);
+            strokeWeight(15);
             line(vertices[i].x, vertices[i].y, vertices[i].x2, vertices[i].y2);
         }
         textSize(15);
