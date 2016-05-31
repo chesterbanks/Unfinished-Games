@@ -1,0 +1,88 @@
+textAlign(CENTER, CENTER);
+textFont(createFont("Avenir-Black"));
+rectMode(CENTER);
+
+var inventory = {
+    iron: {
+        num: 0,
+        subNum: 0,
+        max: 4,
+    },
+    shield: {
+        num: 0,
+        subNum: 0,
+        max: 10,
+    },
+    sword: {
+        num: 0,
+        subNum: 0,
+        max: 30,
+    },
+};
+
+var clicked = false;
+
+var clicker = function(x, y, name, item){
+    this.x = x;
+    this.y = y;
+    this.name = name;
+    this.item = item;
+    
+    this.extraX = 0;
+};
+var clickers = [
+    new clicker(200, 120, 'Iron', inventory.iron),
+    new clicker(200, 200, 'Shield', inventory.shield),
+    new clicker(200, 280, 'Sword', inventory.sword),
+];
+clicker.prototype.draw = function() {
+    if(this.item.subNum >= this.item.max){
+        this.item.num ++;
+        this.item.subNum = 0;
+    }
+    
+    noFill();
+    stroke(235);
+    // rect(this.x, this.y, 350, 70, 10);
+    noStroke();
+    if(mouseX > this.x - 175 && mouseX < this.x + 175 && mouseY < this.y + 35 && mouseY > this.y - 35){
+        fill(255, 255, 255, 10);
+        for(var i = 0; i < 360; i += 30){
+            rect(this.x + sin(i)*7, this.y + cos(i)*7 + 5, 350, 70, 10);
+        }
+        if(clicked){
+            this.extraX = 20;
+            this.item.subNum ++;
+        }
+    }
+    fill(0, 0, 30);
+    rect(this.x, this.y, 350, 70, 10);
+    fill(245);
+    textAlign(CORNER, CENTER);
+    textSize(40);
+    text(this.name.toUpperCase(), this.x - 160, this.y - 5);
+    textSize(20);
+    text(this.item.num, this.x + 140, this.y - 5);
+    fill(255, 255, 255, 50);
+    rect(this.x, this.y + 23, 330, 10, 10);
+    rectMode(LEFT);
+    fill(0, 255, 0);
+    rect(this.x - 165, this.y + 18, ((330 / this.item.max) * this.item.subNum) - this.extraX, 10, 10);
+    rectMode(CENTER);
+    
+    this.extraX /= 1.1;
+};
+
+mouseReleased = function(){
+    clicked = true;
+};
+
+draw = function() {
+    background(0, 0, 30);
+    
+    for(var i in clickers){
+        clickers[i].draw();
+    }
+    
+    clicked = false;
+};
