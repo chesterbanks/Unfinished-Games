@@ -3,6 +3,12 @@
 // Let go to jump
 // Will you judge the distance correctly?
 
+textAlign(CENTER, CENTER);
+textFont(createFont("HelveticaNeue-UltraLight"));
+
+var stage = 0;
+var score = 4;
+
 var completed = false;
 
 var rectCollide = function(a, b) {
@@ -37,8 +43,8 @@ Player.prototype.draw = function() {
     rect(this.x, this.y - 10, 30, 5);
     fill(0, 255, 0);
     rect(this.x, this.y - 10, this.xPower * 6.3, 5);
-    fill(23, 161, 235);
-    rect(this.x, this.y, this.w, this.h);
+    fill(255, 255, 255);
+    rect(this.x, this.y, this.w, this.h, 5);
     
     if(mouse.pressed && !this.jumping && !completed){
         this.xPower += 0.15;
@@ -67,7 +73,10 @@ var Island = function(x, firstPlatform){
     this.w = 30;
     this.h = 170;
     this.xSpeed = -3;
-    this.extraX = 100;
+    this.extraX = 300;
+    
+    this.baseColor = color(207, 168, 89);
+    this.topColor = color(54, 227, 74);
     
     this.firstPlatform = firstPlatform;
     
@@ -82,9 +91,32 @@ var Island = function(x, firstPlatform){
 };
 var islands = [new Island(50, true), new Island(random(80, width), false)];
 Island.prototype.draw = function() {
+    switch(stage){
+        case 0:
+            this.baseColor = color(51, 100, 122);
+            this.topColor = color(116, 156, 168);
+            break;
+        case 1:
+            this.baseColor = color(207, 168, 89);
+            this.topColor = color(54, 227, 74);
+            break;
+        case 2:
+            this.baseColor = color(232, 232, 232);
+            this.topColor = color(232, 174, 67);
+            break;
+        case 3:
+            this.baseColor = color(125, 125, 125);
+            this.topColor = color(171, 171, 171);
+            break;
+        case 4:
+            this.baseColor = color(61, 61, 61);
+            this.topColor = color(59, 59, 59);
+            break;
+    }
+    
     pushMatrix();
     translate(this.x + this.extraX, this.y);
-    fill(207, 168, 89);
+    fill(this.baseColor);
     rect(2.5, 0, this.w - 5, this.h);
     for(var i in this.dirt){
         fill(0, 0, 0, 30);
@@ -92,16 +124,18 @@ Island.prototype.draw = function() {
     }
     fill(255, 255, 255, 30);
     rect(2.5, 0, this.w - 5, this.h/2);
-    fill(81, 237, 96);
+    fill(this.topColor);
+    rect(0, 0, this.w, 10);
+    fill(255, 255, 255, 30);
     rect(0, 0, this.w, 5, 3);
-    fill(54, 227, 74);
-    rect(0, 4, this.w, 5);
+    fill(this.topColor);
     for(var i in this.grass){
         rect(this.grass[i].x, this.grass[i].y + 4, this.grass[i].w, this.grass[i].h);
     }
     popMatrix();
     
     if(rectCollide(this, player) && player.yvel > 1 && player.y < this.y){
+        score ++;
         player.xPower = 0;
         player.yvel = 0;
         player.y = this.y - player.h;
@@ -157,16 +191,138 @@ var mountain = function(x, y, sz){
     endShape();
     popMatrix();
 };
-
-draw = function() {
+var tree1 = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz/10);
+    noStroke();
+    fill(255, 183, 0);
+    beginShape();
+    vertex(0, -50);
+    vertex(-15, 0);
+    vertex(-11, 5);
+    vertex(-18, 25);
+    vertex(-13, 28);
+    vertex(-19, 40);
+    vertex(19, 40);
+    vertex(13, 28); 
+    vertex(18, 25);
+    vertex(11, 5);
+    vertex(15, 0);
+    endShape();
+    fill(204, 175, 122);
+    rect(-2, 0, 4, 50, 10);
+    strokeWeight(1);
+    stroke(204, 175, 122);
+    line(-2, 7, -8, 0);
+    line(2, 7, 8, 0);
+    line(-2, 24, -10, 14);
+    line(2, 24, 10, 14);
+    line(-2, 34, -10, 25);
+    line(2, 34, 10, 25);
+    noStroke();
+    popMatrix();
+};
+var bubbles = [];
+var waterBG = function(){
+    if(bubbles.length < 200){
+        bubbles.push({x: random(400, 800), y: random(height), sz: random(50), sp: random(1, 15), sinAmt: random(30), sinAmt2: random(10)});
+    }
+    
+    noStroke();
+    for(var i = 0; i < height; i += 10){
+        fill(lerpColor(
+            color(45, 209, 227), color(0, 87, 158), i/height));
+        rect(0, i, 400, 10);
+    }
+    fill(227, 179, 102);
+    rect(0, 350, 400, 10);
+    fill(242, 192, 106);
+    rect(0, 360, 400, 50);
+    
+    for(var i in bubbles){
+        fill(255, 255, 255, 50);
+        ellipse(bubbles[i].x, bubbles[i].y + sin(frameCount*bubbles[i].sinAmt2)*bubbles[i].sinAmt, bubbles[i].sz, bubbles[i].sz);
+        ellipse(bubbles[i].x - bubbles[i].sz/6, bubbles[i].y - bubbles[i].sz/6 + sin(frameCount*bubbles[i].sinAmt2)*bubbles[i].sinAmt, bubbles[i].sz/2, bubbles[i].sz/2);
+        bubbles[i].x -= bubbles[i].sz/5;
+        if(bubbles[i].x < -50){
+            bubbles[i].x = 450;
+        }
+    }
+};
+var beachBG = function(){
+    noStroke();
+    background(109, 211, 237);
+    fill(31, 180, 217);
+    rect(0, 150, 400, 200);
+    fill(132, 230, 76);
+    rect(0, 350, 400, 10);
+    fill(118, 207, 29);
+    rect(0, 360, 400, 50);
+    for(var i = 0; i < width+5; i += 10){
+        for(var j = 335; j < 413; j += 18){
+            fill(-102 + j, -150 + j, 114);
+            ellipse(i, j + sin(i*5)*3, 20, 20);
+        }
+    }
+};
+var forestBG = function(){
     background(219, 251, 255);
     mountain(0, 0, 10);
     mountain(100, -105, 13);
     mountain(246, 0, 10);
     fill(132, 230, 76);
     rect(0, 350, 400, 10);
-    fill(116, 209, 62);
+    fill(118, 207, 29);
     rect(0, 360, 400, 50);
+    for(var i = 0; i < width; i += 30){
+        tree1(i, 305, sin(i*5)*4 + 10);
+        tree1(i + 16, 305, sin(i*3)*1 + 10);
+    }
+};
+var mountainBG = function(){
+    background(219, 251, 255);
+    mountain(0, 0, 10);
+    mountain(100, -105, 13);
+    mountain(246, 0, 10);
+    fill(132, 230, 76);
+    rect(0, 350, 400, 10);
+    fill(118, 207, 29);
+    rect(0, 360, 400, 50);
+};
+var nightMountainBG = function(){
+    background(219, 251, 255);
+    mountain(0, 0, 10);
+    mountain(100, -105, 13);
+    mountain(246, 0, 10);
+    fill(132, 230, 76);
+    rect(0, 350, 400, 10);
+    fill(118, 207, 29);
+    rect(0, 360, 400, 50);
+};
+
+draw = function() {
+    switch(stage){
+        case 0:
+            waterBG();
+            break;
+        case 1:
+            beachBG();
+            break;
+        case 2:
+            forestBG();
+            break;
+        case 3:
+            mountainBG();
+            break;
+        case 4:
+            nightMountainBG();
+            break;
+    }
+    
+    fill(255, 255, 255, 100);
+    textSize(70);
+    text(score, 200, 200);
     
     for(var i in islands){
         islands[i].draw();
@@ -175,6 +331,11 @@ draw = function() {
         }
     }
     player.draw();
+    
+    if(score >= 5){
+        stage ++;
+        score = 0;
+    }
     
     mouse.released = false;
 };
