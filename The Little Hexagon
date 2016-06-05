@@ -1,7 +1,7 @@
 /** 
  * The Little Hexagon
- * Proxima Programming
- * April 10 2016
+ * Chester Banks
+ * June 6 2016
  * 
  * @INSTRUCTIONS
     Press to duck
@@ -10,12 +10,6 @@
     Avoid buzzsaws and overhangs
     Grab coins
     Buy more characters with coins
-    
- * @CREDITS (listed in order of most work done)
-    Chester Banks
-    17mloges
-    Stargazer
-    Everyone else at TA
 
  * @CHARACTERS
     Zipp (0$) - You start out with him. Only single jump, and no powers.
@@ -26,7 +20,6 @@
   * @TO_DO
     - Add a shop page where you can buy Jag, Medo, and Max.
     - Make instructions page
-    - Make credits page
 */
 
 textAlign(CENTER, CENTER);
@@ -392,7 +385,7 @@ draw = function() {
         textLeading(60);
         text("the\nlittle\nhexagon", 200, 160);
         textSize(15);
-        text("a proxima programming production", 200, 275);
+        text("a chester banks production", 200, 275);
         textSize(20);
         text("Your distance record: " + distanceRecord, 200, 30);
         strokeWeight(1);
