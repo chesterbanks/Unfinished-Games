@@ -1,0 +1,249 @@
+// Settings
+{
+    textAlign(CENTER, CENTER);
+    textFont(createFont("Verdana Bold"));
+}
+
+// System objects
+{
+    var mouse = {
+        clicked: false,
+        overButton: false,
+    };
+    var system = {
+        scene: 'game',
+        keys: [],
+        nextScene: 'Map',
+        switchingScenes: false,
+        blackness: 0,
+        blackSpeed: 0,
+        
+        workingOn: false,
+        rectCollide: function(a, b) {
+            return a.x+a.w > b.x && a.y+a.h > b.y && a.x < b.x+b.w && a.y < b.y+b.h;
+        }
+    };
+}
+
+// Functions
+{   
+    var button = function(x, y, sz, txt, next){
+        this.x = x; 
+        this.y = y;
+        this.sz = sz; 
+        this.txt = txt;
+        this.next = next;
+    };
+    button.prototype.draw = function() {
+        noStroke();
+        fill(0, 0, 0, 50);
+        ellipse(this.x, this.y + 12, this.sz, this.sz);
+        textSize(this.sz/6);
+        strokeWeight(10);
+        stroke(255, 255, 255);
+        fill(255, 255, 255, 220);
+        if(dist(mouseX, mouseY, this.x, this.y) < this.sz/2){
+            mouse.overButton = true;
+            fill(255, 255, 255, 220);
+            ellipse(this.x, this.y, this.sz + sin(frameCount*10)*10, this.sz + cos(frameCount*10)*10);
+            fill(50);
+            text(this.txt.toUpperCase(), this.x, this.y);
+            if(mouse.clicked){
+                system.nextScene = this.next;
+                system.switchingScenes = true;
+            }
+        } else {
+            ellipse(this.x, this.y, this.sz, this.sz);
+            fill(50);
+            text(this.txt.toUpperCase(), this.x, this.y);
+        }
+    };
+    
+    var Block = function(x, y, colo){
+        this.x = x;
+        this.y = y;
+        this.w = 40;
+        this.h = 40;
+        this.color = colo;
+    };
+    Block.prototype.draw = function() {
+        fill(this.color);
+        rect(this.x, this.y, this.w, this.h);
+    };
+    
+    var Player = function(x, y, colo1, colo2, controls){
+        this.x = x;     
+        this.y = y;     
+        this.w = 40;
+        this.h = 40;
+        this.color = colo1;
+        this.color2 = colo2;
+        this.controls = controls;
+        
+        this.xvel = 0;
+        this.yvel = 0;
+        this.maxSpeed = 5;
+    };
+    Player.prototype.draw = function() {
+        noStroke();
+        pushMatrix();
+        translate(this.x, this.y);
+        fill(this.color);
+        rect(0, 0, this.w, this.h);
+        fill(this.color2);
+        if(this.controls === 0){
+            rect(20, 20, 7, 7);
+            rect(10, 20, 7, 7);
+        } else {
+            rect(20, 10, 7, 7);
+            rect(10, 10, 7, 7);
+        }
+        popMatrix();
+        
+        this.x += this.xvel;
+        this.y += this.yvel;
+        
+        if(system.keys[RIGHT]){
+            this.xvel += 0.1;
+        }
+        if(system.keys[LEFT]){
+            this.xvel -= 0.1;
+        }
+        if(this.controls === 0){
+            if(system.keys[UP]){
+                this.yvel -= 0.1;
+            }
+            if(system.keys[DOWN]){
+                this.yvel += 0.1;
+            }
+            if(this.y + this.h > 300){
+                this.y = 300 - this.h;
+                this.yvel = 0;
+            }
+        } else {
+            if(system.keys[UP]){
+                this.yvel += 0.1;
+            }
+            if(system.keys[DOWN]){
+                this.yvel -= 0.1;
+            }
+            if(this.y < 300){
+                this.y = 300;
+                this.yvel = 0;
+            }
+        }
+        
+        if(this.xvel > this.maxSpeed){ this.xvel = this.maxSpeed; }
+        if(this.xvel < -this.maxSpeed){ this.xvel = -this.maxSpeed; }
+        if(this.yvel > this.maxSpeed){ this.yvel = this.maxSpeed; }
+        if(this.yvel < -this.maxSpeed){ this.yvel = -this.maxSpeed; }
+    };
+}
+
+// Scenes
+{
+    var Game = function(){
+        this.colors = [
+            color(25),
+            color(235)
+        ];
+        this.player1 = new Player(280, 260, this.colors[0], this.colors[1], 0);
+        this.player2 = new Player(280, 300, this.colors[1], this.colors[0], 1);
+        
+        this.map = [];
+    };
+    Game.prototype.draw = function() {
+        noStroke();
+        
+        background(this.colors[0]);
+        fill(this.colors[1]);
+        rect(0, 0, 600, 300);
+        
+        this.player1.draw();
+        this.player2.draw();
+        
+        for(var i in this.map){
+            this.map[i].draw();
+        }
+    };
+    var game = new Game();
+}
+
+var levelMap = [
+    '          .....',
+    ' ..            ',
+    '  .            ',
+    '  ..           ',
+    '        ..     ',
+    '        .      ',
+    '               ',
+    '               ',
+    ' .       .     ',
+    ' ..     ..     ',  
+    '.        ..    ',
+    '         .     ',
+    ' ..            ',
+    '  .           .',
+    '  ..         ..',
+];
+var readMap = function(){
+    for(var i in levelMap){
+        for(var j in levelMap[i]){
+            var letter = levelMap[j].charAt(i);
+            
+            switch(letter){
+                case '.':
+                    if(j * 40 < 300){
+                        game.map.push(new Block(i * 40, j * 40, game.colors[0]));
+                    } else {
+                        game.map.push(new Block(i * 40, j * 40, game.colors[1]));
+                    }
+                    break;
+            }
+        }
+    }
+};
+readMap();
+
+// Processing events
+{
+    keyPressed = function() {system.keys[keyCode] = true;};
+    keyReleased = function() {system.keys[keyCode] = false;};
+    mouseClicked = function(){mouse.clicked = true;};
+}
+
+draw = function() {
+    switch(system.scene){
+        case 'game':
+            game.draw();
+            break;
+        default:
+            println('There is no scene called "' + system.scene + '".');
+            noLoop();
+            break;
+    }
+    
+    // Cursor
+    cursor(mouse.overButton ? 'pointer' : 'default');
+    
+    // Transitions
+    {
+        noStroke();
+        fill(255, 255, 255, system.blackness);
+        rect(0, 0, width, height);
+        if(system.switchingScenes){
+            system.blackSpeed = +10;
+        }
+        if(system.blackness > 255){
+            system.scene = system.nextScene;
+            system.switchingScenes = false;
+            system.blackSpeed = -system.blackSpeed;
+        }
+        if(system.blackness < 0){ system.blackness = 0; }
+        system.blackness += system.blackSpeed;
+    }
+    
+    // Reset mouse events
+    mouse.clicked = false;
+    mouse.overButton = false;
+};
