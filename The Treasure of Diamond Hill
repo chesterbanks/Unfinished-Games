@@ -1,23 +1,3 @@
-/**
-    @STORYLINE
-        The town of Diamond Hill has attracted hundreds of visitors over just the last few years because of a recent lead on an old legend.
-        
-        In the year 1920, travelers arrived in what would become Diamond Hill looking for hidden riches. The travelers banded together and set up a city and named it Diamond Hill, after the riches that were supposedly scattered among the area.
-        
-        Eight years later, an outsider looking for treasure made a surprising discovery that proved the legend true. Buried three feet beneath the ground was a small chest, with the initals F.T. engraved upon it. The visitor cracked open the chest, to find that it was full of glittering gold bars.
-        
-        Word spread quickly throughout Diamond Hill of the outsider's discovery, and the townspeople claimed that the treasure belonged to them because it was on their land. The discoverer disagreed, and the townspeople chased after him, hoping to get a share of the gold.
-        
-        The discoverer tried to drag away the chest, but it was too heavy. Secretly, he hid the fortune inside a small and secure hiding spot, planning to retrieve it later. But that day never came.
-        
-        Now, nearly a century later, the mayor has found new evidence pertaining to the long-lost treasure. You, an enthusiastic explorer, have agreed to meet with the mayor to go over information on the treasure.
-        Apparently the original discoverer of the chest wrote a letter to a friend right before his death. It is just a small piece of paper with a riddle-like poem written on it.
-        
-        [ SHOW MAP ]
-        The clue the discoverer left should lead to somewhere in one of these places on the map. Can you figure out the clue and find the next one?
-
-*/
-
 // Settings
 {
     textAlign(CENTER, CENTER);
@@ -435,11 +415,6 @@
                 cred: 'For all of the awesome clues'
             },
             {
-                name: 'SlingBlade100',
-                img: getImage("avatars/leaf-blue"),
-                cred: 'For the player movement and map code'
-            },
-            {
                 name: '17mloges',
                 img: getImage("avatars/mr-pants"),
                 cred: 'For the great storyline'
@@ -538,7 +513,7 @@
         textSize(25);
         text('the map of', 183, 40);
         
-        // Library
+        // Buildings
         this.rooftop(80, 180, 100, 50, -15, 'Library');
         this.rooftop(365, 170, 100, 80, 0, 'Oak West Mall');
         this.rooftop(495, 170, 80, 30, 90);
