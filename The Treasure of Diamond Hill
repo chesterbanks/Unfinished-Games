@@ -1,3 +1,23 @@
+/**
+    @STORYLINE
+        The town of Diamond Hill has attracted hundreds of visitors over just the last few years because of a recent lead on an old legend.
+        
+        In the year 1920, travelers arrived in what would become Diamond Hill looking for hidden riches. The travelers banded together and set up a city and named it Diamond Hill, after the riches that were supposedly scattered among the area.
+        
+        Eight years later, an outsider looking for treasure made a surprising discovery that proved the legend true. Buried three feet beneath the ground was a small chest, with the initals F.T. engraved upon it. The visitor cracked open the chest, to find that it was full of glittering gold bars.
+        
+        Word spread quickly throughout Diamond Hill of the outsider's discovery, and the townspeople claimed that the treasure belonged to them because it was on their land. The discoverer disagreed, and the townspeople chased after him, hoping to get a share of the gold.
+        
+        The discoverer tried to drag away the chest, but it was too heavy. Secretly, he hid the fortune inside a small and secure hiding spot, planning to retrieve it later. But that day never came.
+        
+        Now, nearly a century later, the mayor has found new evidence pertaining to the long-lost treasure. You, an enthusiastic explorer, have agreed to meet with the mayor to go over information on the treasure.
+        Apparently the original discoverer of the chest wrote a letter to a friend right before his death. It is just a small piece of paper with a riddle-like poem written on it.
+        
+        [ SHOW MAP ]
+        The clue the discoverer left should lead to somewhere in one of these places on the map. Can you figure out the clue and find the next one?
+
+*/
+
 // Settings
 {
     textAlign(CENTER, CENTER);
@@ -80,13 +100,13 @@
         strokeWeight(4);
         ellipse(135, 430, 120, 120);
         ellipse(135, 430, 105, 105);
-        for(var i = -frameCount%22; i < 360; i += 22){
+        for(var i = -22; i < 360; i += 22){
             strokeWeight(2);
             line(135 + sin(i)*50, 430 + cos(i)*50, 135, 430);
         }
         noStroke();
         fill(85);
-        for(var i = -frameCount%22; i < 360; i += 22){
+        for(var i = -22; i < 360; i += 22){
             ellipse(135 + sin(i)*65, 430 + cos(i)*65, 10, 10);
         }
         
@@ -126,16 +146,16 @@
         }
         
         // Building #3
-        fill(227, 174, 104);
+        fill(179, 252, 250);
         rect(185, 475, 60, 100);
-        fill(128, 97, 61);
+        fill(0, 230, 255);
         rect(185, 415, 60, 20);
-        fill(99, 85, 67);
+        fill(0, 191, 201);
         rect(185, 426, 66, 3, 5);
         rect(153, 415, 3, 23, 5);
-        fill(227, 174, 104);
+        fill(255, 255, 255);
         rect(165, 405, 7, 16);
-        fill(93, 122, 117);
+        fill(176, 176, 176);
         for(var i = 165; i < 204; i += 15){
             for(var j = 447; j < 511; j += 29){
                 rect(i, j, 10, 15);
@@ -173,19 +193,19 @@
         rect(130, 445, 3, 15, 5);
         
         // Building #4
-        fill(224, 123, 90);
+        fill(255, 255, 255);
         rect(230, 460, 60, 130);
-        fill(110, 96, 77);
+        fill(30, 155, 186);
         rect(230, 520, 68, 10);
         rect(230, 385, 60, 20);
-        fill(138, 116, 88);
+        fill(45, 117, 130);
         rect(230, 395, 66, 3, 5);
         rect(198, 385, 3, 23, 5);
         rect(260, 385, 3, 23, 5);
-        fill(224, 123, 90);
+        fill(232, 232, 232);
         rect(245, 375, 3, 15, 5);
         rect(250, 375, 3, 15, 5);
-        fill(93, 122, 117);
+        fill(163, 186, 182);
         for(var i = 210; i < 255; i += 13){
             for(var j = 417; j < 500; j += 25){
                 rect(i, j, 8, 15);
@@ -222,7 +242,7 @@
         translate(105, 0);
         fill(230, 230, 230);
         rect(380, 490, 60, 70);
-        fill(235, 174, 82);
+        fill(235, 184, 82);
         rect(380, 507, 60, 35);
         fill(128, 97, 61);
         rect(380, 445, 60, 20);
@@ -244,14 +264,14 @@
         // Building #7
         pushMatrix();
         translate(295, 0);
-        fill(186, 126, 126);
+        fill(80, 210, 217);
         rect(130, 495, 40, 60);
-        fill(207, 140, 140);
+        fill(68, 190, 196);
         rect(160, 495, 20, 60);
         triangle(170, 465, 150, 465, 160, 445);
-        fill(102, 75, 59);
+        fill(150, 150, 150);
         quad(150, 465, 160, 445, 120, 445, 110, 465);
-        stroke(140, 110, 92);
+        stroke(196, 196, 196);
         strokeWeight(3);
         line(150, 465, 160, 445);
         line(150, 465, 110, 465);
@@ -271,18 +291,18 @@
         popMatrix();
         
         // Building #6
-        fill(120, 214, 211);
+        fill(255, 255, 255);
         rect(380, 475, 60, 100);
         fill(121, 178, 179);
         rect(380, 520, 61, 10);
-        fill(128, 97, 61);
+        fill(201, 201, 201);
         rect(380, 415, 60, 20);
-        fill(89, 75, 58);
+        fill(161, 161, 161);
         rect(380, 426, 66, 4, 5);
         rect(350, 415, 4, 23, 5);
         rect(410, 415, 4, 23, 5);
         rect(395, 405, 7, 16);
-        fill(123, 135, 133);
+        fill(209, 209, 209);
         for(var i = 358; i < 406; i += 14){
             for(var j = 447; j < 510; j += 27){
                 rect(i, j, 8, 15);
@@ -374,7 +394,7 @@
 {
     var menu = function(){
         this.buttons = [
-            new button(300, 450, 160, 'Begin', 'Map'),
+            new button(300, 450, 160, 'Begin', 'Intro'),
             new button(130, 450, 120, 'How', 'How'),
             new button(470, 450, 120, 'Credits', 'Credits'),
         ];
@@ -392,10 +412,10 @@
             }
         }
         fill(255);
+        textSize(25);
+        text("THE TREASURE OF", 250, 270);
         textSize(50);
-        text("TREASURE HUNT", 300, 300);
-        textSize(20);
-        text("a collaboration", 425, 330);
+        text("DIAMOND HILL", 300, 300);
         
         for(var i in this.buttons){
             this.buttons[i].draw();
@@ -458,6 +478,80 @@
         }
     };
     var Credits = new credits();
+    
+    var intro = function(){
+        this.texts = [
+            'The town of Diamond Hill has attracted hundreds of visitors over just the last few years because of a recent lead on an old legend.',
+            'In the year 1920, travelers arrived in what would become Diamond Hill looking for hidden riches. The travelers banded together and set up a city and named it Diamond Hill, after the riches that were supposedly scattered among the area.',
+            'Eight years later, an outsider looking for treasure made a surprising discovery that proved the legend true. Buried three feet beneath the ground was a small chest, with the initals F.T. engraved upon it. The visitor cracked open the chest, to find that it was full of glittering gold bars.',
+            'Word spread quickly throughout Diamond Hill of the outsider\'s discovery, and the townspeople claimed that the treasure belonged to them because it was on their land. The discoverer disagreed, and the townspeople chased after him, hoping to get a share of the gold.',
+            'The discoverer tried to drag away the chest, but it was too heavy. Secretly, he hid the fortune inside a small and secure hiding spot, planning to retrieve it later. But that day never came.',
+            'Now, nearly a century later, the mayor has found new evidence pertaining to the long-lost treasure. You, an enthusiastic explorer, have agreed to meet with the mayor to go over information on the treasure.',
+            'Apparently the original discoverer of the chest wrote a letter to a friend right before his death. It is just a small piece of paper with a riddle-like poem written on it.',
+        ];
+        this.whichText = 0;
+    };
+    intro.prototype.draw = function() {
+        background(25);
+        fill(235);
+        textSize(20);
+        text(this.texts[this.whichText], 50, 50, 500, 500);
+        
+        if(mouse.clicked){
+            this.whichText ++;
+            if(this.whichText > this.texts.length - 1){
+                system.nextScene = 'Map';
+                system.switchingScenes = true;
+            }
+        }
+    };
+    var Intro = new intro();
+    
+    var theMap = function(){
+        this.rooftop = function(x, y, w, h, rot, txt){
+            pushMatrix();
+            translate(x, y);
+            rotate(rot);
+            fill(173, 173, 173);
+            rect(0, 0, w, h);
+            fill(161, 161, 161);
+            quad(0, 0, w, 0, w - (w/5), h/2, (w/5), h/2);
+            fill(143, 143, 143);
+            quad(0, h, w, h, w - (w/5), h/2, (w/5), h/2);
+            if(txt){
+                textSize(15);
+                text(txt.toUpperCase(), w/2, -10);
+            }
+            popMatrix();
+        };
+    };
+    theMap.prototype.draw = function() {
+        background(201, 201, 201);
+        noStroke();
+        fill(0, 0, 0, 30);
+        rect(55, 135, 490, 347);
+        fill(235);
+        rect(50, 125, 500, 350);
+        fill(255);
+        textSize(45);
+        text('DIAMOND HILL', 300, 70);
+        textSize(25);
+        text('the map of', 183, 40);
+        
+        // Library
+        this.rooftop(80, 180, 100, 50, -15, 'Library');
+        this.rooftop(365, 170, 100, 80, 0, 'Oak West Mall');
+        this.rooftop(495, 170, 80, 30, 90);
+        this.rooftop(315, 185, 50, 50);
+        this.rooftop(335, 170, 30, 15);
+        this.rooftop(365, 300, 80, 50, 10);
+        this.rooftop(393, 295, 30, 10, 10, 'Bank');
+        
+        fill(235);
+        textSize(15);
+        text('The clue the discoverer left should lead to somewhere in one of the places on this map. Click on a yellow dot to be transported to that place.', 50, 385, 500, 300);
+    };
+    var Map1 = new theMap();
 }
 
 draw = function() {
@@ -468,8 +562,14 @@ draw = function() {
         case 'Credits':
             Credits.draw();
             break;
+        case 'Intro':
+            Intro.draw();
+            break;
+        case 'Map':
+            Map1.draw();
+            break;
         default:
-            println('There is no scene called "' + system.scene + '".');
+            println('Uh, there isn\'t a scene called "' + system.scene + '".');
             noLoop();
             break;
     }
