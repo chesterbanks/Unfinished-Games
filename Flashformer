@@ -1,0 +1,438 @@
+imageMode(CENTER);
+rectMode(CENTER);
+textAlign(CENTER, CENTER);
+textFont(createFont('HelveticaNeue-UltraLight'));
+
+var mouse = {
+    clicked: false,
+    overButton: false,
+};
+var system = {
+    scene: 'Home',
+    nextScene: 'Game',
+    switchingScenes: false,
+    blackness: 0,
+    blackSpeed: 0,
+    
+    collide: function(a, b){
+        return a.x + (a.w / 2) > b.x - (b.w / 2) && a.y + (a.h / 2) > b.y - (b.h / 2) && a.x - (a.w / 2) < b.x + (b.w / 2) && a.y - (a.h / 2) < b.y + (b.h / 2);
+    },
+};
+
+var keys = [];
+keyPressed = function(){ keys[keyCode] = true; };
+keyReleased = function(){ keys[keyCode] = false; };
+mouseClicked = function(){ mouse.clicked = true; };
+
+/** LOTS OF CREDIT goes to @Lionofgd for helping with the y collisions, camera and some bug fixing.*/
+
+// This helps with key movement
+var keys = [];
+var keyPressed = function(){ keys[keyCode] = true; };
+var keyReleased = function(){ keys[keyCode] = false; };
+
+// The rectangle collision function
+var rectCollide = function(one, two){
+    if( one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h){
+        return true;
+    }
+};
+
+// Setting the text align, text font, etc.
+textAlign(CENTER, CENTER);
+textFont(createFont("helveticaneue-light"));
+
+// Mountain
+var mountain = function(x, y, sz, br){
+    noStroke();
+    fill(29, 9, 39, br);
+    triangle(x-(sz/5), y, x+(sz/5), y, x, y-(sz));
+    fill(255, 255, 255, br/2);
+    triangle(x-(sz/16), y-sz*0.7, x + sz/16, y-sz*0.7, x, y-sz);
+};
+
+// All of the images
+var images = {
+    "mountainBG": function(){
+        background(0, 0, 0);
+        
+        mountain(200, 350, 172, 255);
+        mountain(285, 350, 245, 255);
+        mountain(360, 350, 125,255);
+        mountain(135, 350, 140,255);
+        mountain(66, 350, 200,255);
+        mountain(420, 350, 172,255);
+        mountain(-8, 350, 172,255);
+        
+        mountain(235, 350, 162, 200);
+        mountain(167, 350, 235, 200);
+        mountain(107, 350, 115, 200);
+        mountain(333, 350, 130, 200);
+        mountain(26, 350, 190, 200);
+        mountain(383, 350, 162, 200);
+        mountain(-8, 350, 162, 200);
+        
+        for(var i = 400; i > 200; i -= 1){
+            stroke(255, 255, 255, i/3 - 80);
+            line(0, i, 400, i);
+        }
+        
+        noStroke();
+        fill(36, 36, 36);
+        beginShape();
+        vertex(0, 400);
+        vertex(400, 400);
+        vertex(400, 320);
+        vertex(372, 301);
+        vertex(348, 304);
+        vertex(332, 338);
+        vertex(299, 330);
+        vertex(279, 340);
+        vertex(254, 338);
+        vertex(232, 334);
+        vertex(200, 336);
+        vertex(174, 345);
+        vertex(138, 338);
+        vertex(127, 329);
+        vertex(73, 324);
+        vertex(51, 329);
+        vertex(23, 329);
+        vertex(-4, 314);
+        endShape();
+        
+        for(var i = 0; i < 236; i += 5){
+            fill(255, 255, 255, i/100);
+            ellipse(85, 70, i, i);
+        }
+        fill(189, 189, 189);
+        ellipse(85, 70, 60, 60);
+        filter(BLUR, 3);
+        
+        return get(0, 0, 400, 400);
+    },
+    "confettiBG": function(){
+        background(25);
+        for(var i = 0; i < 400; i += 10){
+            for(var j = 0; j < 400; j += 10){
+                noStroke();
+                colorMode(HSB);
+                fill((i+j)%255, 255, 255);
+                rect(i + random(-30, 30), j + random(-30, 30), 10, 10);
+                colorMode(RGB);
+            }
+        }
+        filter(BLUR, 7);
+        
+        return get(0, 0, 400, 400);
+    },
+    "factoryBG": function(){
+        background(25);
+        for(var i = 0; i < 400; i += 50){
+            for(var j = 0; j < 400; j += 50){
+                strokeWeight(15);
+                stroke(255, 255, 255, 50);
+                fill((i+j)%100, (i+j)%100, (i+j)%100, 100);
+                rect(i, j, 45, 45);
+            }
+        }
+        filter(BLUR, 3);
+        
+        return get(0, 0, 400, 400);
+    },
+    "khanBG": function(){
+        background(0, 0, 0);
+        
+        this.imgs = [
+            getImage("creatures/Winston"),
+            getImage("creatures/OhNoes"),
+            getImage("creatures/Hopper-Cool"),
+            getImage("creatures/Hopper-Happy"),
+            getImage("avatars/spunky-sam"),
+            getImage("avatars/robot_male_2"),
+            getImage("avatars/purple-pi"),
+            getImage("avatars/aqualine-ultimate"),
+            getImage("avatars/orange-juice-squid"),
+            getImage("avatars/old-spice-man"),
+            getImage("avatars/piceratops-ultimate"),
+            getImage("avatars/piceratops-seed"),
+            getImage("avatars/mr-pink"),
+            getImage("avatars/mr-pants"),
+            getImage("avatars/marcimus"),
+            getImage("avatars/leafers-ultimate"),
+            getImage("avatars/leafers-tree"),
+            getImage("avatars/leafers-seed"),
+            getImage("avatars/leaf-yellow"),
+            getImage("avatars/leaf-red"),
+            getImage("avatars/leaf-orange"),
+            getImage("avatars/leaf-grey"),
+            getImage("avatars/leaf-green"),
+            getImage("avatars/leaf-blue"),
+        ];
+        
+        for(var i = -20; i < width; i += 40){
+           for(var j = -20; j < height; j += 40){
+               image(this.imgs[floor(random(0, this.imgs.length))], i+random(-10, 10), j+random(-10, 10), 80, 80);
+           }
+        }
+        
+        filter(BLUR, 3);
+        
+        fill(0, 0, 0, 160);
+        rect(0, 0, width, height);
+        
+        return get(0, 0, width, height);
+    },
+    
+    "dirtBlock": function(){
+        fill(100);
+        strokeWeight(2);
+        stroke(135);
+        rect(20, 20, 40, 40);
+        
+        return get(0, 0, 40, 40);
+    },
+    "grassBlock": function(){
+        fill(100);
+        strokeWeight(2);
+        stroke(135);
+        rect(20, 20, 40, 40);
+        fill(60);
+        rect(20, 5, 40, 10);
+        
+        return get(0, 0, 40, 40);
+    },
+    
+    "player": function(){
+        noFill();
+        strokeWeight(5);
+        stroke(100);
+        (rect)(20, 20, 40, 40, 20, 0, 20, 0);
+        
+        return get(0, 0, 40, 40);
+    },
+};
+
+// [Almost] everything about the blocks (blox)
+var block = function(x, y, w, h, whichBlock){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    
+    this.whichBlock = whichBlock;
+};
+block.prototype.draw = function() {
+    switch(this.whichBlock){
+        case "dirt":
+            image(images.dirtBlock, this.x, this.y);
+            break;
+        case "grass":
+            image(images.grassBlock, this.x, this.y);
+            break;
+    }
+};
+var blox = [];
+var bloxArray = [
+    "1111111111111111111111111111111111111111111111111111111111111",
+    "1                                                           1",
+    "1                                                           1",
+    "1                                                           1",
+    "1111111111                                                  1",
+    "1111111111111111                                            1",
+    "1111111111111111                                            1",
+    "1111111111111111                                            1",
+    "11111111111111111                                           1",
+    "11111111111111111111                                        1",
+    "11111111111111111111                                        1",
+    "11111111111111111111111111111111111111111 1111111111111111111",
+    "111111111111111111111                     1                 1",
+    "111111111111111111111              111111 1                 1",
+    "111111111111111111111                                1111   1",
+    "111111111111111111111       11111                   11111   1",
+    "111111111111111111111      11                       111     1",
+    "111111111111111111111     11                 111111         1",
+    "111111111111111111111                       111111          1",
+    "11111111111111111111111111        1111                      1",
+    "1111111111111111111111111111111111111111111111111111111111111",
+];
+var bloxLevel = function(level) {
+    /* jshint ignore:start */
+    var row = level.length;
+    while (row) {
+        var lastRow = level[--row - 1] || '',
+            rowString = level[row],
+            col = rowString.length;
+        while (col) {
+            var gridPointAbove = lastRow.charAt(--col),
+                currentGridPoint = Number(rowString[col]),
+                x = col * 40,
+                y = row * 40;
+            
+            switch (currentGridPoint) {
+                case 1:
+                    blox.push(new block(x, y, 40, 40,
+                        gridPointAbove == 1 ? 'dirt' : 'grass'));
+                break;
+            }
+        }
+    }
+    /* jshint ignore:end */
+};
+
+// [Almost] everything about the player
+var Player = function(x, y, w, h){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    
+    this.xvel = 0;
+    this.yvel = 0;
+    this.maxVel = 8;
+    
+    this.jumping = false;
+    this.jumpHeight = 10;
+    
+    this.flashlight = function(x, y){
+        noFill();
+        stroke(0);
+        strokeWeight(width*1.17);
+        ellipse(x, y, width*2.1, height*2.1);
+        strokeWeight(10.3);
+        for(var i = 380; i > 0; i -= 20){
+            stroke(0, 0, 0, i/1.5);
+            ellipse(x, y, i, i);
+        }
+    };
+};
+
+Player.prototype.applyCollisions = function(xvel, yvel) {
+    for (var i = 0; i < blox.length; i++) {
+        if (!system.collide(this, blox[i])) { continue; }
+        if (xvel < 0) {
+            this.x = blox[i].x + blox[i].w;
+            this.xvel = 0;
+        }
+        if (xvel > 0) {
+            this.x = blox[i].x - this.w;
+            this.xvel = 0;
+        }
+        if (yvel < 0) {
+            this.y = blox[i].y + blox[i].h;
+            this.yvel = 0;
+        }
+        if (yvel > 0) {
+            this.y = blox[i].y - this.h;
+            this.yvel = 0;
+            this.jumping = false;
+        }
+    }
+};
+
+Player.prototype.draw = function() {
+    // The actual player
+    pushMatrix();
+    translate(this.x, this.y);
+    if(keys[LEFT]){
+        translate(0, 2);
+    }
+    rotate(this.xvel);
+    this.flashlight(0, 0);
+    image(images.player, 0, 0);
+    popMatrix();
+    
+    // Player movement
+    if(keys[LEFT]){
+        this.xvel -= 2;
+    }
+    if(keys[RIGHT]){
+        this.xvel += 2;
+    }
+    if(!keys[LEFT] && !keys[RIGHT]){
+        this.xvel = 0;
+    }
+    
+    if (keys[UP] && !this.jumping) {
+        this.yvel -= this.jumpHeight;
+        this.jumping = true;
+    }
+    if(this.xvel > this.maxVel){
+        this.xvel = this.maxVel;
+    }
+    if(this.xvel < -this.maxVel){
+        this.xvel = -this.maxVel;
+    }
+    this.jumping = true;
+    this.x += this.xvel;
+    this.applyCollisions(this.xvel, 0);
+    this.y += this.yvel;
+    this.applyCollisions(0, this.yvel);
+    this.yvel += 0.4;
+};
+
+var player = new Player(50, 50, 40, 40);
+
+// The camera
+var mapCamera = {
+    x: 200 - player.x,
+    y: 200 - player.y,
+    right: -Infinity,
+    bottom: -Infinity,
+    run: function(){
+        this.x = constrain(this.x + (200 - player.x - this.x)/5, this.right, 0);
+        this.y = constrain(this.y + (200 - player.y - this.y)/5, this.bottom, 0);
+        translate(this.x, this.y);
+    }
+};
+
+var scene = "Playing";
+
+bloxLevel(bloxArray);
+
+draw = function() {
+    if(scene === "Playing"){
+        for(var i in images){
+            if (typeof images[i] !== "object") {
+                background(0, 0, 0, 0);
+                images[i] = images[i]();
+            }
+        }
+        
+        image(images.mountainBG, mapCamera.x/20, mapCamera.y/20, 600, 600);
+        background(235);
+        
+        pushMatrix();
+        mapCamera.run();
+        
+        for(var i in blox){
+            blox[i].draw();
+        }
+        
+        player.draw();
+        popMatrix();
+        
+        fill(255);
+        text("player.x: " + player.x.toFixed(0) + "\nplayer.y: " + player.y.toFixed(0), 200, 50);
+    }
+    
+    noStroke();
+    fill(25, 25, 25, system.blackness);
+    rect(width/2, height/2, width, height);
+    if(system.switchingScenes){
+        system.blackSpeed = +10;
+    }
+    if(system.blackness > 255){
+        system.scene = system.nextScene;
+        system.switchingScenes = false;
+        system.blackSpeed = -system.blackSpeed;
+    }
+    if(system.blackness < 0){ system.blackness = 0; }
+    system.blackness += system.blackSpeed;
+    
+    // Reset mouse events
+    mouse.clicked = false;
+    mouse.overButton = false;
+};
