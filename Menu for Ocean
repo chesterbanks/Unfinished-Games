@@ -1,0 +1,72 @@
+textAlign(CENTER, CENTER);
+
+var images = {
+    'bg': function(){
+        noStroke();
+        
+        for(var i = 0; i < height; i += 10){
+            fill(lerpColor(
+                color(219, 70, 90),
+                color(235, 116, 52),
+                i/height));
+            rect(0, i, width, 10);
+            for(var j = 0; j < width; j += 10){
+                fill(0, 0, 0, random(10));
+                rect(j, i, 10, 10);
+            }
+        }
+        
+        fill(255, 179, 0);
+        arc(250, 500, 200, 200, -180, 0);
+        for(var i = 0; i < 200; i += 10){
+            fill(255, 106, 0, 5);
+            arc(250, 500, i, i, -180, 0);
+        }
+        
+        for(var i = 500; i < height; i += 10){
+            fill(lerpColor(
+                color(0, 0, 0, 200),
+                color(0, 251, 255, 200),
+                i/height));
+            rect(0, i, width, 10);
+        }
+        
+        noFill();
+        for(var i = 0; i < 100; i ++){
+            stroke(255, 255, 255, random(50));
+            arc(random(width), random(500, height), random(200), random(5), -180, 0);
+        }
+        
+        return get(0, 0, width, height);
+    },
+    'title': function(){
+        textFont(createFont('HelveticaNeue-UltraLight'));
+        textSize(95);
+        fill(0, 0, 0, 30);
+        text('ocean', 200, 255);
+        textSize(100);
+        fill(255);
+        text('ocean', 200, 250);
+        
+        textFont(createFont('HelveticaNeue-Light'));
+        textSize(25);
+        text('the beautiful game', 200, 300);
+        
+        return get(0, 0, width, height);
+    },
+};
+
+draw = function() {
+    for(var i in images){
+        for(var i in images){
+            if (typeof images[i] !== "object") {
+                colorMode(RGB, 255);
+                background(0, 0, 0, 0);
+                images[i] = images[i]();
+            }
+        }
+    }
+    
+    image(images.bg, 0, 0);
+    image(images.title, 0, 0);
+};
