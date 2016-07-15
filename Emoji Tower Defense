@@ -1,0 +1,512 @@
+/**
+ * 
+ * @towers
+    - Smile
+    - Wink
+    - Grin
+    - Shades
+    - Tongue
+    - Surprised
+    - Big Grin
+    - Sad
+ * 
+ * @enemies
+    - Clock
+*/
+
+textAlign(CENTER, CENTER);
+textFont(createFont('AvenirNext-UltraLight'));
+
+var mouse = {
+    clicked: false,
+};
+var system = {
+    scene: 'Game',
+};
+
+var Enemy = function(x, y, type){
+    this.x = x;
+    this.y = y;
+    this.sz = 30;
+    this.type = type;
+    
+    this.health = 100;
+    
+    switch(this.type){
+        case 'Clock':
+            this.speed = 0.1;
+            break;
+    }
+};
+var Enemies = [new Enemy(100, 335, 'Clock'), new Enemy(160, 335, 'Clock'), new Enemy(40, 335, 'Clock'), new Enemy(-20, 335, 'Clock'), new Enemy(-80, 335, 'Clock'), new Enemy(-140, 335, 'Clock')];
+Enemy.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    noFill();
+    stroke(51);
+    strokeWeight(5);
+    ellipse(0, 0, 30, 30);
+    strokeWeight(3);
+    pushMatrix();
+    rotate(frameCount*5);
+    line(0, 0, 0, -8);
+    popMatrix();
+    pushMatrix();
+    rotate(frameCount);
+    line(0, 0, -5, 4);
+    popMatrix();
+    line(-11, 14, -13, 17);
+    line(11, 14, 13, 17);
+    strokeWeight(1);
+    for(var i = 0; i < 360; i += 30){
+        line(sin(i)*15, cos(i)*15, sin(i)*10, cos(i)*10);
+    }
+    noStroke();
+    fill(51);
+    arc(-12, -14, 18, 18, -220, -40);
+    arc(12, -14, 18, 18, -140, 40);
+    fill(0, 0, 0, 30);
+    rect(-25, -35, 50, 5);
+    fill(0, 255, 38);
+    rect(-25, -35, this.health/2, 5);
+    popMatrix();
+    
+    this.x += this.speed;
+};
+
+var Emoji = function(x, y, type){
+    this.x = x;
+    this.y = y;
+    this.type = type;
+    switch(type){
+        case 'Smile':
+            this.fireRate = 50;
+            var damage = 10;
+            this.range = 150;
+            this.price = 25;
+            break;
+        case 'Wink':
+            this.fireRate = 30;
+            var damage = 10;
+            this.range = 180;
+            this.price = 35;
+            break;
+        case 'Grin':
+            this.fireRate = 30;
+            var damage = 15;
+            this.range = 200;
+            this.price = 50;
+            break;
+        case 'Shades':
+            this.fireRate = 7;
+            var damage = 2;
+            this.range = 100;
+            this.price = 80;
+            break;
+        case 'Tongue':
+            this.fireRate = 100;
+            var damage = 30;
+            this.range = 200;
+            this.price = 50;
+            break;
+        case 'Sad':
+            this.fireRate = 20;
+            var damage = 10;
+            this.range = 300;
+            this.price = 60;
+            break;
+    }
+    
+    this.bullet = function(x, y, angle){
+        this.x = x;
+        this.y = y;
+        this.sz = 5;
+        this.angle = angle;
+        this.dead = false;
+        
+        this.outFromCenter = 10;
+    };
+    this.bullets = [];
+    this.bullet.prototype.draw = function() {
+        noStroke();
+        fill(209, 209, 44);
+        ellipse(this.x + sin(this.angle) * this.outFromCenter, this.y + cos(this.angle) * this.outFromCenter, this.sz, this.sz);
+        
+        this.outFromCenter ++;
+        
+        for(var i in Enemies){
+            if(dist(this.x + sin(this.angle) * this.outFromCenter, this.y + cos(this.angle) * this.outFromCenter, Enemies[i].x, Enemies[i].y) < Enemies[i].sz){
+                Enemies[i].health -= damage;
+                this.dead = true;
+            }
+        }
+    };
+};
+var Emojis = [];
+Emoji.prototype.draw = function() {
+    for(var i in Enemies){
+        if(frameCount % this.fireRate === 0 && dist(this.x, this.y, Enemies[i].x, Enemies[i].y) < (this.range + Enemies[i].sz) / 2){
+            this.bullets.push(new this.bullet(this.x + (Enemies[i].speed * 100), this.y, -atan2(Enemies[i].y - this.y, Enemies[i].x - this.x) + 90));
+        }
+    }
+    for(var i in this.bullets){
+        this.bullets[i].draw();
+        if(this.bullets[i].dead){
+            this.bullets.splice(i, 1);
+        }
+    }
+    pushMatrix();
+    translate(this.x, this.y);
+    noStroke();
+    fill(0, 0, 0, 10);
+    ellipse(0, 0, this.range, this.range);
+    strokeWeight(3);
+    stroke(209, 209, 44);
+    fill(227, 227, 38);
+    arc(0, 0, 40, 50, -180, 0);
+    arc(0, 0, 40, 20, 0, 180);
+    fill(0, 0, 0, 20);
+    arc(0, 0, 40, 50, -180, -90);
+    arc(0, 0, 40, 20, 90, 180);
+    switch(this.type){
+        case 'Smile':
+            noFill();
+            stroke(45);
+            strokeWeight(2);
+            arc(0, -3, 15, 9, 0, 180);
+            noStroke();
+            fill(45);
+            ellipse(-8, -9, 6, 6);
+            ellipse(8, -9, 6, 6);
+            break;
+        case 'Wink':
+            noFill();
+            stroke(45);
+            strokeWeight(2);
+            arc(0, -3, 15, 9, 0, 180);
+            line(8, -12, 4, -8);
+            line(8, -8, 4, -8);
+            noStroke();
+            fill(45);
+            ellipse(-8, -9, 6, 6);
+            break;
+        case 'Grin':
+            stroke(45);
+            strokeWeight(2);
+            fill(255);
+            arc(0, -5, 26, 18, 0, 180);
+            noFill();
+            arc(0, -5, 26, 3, 0, 180);
+            line(0, -2, 0, 3);
+            line(-5, -2, -5, 2);
+            line(-10, -2, -10, -1);
+            line(5, -2, 5, 2);
+            line(10, -2, 10, -1);
+            noStroke();
+            fill(45);
+            ellipse(-7, -10, 6, 6);
+            ellipse(7, -10, 6, 6);
+            break;
+        case 'Shades':
+            noFill();
+            stroke(45);
+            strokeWeight(2);
+            arc(0, -3, 15, 9, 20, 110);
+            noStroke();
+            fill(45);
+            ellipse(8, -9, 6, 6);
+            arc(-8, -12, 19, 16, 10, 190);
+            arc(8, -12, 19, 16, -10, 170);
+            fill(255, 255, 255);
+            arc(-9, -11, 13, 10, 130, 190);
+            arc(8, -11, 13, 10, 125, 170);
+            break;
+        case 'Tongue':
+            noStroke();
+            fill(227, 132, 132);
+            arc(0, -2, 12, 16, 0, 180);
+            fill(0, 0, 0, 30);
+            arc(0, -2, 12, 16, 90, 180);
+            noFill();
+            stroke(45);
+            strokeWeight(2);
+            arc(0, -2, 20, -1, 0, 180);
+            noStroke();
+            fill(45);
+            ellipse(-8, -9, 6, 6);
+            ellipse(8, -9, 6, 6);
+            break;
+        case 'Surprised':
+            noStroke();
+            fill(45);
+            ellipse(0, 0, 11, 11);
+            ellipse(-8, -9, 6, 6);
+            ellipse(8, -9, 6, 6);
+            break;
+        case 'Big Grin':
+            stroke(45);
+            strokeWeight(2);
+            fill(255);
+            arc(0, -5, 26, 18, 0, 180);
+            noFill();
+            arc(0, -5, 26, 3, 0, 180);
+            line(0, -2, 0, 3);
+            line(-5, -2, -5, 2);
+            line(-10, -2, -10, -1);
+            line(5, -2, 5, 2);
+            line(10, -2, 10, -1);
+            line(-10, -9, -7, -13);
+            line(-4, -9, -7, -13);
+            line(10, -9, 7, -13);
+            line(4, -9, 7, -13);
+            break;
+        case 'Sad':
+            noFill();
+            stroke(45);
+            strokeWeight(2);
+            arc(0, 0, 13, -6, -5, 159);
+            noStroke();
+            fill(45);
+            ellipse(-8, -9, 6, 6);
+            ellipse(6, -9, 6, 6);
+            break;
+    }
+    textSize(15);
+    fill(224, 224, 224);
+    text('"' + this.type + '"', 0, 25);
+    popMatrix();
+};
+
+mouseClicked = function(){ mouse.clicked = true; };
+
+var Game = function(){
+    this.selected = 'Smile';
+    this.coins = 100;
+    this.price = 0;
+    
+    this.button = function(x, y, type){
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.over = false;
+    };
+    this.buttons = [
+        new this.button(50, 50, 'Smile'),
+        new this.button(110, 50, 'Wink'),
+        new this.button(170, 50, 'Grin'),
+        new this.button(230, 50, 'Shades'),
+        new this.button(290, 50, 'Tongue'),
+        new this.button(350, 50, 'Sad'),
+    ];
+    this.button.prototype.draw = function() {
+        pushMatrix();
+        translate(this.x, this.y);
+        noStroke();
+        if(mouseX > this.x - 30 && mouseX < this.x + 30 && mouseY > this.y - 50 && mouseY < this.y + 50){
+            fill(0, 0, 0, 20);
+            rect(-30, -50, 60, 100);
+            strokeCap(SQUARE);
+            strokeWeight(3);
+            stroke(0, 0, 0, 50);
+            line(-30, -49, 30, -49);
+            line(-30, -50, -30, 50);
+            this.over = true;
+        } else {
+            strokeCap(SQUARE);
+            strokeWeight(3);
+            stroke(0, 0, 0, 50);
+            line(-25, 50, 30, 50);
+            line(30, -50, 30, 50);
+        }
+        stroke(209, 209, 44);
+        fill(227, 227, 38);
+        arc(0, 0, 40, 50, -180, 0);
+        arc(0, 0, 40, 20, 0, 180);
+        fill(0, 0, 0, 20);
+        arc(0, 0, 40, 50, -180, -90);
+        arc(0, 0, 40, 20, 90, 180);
+        switch(this.type){
+            case 'Smile':
+                noFill();
+                stroke(45);
+                strokeWeight(2);
+                arc(0, -3, 15, 9, 0, 180);
+                noStroke();
+                fill(45);
+                ellipse(-8, -9, 6, 6);
+                ellipse(8, -9, 6, 6);
+                break;
+            case 'Wink':
+                noFill();
+                stroke(45);
+                strokeWeight(2);
+                arc(0, -3, 15, 9, 0, 180);
+                line(8, -12, 4, -8);
+                line(8, -8, 4, -8);
+                noStroke();
+                fill(45);
+                ellipse(-8, -9, 6, 6);
+                break;
+            case 'Grin':
+                stroke(45);
+                strokeWeight(2);
+                fill(255);
+                arc(0, -5, 26, 18, 0, 180);
+                noFill();
+                arc(0, -5, 26, 3, 0, 180);
+                line(0, -2, 0, 3);
+                line(-5, -2, -5, 2);
+                line(-10, -2, -10, -1);
+                line(5, -2, 5, 2);
+                line(10, -2, 10, -1);
+                noStroke();
+                fill(45);
+                ellipse(-7, -10, 6, 6);
+                ellipse(7, -10, 6, 6);
+                break;
+            case 'Shades':
+                noFill();
+                stroke(45);
+                strokeWeight(2);
+                arc(0, -3, 15, 9, 20, 110);
+                noStroke();
+                fill(45);
+                ellipse(8, -9, 6, 6);
+                arc(-8, -12, 19, 16, 10, 190);
+                arc(8, -12, 19, 16, -10, 170);
+                fill(255, 255, 255);
+                arc(-9, -11, 13, 10, 130, 190);
+                arc(8, -11, 13, 10, 125, 170);
+                break;
+            case 'Tongue':
+                noStroke();
+                fill(227, 132, 132);
+                arc(0, -2, 12, 16, 0, 180);
+                fill(0, 0, 0, 30);
+                arc(0, -2, 12, 16, 90, 180);
+                noFill();
+                stroke(45);
+                strokeWeight(2);
+                arc(0, -2, 20, -1, 0, 180);
+                noStroke();
+                fill(45);
+                ellipse(-8, -9, 6, 6);
+                ellipse(8, -9, 6, 6);
+                break;
+            case 'Surprised':
+                noStroke();
+                fill(45);
+                ellipse(0, 0, 11, 11);
+                ellipse(-8, -9, 6, 6);
+                ellipse(8, -9, 6, 6);
+                break;
+            case 'Big Grin':
+                stroke(45);
+                strokeWeight(2);
+                fill(255);
+                arc(0, -5, 26, 18, 0, 180);
+                noFill();
+                arc(0, -5, 26, 3, 0, 180);
+                line(0, -2, 0, 3);
+                line(-5, -2, -5, 2);
+                line(-10, -2, -10, -1);
+                line(5, -2, 5, 2);
+                line(10, -2, 10, -1);
+                line(-10, -9, -7, -13);
+                line(-4, -9, -7, -13);
+                line(10, -9, 7, -13);
+                line(4, -9, 7, -13);
+                break;
+            case 'Sad':
+                noFill();
+                stroke(45);
+                strokeWeight(2);
+                arc(0, 0, 13, -6, -5, 159);
+                noStroke();
+                fill(45);
+                ellipse(-8, -9, 6, 6);
+                ellipse(6, -9, 6, 6);
+                break;
+        }
+        textSize(15);
+        fill(0, 0, 0, 40);
+        text(this.type.toLowerCase(), 2, 27);
+        fill(0, 0, 0);
+        text(this.type.toLowerCase(), 0, 25);
+        popMatrix();
+    };
+};
+var game = new Game();
+Game.prototype.draw = function() {
+    switch(this.selected){
+        case 'Smile':
+            this.price = 25;
+            break;
+        case 'Wink':
+            this.price = 35;
+            break;
+        case 'Grin':
+            this.price = 50;
+            break;
+        case 'Shades':
+            this.price = 80;
+            break;
+        case 'Tongue':
+            this.price = 50;
+            break;
+        case 'Sad':
+            this.price = 60;
+            break;
+    }
+    
+    background(127, 225, 255);
+    noStroke();
+    for(var i = 0; i < 400; i += 30){
+        fill(0, 0, 0, 50 - (i/5));
+        rect(0, i, 400, 30);
+    }
+    for(var i in this.buttons){
+        this.buttons[i].draw();
+        if(this.buttons[i].over && mouse.clicked){
+            this.selected = this.buttons[i].type;
+        }
+        this.buttons[i].over = false;
+    }
+    noStroke();
+    fill(50);
+    rect(0, 350, 400, 50);
+    for(var i in Enemies){
+        Enemies[i].draw();
+        if(Enemies[i].health < 0){
+            Enemies.splice(i, 1);
+        }
+    }
+    for(var i in Emojis){
+        Emojis[i].draw();
+    }
+    if(mouse.clicked && mouseY > 100 && this.coins - this.price >= 0){
+        Emojis.push(new Emoji(mouseX, 350, this.selected));
+        this.coins -= this.price;
+    }
+    
+    strokeWeight(2);
+    stroke(209, 209, 44);
+    fill(227, 227, 38);
+    ellipse(20, 380, 20, 20);
+    arc(20, 380, 10, 10, -310, -40);
+    fill(0, 0, 0, 10);
+    arc(20, 380, 20, 20, -270, -90);
+    fill(209, 209, 44);
+    textSize(30);
+    text(this.coins, 55, 377);
+};
+
+draw = function() {
+    switch(system.scene){
+        case 'Game':
+            game.draw();
+            break;
+    }
+    
+    mouse.clicked = false;
+};
