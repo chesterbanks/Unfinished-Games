@@ -1,0 +1,250 @@
+// A twist on ye old dodge game.
+
+var colors = {
+    background: color(235, 231, 228),
+    main: color(21, 190, 212),
+    dark: color(18, 153, 168),
+    shadow: color(0, 0, 0, 30),
+    
+    secMain: color(242, 53, 119),
+    secDark: color(199, 44, 101),
+};
+var fonts = {
+    title: createFont('Trebuchet MS Bold', 105),
+    heading: createFont('Trebuchet MS Bold', 70),
+    subtitle: createFont('Trebuchet MS', 20)
+};
+
+rectMode(CENTER);
+textAlign(CENTER, CENTER);
+
+var system = {
+    scene: 'menu',
+    nextScene: 'Story',
+    switchingScenes: false,
+    blackness: 0,
+    blackSpeed: 0,
+    
+    coolText: function(txt, x, y, color1, color2, rot){
+        pushMatrix();
+        translate(x, y);
+        rotate(rot);
+        fill(colors.shadow);
+        text(txt, 0, 15);
+        fill(color2);
+        for(var i = 0; i < 360; i += 30){
+            text(txt, sin(i) * 5, 7 + cos(i) * 5);
+        }
+        fill(color1);
+        for(var i = 0; i < 360; i += 30){
+            text(txt, sin(i) * 5, cos(i) * 5);
+        }
+        fill(colors.background);
+        text(txt, 0, 0);
+        popMatrix();
+    },
+    circleCollide: function(a, b){
+        return dist(a.x, a.y, b.x, b.y) < ((a.sz / 2) + (b.sz / 2));
+    },
+};
+var mouse = {
+    clicked: false
+};
+
+var Rock = function(x, y){
+    this.x = x;
+    this.y = y;
+    
+    this.beginningSz = 0;
+    this.sz = 50;
+};
+var Rocks = [];
+Rock.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    scale(0.2);
+    strokeWeight(13);
+    stroke(117, 117, 117);
+    fill(158, 158, 158);
+    beginShape();
+    for(var i = 0; i < 360; i += 15){
+        vertex(0 + sin(i + random(20)) * (100 + random(20)), 0 + cos(i + random(20)) * (100 + random(20)));
+    }
+    endShape(CLOSE);
+    popMatrix();
+    
+    if(this.beginningSz <= this.sz){ this.beginningSz += 5; }
+    this.y += 5;
+};
+
+var Fruit = function(x, y){
+    this.type = 'Orange';
+    
+    this.x = x;
+    this.y = y;
+    this.sz = 40;
+    
+    this.health = 100;
+    this.xvel = random(2, 10);
+};
+Fruit.prototype.draw = function() {
+    noStroke();
+    pushMatrix();
+    translate(this.x, this.y);
+    switch(this.type){
+        case 'Orange':
+        fill(240, 166, 39);
+        ellipse(0, 0, 40, 40);
+        fill(0, 0, 0, 30);
+        arc(0, 0, 40, 40, -90, 90);
+        fill(240, 166, 39);
+        ellipse(0, 0, 25, 40);
+        fill(0, 0, 0, 30);
+        ellipse(10, 7, 3, 3);
+        ellipse(7, 9, 3, 3);
+        ellipse(10, 11, 3, 3);
+        ellipse(-10, 7, 3, 3);
+        ellipse(-7, 9, 3, 3);
+        ellipse(-10, 11, 3, 3);
+        fill(38, 38, 38);
+        ellipse(-5, 0, 8, 8);
+        ellipse(5, 0, 7, 7);
+            break;
+        case 'Pineapple':
+            break;
+    }
+    fill(0, 0, 0, 30);
+    rect(0, -25, 33, 5);
+    rectMode(CORNER);
+    fill(0, 255, 0);
+    rect(-17, -27, this.health/3, 5);
+    rectMode(CENTER);
+    popMatrix();
+    
+    this.x += this.xvel;
+    if(this.x > 400 - (this.sz / 2) || this.x < this.sz / 2){
+        this.xvel = -this.xvel;
+    }
+    
+    for(var i in Rocks){
+        if(system.circleCollide(this, Rocks[i])){
+            this.health -= 15;
+            Rocks.splice(i, 1);
+        }
+    }
+};
+
+var levels = [
+    {
+        name: 'Oranges',
+        fruits: [new Fruit(200, 343), new Fruit(100, 343), new Fruit(300, 343), new Fruit(150, 343), new Fruit(350, 343), new Fruit(220, 343)],
+    },
+    {
+        name: 'More oranges',
+        fruits: [new Fruit(200, 343), new Fruit(100, 343), new Fruit(300, 343), new Fruit(150, 343), new Fruit(350, 343), new Fruit(220, 343), new Fruit(200, 343), new Fruit(100, 343), new Fruit(300, 343), new Fruit(150, 343), new Fruit(350, 343), new Fruit(220, 343)],
+    }
+];
+var level = 0;
+
+var keys = [];
+keyPressed = function(){ keys[keyCode] = true; };
+keyReleased = function(){ keys[keyCode] = false; };
+mouseClicked = function(){ mouse.clicked = true; };
+
+draw = function() {
+    if(system.scene === 'menu'){
+        background(colors.background);
+        
+        pushMatrix();
+        translate(-80, 80);
+        rotate(-45);
+        for(var i = 0; i < 300; i += 10){
+            noStroke();
+            fill(0, 0, 0, 50 - i/6);
+            rect(100, i, 600, 10);
+        }
+        popMatrix();
+        
+        textFont(fonts.title);
+        system.coolText('ROCKS', 200, 125, colors.main, colors.dark);
+        system.coolText('FRUIT', 200, 245, colors.main, colors.dark);
+        textFont(fonts.heading);
+        system.coolText('VS', 200, 185, colors.secMain, colors.secDark, -15);
+        textFont(fonts.subtitle);
+        fill(colors.shadow);
+        text('c h e s t e r   b a n k s', 200, 318);
+        fill(colors.secMain);
+        text('c h e s t e r   b a n k s', 200, 315);
+        
+        if(mouse.clicked){
+            system.nextScene = 'game';
+            system.switchingScenes = true;
+        }
+    }
+    if(system.scene === 'game'){
+        background(colors.background);
+        pushMatrix();
+        translate(-80, 80);
+        rotate(-45);
+        for(var i = 0; i < 300; i += 10){
+            noStroke();
+            fill(0, 0, 0, 50 - i/6);
+            rect(100, i, 600, 10);
+        }
+        popMatrix();
+        
+        textFont(fonts.subtitle);
+        textAlign(LEFT, CENTER);
+        system.coolText((level + 1), 13, 20, colors.main, colors.dark);
+        fill(colors.secMain);
+        text(levels[level].name, 30, 21);
+        textAlign(CENTER, CENTER);
+        
+        noStroke();
+        fill(140, 78, 15);
+        rect(200, 380, 400, 40);
+        fill(40, 201, 94);
+        rect(200, 362, 400, 5);
+        fill(0);
+        for(var i = 0; i < 400; i += 17){
+            rect(i, 200, 10, 2);
+        }
+        
+        if(mouse.clicked && mouseY < 200){
+            Rocks.push(new Rock(mouseX, mouseY));
+        }
+        
+        for(var i in levels[level].fruits){
+            levels[level].fruits[i].draw();
+            if(levels[level].fruits[i].health < 0){
+                levels[level].fruits.splice(i, 1);
+            }
+        }
+        for(var i in Rocks){
+            Rocks[i].draw();
+            if(Rocks[i].y > 550){
+                Rocks.splice(i, 1);
+            }
+        }
+        
+        if(levels[level].fruits.length <= 0){
+            level ++;
+        }
+    }
+    
+    noStroke();
+    fill(5, 5, 5, system.blackness);
+    rect(200, 200, width, height);
+    if(system.switchingScenes){
+        system.blackSpeed = +10;
+    }
+    if(system.blackness > 255){
+        system.scene = system.nextScene;
+        system.switchingScenes = false;
+        system.blackSpeed = -system.blackSpeed;
+    }
+    if(system.blackness < 0){ system.blackness = 0; }
+    system.blackness += system.blackSpeed;
+    
+    mouse.clicked = false;
+};
