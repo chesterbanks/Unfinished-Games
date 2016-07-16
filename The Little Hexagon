@@ -1,7 +1,7 @@
 /** 
  * The Little Hexagon
  * Chester Banks
- * June 6 2016
+ * July 15 2016
  * 
  * @INSTRUCTIONS
     Press to duck
@@ -20,17 +20,18 @@
   * @TO_DO
     - Add a shop page where you can buy Jag, Medo, and Max.
     - Make instructions page
+    - Create settings page (mobile and/or sound options)
 */
 
 textAlign(CENTER, CENTER);
 textFont(createFont("Trebuchet MS"));
 
 var scene = "Home";
-var howManyCoins = 300;
+var howManyCoins = 0;
 var distance = 0;
 var distanceRecord = 0;
 
-var character = 'Zipp';
+var character = 'Max';
 
 var clicked = false;
 
@@ -52,13 +53,11 @@ var hexagon = function(x, y, sz){
     endShape(CLOSE);
     popMatrix();
 };
-
 var circleCollide = function(a, b){
     if(dist(a.x, a.y, b.x, b.y) < (a.sz + b.sz)/2){
         return true;
     }
 };
-
 var hexButton = function(x, y, sz, txt, next){
     stroke(255);
     strokeWeight(5);
@@ -85,6 +84,18 @@ var hexButton = function(x, y, sz, txt, next){
         fill(135, 135, 135);
         ellipse(x, y, 5, 5);
         ellipse(x + 7, y, 5, 5);
+    } else if (txt === "Settings"){
+        noFill();
+        stroke(255);
+        strokeWeight(5);
+        ellipse(x, y, sz/2, sz/2);
+        for(var i = 0; i < 360; i += 60){
+            pushMatrix();
+            translate(x, y);
+            rotate(i);
+            rect(8, 0, 1, 1);
+            popMatrix();
+        }
     } else {
         text(txt, x, y);
     }
@@ -99,6 +110,10 @@ var player = function(){
     this.jumping = false;
     this.howManyJumps = 0;
     this.possibleJumps = 3;
+    
+    this.hasShield = false;
+    this.shield = false;
+    this.shieldTimer = 60;
     
     this.particle = function(x){
         this.x = x;
@@ -118,6 +133,19 @@ var player = function(){
     this.particles = [];
 };
 player.prototype.draw = function() {
+    switch(character){
+        case 'Zipp':
+            this.possibleJumps = 1;
+            break;
+        case 'Jag':
+            this.possibleJumps = 3;
+            break;
+        case 'Max':
+            this.possibleJumps = 3;
+            this.hasShield = true;
+            break;
+    }
+    
     if(frameCount % 5 === 0 && !this.jumping){
         this.particles.push(new this.particle(this.x));
     }
@@ -137,6 +165,33 @@ player.prototype.draw = function() {
         this.sz = 36;
     }
     noStroke();
+    if(this.hasShield){
+        if(this.shield){
+            for(var i = 100; i > 0; i -= 5){
+                noFill();
+                strokeWeight(5);
+                stroke(255, 255, 255, (i * 2) - 100);
+                ellipse(0, 0, i, i);
+            }
+            
+            this.shieldTimer --;
+            
+            if(this.shieldTimer <= 0){
+                this.shield = false;
+            }
+        }
+        if(!this.shield && this.shieldTimer < 60){
+            this.shieldTimer += 0.5;
+        }
+        if(keyIsPressed && !this.shield && this.shieldTimer > 5){
+            this.shield = true;
+        }
+        stroke(255, 255, 255, 10);
+        fill(255, 255, 255, 100);
+        rect(-30, -50, 60, 5);
+        fill(255, 255, 255);
+        rect(-30, -50, this.shieldTimer, 5);
+    }
     fill(colorScheme[0]);
     hexagon(0, 0, 30);
     fill(0);
@@ -232,7 +287,7 @@ obstacle.prototype.draw = function() {
         }
         popMatrix();
         
-        if(circleCollide(this, Player)){
+        if(circleCollide(this, Player) && !Player.shield){
             scene = "Home";
         }
         
@@ -247,13 +302,14 @@ obstacle.prototype.draw = function() {
         rect(0, 0, 50, 340);
         popMatrix();
         
-        if(Player.x + (Player.sz/2) > this.x && Player.x < this.x+50 && !Player.ducking){
+        if(Player.x + (Player.sz/2) > this.x && Player.x < this.x+50 && !Player.ducking && !Player.shield){
             scene = "Home";
         }
         
         this.x -= 5;
     }
 };
+
 var shopBtn = function(x, y, name, price){
     this.x = x;
     this.y = y;
@@ -263,10 +319,9 @@ var shopBtn = function(x, y, name, price){
     this.bought = false;
 };
 var shopBtns = [
-    new shopBtn(20, 20, "Zipp", 0),
-    new shopBtn(20, 110, "Jag", 100),
-    new shopBtn(20, 200, "Medo", 300),
-    new shopBtn(20, 290, "Max", 600),
+    new shopBtn(20, 60, "Zipp", 0),
+    new shopBtn(20, 150, "Jag", 30),
+    new shopBtn(20, 240, "Max", 100),
 ];
 shopBtn.prototype.draw = function() {
     if(this.name === "Zipp"){
@@ -395,6 +450,7 @@ draw = function() {
         hexButton(100, 340, 35, "?", "How");
         hexButton(200, 340, 50, "Play", "Game");
         hexButton(300, 340, 35, "Shop", "Shop");
+        // hexButton(360, 40, 25, "Settings", "Game");
     }
     if(scene === "Game"){
         background(colorScheme[1]);
@@ -494,9 +550,73 @@ draw = function() {
             endShape();
         }
         
+        fill(255, 255, 255);
+        textSize(50);
+        text("shop", 200, 25);
+        strokeWeight(1);
+        stroke(255);
+        line(15, 50, 385, 50);
+        
         for(var i in shopBtns){
             shopBtns[i].draw();
         }
+        
+        pushMatrix();
+        translate(340, 30);
+        noStroke();
+        fill(255, 255, 255, 20);
+        for(var i = 10; i < 40; i += 5){
+            ellipse(0, 0, i, i);
+        }
+        
+        strokeWeight(3);
+        stroke(196, 196, 18);
+        fill(224, 227, 36);
+        ellipse(0, 0, 20, 20);
+        fill(196, 196, 18);
+        textSize(15);
+        text("$", 0, 0);
+        fill(255);
+        textSize(15);
+        text(howManyCoins, 20, 0);
+        popMatrix();
+        
+        hexButton(45, 360, 30, "\u2190", "Home");
+    }
+    if(scene === "How"){
+        background(161, 161, 161);
+        
+        noStroke();
+        for(var i = 0; i < width; i += 60){
+            for(var j = 0; j < height; j += 35){
+                fill(0, 0, 0, 50 + sin(j+frameCount*5)*10);
+                hexagon(i, j, 20);
+                hexagon(i+30, j+17.5, 20);
+            }
+        }
+        for(var i = -60; i < 200; i += 30){
+            fill(255, 255, 255, 100 - i/2);
+            beginShape();
+            vertex(0, i);
+            vertex(0, i + 30);
+            vertex(200, i + 90);
+            vertex(400, i + 30);
+            vertex(400, i);
+            vertex(200, i + 60);
+            endShape();
+        }
+        
+        fill(255, 255, 255);
+        textSize(50);
+        text("instructions", 200, 50);
+        strokeWeight(1);
+        stroke(255);
+        line(15, 85, 385, 85);
+        
+        textSize(17);
+        text('Press to duck.\n\nRelease to jump.\n\nDuck under bars.\n\nJump over buzzsaws.\n\nCollect coins.\n\nBuy more hexagons.', 200, 220);
+        
+        hexButton(45, 360, 30, "\u2190", "Home");
     }
     
     clicked = false;
