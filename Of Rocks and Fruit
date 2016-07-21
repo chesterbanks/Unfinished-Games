@@ -165,11 +165,13 @@ draw = function() {
         }
         popMatrix();
         
+        textFont(fonts.heading);
+        system.coolText('OF', 200, 66, colors.secMain, colors.secDark, -10);
         textFont(fonts.title);
         system.coolText('ROCKS', 200, 125, colors.main, colors.dark);
         system.coolText('FRUIT', 200, 245, colors.main, colors.dark);
         textFont(fonts.heading);
-        system.coolText('VS', 200, 185, colors.secMain, colors.secDark, -15);
+        system.coolText('AND', 200, 185, colors.secMain, colors.secDark, -10);
         textFont(fonts.subtitle);
         fill(colors.shadow);
         text('c h e s t e r   b a n k s', 200, 318);
@@ -199,6 +201,12 @@ draw = function() {
         fill(colors.secMain);
         text(levels[level].name, 30, 21);
         textAlign(CENTER, CENTER);
+        
+        textFont(fonts.subtitle);
+        fill(0, 0, 0, 10 + sin(frameCount*5)*50);
+        if(level === 0){
+            text('click to drop rocks\n\ndestroy fruit', 200 + sin(frameCount*3)*20, 100);
+        }
         
         noStroke();
         fill(140, 78, 15);
