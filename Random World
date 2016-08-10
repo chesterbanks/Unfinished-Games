@@ -1,0 +1,554 @@
+/**
+   RANDOM WORLD I
+   Chester Banks
+   August ? 2016
+   
+   @CREDITS
+        Lionofgd for helping me with a lot of the platformer code.
+
+*/
+
+var fonts = {
+    title: createFont('Avenir Bold', 65),
+    little: createFont('Avenir', 14),
+};
+
+// This helps with key movement
+var keys = [];
+var keyPressed = function(){ keys[keyCode] = true; };
+var keyReleased = function(){ keys[keyCode] = false; };
+
+// The rectangle collision function
+var rectCollide = function(one, two){
+    if( one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h){
+        return true;
+    }
+};
+
+// Setting the text align
+textAlign(CENTER, CENTER);
+
+// Vital variables
+var scene = "Playing";
+var level = 0;
+var death = false;
+var deathTrans = 0;
+var carrots = 0;
+
+// Carrot
+var Carrot = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.w = 15;
+    this.h = 30;
+    
+    this.fade = 255;
+    this.eaten = false;
+};
+Carrot.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(10);
+    noStroke();
+    fill(57, 227, 91, this.fade);
+    rect(5, 0, 5, 15, 2);
+    fill(255, 136, 0, this.fade);
+    (rect)(0, 5, 15, 5, 5, 5, 0, 0);
+    triangle(0, 10, 7.5, 30, 15, 10);
+    noFill();
+    strokeWeight(1);
+    stroke(0, 0, 0, this.fade - 220);
+    arc(7.5, 9, 13, 3, 0, 180);
+    arc(7.5, 15, 10, 3, 0, 180);
+    arc(7.5, 20, 10, 5, 50, 120);
+    popMatrix();
+    
+    if(this.eaten){
+        this.y --;
+        this.fade -= 5;
+    }
+};
+
+// Dice
+var Dice = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.w = 30;
+    this.h = 30;
+};
+Dice.prototype.draw = function() {
+    fill(255);
+    rect(this.x, this.y, this.w, this.h, 5);
+    fill(55);
+    ellipse(this.x + 15, this.y + 15, 6, 6);
+    ellipse(this.x + 8, this.y + 8, 6, 6);
+    ellipse(this.x + 22, this.y + 8, 6, 6);
+    ellipse(this.x + 8, this.y + 22, 6, 6);
+    ellipse(this.x + 22, this.y + 22, 6, 6);
+};
+
+// Toaster
+var Toaster = function(x, y, con){
+    this.originalX = x;
+    this.x = x;
+    this.y = y;
+    this.w = 30;
+    this.h = 25;
+    this.xvel = 1;
+    this.con = con;
+    
+    this.particle = function(x, y){
+        this.x = x;
+        this.y = y;
+        this.sz = random(10);
+        this.hue = random(255);
+        this.trans = 255;
+        this.rot = random(10);
+    };
+    this.particles = [];
+    this.particle.prototype.draw = function() {
+        noStroke();
+        colorMode(HSB);
+        fill(this.hue, 255, 255, this.trans);
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(frameCount*this.rot);
+        rectMode(CENTER);
+        rect(0, 0, this.sz, this.sz);
+        rectMode(LEFT);
+        popMatrix();
+        colorMode(RGB);
+        
+        this.sz -= 0.01;
+        this.trans -= 3;
+    };
+};
+Toaster.prototype.draw = function() {
+    if(frameCount % 5 === 0){
+        this.particles.push(new this.particle(this.x, this.y + random(this.h)));
+    }
+    
+    for(var i in this.particles){
+        this.particles[i].draw();
+        if(this.particles[i].trans < 0){
+            this.particles.splice(i, 1);
+        }
+    }
+    noStroke();
+    fill(255, 255, 255);
+    (rect)(this.x, this.y, this.w, this.h, 5, 5, 0, 0);
+    fill(0, 0, 0, 50);
+    (rect)(this.x + 3, this.y + 2, this.w - 6, this.h / 20, 5, 5, 0, 0);
+    (rect)(this.x + 3, this.y + 5, this.w - 6, this.h / 15, 5, 5, 0, 0);
+    
+    this.x += this.xvel;
+    if(this.x > this.originalX + this.con || this.x < this.originalX - this.con){
+        this.xvel = -this.xvel;
+    }
+};
+
+// Portal
+var Portal = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.w = 40;
+    this.h = 40;
+    
+    this.particle = function(x, y){
+        this.x = x;
+        this.y = y;
+        this.x2 = 30;
+        this.rot = random(360);
+        this.sz = random(10);
+        this.trans = 255;
+    };
+    this.particles = [];
+    this.particle.prototype.draw = function() {
+        noStroke();
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(this.rot);
+        fill(255, 255, 255, this.trans);
+        rect(this.x2, 0, this.sz, this.sz);
+        popMatrix();
+        
+        this.x2 -= this.sz/3;
+        this.trans -= this.sz;
+    };
+};
+Portal.prototype.draw = function() {
+    this.particles.push(new this.particle(this.x + 25, this.y + 25));
+    
+    for(var i in this.particles){
+        this.particles[i].draw();
+        if(this.particles[i].trans < 0){
+            this.particles.splice(i, 1);
+        }
+    }
+    noFill();
+    stroke(255, 255, 255);
+    strokeWeight(5);
+    rect(this.x, this.y, 40, 40);
+    noStroke();
+    fill(245);
+    rect(this.x + 8, this.y + 8, 24, 24);
+};
+
+// [Almost] everything about the blocks (blox)
+var block = function(x, y, w, h){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+};
+block.prototype.draw = function() {
+    noStroke();
+    fill(255, 255, 255);
+    rect(this.x, this.y, this.w, this.h);
+};
+
+var Player = function(x, y, w, h){
+    this.x = x; this.originalX = x;
+    this.y = y; this.originalY = y;
+    this.w = w;
+    this.h = h;
+    
+    this.xvel = 0;
+    this.yvel = 0;
+    this.speed = 5;
+    
+    this.slow = false;
+    this.slowTimer = 0;
+    
+    this.jumping = false;
+};
+
+var blox = [
+    {
+        player: new Player(100, 320, 30, 30),
+        portal: new Portal(55, 25),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(0, 290, 100, 20),
+            new block(200, 290, 100, 20),
+            new block(400, 290, 100, 20),
+            new block(100, 230, 100, 20),
+            new block(300, 230, 100, 20),
+            new block(500, 230, 100, 20),
+            new block(400, 160, 100, 20),
+            new block(0, 90, 400, 20)
+        ],
+        txt: 'I am a ninja on a journey.',
+    },
+    {
+        player: new Player(100, 320, 30, 30),
+        portal: new Portal(55, 25),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(180, 240, 20, 110),
+            new block(280, 200, 20, 150),
+            new block(380, 200, 20, 150),
+            new block(480, 200, 20, 150),
+            new block(0, 290, 100, 20),
+            new block(500, 130, 100, 20),
+            new block(0, 80, 400, 20)
+        ],
+        txt: 'When I was hired to stop an evil potato lord, I stumbled into Random World.',
+    },
+    {
+        player: new Player(100, 320, 30, 30),
+        portal: new Portal(545, 295),
+        blox: [
+            new block(0, 350, 600, 50),
+        ],
+        txt: 'Now I must find my way back.',
+    },
+    {
+        player: new Player(100, 320, 30, 30),
+        portal: new Portal(545, 295),
+        blox: [
+            new block(0, 350, 600, 50),
+        ],
+        txt: 'Alas, I\'ve never been to Random World. These magical toasters could be bad or good!',
+        toaster: [new Toaster(300, 325, 80), new Toaster(200, 325, 50)],
+    },
+    {
+        player: new Player(100, 320, 30, 30),
+        portal: new Portal(55, 25),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(0, 290, 100, 20),
+            new block(200, 290, 100, 20),
+            new block(400, 290, 100, 20),
+            new block(100, 230, 100, 20),
+            new block(300, 230, 100, 20),
+            new block(500, 230, 100, 20),
+            new block(400, 160, 100, 20),
+            new block(0, 90, 400, 20)
+        ],
+        txt: 'Whoa! This must be a new realm.',
+        toaster: [new Toaster(35, 265, 35), new Toaster(235, 265, 35), new Toaster(435, 265, 35)],
+    },
+    {
+        player: new Player(100, 320, 30, 30),
+        portal: new Portal(500, 115),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(300, 300, 100, 20),
+            new block(200, 265, 100, 20),
+            new block(100, 230, 100, 20),
+            new block(350, 230, 100, 20),
+            new block(460, 175, 100, 20),
+        ],
+        txt: 'Is that a dice?',
+        toaster: [new Toaster(285, 325, 300)],
+        dice: [new Dice(100, 200)],
+    },
+    {
+        player: new Player(100, 320, 30, 30),
+        portal: new Portal(500, 115),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(300, 300, 50, 20),
+            new block(250, 280, 50, 20),
+            new block(200, 260, 50, 20),
+            new block(150, 240, 50, 20),
+            new block(100, 220, 50, 20),
+            new block(50, 200, 50, 20),
+            new block(350, 200, 50, 20),
+        ],
+        txt: 'Sweet! I don\'t need to have been here before, I know that ninjas need their carrots!',
+        toaster: [new Toaster(285, 325, 300)],
+        carrots: [new Carrot(175, 200), new Carrot(125, 175), new Carrot(70, 155)],
+    },
+    {
+        player: new Player(100, 320, 30, 30),
+        portal: new Portal(420, 115),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(40, 300, 60, 20),
+            new block(80, 260, 60, 20),
+            new block(120, 220, 60, 20),
+            new block(160, 180, 160, 20),
+        ],
+        txt: 'A new realm - wait. This looks kind of familiar.',
+        dice: [new Dice(290, 150)],
+    },
+    {
+        player: new Player(100, 320, 30, 30),
+        portal: new Portal(500, 115),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(0, 290, 100, 20),
+            new block(500, 290, 100, 20),
+            new block(100, 270, 400, 20),
+            new block(100, 200, 400, 20),
+            new block(481, 200, 20, 90),
+        ],
+        txt: 'This realm seems like it\'s been in a dream of mine. Or a dream of a dream.',
+        toaster: [],
+        dice: [new Dice()],
+    },
+];
+
+// [Almost] everything about the player
+Player.prototype.applyCollisions = function(xvel, yvel) {
+    for (var i = 0; i < blox[level].blox.length; i++) {
+        if (!rectCollide(this, blox[level].blox[i])) { continue; }
+        if (xvel < 0) {
+            this.x = blox[level].blox[i].x + blox[level].blox[i].w;
+            this.xvel = 0;
+        }
+        if (xvel > 0) {
+            this.x = blox[level].blox[i].x - this.w;
+            this.xvel = 0;
+        }
+        if (yvel < 0) {
+            this.y = blox[level].blox[i].y + blox[level].blox[i].h;
+            this.yvel = 0;
+        }
+        if (yvel > 0) {
+            this.y = blox[level].blox[i].y - this.h;
+            this.yvel = 0;
+            this.jumping = false;
+        }
+    }
+    if (this.y >= 320 && this.yvel > 0) {
+        this.jumping = false;
+        this.yvel = 0;
+        this.y = 320;
+    }
+};
+Player.prototype.draw = function() {
+    // The actual player
+    noStroke();
+    fill(55);
+    (rect)(this.x, this.y, this.w, this.h, 5, 0, 5, 0);
+    fill(255, 186, 130);
+    (rect)(this.x, this.y + 9, this.w, this.h / 4);
+    fill(0, 0, 0, 70);
+    arc(this.x + (this.w / 2) - 5, this.y + (this.h / 2), 8, 10, -180, 0);
+    arc(this.x + (this.w / 2) + 5, this.y + (this.h / 2), 8, 7, -180, 0);
+    
+    // Player movement
+    if(keys[LEFT]){
+        this.xvel -= 2;
+    }
+    if(keys[RIGHT]){
+        this.xvel += 2;
+    }
+    if(!keys[LEFT] && !keys[RIGHT]){
+        this.xvel = 0;
+    }
+    
+    if (keys[UP] && !this.jumping) {
+        this.yvel -= 10;
+        this.jumping = true;
+    }
+    if(this.xvel > this.speed){
+        this.xvel = this.speed;
+    }
+    if(this.xvel < -this.speed){
+        this.xvel = -this.speed;
+    }
+    this.jumping = true;
+    this.x += this.xvel;
+    this.applyCollisions(this.xvel, 0);
+    this.y += this.yvel;
+    this.applyCollisions(0, this.yvel);
+    this.yvel += 0.6;
+    
+    if(this.slow){
+        this.speed = 1;
+        this.slowTimer ++;
+    } else {
+        this.speed = 5;
+    }
+    if(this.slowTimer > 160){
+        this.slow = false;
+        this.slowTimer = 0;
+    }
+};
+
+keyTyped = function(){
+    if(key.toString().toLowerCase() === 'r'){
+        blox[level].player.x = blox[level].player.originalX;
+        blox[level].player.y = blox[level].player.originalY;
+    }
+};
+
+draw = function() {
+    if(scene === "Playing"){
+        if(level <= 3){
+            background(0, 0, 0);
+            for(var i = 0; i < width; i += 30){
+                for(var j = 0; j < height; j += 30){
+                    strokeWeight(3);
+                    stroke(224, 22, 22, 50);
+                    fill(255, 255, 255, (i+j)/10);
+                    rect(i+sin((j+frameCount)*5)*5, j+sin((i+frameCount)*5)*5, 25, 25);
+                }
+            }
+            noStroke();
+            for(var i = 0; i < height; i += 5){
+                fill(255, 255, 255, i / 2);
+                rect(0, i, width, 5);
+            }
+        } else if (level <= 6){
+            noStroke();
+            colorMode(HSB);
+            for(var i = 0; i < width; i +=20){
+                for(var j = 0; j < height; j += 20){
+                    fill(((frameCount+i+j)/4)%255, 150, 150);
+                    rect(i, j, 20, 20);
+                }
+            }
+            colorMode(RGB);
+        } else if (level <= 8){
+            background(66);
+            noStroke();
+            for(var i = -40; i < width; i += 52){
+                for(var j = 0; j < height; j += 33){
+                    fill(86);
+                    rect(i + ((j%2)*25), j, 50, 30);
+                    fill(0, 0, 0, 20);
+                    triangle(i + ((j%2)*25), j, i + ((j%2)*25) + 50, j, i + ((j%2)*25), j + 30);
+                }
+            }
+        }
+        
+        var txt = 'RANDOMWORLD'.split('');
+        pushMatrix();
+        translate(300, 129);
+        
+        textFont(fonts.title);
+        fill(255, 255, 255, 30);
+        for(var i = -txt.length / 2; i < txt.length / 2; i++){
+            pushMatrix();
+            rotate(i);
+            text(txt[i + txt.length/2], 25 + i * 45, 0);
+            popMatrix();
+        }
+        popMatrix();
+        
+        if(blox[level].carrots){
+            for(var i in blox[level].carrots){
+                blox[level].carrots[i].draw();
+                if(rectCollide(blox[level].carrots[i], blox[level].player) && !blox[level].carrots[i].eaten){
+                    carrots ++;
+                    blox[level].carrots[i].eaten = true;
+                }
+                if(blox[level].carrots[i].fade < 0){
+                    blox[level].carrots.splice(i, 1);
+                }
+            }
+        }
+        if(blox[level].toaster){
+            for(var i in blox[level].toaster){
+                blox[level].toaster[i].draw();
+                if(rectCollide(blox[level].toaster[i], blox[level].player)){
+                    deathTrans = 100;
+                    death = true;
+                    blox[level].player.x = blox[level].player.originalX;
+                    blox[level].player.y = blox[level].player.originalY;
+                }
+            }
+        }
+        if(blox[level].dice){
+            for(var i in blox[level].dice){
+                blox[level].dice[i].draw();
+                if(rectCollide(blox[level].dice[i], blox[level].player)){
+                    blox[level].player.slow = true;
+                }
+            }
+        }
+        for(var i in blox[level].blox){
+            blox[level].blox[i].draw();
+        }
+        blox[level].portal.draw();
+        blox[level].player.draw();
+        
+        if(rectCollide(blox[level].player, blox[level].portal)){
+            level ++;
+        }
+        
+        textFont(fonts.little);
+        fill(0, 0, 0, 100);
+        if(blox[level].txt){
+            text(blox[level].txt, 300, 375);
+        }
+        
+        noStroke();
+        fill(255, 0, 0, deathTrans);
+        rect(0, 0, width, height);
+        if(death){
+            deathTrans -= 5;
+            if(deathTrans < 0){
+                death = false;
+            }
+        }
+    }
+};
