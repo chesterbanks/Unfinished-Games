@@ -1,0 +1,211 @@
+textAlign(CENTER, CENTER);
+textFont(createFont('HelveticaNeue-CondensedBold'));
+
+var system = {
+    scene: 'Choose',
+};
+var mouse = {
+    clicked: false,
+};
+
+var speed = 5;
+var x = 0;
+var y = 0;
+var angle = 0;
+
+var keys = [];
+keyPressed = function(){keys[keyCode] = true;};
+keyReleased = function(){keys[keyCode] = false;};
+mouseReleased = function(){mouse.clicked = true;};
+
+draw = function() {
+    if(system.scene === 'Choose'){
+        background(112, 112, 112);
+        
+        noStroke();
+        fill(255, 255, 255,10);
+        for(var i = 0; i < height; i += 9){
+            ellipse(300, i, i*2, i/2);
+        }
+        
+        noStroke();
+        pushMatrix();
+        translate(width / 2, 10 + width / 5);
+        scale(1, 0.5);
+        for(var i = -300; i < 300; i += 60){
+            for(var j = -260; j < 300; j += 60){
+                pushMatrix();
+                translate(i, j);
+                fill(53, 168, 27);
+                rect(0, 0, 60, 60);
+                fill(0, 0, 0, 20);
+                triangle(0, 40, 0, 60, 60, 60);
+                triangle(0, 0, 0, 60, 20, 60);
+                fill(255, 255, 255, 20);
+                triangle(0, 0, 60, 0, 60, 20);
+                triangle(40, 0, 60, 0, 60, 60);
+                popMatrix();
+            }
+        }
+        popMatrix();
+        
+        rectMode(CENTER);
+        for(var i = 100; i < 400; i += 20){
+            fill(32, 94, 17, 10);
+            rect(300, 150, i, i / 2);
+        }
+        rectMode(CORNER);
+        
+        fill(255, 255, 255, 50);
+        rect(0, mouseY < 300 ? 0 : 300, 600, 300);
+        if(mouse.clicked){
+            system.scene = (mouseY < 300 ? 'Park' : 'Battle');
+        }
+        
+        textSize(70);
+        fill(255);
+        text('POWER PARK', 300, 150);
+        fill(25);
+        text('BATTLE ZONE', 300, 450);
+        
+        strokeWeight(5);
+        stroke(255);
+        line(0, 300, 600, 300);
+    }
+    if(system.scene === 'Battle'){
+        background(255, 255, 255);
+        
+        noStroke();
+        fill(117, 60, 2,4);
+        for(var i = 0; i < height; i += 9){
+            ellipse(300, i, 600, i/3);
+        }
+        
+        strokeWeight(10);
+        stroke(0, 0, 0, 50);
+        fill(125, 82, 26);
+        rect(50, 15, 500, 500);
+        
+        /* Powers */
+        
+        // Bow
+        stroke(0, 0, 0, 150);
+        strokeWeight(3);
+        fill(189, 189, 189);
+        rect(100, 530, 50, 50, 10);
+        noStroke();
+        fill(255, 255, 255, 50);
+        rect(100, 530, 50, 20, 10);
+        pushMatrix();
+        translate(128, 552);
+        rotate(45);
+        stroke(64, 64, 64);
+        strokeWeight(2);
+        line(0, -15, 0, 15);
+        triangle(0, -15, -5, -7, 5, -7);
+        quad(0, 15, 0, 5, -5, 10, -5, 20);
+        quad(0, 15, 0, 5, 5, 10, 5, 20);
+        popMatrix();
+        
+        // Sword
+        stroke(0, 0, 0, 150);
+        strokeWeight(3);
+        fill(189, 189, 189);
+        rect(200, 530, 50, 50, 10);
+        noStroke();
+        fill(255, 255, 255, 50);
+        rect(200, 530, 50, 20, 10);
+        pushMatrix();
+        translate(225, 555);
+        rotate(45);
+        stroke(64, 64, 64);
+        strokeWeight(2);
+        noFill();
+        rect(-10, 5, 20, 4);
+        rect(-2, 10, 4, 8);
+        beginShape();
+        vertex(-3, 4);
+        vertex(3, 4);
+        vertex(3, -15);
+        vertex(0, -18);
+        vertex(-3, -15);
+        endShape(CLOSE);
+        strokeWeight(1);
+        line(0, 5, 0, -10);
+        popMatrix();
+        noStroke();
+        fill(55, 196, 59);
+        ellipse(245, 578, 20, 20);
+        fill(59, 219, 65);
+        ellipse(245, 575, 20, 20);
+        fill(255);
+        textSize(15);
+        text('3', 245, 575);
+    }
+    if(system.scene === 'Park'){
+        noStroke();
+        background(204, 204, 204);
+        
+        for(var i = (x % 40) - 40; i < 600; i += 40){
+            for(var j = (y % 40) - 40; j < 600; j += 40){
+                pushMatrix();
+                translate(i, j);
+                fill(46, 163, 23);
+                rect(0, 0, 40, 40);
+                fill(0, 0, 0, 20);
+                triangle(0, 25, 0, 40, 40, 40);
+                triangle(0, 0, 0, 40, 15, 40);
+                fill(255, 255, 255, 20);
+                triangle(0, 0, 40, 0, 40, 15);
+                triangle(25, 0, 40, 0, 40, 40);
+                popMatrix();
+            }
+        }
+        
+        pushMatrix();
+        translate(x, y);
+        strokeWeight(15);
+        stroke(255);
+        fill(255, 255, 255, 60);
+        rect(0, 0, 1000, 1000);
+        popMatrix();
+        
+        noStroke();
+        pushMatrix();
+        translate(width / 2, height / 2);
+        rotate(-angle); 
+        fill(45);
+        ellipse(-3, 16 + sin(frameCount*15), 5, 10);
+        ellipse(3, 16 + sin(-frameCount*15), 5, 10);
+        fill(0, 162, 255);
+        ellipse(0, 8, 20, 20);
+        fill(255, 206, 156);
+        arc(0, 0, 25, 30, 0, 180);
+        arc(0, 1, 25, 15, -185, 5);
+        fill(196, 134, 72);
+        arc(-3, 0, 24, 15, 0, 180);
+        arc(0, 1, 25, 15, -185, 5);
+        fill(54, 54, 54);
+        ellipse(-3, 9, 4, 4);
+        ellipse(3, 9, 4, 4);
+        popMatrix();
+        
+        if(keys[RIGHT]){angle -= 3;}
+        if(keys[LEFT]){angle += 3;}
+        if(keys[DOWN]){
+            x += sin(angle)*speed;
+            y += cos(angle)*speed;
+        }
+        if(keys[UP]){
+            x -= sin(angle)*speed;
+            y -= cos(angle)*speed;
+        }
+        
+        if(x > 270){ x = 270; }
+        if(x < -670){ x = -670; }
+        if(y < -670){ y = -670; }
+        if(y > 270){ y = 270; }
+    }
+    
+    mouse.clicked = false;
+};
