@@ -116,21 +116,33 @@ draw = function() {
                     break;
             }
             
-            rect(250, y + i * 80, 100, 80);
-            fill(0, 0, 0, 30);
+            strokeWeight(10);
+            stroke(0, 0, 0, 50);
+            rect(250, y + i * 80, 100, 80, 50);
+            noStroke();
+            fill(0, 0, 0, 50);
+            rect(250, y + i * 80, 100, 80, 50);
+            fill(235, 235, 235, 30);
             triangle(250, y + i * 80, 250, y + 80 + i * 80, 350,  y + i * 80);
-            fill(255);
-            text(y + i * 80, 300, y + 40 + i * 80);
         }
         
         for(var i in board){
-            if(y + i * 80 < 485 && y + i * 80 > 455){
+            if(y + i * 80 < 475 && y + i * 80 > 465){
                 onBlock = board[i];
             }
         }
         
-        fill(255, 255, 255);
+        fill(209, 138, 62);
         ellipse(300, 510, 40, 40);
+        noFill();
+        stroke(255);
+        strokeWeight(5);
+        bezier(280, 510, 300, 520, 300, 500, 320, 510);
+        fill(255);
+        arc(300, 510, 40, 40, 0, 180);
+        stroke(0);
+        point(295, 500);
+        point(305, 500);
         
         if(onBlock !== card){
             y += 5;
@@ -139,10 +151,16 @@ draw = function() {
         fill(25);
         text("You are on a " + onBlock + " block.\nYou drew a " + card + " card.", 120, 300);
         
-        if(clicked && mouseX > 410 && mouseX < 560 && mouseY > 200 && mouseY < 300){
-            card = cards[floor(random(cards.length))];
+        if(mouseX > 410 && mouseX < 560 && mouseY > 200 && mouseY < 300){
+            cursor('pointer');
+            if(clicked && onBlock === card){
+                card = cards[floor(random(cards.length))];
+            }
+        } else {
+            cursor('default');
         }
         
+        strokeWeight(5);
         stroke(163, 163, 163);
         fill(217, 217, 217);
         for(var i = 400; i < 415; i += 5){
@@ -172,7 +190,9 @@ draw = function() {
                 fill(15, 250, 30);
                 break;
         }
-        rect(435, 365, 100, 70);
+        ellipse(485, 400, 70, 70);
+        fill(0, 0, 0, 30);
+        arc(485, 400, 70, 70, -40, 140);
         textSize(30);
         fill(194, 194, 194);
         pushMatrix();
