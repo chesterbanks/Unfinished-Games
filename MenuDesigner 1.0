@@ -1,7 +1,7 @@
 /**
  * MenuMaker v1.0
  * Chester Banks
- * September 10 2016
+ * October 2 2016
  * 
  * Made for Khantober!
  * 
@@ -134,11 +134,18 @@ draw = function() {
                 rect(i, j, 30, 30);
             }
         }
-    } else if (info.bg_style){
+    } else if (info.bg_style === 10){
         noStroke();
         for(var i = 0; i < width*2; i += 60){
             fill(0, 0, 0, 5);
             ellipse(300, 600, i, i);
+        }
+    } else if (info.bg_style === 11){
+        for(var i = 0; i < 1000; i+=50){
+            strokeWeight(100);
+            stroke(0, 0, 0, 10);
+            line(0, i, 700, i/2);
+            line(i, 0, i/2, 700);
         }
     }
     
@@ -206,6 +213,11 @@ draw = function() {
         
         textSize(20);
         text('Font', 300, 110);
+    }
+    
+    // Export code
+    if(clicked && mouseButton === RIGHT){
+        println('textAlign(CENTER, CENTER);\ntextFont(createFont("' + info.fonts[abs(info.font) % info.fonts.length] + '"));\n\ndraw = function(){\n    background(' + info.bg_colors[0] + ');\n};');
     }
     
     clicked = false;
