@@ -1,7 +1,9 @@
 /**
- * Menu Maker v1.0
+ * MenuMaker v1.0
  * Chester Banks
  * September 10 2016
+ * 
+ * Made for Khantober!
  * 
     @Features
         Background color
@@ -42,70 +44,19 @@
 var clicked = false;
 
 var info = {
-    bg_colors: [color(219, 44, 44), color(31, 194, 69), color(16, 199, 175), color(35, 130, 194), color(217, 147, 60), color(158, 66, 194), color(183, 217, 46), color(235, 235, 235), color(26, 26, 26),],
+    bg_colors: [color(219, 44, 44), color(31, 194, 69), color(16, 199, 175), color(35, 130, 194), color(217, 147, 60), color(158, 66, 194), color(183, 217, 46), color(232, 102, 197), color(235, 235, 235), color(26, 26, 26),],
     bg_color: 0,
     bg_style: 3,
     
     fonts: ["Trebuchet MS", "HelveticaNeue-UltraLight", "Impact", "Courier", "Avenir Bold"],
     font: 1,
     
-    title: 'majestic',
+    title: 'Amazing',
     creator: 'Aidabaida',
 };
 var whichInfo = 0;
 
-var tab = 'txt';
-
 mouseClicked = function(){clicked = true;};
-
-var dropdown = function(x, y, w, h, name, items){
-    this.x = x; this.y = y;
-    this.w = w; this.h = h;
-    this.name = name;
-    this.items = items;
-    
-    this.dropped = false;
-};
-dropdown.prototype.draw = function() {
-    textAlign(LEFT, TOP);
-    fill(25);
-    textFont(createFont("Arial Bold"), 15);
-    text(this.name, this.x, this.y);
-    
-    textFont(createFont("Arial"), 15);
-    if(this.dropped){
-        fill(0, 0, 0, 20);
-        rect(this.x - 5, this.y, this.w, this.h);
-        fill(240);
-        (rect)(this.x - 5, this.y + this.h, this.w, this.items.length * 22, 0, 0, 5, 5);
-        for(var i = 0; i < this.items.length; i ++){
-            fill(25);
-            text(this.items[i].name, this.x, 20 + (i * 20));
-            if(mouseX > this.x && mouseX < this.x + this.w + 100 && mouseY > 20 + (i * 20) && mouseY < 40 + (i * 20)){
-                fill(0, 0, 0, 20);
-                rect(this.x - 5, 20 + (i * 20), this.w, this.h);
-                fill(240);
-                (rect)(this.x + this.w - 5, (i * 20), 100, this.items[i].drops.length * 22, 0, 10, 10, 0);
-                fill(25);
-                for(var j = 0; j < this.items[i].drops.length; j ++){
-                    text(this.items[i].drops[j], this.x + this.w + 5, 20 + (j * 20));
-                }
-            }
-        }
-    }
-    
-    if(clicked){
-        if(mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h){
-            this.dropped = true;
-        } else {
-            this.dropped = false;
-        }
-    }
-};
-var dropdowns = [
-    new dropdown(15, 0, 100, 20, 'Background', [{name:'Color',drops:[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}, {name:'Style',drops:[0, 1, 2, 3]}]),
-    new dropdown(110, 0, 100, 20, 'Text', ['Color', 'Style']),
-];
 
 draw = function() {
     background(info.bg_colors[abs(info.bg_color)%info.bg_colors.length]);
@@ -122,6 +73,72 @@ draw = function() {
                 fill(0, 0, 0, noise(i + noise(j, 1.1)*10, 1.1)*81);
                 rect(i, j, 20, 20);
             }
+        }
+    } else if (info.bg_style === 4){
+        noStroke();
+        for(var i = 0; i < height; i += 5){
+            fill(0, 0, 0, i/6);
+            rect(0, i, width, 5);
+        }
+    } else if (info.bg_style === 5){
+        noStroke();
+        for(var i = 0; i < height; i += 5){
+            fill(0, 0, 0, -i/5 + 100);
+            rect(0, i, width, 5);
+        }
+    } else if (info.bg_style === 6){
+        strokeWeight(5);
+        stroke(0, 0, 0, 20);
+        pushMatrix();
+        translate(300, 300);
+        rotate(50);
+        for(var i = -400; i < 400; i += 25){
+            for(var j = -446; j < 400; j += 60){
+                line(j, i, j + 50, i);
+                line(j + 32, i + 7.5, j + 75, i + 7.5);
+            }
+        }
+        popMatrix();
+    } else if (info.bg_style === 7){
+        for(var i = 0; i < width + 50; i += 50){
+            for(var j = 0; j < height + 50; j += 50){
+                noStroke();
+                fill(0, 0, 0, 7);
+                ellipse(i, j, 200, 200);
+                fill(255, 255, 255, 10);
+                ellipse(i, j, 20, 20);
+            }
+        }
+    } else if (info.bg_style === 8){
+        for(var i = -25; i < width; i += 50){
+            for(var j = 0; j < height; j += 50){
+                noStroke();
+                fill(0, 0, 0, 30 + sin(i*50)*30);
+                pushMatrix();
+                translate(i + ((j/10)%2)*25, j);
+                triangle(0, 0, 25, 50, 50, 0);
+                popMatrix();
+                noStroke();
+                fill(0, 0, 0, 30 + sin(i*50)*50);
+                pushMatrix();
+                translate(i + ((j/10)%2)*25, j);
+                triangle(25, 50, 50, 0, 75, 50);
+                popMatrix();
+            }
+        }
+    } else if (info.bg_style === 9){
+        noStroke();
+        for(var i = 0; i < width; i += 30){
+            for(var j = 0; j < height; j += 30){
+                fill(0, 0, 0, 25 + sin((i+j)+frameCount*5)*10);
+                rect(i, j, 30, 30);
+            }
+        }
+    } else if (info.bg_style){
+        noStroke();
+        for(var i = 0; i < width*2; i += 60){
+            fill(0, 0, 0, 5);
+            ellipse(300, 600, i, i);
         }
     }
     
@@ -190,53 +207,6 @@ draw = function() {
         textSize(20);
         text('Font', 300, 110);
     }
-    
-    /*fill(242, 242, 242);
-    rect(0, 0, width, 20);
-    textFont(createFont("Arial"), 15);
-    
-    noStroke();
-    fill(0, 0, 0, 5);
-    for(var i = 0; i < 16; i ++){
-        rect(0, 20, width, i);
-    }
-    
-    for(var i in dropdowns){
-        dropdowns[i].draw();
-    }*/
-    
-    /*
-    fill(242);
-    if(tab === 'bg'){
-        (rect)(5, 20, 100, 45, 0, 0, 5, 5);
-        fill(45);
-        text('Color', 10, 30);
-        text('Style', 10, 50);
-    }
-    if(tab === 'txt'){
-        (rect)(110, 20, 100, 85, 0, 0, 5, 5);
-        fill(45);
-        text('Title', 120, 30);
-        text('Creator', 120, 50);
-        text('Font', 120, 70);
-        text('Color', 120, 90);
-    }
-    
-    textFont(createFont("Arial Bold"), 15);
-    fill(45);
-    text("Background    Text    Layout", 10, 10);
-    
-    if(clicked){
-        if(mouseX < 110 && mouseY < 20){
-            tab = 'bg';
-        } else if (mouseX < 160 && mouseY < 20){
-            tab = 'txt';
-        } else if (mouseX < 240){
-            
-        } else {
-            tab = 'none';
-        }
-    }*/
     
     clicked = false;
 };
