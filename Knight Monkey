@@ -9,9 +9,6 @@
  * Thanks to my subscribers! Subsribe to me here:
 */
 
-
-var TITLE = "Knight";
-
 var clicked = false;
 
 var scene = "Home";
@@ -124,9 +121,44 @@ var Guard = function(x, y){
 };
 var Guards = [];
 Guard.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    strokeWeight(2);
+    fill(227, 143, 143);
+    stroke(79, 45, 20);
+    ellipse(-14, 0, 10, 10);
+    ellipse(14, 0, 10, 10);
+    noFill();
+    stroke(0, 0, 0, 60);
+    arc(0, 0, 30, 30, -195, -161);
+    arc(0, 0, 30, 30, -18, 16);
     noStroke();
-    fill(34, 255, 0);
-    ellipse(this.x, this.y, this.w, this.h);
+    fill(77, 46, 23);
+    ellipse(0, 0, 30, 30);
+    fill(0, 0, 0, 30);
+    arc(0, 0, 30, 30, -90, 90);
+    fill(168, 134, 89);
+    ellipse(-5, 0, 15, 15);
+    ellipse(5, 0, 15, 15);
+    ellipse(0, 5, 15, 15);
+    fill(43, 43, 43);
+    ellipse(-5, 0, 5, 5);
+    ellipse(5, 0, 5, 5);
+    fill(43, 43, 43, 100);
+    ellipse(-1.5, 4, 2, 2);
+    ellipse(1.5, 4, 2, 2);
+    stroke(45);
+    noFill();
+    strokeWeight(1);
+    line(-1, 8, 3, 8);
+    noStroke();
+    fill(59, 51, 42);
+    bezier(-15, 2, -12, 24, 14, 17, 15, 3);
+    bezier(-15, -1, -12, -23, 14, -17, 15, -2);
+    fill(0, 0, 0, 30);
+    bezier(-15, 2, -9, 18, -8, 17, 4, 3);
+    bezier(-15, -1, -12, -23, 14, -17, 7, -2);
+    popMatrix();
     
     this.x += this.speed;
     if(this.x > width - (this.w / 2) || this.x < this.w / 2){
@@ -213,7 +245,7 @@ Enemy.prototype.draw = function() {
     for(var i in Guards){
         if(circleCollide(this, Guards[i])){
             this.dead = true;
-            Guards.splice(i, 1);
+            //Guards.splice(i, 1);
         }
     }
 };
@@ -248,21 +280,27 @@ var introTxts = [
     "This is one of the Robot Monkeys. They have taken over half of Monkey Realm and are looking to take yours.",
     "This is one of your guards. Click to spawn a guard, as long as you have a coin to purchase one.",
     "This is the enemy's realm. If you grab a coin from their realm, it comes to your side. If you touch an enemy on their side, you get sent back to your side.",
-    "This is your realm. You can place guards to protect your coins by clicking anywhere on this side. If a guard and enemy touch, they both die.",
+    "This is your realm. You can place guards to protect your coins by clicking anywhere on this side. If a guard and enemy touch, the enemy dies.",
     "If you lose all your coins, you lose! If you gain all the coins, you win!",
 ];
 var intro = -1;
 
 var exampleEnemies = [new Enemy(50, 50, 0), new Enemy(300, 150, 0), new Enemy(500, 100, 0)];
 var exampleCoins = [new Treasure(60, 60), new Treasure(500, 250), new Treasure(300, 100)];
+var exampleCoins2 = [new Treasure(600, 360), new Treasure(500, 450), new Treasure(50, 500)];
+var exampleGuards = [new Guard(50, 350), new Guard(300, 450), new Guard(500, 500)];
+var testPlayer = new Player();
 
 draw = function() {
     textAlign(CENTER, CENTER);
-    textFont(createFont('Arial Black'), 100);
+    textFont(createFont('Arial Black'));
     
     if(scene === "Home"){
-        background(102, 164, 186);
         noStroke();
+        for(var i = 0; i < height; i += 20){
+            fill(lerpColor(color(46, 199, 82), color(49, 179, 212), i / height));
+            rect(0, i, width, 20);
+        }
         for(var i = 0; i < width; i += 20){
             for(var j = 0; j < height; j += 20){
                 fill(0, 0, 0, noise(i + noise(j, 1.1)*(sin(frameCount/10)*15), 1.1)*90);
@@ -273,16 +311,127 @@ draw = function() {
         translate(width / 2, height / 2);
         rotate(13);
         fill(0, 0, 0, 30);
-        text(TITLE.toUpperCase(), 7, 6);
+        textSize(55);
+        text("KNIGHT MONKEY", 7, 6);
         fill(255, 255, 255);
-        text(TITLE.toUpperCase(), 0, 0);
+        text("KNIGHT MONKEY", 0, 0);
         textSize(15);
-        text('|| CHESTER BANKS || KHANTOBER 2016 ||', 0, 50);
+        text('|| CHESTER BANKS || KHANTOBER 2016 ||', 0, 40);
         popMatrix();
         
         noStroke();
         triangle(-400, 0, 600, 0, 600, 200);
         triangle(0, 400, 0, 600, 1000, 600);
+        
+        pushMatrix();
+        translate(200, 550);
+        rotate(15);
+        scale(1.5);
+        strokeWeight(2);
+        fill(227, 143, 143);
+        stroke(79, 45, 20);
+        ellipse(-14, 0, 10, 10);
+        ellipse(14, 0, 10, 10);
+        noFill();
+        stroke(0, 0, 0, 60);
+        arc(0, 0, 30, 30, -195, -161);
+        arc(0, 0, 30, 30, -18, 16);
+        noStroke();
+        fill(77, 46, 23);
+        ellipse(0, 0, 30, 30);
+        fill(0, 0, 0, 30);
+        arc(0, 0, 30, 30, -90, 90);
+        fill(168, 134, 89);
+        ellipse(-5, 0, 15, 15);
+        ellipse(5, 0, 15, 15);
+        ellipse(0, 5, 15, 15);
+        fill(43, 43, 43);
+        ellipse(-5, 0, 5, 5);
+        ellipse(5, 0, 5, 5);
+        fill(43, 43, 43, 100);
+        ellipse(-1.5, 4, 2, 2);
+        ellipse(1.5, 4, 2, 2);
+        stroke(45);
+        noFill();
+        strokeWeight(1);
+        line(-1, 8, 3, 8);
+        noStroke();
+        fill(59, 51, 42);
+        bezier(-15, 2, -12, 24, 14, 17, 15, 3);
+        bezier(-15, -1, -12, -23, 14, -17, 15, -2);
+        fill(0, 0, 0, 30);
+        bezier(-15, 2, -9, 18, -8, 17, 4, 3);
+        bezier(-15, -1, -12, -23, 14, -17, 7, -2);
+        popMatrix();
+        
+        pushMatrix();
+        translate(100, 530);
+        rotate(-5);
+        scale(3.5);
+        strokeWeight(2);
+        fill(227, 143, 143);
+        stroke(130, 75, 33);
+        ellipse(-14, 0, 10, 10);
+        ellipse(14, 0, 10, 10);
+        noFill();
+        stroke(0, 0, 0, 60);
+        arc(0, 0, 30, 30, -195, -161);
+        arc(0, 0, 30, 30, -18, 16);
+        noStroke();
+        fill(130, 76, 33);
+        ellipse(0, 0, 30, 30);
+        fill(0, 0, 0, 30);
+        arc(0, 0, 30, 30, -90, 90);
+        fill(232, 189, 132);
+        ellipse(-5, 0, 15, 15);
+        ellipse(5, 0, 15, 15);
+        ellipse(0, 5, 15, 15);
+        fill(43, 43, 43);
+        ellipse(-5, 0, 5, 5);
+        ellipse(5, 0, 5, 5);
+        fill(43, 43, 43, 100);
+        ellipse(-1.5, 4, 2, 2);
+        ellipse(1.5, 4, 2, 2);
+        stroke(45);
+        noFill();
+        strokeWeight(1);
+        arc(0, 7, 7, 5, 0, 180);
+        popMatrix();
+        
+        pushMatrix();
+        translate(510, 80);
+        scale(3.5);
+        strokeWeight(2);
+        fill(158, 158, 158);
+        stroke(128, 128, 128);
+        ellipse(-14, 0, 10, 10);
+        ellipse(14, 0, 10, 10);
+        noFill();
+        stroke(0, 0, 0, 60);
+        arc(0, 0, 30, 30, -195, -161);
+        arc(0, 0, 30, 30, -16, 15);
+        noStroke();
+        fill(128);
+        ellipse(0, 0, 30, 30);
+        fill(0, 0, 0, 30);
+        arc(0, 0, 30, 30, -90, 90);
+        fill(94);
+        ellipse(-5, 0, 15, 15);
+        ellipse(5, 0, 15, 15);
+        ellipse(0, 5, 15, 15);
+        fill(128);
+        ellipse(-5, 0, 5, 5);
+        ellipse(5, 0, 5, 5);
+        fill(94);
+        arc(0, -4, 20, 8, 0, 180);
+        fill(43, 43, 43, 100);
+        ellipse(-1.5, 4, 2, 2);
+        ellipse(1.5, 4, 2, 2);
+        stroke(128);
+        noFill();
+        strokeWeight(1);
+        arc(0, 7, 7, 5, 0, 180);
+        popMatrix();
         
         if(clicked){
             scene = "Intro";
@@ -431,7 +580,26 @@ draw = function() {
             }
         }
         if(intro === 4){
+            background(37, 176, 72);
+            noStroke();
+            for(var i = 0; i < width; i += 20){
+                for(var j = 0; j < height; j += 20){
+                    fill(0, 0, 0, noise(i + noise(j, 1.1)*10, 1.1)*90);
+                    rect(i, j, 20, 20);
+                }
+            }
             
+            fill(255, 255, 255, 100);
+            for(var i = 0; i < 600; i += 25){
+                rect(i, 298, 20, 5);
+            }
+            for(var i in exampleGuards){
+                exampleGuards[i].draw();
+            }
+            for(var i in exampleCoins2){
+                exampleCoins2[i].draw();
+            }
+            testPlayer.draw();
         }
         
         textFont(createFont("Trebuchet MS", 16));
@@ -441,6 +609,9 @@ draw = function() {
         
         if(clicked){
             intro ++;
+            if(intro > introTxts.length - 1){
+                scene = "Game";
+            }
         }
     }
     if(scene === "Game"){
@@ -490,7 +661,7 @@ draw = function() {
             Guards.push(new Guard(mouseX, mouseY));
         }
         
-        if(frameCount % 100 === 0){
+        if(frameCount % 200 === 0){
             Enemies.push(new Enemy(random(width), random(height / 2), 0));
             Enemies.push(new Enemy(random(width), random(height / 2), 1));
         }
