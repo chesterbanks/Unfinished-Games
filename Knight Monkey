@@ -9,6 +9,7 @@
  * Thanks to my subscribers! Subsribe to me here:
 */
 
+
 var TITLE = "Knight";
 
 var clicked = false;
@@ -246,11 +247,14 @@ var introTxts = [
     "This is you - Knight Monkey. Move around with the arrow keys.",
     "This is one of the Robot Monkeys. They have taken over half of Monkey Realm and are looking to take yours.",
     "This is one of your guards. Click to spawn a guard, as long as you have a coin to purchase one.",
-    "This is the enemy's realm. If you touch a coin in their realm, it comes to your side. If you touch an enemy, you get sent back to your side.",
+    "This is the enemy's realm. If you grab a coin from their realm, it comes to your side. If you touch an enemy on their side, you get sent back to your side.",
     "This is your realm. You can place guards to protect your coins by clicking anywhere on this side. If a guard and enemy touch, they both die.",
     "If you lose all your coins, you lose! If you gain all the coins, you win!",
 ];
 var intro = -1;
+
+var exampleEnemies = [new Enemy(50, 50, 0), new Enemy(300, 150, 0), new Enemy(500, 100, 0)];
+var exampleCoins = [new Treasure(60, 60), new Treasure(500, 250), new Treasure(300, 100)];
 
 draw = function() {
     textAlign(CENTER, CENTER);
@@ -370,7 +374,7 @@ draw = function() {
             scale(7);
             strokeWeight(2);
             fill(227, 143, 143);
-            stroke(130, 75, 33);
+            stroke(79, 45, 20);
             ellipse(-14, 0, 10, 10);
             ellipse(14, 0, 10, 10);
             noFill();
@@ -378,11 +382,11 @@ draw = function() {
             arc(0, 0, 30, 30, -195, -161);
             arc(0, 0, 30, 30, -18, 16);
             noStroke();
-            fill(130, 76, 33);
+            fill(77, 46, 23);
             ellipse(0, 0, 30, 30);
             fill(0, 0, 0, 30);
             arc(0, 0, 30, 30, -90, 90);
-            fill(232, 189, 132);
+            fill(168, 134, 89);
             ellipse(-5, 0, 15, 15);
             ellipse(5, 0, 15, 15);
             ellipse(0, 5, 15, 15);
@@ -395,13 +399,44 @@ draw = function() {
             stroke(45);
             noFill();
             strokeWeight(1);
-            arc(0, 7, 7, 5, 0, 180);
+            line(-1, 8, 3, 8);
+            noStroke();
+            fill(59, 51, 42);
+            bezier(-15, 2, -12, 24, 14, 17, 15, 3);
+            bezier(-15, -1, -12, -23, 14, -17, 15, -2);
+            fill(0, 0, 0, 30);
+            bezier(-15, 2, -9, 18, -8, 17, 4, 3);
+            bezier(-15, -1, -12, -23, 14, -17, 7, -2);
             popMatrix();
+        }
+        if(intro === 3){
+            background(37, 176, 72);
+            noStroke();
+            for(var i = 0; i < width; i += 20){
+                for(var j = 0; j < height; j += 20){
+                    fill(0, 0, 0, noise(i + noise(j, 1.1)*10, 1.1)*90);
+                    rect(i, j, 20, 20);
+                }
+            }
+            
+            fill(255, 255, 255, 100);
+            for(var i = 0; i < 600; i += 25){
+                rect(i, 298, 20, 5);
+            }
+            for(var i in exampleEnemies){
+                exampleEnemies[i].draw();
+            }
+            for(var i in exampleCoins){
+                exampleCoins[i].draw();
+            }
+        }
+        if(intro === 4){
+            
         }
         
         textFont(createFont("Trebuchet MS", 16));
         fill(255);
-        text(introTxts[intro], 150, 400, 300, 100);
+        text(introTxts[intro], 150, intro === 3 ? 100 : 400, 300, 100);
         textFont(createFont("Arial Black"));
         
         if(clicked){
