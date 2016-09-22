@@ -14,7 +14,7 @@ var clicked = false;
 var scene = "Home";
 
 var keys = [];
-mouseClicked = function(){clicked = true;};
+mouseReleased = function(){clicked = true;};
 keyPressed = function(){keys[keyCode]=true;};
 keyReleased = function(){keys[keyCode]=false;};
 
@@ -661,7 +661,7 @@ draw = function() {
             Guards.push(new Guard(mouseX, mouseY));
         }
         
-        if(frameCount % 200 === 0){
+        if(frameCount % 200 === 0 && Enemies.length < 10){
             Enemies.push(new Enemy(random(width), random(height / 2), 0));
             Enemies.push(new Enemy(random(width), random(height / 2), 1));
         }
