@@ -1,0 +1,428 @@
+var mouse = {
+    clicked: false,
+    overButton: false,
+};
+var system = {
+    scene: 'Menu',
+    nextScene: 'Game',
+    switchingScenes: false,
+    blackness: 0,
+    blackSpeed: 0,
+    keyTyped: false,
+};
+
+var keys = [];
+keyPressed = function(){ keys[keyCode] = true; };
+keyReleased = function(){ keys[keyCode] = false; };
+
+var letter = function(which, x, y, sz){
+    noFill();
+    pushMatrix();
+    translate(x, y);
+    scale(sz/50);
+    switch(which.toUpperCase()){
+        case 'A':
+            line(0, -50, -40, 50);
+            line(0, -50, 40, 50);
+            line(-26, 20, 26, 20);
+            break;
+        case 'B':
+            line(-40, -50, -40, 50);
+            line(-40, -50, -10, -50);
+            line(-40, 0, 5, 0);
+            line(-40, 50, 5, 50);
+            arc(-10, -25, 50, 50, -90, 90);
+            arc(5, 25, 50, 50, -90, 90);
+            break;
+        case 'C':
+            arc(0, -15, 80, 70, -180, 0);
+            arc(0, 15, 80, 70, 0, 180);
+            line(-40, 13, -40, -13);
+            break;
+        case 'D':
+            arc(0, -15, 80, 70, -90, 0);
+            arc(0, 15, 80, 70, 0, 90);
+            line(-40, 50, -40, -50);
+            line(-40, 50, 0, 50);
+            line(-40, -50, 0, -50);
+            line(40, -15, 40, 15);
+            break;
+        case 'E':
+            line(-40, -50, -40, 50);
+            line(-40, -50, 40, -50);
+            line(-40, 10, 30, 10);
+            line(-40, 50, 40, 50);
+            break;
+        case 'F':
+            line(-40, -50, -40, 50);
+            line(-40, -50, 40, -50);
+            line(-40, 10, 30, 10);
+            break;
+        case 'G':
+            arc(0, -15, 80, 70, -180, 0);
+            arc(0, 15, 80, 70, 0, 180);
+            line(-40, 13, -40, -13);
+            line(-10, 15, 40, 15);
+            break;
+        case 'H':
+            line(-40, -50, -40, 50);
+            line(-40, 10, 40, 10);
+            line(40, -50, 40, 50);
+            break;
+        case 'I':
+            line(0, -50, 0, 50);
+            line(-40, -50, 40, -50);
+            line(-40, 50, 40, 50);
+            break;
+        case 'J':
+            arc(-30, 15, 80, 70, 0, 90);
+            line(-40, 50, -30, 50);
+            line(10, -50, 10, 15);
+            break;
+        case 'K':
+            line(-40, -50, -40, 50);
+            line(-40, 15, 40, -50);
+            line(-20, 0, 40, 50);
+            break;
+        case 'L':
+            line(-40, -50, -40, 50);
+            line(-40, 50, 40, 50);
+            break;
+        case 'M':
+            line(-40, -50, -40, 50);
+            line(0, 20, -40, -50);
+            line(0, 20, 40, -50);
+            line(40, -50, 40, 50);
+            break;
+        case 'N':
+            line(-40, -50, -40, 50);
+            line(40, 50, -40, -50);
+            line(40, -50, 40, 50);
+            break;
+        case 'O':
+            ellipse(0, 0, 80, 80);
+            break;
+        case 'P':
+            line(-40, -50, -40, 50);
+            line(-40, -50, 5, -50);
+            line(-40, 0, 5, 0);
+            arc(5, -25, 50, 50, -90, 90);
+            break;
+        case 'Q':
+            arc(0, -15, 80, 70, -180, 0);
+            arc(0, 15, 80, 70, 0, 180);
+            line(-40, 13, -40, -13);
+            line(40, 13, 40, -13);
+            arc(5, 45, 30, 30, -180, 0);
+            arc(30, 40, 20, 20, 0, 180);
+            break;
+        case 'R':
+            line(-40, -50, -40, 50);
+            line(-40, -50, 5, -50);
+            line(-40, 0, 5, 0);
+            arc(5, -25, 50, 50, -90, 90);
+            line(0, 0, 40, 50);
+            break;
+        case 'S':
+            line(-20, -50, 15, -50);
+            line(-15, 0, 15, 0);
+            line(-15, 50, 15, 50);
+            arc(-15, -25, 50, 50, -270, -90);
+            arc(15, 25, 50, 50, -90, 90);
+            arc(15, -25, 50, 50, -100, -30);
+            arc(-15, 25, 50, 50, 90, 150);
+            break;
+        case 'T':
+            line(0, -50, 0, 50);
+            line(-40, -50, 40, -50);
+            break;
+        case 'U':
+            line(-40, -50, -40, 10);
+            line(40, -50, 40, 10);
+            arc(0, 10, 80, 80, 0, 180);
+            break;
+        case 'V':
+            line(-40, -50, 0, 50);
+            line(40, -50, 0, 50);
+            break;
+        case 'W':
+            line(-40, -50, -25, 50);
+            line(40, -50, 25, 50);
+            line(0, 5, -25, 50);
+            line(0, 5, 25, 50);
+            break;
+        case 'X':
+            line(-40, -50, 40, 50);
+            line(-40, 50, 40, -50);
+            break;
+        case 'Y':
+            line(-40, -50, 0, 0);
+            line(0, 0, 40, -50);
+            line(0, 0, 0, 50);
+            break;
+        case 'Z':
+            line(-40, -50, 40, -50);
+            line(40, -50, -40, 50);
+            line(-40, 50, 40, 50);
+            break;
+        case '.':
+           ellipse(0, 42, 15, 15);
+            break;
+        case '\'':
+            line(0, -20, 10, -50);
+            break;
+        case '?':
+            arc(0, -30, 50, 50, 220, 440);
+            line(0, 20, 0, 0);
+            ellipse(0, 50, 10, 10);
+            break;
+        case '!':
+            line(0, 10, 0, -50);
+            ellipse(0, 50, 10, 10);
+            break;
+    }
+    popMatrix();
+};
+var word = function(which, x, y, sz){
+    var theWord = which.split("");
+    
+    
+    for(var i in theWord){
+        pushMatrix();
+        translate(x - ((theWord.length - 1)*sz), y);
+        if((theWord[i] === '\'' || theWord[i-1] === '\'') || (theWord[i] === '.' || theWord[i-1] === '.')){
+            letter(theWord[i], i*(sz*1.9), 0, sz);
+        } else {
+            letter(theWord[i], i*(sz*2), 0, sz);
+        }
+        popMatrix();
+    }
+};
+var word2 = function(which, x, y, sz){
+    strokeWeight(30);
+    word(which, x, y + 3, sz);
+    for(var i = 25; i > 0; i -= 3){
+        stroke(0, 0, 0, 3);
+        strokeWeight(i);
+        word(which, x, y, sz);
+    }
+};
+
+// Falling snow
+var snow = function(x, y, sz){
+    this.x = x;
+    this.y = y;
+    this.sz = sz;
+    this.deleteMe = false;
+};
+var Snow = []; // Array of all snowflakes
+// Snow prototype
+snow.prototype.draw = function() {
+    if(!this.deleteMe){
+        noStroke();
+        fill(255);
+        rect(this.x, this.y, this.sz, this.sz);
+        this.x += this.sz/3;
+        this.y += this.sz;
+        if(this.y > height){
+            this.deleteMe = true;
+        }
+    }
+};
+
+var Player = function(){
+    this.x = 300;
+    this.y = 500;
+    this.w = 30;
+    this.h = 30;
+    
+    this.speed = 3;
+    this.howMany = 3;
+    
+    this.Snowball = function(x, y){
+        this.x = x;
+        this.y = y;
+    };
+    this.Snowballs = [];
+    this.Snowball.prototype.draw = function() {
+        fill(255);
+        stroke(0, 0, 0, 60);
+        strokeWeight(1);
+        ellipse(this.x, this.y, 20, 20);
+        
+        this.y -= 5;
+    };
+};
+Player.prototype.draw = function() {
+    for(var i in this.Snowballs){
+        this.Snowballs[i].draw();
+    }
+    
+    strokeWeight(3);
+    stroke(196, 169, 118);
+    fill(230, 198, 138);
+    pushMatrix();
+    translate(this.x, this.y);
+    ellipse(0, 0, this.w, this.h);
+    popMatrix();
+    
+    if(keys[RIGHT]){ this.x += this.speed; }
+    if(keys[LEFT]){ this.x -= this.speed; }
+    if(keys[DOWN]){ this.y += this.speed; }
+    if(keys[UP]){ this.y -= this.speed; }
+    if(system.keyTyped && key.toString() === ' ' && this.howMany > 0){ 
+        this.Snowballs.push(new this.Snowball(this.x, this.y));
+        this.howMany --;
+    }
+    if(dist(this.x, this.y, 300, 550) < 40){
+        this.howMany = 3;
+    }
+};
+var player = new Player();
+
+var Menu = function(){
+    this.mountain = function(x, y, sz, tr){
+        noStroke();
+        pushMatrix();
+        translate(x, y);
+        scale(sz / 10);
+        fill(126, 139, 140);
+        triangle(-75, 0, 75, 0, 0, -200);
+        fill(235);
+        beginShape();
+        vertex(0, -200);
+        vertex(-25, -135);
+        vertex(-15, -145);
+        vertex(-10, -135);
+        vertex(-5, -140);
+        vertex(0, -130);
+        vertex(15, -145);
+        vertex(15, -135);
+        vertex(18, -140);
+        vertex(25, -135);
+        endShape();
+        fill(0, 0, 0, 20);
+        triangle(-30, 0, -75, 0, 0, -200);
+        fill(0, 0, 0, tr);
+        triangle(-75, 0, 75, 0, 0, -200);
+        popMatrix();
+    };
+};
+Menu.prototype.draw = function() {
+    
+    background(87, 143, 171);
+    noStroke();
+    fill(0, 0, 0, 5);
+    for(var i = height; i > 0; i -= 30){
+        rect(0, 0, width, i);
+    }
+    
+    this.mountain(308, 600, 25, 90);
+    this.mountain(200, 600, 25, 60);
+    this.mountain(370, 600, 22, 60);
+    this.mountain(45, 600, 35, 1);
+    this.mountain(555, 600, 32, 1);
+    
+    // Draw falling snow
+    Snow.push(new snow(random(-100, width), random(-10, -50), random(1, 20)));
+    for(var i = 0; i < Snow.length/2; i++){
+        Snow[i].draw();
+    }
+    
+    strokeWeight(23);
+    stroke(0, 0, 0, 60);
+    word('WINTER', 300, 202, 40);
+    word('WAR', 310, 340, 70);
+    stroke(255, 255, 255);
+    strokeWeight(17);
+    word2('WINTER', 300, 190, 40);
+    stroke(255, 255, 255);
+    word2('War', 310, 340, 80);
+    stroke(255, 255, 255);
+    strokeWeight(10);
+    word('Chester', 244, 475, 12);
+    stroke(0);
+    word('Banks', 402, 475, 12);
+    
+    if(mouse.clicked){
+        system.nextScene = 'Game';
+        system.switchingScenes = true;
+    }
+};
+var menu = new Menu();
+
+var Game = function(){
+    
+};
+Game.prototype.draw = function() {
+    background(255);
+    
+    noStroke();
+    for(var i = 0; i < 300; i += 20){
+        fill(0, 0, 0, -i/10 + 25);
+        rect(0, i, 600, 20);
+    }
+    for(var i = 300; i < 600; i += 20){
+        fill(0, 0, 0, i/10 - 30);
+        rect(0, i, 600, 20);
+    }
+    
+    fill(0, 0, 0, 60);
+    for(var i = 0; i < 600; i += 30){
+        rect(i, 287.5, 25, 5);
+    }
+    
+    strokeWeight(5);
+    stroke(0, 0, 0, 40);
+    fill(255);
+    ellipse(300, 550, 50 + sin(frameCount*5)*5, 50 + cos(frameCount*5)*5);
+    
+    player.draw();
+    
+    textSize(13);
+    fill(45);
+    text('You have ' + player.howMany + ' snowballs', 15, 20);
+};
+var game = new Game();
+
+mouseClicked = function(){
+    mouse.clicked = true;
+};
+keyTyped = function(){
+    system.keyTyped = true;
+};
+
+draw = function() {
+    
+    switch(system.scene){
+        case 'Menu':
+            menu.draw();
+            break;
+        case 'Game':
+            game.draw();
+            break;
+        default:
+            println('No scene called "' + system.scene + '".');
+            noLoop();
+            break;
+    }
+
+    noStroke();
+    fill(255, 255, 255, system.blackness);
+    rect(0, 0, width, height);
+    if(system.switchingScenes){
+        system.blackSpeed = +10;
+    }
+    if(system.blackness > 255){
+        system.scene = system.nextScene;
+        system.switchingScenes = false;
+        system.blackSpeed = -system.blackSpeed;
+    }
+    if(system.blackness < 0){ system.blackness = 0; }
+    system.blackness += system.blackSpeed;
+    
+    // Reset mouse events
+    mouse.clicked = false;
+    mouse.overButton = false;
+    system.keyTyped = false;
+};
