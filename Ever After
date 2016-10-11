@@ -1,0 +1,391 @@
+/**
+    E V E R   A F T E R
+    
+    @Menu DONE
+    @HowTo
+    @Game1 DONE
+    @Cutscene1 
+    @Game2 (platformer?)
+    @Cutscene2
+    @Game3 (protect the planet style)
+    @Cutscene3
+    @Lose
+    @Win
+
+*/
+
+textAlign(CENTER, CENTER);
+
+var scene = 'Menu';
+
+// The rectangle collision function
+var rectCollide = function(one, two){
+    return one.x+one.w > two.x && one.y+one.h > two.y && one.x < two.x+two.w && one.y < two.y+two.h;
+};
+
+// Key movement
+var keys = [];
+keyPressed = function(){
+    keys[keyCode] = true;
+};
+keyReleased = function(){
+    keys[keyCode] = false;
+};
+var clicked = false;
+mouseClicked = function(){
+    clicked = true;
+};
+
+var lives = 3;
+var progress = 0;
+
+var eaText = function(x, y){
+    pushMatrix();
+    translate(200 - x, 200 - y);
+    line(65, 200, 65, 280);
+    line(65, 280, 75, 279);
+    line(65, 200, 72, 201);
+    line(73, 237, 65, 238);
+    line(90, 200, 105, 280);
+    line(105, 280, 115, 198);
+    
+    line(130, 200, 130, 280);
+    line(132, 280, 142, 279);
+    line(130, 200, 138, 201);
+    line(138, 237, 130, 238);
+    
+    line(158, 200, 157, 280);
+    arc(158, 219, 23, 37, -90, 90);
+    line(163, 237, 173, 280);
+    
+    line(220, 200, 203, 280);
+    line(220, 200, 227, 280);
+    line(226, 264, 208, 260);
+    
+    line(241, 200, 245, 280);
+    line(241, 200, 249, 200);
+    line(244, 239, 251, 238);
+    
+    line(277, 282, 274, 202);
+    line(265, 202, 281, 200);
+    
+    line(296, 282, 297, 202);
+    line(304, 201, 297, 201);
+    line(304, 238, 297, 239);
+    line(306, 281, 297, 282);
+    
+    line(323, 200, 324, 280);
+    arc(323, 219, 23, 37, -90, 90);
+    line(328, 237, 341, 280);
+    popMatrix();
+};
+
+// First stage enemies
+var Enemy = function(){
+    this.x = random(width - 50);
+    this.y = random(-50, -height);
+    this.w = 50;
+    this.h = 50;
+};
+var Enemies = [];
+Enemy.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    noStroke();
+    fill(0, 0, 0, 50);
+    rect(-2, 47, 54, 10, 10);
+    strokeWeight(4);
+    stroke(50);
+    fill(209, 178, 107);
+    rect(0, 0, 50, 50, 5);
+    noStroke();
+    fill(143, 49, 49);
+    arc(15, 20, 10, 10, 15, 195);
+    arc(34, 20, 10, 10, -15, 155);
+    fill(50);
+    triangle(18, 0, 32, 0, 25, -10);
+    (rect)(0, 30, 50, 20, 0, 0, 5, 5);
+    (rect)(0, 0, 50, 15, 5, 5, 0, 0);
+    arc(0, 15, 50, 10, 0, 90);
+    arc(50, 15, 50, 10, 90, 180);
+    bezier(0, 30, 55, 25, -11, 20, 50, 30);
+    fill(0, 0, 0, 30);
+    (rect)(25, 0, 25, 50, 0, 5, 5, 0);
+    popMatrix();
+    
+    this.y += 4;
+};
+
+// First stage player
+var Player = function(){
+    this.x = 175;
+    this.y = 430;
+    this.w = 50;
+    this.h = 50;
+    this.flash = 0;
+};
+Player.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    noStroke();
+    fill(171, 171, 171);
+    rect(3, 47 + sin(frameCount*10)*3, 20, 10, 5);
+    rect(28, 47+ sin(-frameCount*10)*3, 20, 10, 5);
+    fill(219, 219, 219);
+    rect(5, 0, 40, 50, 10);
+    fill(207, 207, 207);
+    rect(0, 0, 50, 35, 15);
+    fill(227, 227, 227);
+    rect(5, 5, 30, 5, 10);
+    rect(5, 5, 5, 15, 10);
+    popMatrix();
+    
+    if(keys[LEFT] && this.x > 0){
+        this.x -= 5;
+    }
+    if(keys[RIGHT] && this.x < 350){
+         this.x += 5;
+    }
+    
+    for(var i = 0; i < Enemies.length; i ++){
+        if(rectCollide(this, Enemies[i])){
+            this.flash = 255;
+            progress = 0;
+            lives --;
+            Enemies = [];
+        }
+    }
+    
+    if(this.flash > -10){
+        this.flash -= 10;
+    }
+};
+var player = new Player();
+
+var bgRects = [];
+for(var i = 0; i < width; i += 50){
+    for(var j = -100; j < height; j += 50){
+        bgRects.push({x: i, y: j, trans: random(30)});
+    }
+}
+
+var stars = [];
+for(var i = 0; i < width; i += 50){
+    for(var j = -100; j < height; j += 5){
+        stars.push({x: i + random(-50, 50), y: j + random(-50, 50), trans: random(100), sz: random(5)});
+    }
+}
+
+draw = function() {
+    if(scene === 'Menu'){
+        noStroke();
+        for(var i = 0; i < height; i += 20){
+            fill(lerpColor(
+                color(3, 13, 18),
+                color(24, 71, 105),
+                i/height));
+            rect(0, i, width, 20);
+        }
+        
+        for(var i in stars){
+            fill(255, 255, 255, stars[i].trans);
+            ellipse(stars[i].x, stars[i].y, stars[i].sz, stars[i].sz);
+        }
+        
+        noFill();
+        stroke(255, 255, 255, 50);
+        strokeWeight(12);
+        eaText(200, 200);
+        strokeWeight(8);
+        eaText(200, 200);
+        stroke(255, 255, 255);
+        strokeWeight(2);
+        eaText(200, 200);
+        
+        fill(186, 186, 186);
+        noStroke();
+        beginShape();
+        vertex(50, 300);
+        vertex(60, 295);
+        vertex(315, 295);
+        vertex(315, 305);
+        vertex(60, 305);
+        endShape();
+        fill(255, 255, 255, 100);
+        quad(50, 300, 60, 295, 315, 295, 315, 300);
+        fill(148, 148, 148);
+        rect(315, 295, 30, 10, 5);
+        fill(161, 161, 161);
+        rect(315, 290, 5, 20);
+        
+        fill(255);
+        textFont(createFont('AvenirNext-UltraLight Italic'), 22);
+        text('v a l i a n t   r e s c u e', 200, 315);
+        
+        if(clicked){
+            scene = 'Game-1';
+        }
+    }
+    if(scene === 'Cutscene1'){
+        background(59, 95, 115);
+        
+        noStroke();
+        fill(255, 255, 255, 30);
+        ellipse(200, 250, 300, 300);
+        
+        fill(217, 117, 46);
+        triangle(200, 70, 155, 130, 245, 130);
+        fill(0, 0, 0, 25);
+        triangle(200, 70, 155, 130, 200, 130);
+        
+        rectMode(CENTER);
+        fill(18, 77, 30);
+        rect(200, 360, 300, 10, 10);
+        fill(102, 102, 102);
+        rect(200, 200, 90, 150);
+        fill(74, 74, 74);
+        rect(135, 234, 40, 150);
+        rect(265, 234, 40, 150);
+        fill(92, 92, 92);
+        rect(200, 315, 140, 80);
+        fill(74, 74, 74);
+        rect(115, 305, 30, 100);
+        rect(285, 305, 30, 100);
+        fill(66, 66, 66);
+        rect(80, 320, 40, 70);
+        rect(320, 320, 40, 70);
+        
+        fill(92, 92, 92);
+        for(var i = 140; i < 280; i += 30){
+            rect(i, 267, 15, 15);
+        }
+        fill(102, 102, 102);
+        rect(200, 130, 90, 10);
+        for(var i = 160; i < 260; i += 20){
+            rect(i, 120, 10, 10);
+        }
+        rectMode(CORNER);
+    }
+    if(scene === 'Game-1'){
+        if(frameCount % 25 === 0 && progress < 80){
+            Enemies.push(new Enemy());
+        }
+        
+        background(62, 181, 80);
+        noStroke();
+        for(var i in bgRects){
+            fill(0, 0, 0, bgRects[i].trans);
+            rect(bgRects[i].x, bgRects[i].y, 50, 50, -30);
+            
+            bgRects[i].y += 3;
+            
+            if(bgRects[i].y > 550){
+                bgRects[i].y = -50;
+            }
+        }
+        noStroke();
+        fill(0, 0, 0, progress);
+        rect(0, 0, width, height);
+        
+        for(var i = 0; i < Enemies.length; i ++){
+            Enemies[i].draw();
+            if(Enemies[i].y > 550){
+                Enemies.splice(i, 1);
+                i--; // Learned this recently. Removes the "splice flash".
+            }
+        }
+        player.draw();
+        
+        fill(255);
+        textSize(30);
+        for(var i = 0; i < lives; i ++){
+            text('\u2764', 30 + (i*30), 25);
+        }
+        
+        strokeWeight(3);
+        stroke(255);
+        fill(255, 255, 255, 100);
+        rect(360, 390, 30, 100);
+        rect(372, 482 - progress, 5, 5);
+        
+        progress += 0.05;
+        
+        noStroke();
+        fill(255, 255, 255, player.flash);
+        rect(0, 0, width, height);
+        
+        if(lives < 0){
+            scene = 'Lose';
+        }
+        if(progress > 90){
+            scene = 'Game-2';
+        }
+    }
+    if(scene === 'Game-3'){
+        background(54, 40, 33);
+        
+        noFill();
+        strokeWeight(20);
+        for(var i = 610; i > 200; i -= 10){
+            stroke(0, 0, 0, i/10);
+            ellipse(200, 250, i, i);
+        }
+        
+        noStroke();
+        
+        fill(242,218,145);
+        beginShape();
+        vertex(162, 283);
+        bezierVertex(179, 190, 226, 201, 238, 280);
+        bezierVertex(217, 302, 204, 278, 172, 294);
+        endShape(CLOSE);
+        
+        fill(240, 113, 162);
+        ellipse(200, 273, 30, 30);
+        fill(230, 179, 113);
+        ellipse(200, 250, 40, 40);
+        fill(45);
+        ellipse(194, 257, 8, 8);
+        ellipse(207, 257, 8, 8);
+        
+        fill(242, 218, 145);
+        bezier(184, 242, 171, 219, 266, 228, 178, 250);
+    }
+    if(scene === 'Lose'){
+        background(3, 37, 54);
+        
+        textFont(createFont('Times'));
+        
+        rectMode(CENTER);
+        noStroke();
+        
+        fill(40, 168, 79);
+        arc(37, 450, 268, 194, -180, 0);
+        arc(355, 486, 268, 194, -180, 0);
+        
+        pushMatrix();
+        translate(200, 345);
+        rotate(10);
+        fill(150, 147, 150);
+        arc(15, -100, 200, 200, -180, 5);
+        rect(15, 0, 200, 200);
+        fill(184, 184, 184);
+        arc(0, -100, 200, 200, -180, 5);
+        rect(0, 0, 200, 200);
+        fill(0, 0, 0, 50);
+        textSize(90);
+        text('RIP', 0, -90);
+        rect(0, -45, 160, 3);
+        rect(0, -50, 160, 3);
+        textSize(17);
+        text('Here lies the valiant\nKnight who bravely\nattempted to rescue\nour beloved princess.', 0, 11);
+        popMatrix();
+        rectMode(CORNER);
+
+        fill(45, 204, 93);
+        arc(235, 450, 500, 84, -180, 0);
+        rect(0, 450, width, 50);
+    }
+    
+    clicked = false;
+};
