@@ -16,7 +16,7 @@
 
 textAlign(CENTER, CENTER);
 
-var scene = 'Menu';
+var scene = '';
 
 // The rectangle collision function
 var rectCollide = function(one, two){
@@ -340,8 +340,26 @@ draw = function() {
         bezierVertex(217, 302, 204, 278, 172, 294);
         endShape(CLOSE);
         
+        noFill();
+        stroke(240, 113, 162);
+        strokeWeight(5);
+        arc(200, 294, 45, 50, -180, 0);
+        stroke(222, 222, 222);
+        strokeWeight(9);
+        arc(200, 294, 45, 50, -125, -50);
+        noStroke();
         fill(240, 113, 162);
-        ellipse(200, 273, 30, 30);
+        ellipse(195, 297, 10, 20);
+        ellipse(205, 297, 10, 20);
+        fill(224, 224, 224);
+        ellipse(200, 292, 33, 14);
+        ellipse(192, 305, 10, 5);
+        ellipse(208, 305, 10, 5);
+        fill(240, 113, 162);
+        ellipse(200, 233, 33, 14);
+        triangle(200, 235, 185, 293, 215, 293);
+        ellipse(200, 293, 29, 5);
+        ellipse(200, 273, 25, 30);
         fill(230, 179, 113);
         ellipse(200, 250, 40, 40);
         fill(45);
@@ -350,6 +368,11 @@ draw = function() {
         
         fill(242, 218, 145);
         bezier(184, 242, 171, 219, 266, 228, 178, 250);
+        
+        noFill();
+        stroke(255, 255, 255, 50);
+        strokeWeight(2);
+        arc(200, 280, 25, 10, 0, 180);
     }
     if(scene === 'Lose'){
         background(3, 37, 54);
