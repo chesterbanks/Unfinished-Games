@@ -1,0 +1,93 @@
+// don't get caught uncloaked in the spotlight
+// don't run into a mine
+
+var keys = [];
+keyPressed = function(){keys[keyCode]=true;};
+keyReleased = function(){keys[keyCode]=false;};
+
+var Light = function (){
+    this.y = 0;
+};
+Light.prototype.draw = function() {
+    noStroke();
+    for(var i = 0; i < 45; i += 5){
+        fill(175, 227, 20, 20);
+        rect(0, this.y, width, i);
+        rect(0, this.y, width, -i);
+    }
+    fill(224, 227, 20);
+    
+    this.y += 1;
+    if(this.y > height + 50){
+        this.y = -50;
+    }
+};
+var light = new Light();
+
+var Mine = function(){
+    this.x = random(width);
+    this.y = random(height);
+    this.r = random(360);
+    this.sz = 20;
+};
+Mine.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(this.r);
+    noStroke();
+    fill(0);
+    ellipse(0, 0, this.sz, this.sz);
+    stroke(0);
+    strokeWeight(5);
+    line(0, 0, 0, -12);
+    popMatrix();
+};
+var mines = [];
+for(var i = 0; i < 30; i ++){
+    mines.push(new Mine());
+}
+
+var Player = function(){
+    this.x = 200;
+    this.y = 350;
+    this.sz = 20;
+};
+Player.prototype.draw = function() {
+    stroke(21, 189, 46);
+    fill(30, 230, 56);
+    strokeWeight(3);
+    ellipse(this.x, this.y, this.sz, this.sz);
+    
+    if(keys[32]){
+        fill(0);
+        stroke(0);
+        ellipse(this.x, this.y, this.sz, this.sz);
+    }
+    
+    if(keys[RIGHT]){ this.x += 3; }
+    if(keys[LEFT]){ this.x -= 3; }
+    if(keys[UP]){ this.y -= 3; }
+    if(keys[DOWN]){ this.y += 3; }
+    
+    for(var i in mines){
+        if(dist(this.x, this.y, mines[i].x, mines[i].y) < 20){
+            background(255, 0, 0);
+        }
+    }
+};
+var player = new Player();
+
+draw = function() {
+    background(0);
+    
+    // draw searchlight
+    light.draw();
+    
+    // draw mines
+    for(var i in mines){
+        mines[i].draw();
+    }
+    
+    // draw player
+    player.draw();
+};
