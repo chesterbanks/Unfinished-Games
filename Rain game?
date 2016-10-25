@@ -1,0 +1,132 @@
+var rectCollide = function(one, two){
+    return one.x+one.w > two.x && one.y+one.h > two.y && one.x < two.x+two.w && one.y < two.y+two.h;
+};
+
+var Cloud = function(x, y){
+    this.x = x;
+    this.y = y;
+    
+    this.rain = function(x, y){
+        this.x = x;
+        this.y = y;
+        this.w = 2;
+        this.h = 20;
+        this.trans = random(255);
+        this.speed = random(2, 4);
+    };
+    this.rain.prototype.draw = function() {
+        noStroke();
+        fill(89, 230, 255);
+        rect(this.x, this.y, 2, 20);
+        fill(250, 250, 250, this.trans);
+        rect(this.x, this.y, 2, 20);
+        
+        this.y += this.speed;
+    };
+    this.rains = []; // incorrect grammar, i know
+};
+Cloud.prototype.draw = function() {
+    if(frameCount % 1 === 0){
+        this.rains.push(new this.rain(random(this.x - 30, this.x + 40), this.y));
+    }
+    
+    for(var i in this.rains){
+        this.rains[i].draw();
+        if(this.rains[i].y > height + 30){
+            this.rains.splice(i, 1);
+            i --;
+        }
+    }
+    
+    pushMatrix();
+    translate(this.x, this.y);
+    scale(0.5);
+    noStroke();
+    fill(46);
+    ellipse(-65, 50, 55, 55);
+    ellipse(0, 0, 155, 155);
+    ellipse(60, 32, 85, 85);
+    rect(-100, 53, 204, 21, 19);
+    rect(-107, 60, 226, 23, 19);
+    fill(230, 230, 230);
+    rect(-98, 55, 200, 21, 19);
+    rect(-104, 62, 220, 14, 19);
+    pushMatrix();
+    translate(-65, 50);
+    rotate(45);
+    fill(255);
+    ellipse(0, 0, 50, 50);
+    fill(0, 0, 0, 20);
+    arc(0, 0, 50, 50, -90, 90);
+    fill(255);
+    ellipse(0, 0, 30, 50);
+    popMatrix();
+    pushMatrix();
+    translate(0, 0);
+    rotate(45);
+    fill(255);
+    ellipse(0, 0, 150, 150);
+    fill(0, 0, 0, 20);
+    arc(0, 0, 150, 150, -90, 90);
+    fill(255);
+    ellipse(0, 0, 90, 150);
+    popMatrix();
+    pushMatrix();
+    translate(60, 32);
+    rotate(45);
+    fill(255);
+    ellipse(0, 0, 80, 80);
+    fill(0, 0, 0, 20);
+    arc(0, 0, 80, 80, -90, 90);
+    fill(255);
+    ellipse(0, 0, 50, 80);
+    popMatrix();
+    popMatrix();
+};
+var Clouds = [];
+
+var Grass = function(x){
+    this.x = x;
+    this.y = 380;
+    this.w = 20;
+    this.h = 20;
+    this.dark = 100;
+    this.water = 0;
+};
+Grass.prototype.draw = function() {
+    noStroke();
+    fill(38, 180, 227);
+    rect(this.x, this.y, 20, this.water);
+    fill(44, 186, 59);
+    rect(this.x, this.y, 20, 20);
+    fill(0, 0, 0, this.dark);
+    rect(this.x, this.y, 20, 20);
+    for(var i in Clouds){
+        for(var j in Clouds[i].rains){
+            if(rectCollide(Clouds[i].rains[j], this)){
+                this.dark -= 0.05;
+                if(this.dark < 0){
+                    this.water -= 0.05;
+                }
+            }
+        }
+    }
+};
+var Grasses = [];
+for(var i = 0; i < width; i += 20){
+    Grasses.push(new Grass(i));
+}
+
+mouseClicked = function(){
+    Clouds.push(new Cloud(mouseX, mouseY));
+};
+
+draw = function() {
+    background(255);
+    for(var i in Clouds){   
+        Clouds[i].draw();
+    }
+    for(var i in Grasses){
+        Grasses[i].draw();
+    }
+};
