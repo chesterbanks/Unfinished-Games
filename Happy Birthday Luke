@@ -1,0 +1,164 @@
+textAlign(CENTER, CENTER);
+textFont(createFont('AvenirNext-UltraLightItalic'));
+
+var mouse = { overButton: false, clicked: false};
+mouseClicked = function(){ mouse.clicked = true; };
+
+var scene = 'Menu';
+
+var bgOrb = function(x, y, color){
+    noStroke();
+    for(var i = 0; i < 230; i += 15){
+        fill(color);
+        ellipse(x, y, i, i);
+    }
+};
+
+var button = function(x, y, sz, txt, next){
+    this.x = x; 
+    this.y = y;
+    this.sz = sz; 
+    this.txt = txt;
+    this.next = next;
+};
+button.prototype.draw = function() {
+    textSize(this.sz / 4.0);
+    noFill();
+    strokeWeight(2);
+    stroke(255, 255, 255, 100);
+    bezier(this.x, this.y + (this.sz / 2) + 10, this.x - 40, this.y + 90, this.x + 40, this.y + 45, this.x, this.y + 100);
+    strokeWeight(5);
+    stroke(0, 0, 0, 50);
+    fill(33, 171, 235, 100);
+    triangle(this.x, this.y + (this.sz / 2), this.x + 5, this.y + (this.sz / 2) + 10, this.x - 5, this.y + (this.sz / 2) + 10);
+    if(dist(mouseX, mouseY, this.x, this.y) < this.sz/2){
+        mouse.overButton = true;
+        fill(33, 171, 235, 200);
+        ellipse(this.x, this.y, this.sz + sin(frameCount*10)*3, this.sz + cos(frameCount*10)*3);
+        if(mouse.clicked){
+            scene = this.next;
+        }
+    } else {
+        ellipse(this.x, this.y, this.sz, this.sz);
+    }
+    noFill();
+    stroke(255, 255, 255, 50);
+    arc(this.x, this.y, this.sz / 1.2, this.sz / 1.2, -168, -100);
+    fill(255);
+    if(this.txt === '.'){
+        noStroke();
+        fill(255);
+        triangle(this.x + 15, this.y, this.x - 10, this.y - 15, this.x - 10, this.y + 15);
+    } else {
+        text(this.txt.toUpperCase(), this.x, this.y);
+    }
+};
+var buttons = {
+    play: new button(150, 320, 90, 'PLAY', 'Game'),
+    how: new button(250, 320, 90, 'HOW', 'How'),
+    back: new button(50, 320, 70, 'BACK', 'Menu'),
+};
+
+draw = function() {
+    if(scene === 'Menu'){
+        background(0);
+        colorMode(HSB);
+        for(var i = 0; i < 360; i += 55){
+            bgOrb(200 + cos(i)*100, 200 + sin(i)*100, (color)(i, 255, 255, 10 + sin(frameCount*10)*5));
+            bgOrb(200 + cos(i)*200, 200 + sin(i)*200, color(i+100, 255, 255, 10 + cos(frameCount*10)*5));
+        }
+        colorMode(RGB);
+        
+        fill(255);
+        textSize(30);
+        text('HAPPY BIRTHDAY', 200, 140);
+        textSize(130);
+        text('LUKE', 200, 200);
+        
+        buttons.play.draw();
+        buttons.how.draw();
+    }
+    if(scene === 'How'){
+        background(0, 0, 0);
+        colorMode(HSB);
+        for(var i = 0; i < 360; i += 55){
+            bgOrb(200 + cos(i)*100, 200 + sin(i)*100, (color)(i, 255, 255, 10 + sin(frameCount*10)*5));
+            bgOrb(200 + cos(i)*200, 200 + sin(i)*200, color(i+100, 255, 255, 10 + cos(frameCount*10)*5));
+        }
+        colorMode(RGB);
+        
+        buttons.back.draw();
+    }
+    
+    if(scene === 'Game'){
+        background(255, 255, 255);
+        colorMode(HSB);
+        for(var i = -15; i < width + 1; i += 50){
+            for(var j = 15; j < height + 1; j += 52){
+                pushMatrix();
+                translate(i + ((j/52)%2)*25, j);
+                scale(0.6);
+                noFill();
+                strokeWeight(2);
+                stroke(0, 0, 0, 50);
+                bezier(0, 55, -40, 90, 40, 45, 0, 100);
+                strokeWeight(5);
+                stroke(0, 0, 0, 50);
+                fill((i+15+j)%255, 171, 235, 100);
+                triangle(0, 45, 5, 55, -5, 55);
+                ellipse(0, 0, 90, 90);
+                noFill();
+                stroke(255, 255, 255, 100);
+                arc(0, 0, 90 / 1.2, 90 / 1.2, -168, -100);
+                popMatrix();
+            }
+        }
+        colorMode(RGB);
+        
+        noStroke();
+        fill(255, 255, 255, 150);
+        rect(0, 0, width, height);
+        
+        fill(25);
+        textSize(100);
+        text('LUKE', 200, 70);
+        noFill();
+        strokeWeight(2);
+        stroke(25);
+        for(var i = 0; i < 360; i += 35){
+            pushMatrix();
+            translate(i, 130);
+            bezier(0, 0, 25, 35, 25, -35, 50, 0);
+            popMatrix();
+        }
+        
+        fill(255, 255, 255, 150);
+        strokeWeight(5);
+        stroke(0, 0, 0, 50);
+        rect(20, 150, 100, 130, 10);
+        
+        strokeWeight(2);
+        fill(242, 171, 100);
+        stroke(219, 153, 88);
+        ellipse(70, 215, 70, 90);
+        stroke(130, 82, 43);
+        fill(156, 100, 54);
+        arc(70, 215, 70, 90, -180, 0);
+        fill(242, 171, 100);
+        stroke(219, 153, 88);
+        arc(70, 215, 67, 64, -184, 0);
+        stroke(204, 140, 79);
+        line(67, 210, 65, 230);
+        line(70, 231, 65, 230);
+        arc(70, 237, 30, 11, 0, 150);
+        arc(80, 205, 24, 10, -120, -20);
+        arc(55, 205, 19, 10, -180, -60);
+        noStroke();
+        fill(56, 56, 56);
+        ellipse(80, 215, 5, 10);
+        ellipse(55, 215, 5, 10);
+    }
+    
+    mouse.clicked = false;
+    mouse.overButton = false;
+};
