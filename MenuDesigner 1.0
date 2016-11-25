@@ -46,13 +46,13 @@ var clicked = false;
 var info = {
     bg_colors: [color(219, 44, 44), color(31, 194, 69), color(16, 199, 175), color(35, 130, 194), color(217, 147, 60), color(158, 66, 194), color(183, 217, 46), color(232, 102, 197), color(235, 235, 235), color(26, 26, 26),],
     bg_color: 0,
-    bg_style: 3,
+    bg_style: 1,
     
     fonts: ["Trebuchet MS", "HelveticaNeue-UltraLight", "Impact", "Courier", "Avenir Bold"],
     font: 1,
     
-    title: 'Amazing',
-    creator: 'Aidabaida',
+    title: 'Bounce',
+    creator: 'Chester Banks',
 };
 var whichInfo = 0;
 
@@ -217,7 +217,38 @@ draw = function() {
     
     // Export code
     if(clicked && mouseButton === RIGHT){
-        println('textAlign(CENTER, CENTER);\ntextFont(createFont("' + info.fonts[abs(info.font) % info.fonts.length] + '"));\n\ndraw = function(){\n    background(' + info.bg_colors[0] + ');\n};');
+        println('textAlign(CENTER, CENTER);\ntextFont(createFont("' + info.fonts[abs(info.font) % info.fonts.length] + '"));\n\ndraw = function(){\n    background(' + info.bg_colors[0] + ');');
+        
+        // Mumbo jumbo for backgrounds
+        if(info.bg_style === 1){
+            println('\n    fill(0, 0, 0, 20);\n    triangle(0, 0, 0, height, width, 0);');
+        } else if (info.bg_style === 2){
+            println('\n    fill(0, 0, 0, 20);\n    rect(-width, -height, width, height, -width * 1.4);');
+        } else if (info.bg_style === 3){
+            println('    for(var i = 0; i < width; i += 20){');
+            println('        for(var j = 0; j < height; j += 20){');
+            println('            fill(0, 0, 0, noise(i + noise(j, 1.1)*10, 1.1)*81);\n            rect(i, j, 20, 20);');
+            println('        }');
+            println('    }');
+        } else if (info.bg_style === 4){
+            println('    noStroke();\n    for(var i = 0; i < height; i += 5){\n        fill(0, 0, 0, i/6);\n        rect(0, i, width, 5);\n    }');
+        } else if (info.bg_style === 5){
+            println('    noStroke();\n    for(var i = 0; i < height; i += 5){\n        fill(0, 0, 0, -i/5 + 100);\n        rect(0, i, width, 5);\n    }');
+        } else if (info.bg_style === 6){
+            println('    strokeWeight(5);\n    stroke(0, 0, 0, 20);\n    pushMatrix();\n    translate(300, 300);\n    rotate(50);\n    for(var i = -400; i < 400; i += 25){\n        for(var j = -446; j < 400; j += 60){\n            line(j, i, j + 50, i);\n            line(j + 32, i + 7.5, j + 75, i + 7.5);\n        }\n    }\n    popMatrix();');
+        } else if (info.bg_style === 7){
+            println('    for(var i = 0; i < width + 50; i += 50){\n        for(var j = 0; j < height + 50; j += 50){\n            noStroke();            fill(0, 0, 0, 7);\n            ellipse(i, j, 200, 200);\n            fill(255, 255, 255, 10);\n            ellipse(i, j, 20, 20);\n        }\n    }');
+        } else if (info.bg_style === 8){
+            println('    for(var i = -25; i < width; i += 50){\n        for(var j = 0; j < height; j += 50){\n            noStroke();        fill(0, 0, 0, 30 + sin(i*50)*30);\n            pushMatrix();\n            translate(i + ((j/10)%2)*25, j);\n            triangle(0, 0, 25, 50, 50, 0);\n            popMatrix();\n            noStroke();\n            fill(0, 0, 0, 30 + sin(i*50)*50);\n            pushMatrix();\n            translate(i + ((j/10)%2)*25, j);\n            triangle(25, 50, 50, 0, 75, 50);\n            popMatrix();\n        }\n    }');
+        } else if (info.bg_style === 9){
+            println('    noStroke();\n    for(var i = 0; i < width; i += 30){\n        for(var j = 0; j < height; j += 30){\n            fill(0, 0, 0, 25 + sin((i+j)+frameCount*5)*10);\n            rect(i, j, 30, 30);\n        }\n    }');
+        } else if (info.bg_style === 10){
+            println('    noStroke();\n    for(var i = 0; i < width*2; i += 60){\n        fill(0, 0, 0, 5);\n        ellipse(300, 600, i, i);\n    }');
+        } else if (info.bg_style === 11){
+            println('    for(var i = 0; i < 1000; i += 50){\n        strokeWeight(100);\n        stroke(0, 0, 0, 10);\n        line(0, i, 700, i/2);\n        line(i, 0, i/2, 700);\n    }');
+        }
+        
+        println('};');
     }
     
     clicked = false;
