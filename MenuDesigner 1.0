@@ -52,6 +52,7 @@ var info = {
     font: 1,
     
     title: 'Bounce',
+    title_style: 0,
     creator: 'Chester Banks',
 };
 var whichInfo = 0;
@@ -151,6 +152,20 @@ draw = function() {
     
     textAlign(CENTER, CENTER);
     textFont(createFont(info.fonts[abs(info.font) % info.fonts.length]), 100);
+    if(info.title_style === 1){
+        fill(0, 0, 0, 30);
+        text(info.title.toUpperCase(), width / 2, 7 + height / 2);
+    } else if (info.title_style === 2){
+        fill(255, 255, 255, 15);
+        for(var i = 0; i < 360; i += 30){
+            text(info.title.toUpperCase(), sin(i)*10 + width / 2, cos(i)*10 + height / 2);
+        }
+    } else if (info.title_style === 3){
+        fill(255, 255, 255, 15);
+        for(var i = 0; i < 360; i += 30){
+            text(info.title.toUpperCase(), sin(i)*10 + width / 2, cos(i)*10 + height / 2);
+        }
+    }
     fill(255);
     text(info.title.toUpperCase(), width / 2, height / 2);
     textSize(25);
@@ -178,6 +193,8 @@ draw = function() {
             info.bg_style --;
         } else if (whichInfo === 2){
             info.font --;
+        } else if (whichInfo === 3){
+            info.title_style --;
         }
     }
     if(mouseX < 365 && mouseX > 350 && mouseY > 60 && mouseY < 80 && clicked){
@@ -187,6 +204,8 @@ draw = function() {
             info.bg_style ++;
         } else if (whichInfo === 2){
             info.font ++;
+        } else if (whichInfo === 3){
+            info.title_style ++;
         }
     }
     
@@ -213,10 +232,18 @@ draw = function() {
         
         textSize(20);
         text('Font', 300, 110);
+    } else if (whichInfo === 3){
+        fill(255);
+        textSize(50);
+        text(info.title_style, 300, 70);
+        
+        textSize((abs(info.font)%info.fonts.length === 3) ? 15 : 20);
+        text('Title style', 300, 110);
     }
     
     // Export code
     if(clicked && mouseButton === RIGHT){
+        println('/** MENU MADE BY CHESTER BANKS\' MENU MAKER. CHECK OUT HIS PROFILE HERE: khanacademy.org/profile/chesterbanks */\n\n');
         println('textAlign(CENTER, CENTER);\ntextFont(createFont("' + info.fonts[abs(info.font) % info.fonts.length] + '"));\n\ndraw = function(){\n    background(' + info.bg_colors[0] + ');');
         
         // Mumbo jumbo for backgrounds
@@ -247,7 +274,7 @@ draw = function() {
         } else if (info.bg_style === 11){
             println('    for(var i = 0; i < 1000; i += 50){\n        strokeWeight(100);\n        stroke(0, 0, 0, 10);\n        line(0, i, 700, i/2);\n        line(i, 0, i/2, 700);\n    }');
         }
-        
+        println('    fill(255);\n    textSize(100);\n    text("' + info.title.toUpperCase() + '", width / 2, height / 2);\n    textSize(25);\n    text("Created by ' + info.creator + '", width / 2, height / 2 + 55);');
         println('};');
     }
     
