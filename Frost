@@ -49,11 +49,22 @@ var images = {
             }
         }
         
+        fill(245);
+        rect(0, 300, width, 100);
+        
         for(var i = 0; i < width + 10; i += 30){
             for(var j = 300; j < 410; j += 30){
                 tree(i + random(15), j + random(15), random(1, 6));
             }
         }
+        
+        noStroke();
+        fill(255, 255, 255, 10);
+        for(var i = 50; i < 100; i += 5){
+            ellipse(500, 100, i, i);
+        }
+        fill(210);
+        ellipse(500, 100, 50, 50);
         
         filter(BLUR, 2);
         
@@ -135,7 +146,7 @@ Snow.prototype.draw = function() {
 };
 
 // Vital variables
-var scene = "Game";
+var scene = "Menu";
 var level = 0;
 
 var trans = { active: false, plusX: 400, rot: 90, w: 590, out: false};
@@ -515,13 +526,12 @@ draw = function() {
         translate(300, 200);
         rectMode(CENTER);
         noStroke();
+        fill(255, 255, 255);
         if(!trans.out){
             rotate(90 - trans.rot);
-            fill(255);
             rect(0, 0, 400 - trans.plusX, 600 - trans.w);
         } else {
             rotate(trans.rot);
-            fill(255);
             rect(0, 0, trans.plusX, 10 + trans.w);
         }
         popMatrix();
