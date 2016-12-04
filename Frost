@@ -112,6 +112,8 @@ var images = {
 var keys = [];
 var keyPressed = function(){ keys[keyCode] = true; };
 var keyReleased = function(){ keys[keyCode] = false; };
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
 
 // The rectangle collision function
 var rectCollide = function(one, two){
@@ -149,7 +151,64 @@ Snow.prototype.draw = function() {
 var scene = "Menu";
 var level = 0;
 
-var trans = { active: false, plusX: 400, rot: 90, w: 590, out: false};
+var trans = { active: false, plusX: 400, rot: 90, w: 590, out: false, type: 'Game'};
+
+// Toaster
+var Toaster = function(x, y, con){
+    this.originalX = x;
+    this.x = x;
+    this.y = y;
+    this.w = 30;
+    this.h = 25;
+    this.xvel = 1;
+    this.con = con;
+    
+    this.particle = function(x, y){
+        this.x = x;
+        this.y = y;
+        this.sz = random(10);
+        this.trans = 255;
+        this.rot = random(10);
+    };
+    this.particles = [];
+    this.particle.prototype.draw = function() {
+        noStroke();
+        fill(255, 255, 255, this.trans);
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(frameCount*this.rot);
+        rectMode(CENTER);
+        rect(0, 0, this.sz, this.sz);
+        rectMode(LEFT);
+        popMatrix();
+        
+        this.sz -= 0.01;
+        this.trans -= 3;
+    };
+};
+Toaster.prototype.draw = function() {
+    if(frameCount % 5 === 0){
+        this.particles.push(new this.particle(this.x, this.y + random(this.h)));
+    }
+    
+    for(var i in this.particles){
+        this.particles[i].draw();
+        if(this.particles[i].trans < 0){
+            this.particles.splice(i, 1);
+        }
+    }
+    noStroke();
+    fill(255, 255, 255);
+    (rect)(this.x, this.y, this.w, this.h, 5, 5, 0, 0);
+    fill(0, 0, 0, 50);
+    (rect)(this.x + 3, this.y + 2, this.w - 6, this.h / 20, 5, 5, 0, 0);
+    (rect)(this.x + 3, this.y + 5, this.w - 6, this.h / 15, 5, 5, 0, 0);
+    
+    this.x += this.xvel;
+    if(this.x > this.originalX + this.con || this.x < this.originalX - this.con){
+        this.xvel = -this.xvel;
+    }
+};
 
 // Portal
 var Portal = function(x, y){
@@ -263,6 +322,7 @@ var blox = [
             new block(400, 160, 100, 20),
             new block(0, 90, 400, 20)
         ],
+        toaster: [new Toaster(300, 325, 80), new Toaster(200, 325, 50)],
     },
     {
         player: new Player(100, 320),
@@ -287,9 +347,12 @@ var blox = [
     },
     {
         player: new Player(100, 320),
-        portal: new Portal(545, 295),
+        portal: new Portal(45, 145),
         blox: [
             new block(0, 350, 600, 50),
+            new block(0, 200, 400, 120),
+            new block(400, 260, 100, 60),
+            new block(500, 280, 40, 40),
         ],
     },
     {
@@ -357,7 +420,7 @@ var blox = [
         ],
     },
 ];
-var story = "".split("|");
+var story = "I have to get back to my family.|I haven't seen them for seven hundred and thirty days.|And now, on the eve of Christmas, I am finally on my way back to my home.".split("|");
 
 // [Almost] everything about the player
 Player.prototype.applyCollisions = function(xvel, yvel) {
@@ -485,6 +548,10 @@ draw = function() {
             rect(0, height, 0.5, 0.5, i);
             rect(width, height, 0.5, 0.5, i);
         }
+        
+        if(clicked){
+            trans.active = true;
+        }
     }
     if(scene === 'Game'){
         image(images.bg1, 0, 0);
@@ -499,12 +566,15 @@ draw = function() {
             }
         }
         
-        /*fill(255, 255, 255);
-        textFont(fonts.h1, 40);
-        text('j  a  n  u  a  r  y', width / 2, height / 2);
-        textFont(fonts.h3, 15);
-        text('t h e   b e a u t i f u l   m o n t h s', (width / 2) - 5, 30 + height / 2);*/
-        
+        if(blox[level].toaster){
+            for(var i in blox[level].toaster){
+                blox[level].toaster[i].draw();
+                if(rectCollide(blox[level].toaster[i], blox[level].player)){
+                    blox[level].player.x = blox[level].player.originalX;
+                    blox[level].player.y = blox[level].player.originalY;
+                }
+            }
+        }
         
         for(var i in blox[level].blox){
             blox[level].blox[i].draw();
@@ -518,40 +588,46 @@ draw = function() {
         
         
         fill(255, 255, 255);
-        textFont(fonts.h3, 17);
+        textFont(fonts.h3, 15);
         text(story[level], 300, 375);
-        
-        pushStyle();
-        pushMatrix();
-        translate(300, 200);
-        rectMode(CENTER);
-        noStroke();
-        fill(255, 255, 255);
-        if(!trans.out){
-            rotate(90 - trans.rot);
-            rect(0, 0, 400 - trans.plusX, 600 - trans.w);
-        } else {
-            rotate(trans.rot);
-            rect(0, 0, trans.plusX, 10 + trans.w);
+    }
+    
+    pushStyle();
+    pushMatrix();
+    translate(300, 200);
+    rectMode(CENTER);
+    noStroke();
+    fill(255, 255, 255);
+    if(!trans.out){
+        rotate(90 - trans.rot);
+        rect(0, 0, 400 - trans.plusX, 600 - trans.w);
+    } else {
+        rotate(trans.rot);
+        rect(0, 0, trans.plusX, 10 + trans.w);
+    }
+    popMatrix();
+    popStyle();
+    
+    if(trans.active){
+        trans.plusX /= 1.1;
+        if(trans.plusX < 100){
+            trans.rot /= 1.3;
         }
-        popMatrix();
-        popStyle();
-        
-        if(trans.active){
-            trans.plusX /= 1.1;
-            if(trans.plusX < 100){
-                trans.rot /= 1.3;
-            }
-            if(trans.rot < 1){
-                trans.w /= 1.3;
-            }
-            if(trans.w < 0.1){
+        if(trans.rot < 1){
+            trans.w /= 1.3;
+        }
+        if(trans.w < 0.1){
+            if(trans.type === 'level'){
                 level ++;
-                trans = { active: true, plusX: 400, rot: 90, w: 590, out: true};
+            } else {
+                scene = trans.type;
             }
-            if(trans.out && trans.w < 10){
-                trans = { active: false, plusX: 400, rot: 90, w: 590, out: false};
-            }
+            trans = { active: true, plusX: 400, rot: 90, w: 590, out: true, type: 'level'};
+        }
+        if(trans.out && trans.w < 10){
+            trans = { active: false, plusX: 400, rot: 90, w: 590, out: false, type: 'level'};
         }
     }
+    
+    clicked = false;
 };
