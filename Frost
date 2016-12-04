@@ -125,6 +125,7 @@ var rectCollide = function(one, two){
     }
 };
 
+// Snow (the flakes falling from the sky, not the president)
 var Snow = function(){
     this.x = random(width);
     this.y = random(-20, -100);
@@ -148,7 +149,7 @@ Snow.prototype.draw = function() {
 };
 
 // Vital variables
-var scene = "Menu";
+var scene = 'Game';
 var level = 0;
 
 var trans = { active: false, plusX: 400, rot: 90, w: 590, out: false, type: 'Game'};
@@ -159,7 +160,7 @@ var Toaster = function(x, y, con){
     this.x = x;
     this.y = y;
     this.w = 30;
-    this.h = 25;
+    this.h = 30;
     this.xvel = 1;
     this.con = con;
     
@@ -173,7 +174,7 @@ var Toaster = function(x, y, con){
     this.particles = [];
     this.particle.prototype.draw = function() {
         noStroke();
-        fill(255, 255, 255, this.trans);
+        fill(25, 25, 25, this.trans);
         pushMatrix();
         translate(this.x, this.y);
         rotate(frameCount*this.rot);
@@ -197,12 +198,18 @@ Toaster.prototype.draw = function() {
             this.particles.splice(i, 1);
         }
     }
+    
     noStroke();
-    fill(255, 255, 255);
-    (rect)(this.x, this.y, this.w, this.h, 5, 5, 0, 0);
-    fill(0, 0, 0, 50);
-    (rect)(this.x + 3, this.y + 2, this.w - 6, this.h / 20, 5, 5, 0, 0);
-    (rect)(this.x + 3, this.y + 5, this.w - 6, this.h / 15, 5, 5, 0, 0);
+    fill(46, 46, 46);
+    rect(this.x, this.y, this.w, this.h, 3);
+    fill(255, 255, 255, 30);
+    rect(this.x + 2, this.y, this.w / 5, this.h);
+    fill(0, 0, 0);
+    rect(this.x, this.y, this.w, this.h / 3, 3);
+    arc(this.x + 24, this.y, 30, 26, -270, -180);
+    fill(240, 40, 40);
+    rect(this.xvel + this.x + 9, this.y + 16, 5, 4);
+    rect(this.xvel + this.x + 18, this.y + 16, 5, 4);
     
     this.x += this.xvel;
     if(this.x > this.originalX + this.con || this.x < this.originalX - this.con){
@@ -260,6 +267,7 @@ Portal.prototype.draw = function() {
     
     pushMatrix();
     translate(this.x + 20, this.y + 20);
+    rotate(frameCount * 5);
     scale(0.6);
     noStroke();
     fill(255, 255, 255, 200);
@@ -284,6 +292,10 @@ var block = function(x, y, w, h){
     this.h = h;
 };
 block.prototype.draw = function() {
+    noStroke();
+    fill(217, 217, 217);
+    quad(this.x, this.y, this.x + this.w, this.y, this.x + this.w - (this.x + this.w === 600 ? 0 : 5), this.y - 4, this.x + (this.x === 0 ? 0 : 5), this.y - 4);
+    
     for(var i = 0; i < this.w; i += 20){
         for(var j = 0; j < this.h; j += 20){
             image(j === 0 ? images.snowBlock : images.dirtBlock, this.x + i, this.y + j, 20, 20);
@@ -322,7 +334,6 @@ var blox = [
             new block(400, 160, 100, 20),
             new block(0, 90, 400, 20)
         ],
-        toaster: [new Toaster(300, 325, 80), new Toaster(200, 325, 50)],
     },
     {
         player: new Player(100, 320),
@@ -354,6 +365,7 @@ var blox = [
             new block(400, 260, 100, 60),
             new block(500, 280, 40, 40),
         ],
+        toaster: [new Toaster(180, 170, 180)],
     },
     {
         player: new Player(100, 320),
@@ -420,7 +432,7 @@ var blox = [
         ],
     },
 ];
-var story = "I have to get back to my family.|I haven't seen them for seven hundred and thirty days.|And now, on the eve of Christmas, I am finally on my way back to my home.".split("|");
+var story = "I have to get back to my family.|I haven't seen them for seven hundred and thirty days.|And now, on the eve of Christmas, I am finally on my way back to my home.|Oh no, it's one of Them. I didn't think They'd be patrolling this far away from the mines.".split("|");
 
 // [Almost] everything about the player
 Player.prototype.applyCollisions = function(xvel, yvel) {
@@ -566,6 +578,10 @@ draw = function() {
             }
         }
         
+        for(var i in blox[level].blox){
+            blox[level].blox[i].draw();
+        }
+        
         if(blox[level].toaster){
             for(var i in blox[level].toaster){
                 blox[level].toaster[i].draw();
@@ -576,9 +592,6 @@ draw = function() {
             }
         }
         
-        for(var i in blox[level].blox){
-            blox[level].blox[i].draw();
-        }
         blox[level].portal.draw();
         blox[level].player.draw();
         
@@ -588,7 +601,7 @@ draw = function() {
         
         
         fill(255, 255, 255);
-        textFont(fonts.h3, 15);
+        textFont(fonts.h3, 14);
         text(story[level], 300, 375);
     }
     
