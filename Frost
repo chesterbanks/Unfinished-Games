@@ -425,6 +425,20 @@ var blox = [
         toaster: [new Toaster(135, 200, 35), new Toaster(235, 235, 35)],
     },
     {
+        player: new Player(100, 320),
+        portal: new Portal(420, 115),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(160, 0, 20, 300),
+            new block(60, 260, 20, 20),
+            new block(140, 280, 20, 20),
+            new block(0, 200, 60, 20),
+            new block(0, 140, 60, 20),
+            new block(100, 90, 60, 20),
+        ],
+        toaster: [new Toaster(235, 320, 200), new Toaster(275, 320, 200), new Toaster(315, 320, 200), new Toaster(355, 320, 200)],
+    },
+    {
         player: new Player(550, 10),
         portal: new Portal(500, 115),
         blox: [
@@ -469,7 +483,7 @@ var blox = [
         ],
     },
 ];
-var story = "I have to get back to my family.|I haven't seen them for seven hundred and thirty dreadful days.|And now, on the eve of Christmas, I am finally on my way back to my home.|Oh no, it's one of Them. I didn't think They'd be patrolling this far away from the mines.|They're looking for me.".split("|");
+var story = "I have to get back to my family.|I haven't seen them for seven hundred and thirty dreadful days.|And now, on the eve of Christmas, I am finally on my way back to my home.|Oh no, it's one of Them. I didn't think They'd be patrolling this far away from the mines.|They're looking for me.|After watching them guard me for two years in the mines, they have no weaknesses that I can see.|What's that candy cane? Maybe it'll be of some use.".split("|");
 
 // [Almost] everything about the player
 Player.prototype.applyCollisions = function(xvel, yvel) {
@@ -652,7 +666,8 @@ draw = function() {
         
         fill(255, 255, 255);
         textFont(fonts.h3, 14);
-        text(story[level], 300, 375);
+        textLeading(14);
+        text(story[level], 30, 351, 540, 50);
     }
     
     pushStyle();
