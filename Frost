@@ -149,7 +149,7 @@ Snow.prototype.draw = function() {
 };
 
 // Vital variables
-var scene = 'Game';
+var scene = 'Menu';
 var level = 0;
 
 var trans = { active: false, plusX: 400, rot: 90, w: 590, out: false, type: 'Game'};
@@ -317,6 +317,34 @@ var Player = function(x, y, w, h){
     this.slowTimer = 0;
     
     this.jumping = false;
+    
+    this.dir = 'left';
+    this.particle = function(x, y, dir){
+        this.x = x;
+        this.y = y;
+        this.dir = dir;
+        this.sz = random(10);
+        this.trans = 255;
+        this.rot = random(10);
+    };
+    this.particles = [];
+    this.particle.prototype.draw = function() {
+        noStroke();
+        fill(255, 255, 255, this.trans);
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(frameCount*this.rot);
+        ellipse(0, 0, this.sz, this.sz);
+        popMatrix();
+        
+        this.sz -= 0.01;
+        this.trans -= 10;
+        if(this.dir === 'left'){
+            this.x -= this.sz / 2;
+        } else {
+            this.x += this.sz / 2;
+        }
+    };
 };
 
 var blox = [
@@ -381,6 +409,7 @@ var blox = [
             new block(400, 160, 100, 20),
             new block(0, 90, 400, 20)
         ],
+        toaster: [new Toaster(35, 265, 35), new Toaster(235, 265, 35), new Toaster(435, 265, 35)],
     },
     {
         player: new Player(100, 320),
@@ -393,19 +422,27 @@ var blox = [
             new block(350, 230, 100, 20),
             new block(460, 175, 100, 20),
         ],
+        toaster: [new Toaster(135, 200, 35), new Toaster(235, 235, 35)],
     },
     {
-        player: new Player(100, 320),
+        player: new Player(550, 10),
         portal: new Portal(500, 115),
         blox: [
             new block(0, 350, 600, 50),
-            new block(300, 300, 50, 20),
-            new block(250, 280, 50, 20),
-            new block(200, 260, 50, 20),
-            new block(150, 240, 50, 20),
-            new block(100, 220, 50, 20),
-            new block(50, 200, 50, 20),
-            new block(350, 200, 50, 20),
+            new block(300, 300, 40, 20),
+            new block(250, 280, 40, 20),
+            new block(200, 260, 40, 20),
+            new block(150, 240, 40, 20),
+            new block(100, 220, 40, 20),
+            new block(50, 200, 40, 20),
+            new block(0, 180, 40, 20),
+            new block(50, 130, 40, 20),
+            new block(100, 120, 40, 20),
+            new block(150, 100, 40, 20),
+            new block(200, 80, 40, 20),
+            new block(250, 60, 40, 20),
+            new block(300, 40, 300, 20),
+            new block(450, 230, 40, 20),
         ],
     },
     {
@@ -432,7 +469,7 @@ var blox = [
         ],
     },
 ];
-var story = "I have to get back to my family.|I haven't seen them for seven hundred and thirty days.|And now, on the eve of Christmas, I am finally on my way back to my home.|Oh no, it's one of Them. I didn't think They'd be patrolling this far away from the mines.".split("|");
+var story = "I have to get back to my family.|I haven't seen them for seven hundred and thirty dreadful days.|And now, on the eve of Christmas, I am finally on my way back to my home.|Oh no, it's one of Them. I didn't think They'd be patrolling this far away from the mines.|They're looking for me.".split("|");
 
 // [Almost] everything about the player
 Player.prototype.applyCollisions = function(xvel, yvel) {
@@ -463,6 +500,17 @@ Player.prototype.applyCollisions = function(xvel, yvel) {
     }
 };
 Player.prototype.draw = function() {
+    if(mouseIsPressed){
+        this.particles.push(new this.particle(this.x + 5, this.y + random(this.h), this.dir), new this.particle(this.x + 5, this.y + random(this.h), this.dir), new this.particle(this.x + 5, this.y + random(this.h), this.dir));
+    }
+    
+    for(var i in this.particles){
+        this.particles[i].draw();
+        if(this.particles[i].trans < 0){
+            this.particles.splice(i, 1);
+        }
+    }
+    
     // The actual player
     noStroke();
     fill(224, 178, 119);
@@ -478,9 +526,11 @@ Player.prototype.draw = function() {
     
     // Player movement
     if(keys[LEFT]){
+        this.dir = 'left';
         this.xvel -= 2;
     }
     if(keys[RIGHT]){
+        this.dir = 'right';
         this.xvel += 2;
     }
     if(!keys[LEFT] && !keys[RIGHT]){
@@ -556,7 +606,7 @@ draw = function() {
             fill(255, 255, 255, 7);
             rect(0, 0, 0.5, 0.5, i);
             rect(width, 0, 0.5, 0.5, i);
-            fill(0, 0, 0, 10);
+            fill(0, 0, 0, 15);
             rect(0, height, 0.5, 0.5, i);
             rect(width, height, 0.5, 0.5, i);
         }
