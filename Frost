@@ -106,6 +106,70 @@ var images = {
         
         return get(0, 0, 20, 20);
     },
+    "frozenEnemy": function(){
+        noStroke();
+        fill(46, 46, 46);
+        rect(0, 0, 30, 30, 3);
+        fill(255, 255, 255, 30);
+        rect(2, 0, 6, 30);
+        fill(0, 0, 0);
+        rect(0, 0, 30, 10, 3);
+        arc(24, 0, 30, 26, -270, -180);
+        fill(240, 40, 40);
+        rect(9,  16, 5, 4);
+        rect(18, 16, 5, 4);
+        
+        filter(BLUR, 1.5);
+        
+        fill(0, 230, 255, 90);
+        rect(0, 0, 30, 30, 3);
+        
+        pushMatrix();
+        translate(8, 8);
+        rotate(-45);
+        stroke(255, 255, 255, 50);
+        strokeWeight(6);
+        line(-15, 0, 15, 0);
+        strokeWeight(3);
+        line(-15, 7, 15, 7);
+        popMatrix();
+        
+        return get(0, 0, 30, 30);
+    },
+    "candycane": function(){
+        noFill();
+        background(255, 255, 255);
+        pushMatrix();
+        translate(15, 15);
+        rotate(-45);
+        strokeWeight(3);
+        stroke(235, 30, 30);
+        for(var i = -15; i < 20; i += 5){
+            line(-15, i, 15, i);
+        }
+        popMatrix();
+        var front = get(0, 0, 30, 35);
+        
+        background(0, 0, 0, 0);
+        pushMatrix();
+        translate(0, 0);
+        noFill();
+        stroke(0, 0, 0);
+        rect(0, 0, 30, 30);
+        stroke(255, 255, 255);
+        strokeWeight(5);
+        arc(15, 10, 14, 15, -180, 0);
+        line(22, 12, 22, 28);
+        popMatrix();
+        var back = get(0, 0, 30, 35);
+        
+        front.mask(back);
+        
+        background(0, 0, 0, 0);
+        image(front, 0, 0);
+        
+        return get(0, 0, 30, 35);
+    },
 };
 
 // This helps with key movement
@@ -149,10 +213,35 @@ Snow.prototype.draw = function() {
 };
 
 // Vital variables
-var scene = 'Menu';
-var level = 0;
+var scene = 'Game';
+var level = 7;
 
 var trans = { active: false, plusX: 400, rot: 90, w: 590, out: false, type: 'Game'};
+
+// Candycane
+var Candycane = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.w = 30;
+    this.h = 30;
+    this.collected = false;
+};
+Candycane.prototype.draw = function() {
+    if(!this.collected){
+        pushMatrix();
+        translate(this.x, this.y);
+        noFill();
+        stroke(255, 255, 255, 15);
+        for(var i = 5; i < 16; i++){
+            strokeWeight(i);
+            arc(15, 10, 14, 15, -180, 0);
+            line(22, 12, 22, 28);
+        }
+        image(images.candycane, 0, 0);
+        popMatrix();
+    }
+};
+var candycane = new Candycane(110, 56);
 
 // Toaster
 var Toaster = function(x, y, con){
@@ -285,23 +374,30 @@ Portal.prototype.draw = function() {
 };
 
 // [Almost] everything about the blocks (blox)
-var block = function(x, y, w, h){
+var block = function(x, y, w, h, type){
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
+    this.type = type || 'NORMAL';
 };
 block.prototype.draw = function() {
-    noStroke();
-    fill(217, 217, 217);
-    quad(this.x, this.y, this.x + this.w, this.y, this.x + this.w - (this.x + this.w === 600 ? 0 : 5), this.y - 4, this.x + (this.x === 0 ? 0 : 5), this.y - 4);
-    
-    for(var i = 0; i < this.w; i += 20){
-        for(var j = 0; j < this.h; j += 20){
-            image(j === 0 ? images.snowBlock : images.dirtBlock, this.x + i, this.y + j, 20, 20);
+    if(this.type !== 'FROZEN'){
+        noStroke();
+        fill(217, 217, 217);
+        quad(this.x, this.y, this.x + this.w, this.y, this.x + this.w - (this.x + this.w === 600 ? 0 : 5), this.y - 4, this.x + (this.x === 0 ? 0 : 5), this.y - 4);
+        
+        for(var i = 0; i < this.w; i += 20){
+            for(var j = 0; j < this.h; j += 20){
+                image(j === 0 ? images.snowBlock : images.dirtBlock, this.x + i, this.y + j, 20, 20);
+            }
         }
+    } else {
+        image(images.frozenEnemy, this.x, this.y);
     }
 };
+
+var blox;
 
 var Player = function(x, y, w, h){
     this.x = x; this.originalX = x;
@@ -323,7 +419,7 @@ var Player = function(x, y, w, h){
         this.x = x;
         this.y = y;
         this.dir = dir;
-        this.sz = random(10);
+        this.w = this.h = random(10);
         this.trans = 255;
         this.rot = random(10);
     };
@@ -334,20 +430,26 @@ var Player = function(x, y, w, h){
         pushMatrix();
         translate(this.x, this.y);
         rotate(frameCount*this.rot);
-        ellipse(0, 0, this.sz, this.sz);
+        ellipse(0, 0, this.w, this.h);
         popMatrix();
         
         this.sz -= 0.01;
         this.trans -= 10;
         if(this.dir === 'left'){
-            this.x -= this.sz / 2;
+            this.x -= this.w / 2;
         } else {
-            this.x += this.sz / 2;
+            this.x += this.w / 2;
+        }
+        for(var i in blox[level].toaster){
+            if(rectCollide(blox[level].toaster[i], this)){
+                blox[level].blox.push(new block(blox[level].toaster[i].x, blox[level].toaster[i].y, 30, 30, 'FROZEN'));
+                blox[level].toaster.splice(i, 1);
+            }
         }
     };
 };
 
-var blox = [
+blox = [
     {
         player: new Player(100, 300),
         portal: new Portal(55, 25),
@@ -425,20 +527,6 @@ var blox = [
         toaster: [new Toaster(135, 200, 35), new Toaster(235, 235, 35)],
     },
     {
-        player: new Player(100, 320),
-        portal: new Portal(420, 115),
-        blox: [
-            new block(0, 350, 600, 50),
-            new block(160, 0, 20, 300),
-            new block(60, 260, 20, 20),
-            new block(140, 280, 20, 20),
-            new block(0, 200, 60, 20),
-            new block(0, 140, 60, 20),
-            new block(100, 90, 60, 20),
-        ],
-        toaster: [new Toaster(235, 320, 200), new Toaster(275, 320, 200), new Toaster(315, 320, 200), new Toaster(355, 320, 200)],
-    },
-    {
         player: new Player(550, 10),
         portal: new Portal(500, 115),
         blox: [
@@ -464,6 +552,20 @@ var blox = [
         portal: new Portal(420, 115),
         blox: [
             new block(0, 350, 600, 50),
+            new block(160, 0, 20, 300),
+            new block(60, 260, 20, 20),
+            new block(140, 280, 20, 20),
+            new block(0, 200, 60, 20),
+            new block(0, 140, 60, 20),
+            new block(100, 90, 60, 20),
+        ],
+        toaster: [new Toaster(235, 320, 200), new Toaster(275, 320, 200), new Toaster(315, 320, 200), new Toaster(355, 320, 200)],
+    },
+    {
+        player: new Player(100, 320),
+        portal: new Portal(420, 115),
+        blox: [
+            new block(0, 350, 600, 50),
             new block(40, 300, 60, 20),
             new block(80, 260, 60, 20),
             new block(120, 220, 60, 20),
@@ -483,7 +585,8 @@ var blox = [
         ],
     },
 ];
-var story = "I have to get back to my family.|I haven't seen them for seven hundred and thirty dreadful days.|And now, on the eve of Christmas, I am finally on my way back to my home.|Oh no, it's one of Them. I didn't think They'd be patrolling this far away from the mines.|They're looking for me.|After watching them guard me for two years in the mines, they have no weaknesses that I can see.|What's that candy cane? Maybe it'll be of some use.".split("|");
+
+var story = "I have to get back to my family.|I haven't seen them for seven hundred and thirty dreadful days.|And now, on the eve of Christmas, I am finally on my way back to my home.|Oh no, it's one of Them. I didn't think they'd be patrolling this far away from the mines.|They're looking for me.|After watching them guard us for two years in the mines, they have no weaknesses that I can see.|I wonder how fast they figured out how I escaped from the mines.|What's that candy cane? Maybe it'll be of some use.|I'm so glad I got that candy cane. Maybe I can get home for Christmas!".split("|");
 
 // [Almost] everything about the player
 Player.prototype.applyCollisions = function(xvel, yvel) {
@@ -514,8 +617,8 @@ Player.prototype.applyCollisions = function(xvel, yvel) {
     }
 };
 Player.prototype.draw = function() {
-    if(mouseIsPressed){
-        this.particles.push(new this.particle(this.x + 5, this.y + random(this.h), this.dir), new this.particle(this.x + 5, this.y + random(this.h), this.dir), new this.particle(this.x + 5, this.y + random(this.h), this.dir));
+    if(mouseIsPressed && candycane.collected){
+        this.particles.push(new this.particle(this.x + 5, this.y + random(this.h), this.dir));
     }
     
     for(var i in this.particles){
@@ -658,6 +761,13 @@ draw = function() {
         
         blox[level].portal.draw();
         blox[level].player.draw();
+        
+        if(level === 7){
+            candycane.draw();
+        }
+        if(rectCollide(blox[level].player, candycane)){
+            candycane.collected = true;
+        }
         
         if(rectCollide(blox[level].player, blox[level].portal)){
             trans.active = true;
