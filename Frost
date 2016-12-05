@@ -213,8 +213,9 @@ Snow.prototype.draw = function() {
 };
 
 // Vital variables
-var scene = 'Game';
-var level = 7;
+var scene = 'Menu';
+var level = 0;
+var goBack = false, removeFreeze;
 
 var trans = { active: false, plusX: 400, rot: 90, w: 590, out: false, type: 'Game'};
 
@@ -246,12 +247,14 @@ var candycane = new Candycane(110, 56);
 // Toaster
 var Toaster = function(x, y, con){
     this.originalX = x;
+    this.originalY = y;
     this.x = x;
     this.y = y;
     this.w = 30;
     this.h = 30;
     this.xvel = 1;
     this.con = con;
+    this.deleted = false;
     
     this.particle = function(x, y){
         this.x = x;
@@ -277,32 +280,34 @@ var Toaster = function(x, y, con){
     };
 };
 Toaster.prototype.draw = function() {
-    if(frameCount % 5 === 0){
-        this.particles.push(new this.particle(this.x, this.y + random(this.h)));
-    }
-    
-    for(var i in this.particles){
-        this.particles[i].draw();
-        if(this.particles[i].trans < 0){
-            this.particles.splice(i, 1);
+    if(!this.deleted){
+        if(frameCount % 5 === 0){
+            this.particles.push(new this.particle(this.x, this.y + random(this.h)));
         }
-    }
-    
-    noStroke();
-    fill(46, 46, 46);
-    rect(this.x, this.y, this.w, this.h, 3);
-    fill(255, 255, 255, 30);
-    rect(this.x + 2, this.y, this.w / 5, this.h);
-    fill(0, 0, 0);
-    rect(this.x, this.y, this.w, this.h / 3, 3);
-    arc(this.x + 24, this.y, 30, 26, -270, -180);
-    fill(240, 40, 40);
-    rect(this.xvel + this.x + 9, this.y + 16, 5, 4);
-    rect(this.xvel + this.x + 18, this.y + 16, 5, 4);
-    
-    this.x += this.xvel;
-    if(this.x > this.originalX + this.con || this.x < this.originalX - this.con){
-        this.xvel = -this.xvel;
+        
+        for(var i in this.particles){
+            this.particles[i].draw();
+            if(this.particles[i].trans < 0){
+                this.particles.splice(i, 1);
+            }
+        }
+        
+        noStroke();
+        fill(46, 46, 46);
+        rect(this.x, this.y, this.w, this.h, 3);
+        fill(255, 255, 255, 30);
+        rect(this.x + 2, this.y, this.w / 5, this.h);
+        fill(0, 0, 0);
+        rect(this.x, this.y, this.w, this.h / 3, 3);
+        arc(this.x + 24, this.y, 30, 26, -270, -180);
+        fill(240, 40, 40);
+        rect(this.xvel + this.x + 9, this.y + 16, 5, 4);
+        rect(this.xvel + this.x + 18, this.y + 16, 5, 4);
+        
+        this.x += this.xvel;
+        if(this.x > this.originalX + this.con || this.x < this.originalX - this.con){
+            this.xvel = -this.xvel;
+        }
     }
 };
 
@@ -441,9 +446,9 @@ var Player = function(x, y, w, h){
             this.x += this.w / 2;
         }
         for(var i in blox[level].toaster){
-            if(rectCollide(blox[level].toaster[i], this)){
+            if(rectCollide(blox[level].toaster[i], this) && !blox[level].toaster[i].deleted){
                 blox[level].blox.push(new block(blox[level].toaster[i].x, blox[level].toaster[i].y, 30, 30, 'FROZEN'));
-                blox[level].toaster.splice(i, 1);
+                blox[level].toaster[i].deleted = true;
             }
         }
     };
@@ -556,7 +561,7 @@ blox = [
             new block(60, 260, 20, 20),
             new block(140, 280, 20, 20),
             new block(0, 200, 60, 20),
-            new block(0, 140, 60, 20),
+            new block(0, 140, 40, 20),
             new block(100, 90, 60, 20),
         ],
         toaster: [new Toaster(235, 320, 200), new Toaster(275, 320, 200), new Toaster(315, 320, 200), new Toaster(355, 320, 200)],
@@ -683,13 +688,6 @@ Player.prototype.draw = function() {
     }
 };
 
-keyTyped = function(){
-    if(key.toString().toLowerCase() === 'r'){
-        blox[level].player.x = blox[level].player.originalX;
-        blox[level].player.y = blox[level].player.originalY;
-    }
-};
-
 draw = function() {
     for(var i in images){
         if (typeof images[i] !== "object") {
@@ -745,16 +743,38 @@ draw = function() {
             }
         }
         
+        if(key.toString().toLowerCase() === 'r'){
+            blox[level].player.x = blox[level].player.originalX;
+            blox[level].player.y = blox[level].player.originalY;
+            for(var i in blox[level].toaster){
+                blox[level].toaster[i].deleted = false;
+                blox[level].toaster[i].x = blox[level].toaster[i].originalX;
+                blox[level].toaster[i].y = blox[level].toaster[i].originalY;
+            }
+            removeFreeze = true;
+        }
+        
         for(var i in blox[level].blox){
             blox[level].blox[i].draw();
+            if(removeFreeze){
+                if(blox[level].blox[i].type === 'FROZEN'){
+                    blox[level].blox.splice(i, 1);
+                    i --;
+                }
+            }
         }
         
         if(blox[level].toaster){
             for(var i in blox[level].toaster){
                 blox[level].toaster[i].draw();
-                if(rectCollide(blox[level].toaster[i], blox[level].player)){
+                if(rectCollide(blox[level].toaster[i], blox[level].player) && !blox[level].toaster[i].deleted){
                     blox[level].player.x = blox[level].player.originalX;
                     blox[level].player.y = blox[level].player.originalY;
+                    goBack = true;
+                }
+                if(goBack){
+                    blox[level].toaster[i].x = blox[level].toaster[i].originalX;
+                    blox[level].toaster[i].y = blox[level].toaster[i].originalY;
                 }
             }
         }
@@ -818,4 +838,6 @@ draw = function() {
     }
     
     clicked = false;
+    goBack = false;
+    removeFreeze = false;
 };
