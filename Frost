@@ -554,7 +554,7 @@ blox = [
     },
     {
         player: new Player(100, 320),
-        portal: new Portal(420, 115),
+        portal: new Portal(530, 275),
         blox: [
             new block(0, 350, 600, 50),
             new block(160, 0, 20, 300),
@@ -688,6 +688,73 @@ Player.prototype.draw = function() {
     }
 };
 
+var CaneInfo = function(){
+    this.s = 0.99;
+    this.leave = false;
+};
+CaneInfo.prototype.draw = function() {
+    pushStyle();
+    rectMode(CENTER);
+    pushMatrix();
+    translate(width / 2, height / 2);
+    scale(1 - this.s);
+    strokeWeight(6);
+    stroke(0, 0, 0, 50);
+    fill(255, 255, 255);
+    rect(0, 0, 300, 150, 10);
+    rect(-160, 0, 80, 120, 10);
+    strokeWeight(2);
+    line(-116, -28, 150, -28);
+    noFill();
+    stroke(207, 207, 207);
+    strokeWeight(23);
+    arc(-160, -21, 40, 40, -180, 0);
+    line(-140, -21, -140, 35);
+    image(images.candycane, -200, -50, 80, 100);
+    
+    fill(61, 61, 61);
+    textFont(fonts.h1, 29);
+    text('Freeze Stick', 0, -50);
+    textFont(fonts.h3, 15);
+    textLeading(19);
+    text('Disguised as a candy cane, this Freeze Stick can spew forth freezing air, turning anything in its path into ice. Press mouse to use.', -120, -45, 240, 111);
+    
+    if(mouseX > 445 - 12 && mouseX < 457 && mouseY > 130 - 12 && mouseY < 142){
+        strokeWeight(3);
+        stroke(161, 47, 47);
+        fill(230, 23, 23);
+        rect(145, -67, 25, 25, 5);
+        
+        textFont(fonts.h3, 18);
+        fill(255);
+        text('X', 145, -67);
+        if(clicked){
+            this.leave = true;
+        }
+    } else {
+        strokeWeight(3);
+        stroke(161, 47, 47);
+        fill(230, 23, 23);
+        rect(145, -67, 25, 25, 5);
+        rect(145, -70, 25, 25, 5);
+        
+        textFont(fonts.h3, 18);
+        fill(255);
+        text('X', 145, -70);
+    }
+    
+    popMatrix();
+    popStyle();
+    
+    if(this.s > 0.01 && !this.leave){ 
+        this.s /= 1.1; 
+    }
+    if(this.leave){
+        this.s *= 1.1;
+    }
+};
+var caneInfo = new CaneInfo();
+
 draw = function() {
     for(var i in images){
         if (typeof images[i] !== "object") {
@@ -743,13 +810,15 @@ draw = function() {
             }
         }
         
-        if(key.toString().toLowerCase() === 'r'){
+        if(keys[82]){
             blox[level].player.x = blox[level].player.originalX;
             blox[level].player.y = blox[level].player.originalY;
-            for(var i in blox[level].toaster){
-                blox[level].toaster[i].deleted = false;
-                blox[level].toaster[i].x = blox[level].toaster[i].originalX;
-                blox[level].toaster[i].y = blox[level].toaster[i].originalY;
+            if(blox[level].toaster){
+                for(var i in blox[level].toaster){
+                    blox[level].toaster[i].deleted = false;
+                    blox[level].toaster[i].x = blox[level].toaster[i].originalX;
+                    blox[level].toaster[i].y = blox[level].toaster[i].originalY;
+                }
             }
             removeFreeze = true;
         }
@@ -784,9 +853,9 @@ draw = function() {
         
         if(level === 7){
             candycane.draw();
-        }
-        if(rectCollide(blox[level].player, candycane)){
-            candycane.collected = true;
+            if(rectCollide(blox[level].player, candycane)){
+                candycane.collected = true;
+            }
         }
         
         if(rectCollide(blox[level].player, blox[level].portal)){
@@ -798,6 +867,10 @@ draw = function() {
         textFont(fonts.h3, 14);
         textLeading(14);
         text(story[level], 30, 351, 540, 50);
+        
+        if(candycane.collected && caneInfo.s < 0.991){
+            caneInfo.draw();
+        }
     }
     
     pushStyle();
