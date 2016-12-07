@@ -1,0 +1,57 @@
+textAlign(CENTER, CENTER);
+
+var images = {
+    bg: function(){
+        background(0, 24, 43);
+        
+        pushMatrix();
+        rotate(-5);
+        pushStyle();
+        textAlign(LEFT, TOP);
+        textSize(12);
+        fill(40, 177, 222, 100);
+        text(text + text + text + text + text, -20, 0, 600, 500);
+        popStyle();
+        popMatrix();
+        
+        filter(BLUR, 2);
+        
+        return get(0, 0, width, height);
+    },
+};
+
+var scene = 0;
+
+var titles = "Background|Icon|Name|Animations|Ending".split("|");
+
+draw = function() {
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    background(0, 24, 43);
+    image(images.bg, 0, 0);
+    
+    textFont(createFont("Avenir Bold"), 50);
+    fill(245);
+    text(titles[floor(scene / 4)], 300, 40);
+    textSize(15);
+    text((scene % 4) + 1, 15, 15);
+    
+    textFont(createFont("Avenir"), 15);
+    if(scene === 0){
+        text('The first thing you\'ll want to make for your new logo is the background. In my logos, I usually make a pattern in the background from for loops of shapes. Some examples of this could be:\n\n- A gradient background using lerpColor.\n- A pattern of transparent shapes (usually squares, ellipses, or hexagons).\n- A "glowing" from the center by using transparent circles.\n- My classic pixel overlay.\n\nI\'ll show you some examples of these and how to code them in the next few pages.', 50, -75, 500, 600);
+    }
+    
+    stroke(245);
+    line(0, 80, width, 80);
+    //line(300, 80, 300, height);
+};
+
+mouseClicked = function(){
+    scene ++;
+};
