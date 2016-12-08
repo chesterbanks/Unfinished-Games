@@ -71,7 +71,7 @@ var images = {
 
 var scene = 0;
 
-var titles = "Background|Icon|Name|Animations|Ending".split("|");
+var titles = "Code Setup|Background|Icon|Name|Animations|Ending".split("|");
 
 draw = function() {
     for(var i in images){
@@ -92,12 +92,22 @@ draw = function() {
     fill(245);
     text(titles[floor(scene / 5)], 300, 40);
     textSize(15);
-    text((scene % 5) + 1, 15, 15);
+    text((scene + 1), 15, 15);
     
     textFont(createFont("Avenir"), 15);
     if(scene === 0){
+        text('', 125, 355);
+        text('This is how you\'ll want to set it up.', 385, 99);
+        textFont(createFont('Monaco'), 11);
+        noStroke();
+        fill(255, 255, 255, 150);
+        rect(420, 250, 305, 280, 3);
+        textAlign(LEFT, TOP);
+        fill(0);
+        text('var scene = "Logo"; // Scene\nvar Logo = function(){\n    // Logo "this" variables\n};\nLogo.prototype.draw = function(){\n    // Logo code that would be in the draw function.\n};\nvar logo = new Logo();\n\ndraw = function(){\n    if(scene === "Logo"){\n        logo.draw();\n    }\n    if(scene === "Game"){\n        // Game code here\n    }\n};', 275, 115, 300, 300);
+    } else if(scene === 1){
         text('The first thing you\'ll want to make for your new logo is the background. In my logos, I usually make a pattern in the background from for loops of shapes. Some examples of this could be:\n\n- A gradient background using lerpColor.\n- A pattern of transparent shapes (usually squares, ellipses, or hexagons).\n- A "glowing" from the center by using transparent circles.\n- My classic pixel overlay.\n\nI\'ll show you some examples of these and how to code them in the next few pages.', 50, -75, 500, 600);
-    } else if (scene === 1){
+    } else if (scene === 2){
         image(images.bg1, 125, 235, 200, 200);
         text('A gradient background.', 125, 355);
         text('How to code this background:', 370, 150);
@@ -108,7 +118,7 @@ draw = function() {
         textAlign(LEFT, TOP);
         fill(0);
         text('strokeWeight(5);\nfor(var i = 0; i < height + 1; i += 5){\n    stroke(lerpColor(color(54, 125, 207), color(89, 235, 133), i / height));\n    line(0, i, width, i);\n}', 275, 169, 300, 250);
-    } else if (scene === 2){
+    } else if (scene === 3){
         image(images.bg2, 125, 235, 200, 200);
         text('A pattern from transparent \nshapes.', 125, 365);
         text('How to code this background:', 370, 150);
@@ -119,7 +129,7 @@ draw = function() {
         textAlign(LEFT, TOP);
         fill(0);
         text('background(207, 29, 29);\nfor(var i = 0; i < width + 50; i += 50){\n    for(var j = 0; j < height + 50; j += 50){\n        noStroke();\n        fill(0, 0, 0, 10);\n        ellipse(i, j, 200, 200);\n        fill(255, 255, 255, 30);\n        ellipse(i, j, 20, 20);\n    }\n}', 275, 169, 300, 250);
-    } else if (scene === 3){
+    } else if (scene === 4){
         image(images.bg3, 125, 235, 200, 200);
         text('Glowing background from\nlayered transparent circles.', 125, 365);
         text('How to code this background:', 370, 150);
@@ -130,7 +140,7 @@ draw = function() {
         textAlign(LEFT, TOP);
         fill(0);
         text('strokeWeight(5);\nfor(var i = 0; i < height + 1; i += 5){\n    stroke(lerpColor(color(54, 125, 207), color(89, 235, 133), i / height));\n    line(0, i, width, i);\n}', 275, 169, 300, 250);
-    } else if (scene === 4){
+    } else if (scene === 5){
         image(images.bg4, 125, 235, 200, 200);
         text('A pixel overlay.', 125, 355);
         text('How to code this background:', 370, 150);
@@ -146,7 +156,7 @@ draw = function() {
     strokeWeight(1);
     stroke(245);
     line(0, 80, width, 80);
-    if(scene !== 0){
+    if(scene !== 1 && scene !== 0){
         noFill();
         line(250, 80, 250, height);
         rect(125, 235, 210, 210);
