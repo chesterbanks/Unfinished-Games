@@ -1,0 +1,107 @@
+textAlign(CENTER, CENTER);
+textFont(createFont("Century Gothic Bold"));
+
+var scene = 'Menu';
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
+
+var Menu = function(){
+    this.slide = 300;
+    
+    this.btn = function(x, y, txt, next){
+        this.x = x;
+        this.y = y;
+        this.txt = txt;
+        this.next = next;
+        
+        this.r = 360;
+        this.trans = false;
+    };
+    this.btn.prototype.draw = function() {
+        fill(25);
+        textSize(25);
+        
+        pushMatrix();
+        translate(this.x, this.y);
+        scale(1);
+        if(mouseY > this.y - 10 && mouseY < this.y + 10){
+            scale(1.2);
+            this.trans = true;
+            if(clicked){
+                scene = this.next;
+                clicked = false;
+            }
+        }
+        rotate(this.r);
+        text(this.txt, 0, 0);
+        popMatrix();
+        
+        if(this.trans){
+            this.r /= 1.1;
+        }
+        if(this.r < 10){
+            this.trans = false;
+            this.r = 360;
+        }
+    };
+    
+    this.play = new this.btn(200, 285, 'PLAY', 'Game');
+    this.how = new this.btn(200, 315, 'HOW', 'How');
+    this.creds = new this.btn(200, 345, 'CREDITS', 'Credits');
+};
+Menu.prototype.draw = function() {
+    background(25);
+    
+    noStroke();
+    fill(245);
+    rect(0, height / 2, width, height / 2);
+    
+    fill(245);
+    textSize(55);
+    text('DIMENSION', 200, 180 - this.slide);
+    fill(25);
+    text('DODGE', 200, 219 + this.slide);
+    this.play.draw();
+    this.how.draw();
+    this.creds.draw();
+    
+    this.slide /= 1.1;
+};
+var menu = new Menu();
+
+var Game = function(){
+    this.dimension = 1;
+};
+Game.prototype.draw = function() {
+    if(this.dimension === 0){
+        background(25);
+        
+        noStroke();
+        fill(245);
+        rect(0, height - (height / 10), width, height / 10);
+        rect(width / 2, height - (height / 6), width / 15, height / 15);
+    } else {
+        background(245);
+        
+        noStroke();
+        fill(25);
+        rect(0, height - (height / 10), width, height / 10);
+        rect(width / 2, height - (height / 6), width / 15, height / 15);
+    }
+    
+    if(clicked){
+        this.dimension = (this.dimension === 0) ? 1 : 0;
+    }
+};
+var game = new Game();
+
+draw = function() {
+    if(scene === 'Menu'){
+        menu.draw();
+    }
+    if(scene === 'Game'){
+        game.draw();
+    }
+    
+    clicked = false;
+};
