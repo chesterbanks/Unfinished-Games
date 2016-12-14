@@ -69,6 +69,20 @@ Menu.prototype.draw = function() {
 };
 var menu = new Menu();
 
+var game;
+var Player = function(){
+    this.x = 200;
+    this.y = 320;
+    this.w = 40;
+    this.h = 40;
+};
+Player.prototype.draw = function() {
+    noStroke();
+    fill((game.dimension === 0) ? color(245) : color(25));
+    rect(this.x, this.y, this.w, this.h);
+};
+var player = new Player();
+
 var Game = function(){
     this.dimension = 1;
 };
@@ -79,21 +93,21 @@ Game.prototype.draw = function() {
         noStroke();
         fill(245);
         rect(0, height - (height / 10), width, height / 10);
-        rect(width / 2, height - (height / 6), width / 15, height / 15);
     } else {
         background(245);
         
         noStroke();
         fill(25);
         rect(0, height - (height / 10), width, height / 10);
-        rect(width / 2, height - (height / 6), width / 15, height / 15);
     }
+    
+    player.draw();
     
     if(clicked){
         this.dimension = (this.dimension === 0) ? 1 : 0;
     }
 };
-var game = new Game();
+game = new Game();
 
 draw = function() {
     if(scene === 'Menu'){
