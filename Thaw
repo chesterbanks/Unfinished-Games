@@ -1,0 +1,1166 @@
+/** 
+ * Thaw: Search For Answers
+ * Chester Banks
+ * December 7 2016
+ * 
+ * Sequel to Frost: A Winter Adventure
+ * 
+ * This program's LUCKY SUBSCRIBER is FIREGLIDER! Check out his profile here: khanacademy.org/profile/Gliders
+ * Liked this game? Subscribe to me here: khanacademy.org/cs/cb/4790207744704512
+ *
+    @INSTRUCTIONS
+      - Click to begin.
+      - Arrow keys or WASD to move.
+      - Get to the portal.
+      - R to restart the level.
+      - Read the story.
+      - Enjoy.
+      - Tell me what you think of it in the T&T.
+ */
+ 
+var removeLag = false; // Change to true if it is lagging.
+ 
+textAlign(CENTER, CENTER);
+
+var fonts = {
+    h1: createFont('AvenirNext-UltraLight'),
+    h3: createFont('Avenir'),
+};
+
+// Helpful little graphics functions
+var tree = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz/10);
+    strokeCap(SQUARE);
+    strokeWeight(5);
+    noStroke();
+    fill(163, 102, 16);
+    rect(-10, 68, 20, 50);
+    fill(0, 122, 49);
+    triangle(0, -105, -60, 70, 60, 70);
+    for(var i = -57; i < 60; i += 5){
+        stroke(255, 255, 255, i/3 + 40);
+        line(0, -105, i, 70);
+    }
+    noStroke();
+    triangle(0, -105, -55, 25, 55, 25);
+    for(var i = -50; i < 55; i += 5){
+        stroke(255, 255, 255, i/3 + 40);
+        line(0, -105, i, 25);
+    }
+    noStroke();
+    triangle(0, -100, -50, -20, 50, -20);
+    for(var i = -44; i < 50; i += 5){
+        stroke(255, 255, 255, i/3 + 40);
+        line(0, -100, i, -20);
+    }
+    popMatrix();
+};
+
+var images = {
+    "bg1": function(){
+        noStroke();
+        for(var i = 0; i < height; i += 20){
+            fill(lerpColor(
+                color(12, 44, 59), color(65, 114, 138), i / height));
+            rect(0, i, 300, 20);
+            fill(lerpColor(
+                color(8, 33, 43), color(113, 201, 230), i / height));
+            rect(300, i, 300, 20);
+            for(var j = 0; j < width; j += 5){
+                fill(255, 255, 255, random(10));
+                rect(j, i, 5 + random(-2, 2), 20  + random(-2, 10));
+            }
+        }
+        
+        fill(88, 219, 134);
+        
+        noStroke();
+        fill(216, 222, 93, 10);
+        for(var i = 10; i < 200; i += 5){
+            ellipse(500, 80, i, i);
+        }
+        fill(209, 227, 93, 200);
+        ellipse(500, 80, 100, 100);
+        
+        filter(BLUR, 2);
+        
+        return get(0, 0, width, height);
+    },
+    "tree": function(){
+        pushMatrix();
+        translate(50, 5);
+        strokeWeight(2);
+        stroke(69, 40, 21);
+        fill(128, 85, 53);
+        
+        beginShape();
+        vertex(263, 393);vertex(250, 379);vertex(248, 340);vertex(250, 295);vertex(249, 269);vertex(250, 252);vertex(224, 225);vertex(187, 218);vertex(135, 225);vertex(114, 240);vertex(102, 262);vertex(93, 276);vertex(74, 267);vertex(90, 263);vertex(99, 248);vertex(103, 238);vertex(59, 242);vertex(34, 220);vertex(63, 229);vertex(104, 226);vertex(131, 216);vertex(140, 210);vertex(102, 199);vertex(78, 187);vertex(61, 167);vertex(53, 150);vertex(41, 142);vertex(46, 135);vertex(56, 143);vertex(69, 152);vertex(70, 163);vertex(76, 163);vertex(75, 146);vertex(75, 133);vertex(81, 130);vertex(83, 143);vertex(82, 154);vertex(83, 166);vertex(83, 175);vertex(96, 184);vertex(124, 194);vertex(150, 198);vertex(171, 202);vertex(157, 161);vertex(141, 148);vertex(126, 140);vertex(107, 125);vertex(98, 104);vertex(90, 97);vertex(70, 89);vertex(64, 72);vertex(75, 83);vertex(88, 90);vertex(94, 81);vertex(91, 66);vertex(78, 50);vertex(101, 65);vertex(102, 85);vertex(100, 93);vertex(107, 106);vertex(116, 122);vertex(125, 128);vertex(126, 117);vertex(130, 103);vertex(141, 97);vertex(153, 94);vertex(154, 83);vertex(159, 99);vertex(152, 104);vertex(142, 110);vertex(137, 113);vertex(135, 126);vertex(134, 131);vertex(146, 143);vertex(157, 146);vertex(167, 155);vertex(169, 145);vertex(173, 163);vertex(171, 167);vertex(174, 183);vertex(197, 203);vertex(214, 210);vertex(231, 214);vertex(229, 201);vertex(228, 182);vertex(235, 159);vertex(239, 150);vertex(233, 141);vertex(223, 127);vertex(213, 113);vertex(212, 101);vertex(212, 88);vertex(219, 82);vertex(223, 104);vertex(233, 125);vertex(244, 136);vertex(250, 130);vertex(250, 112);vertex(252, 92);vertex(259, 82);vertex(256, 66);vertex(246, 50);vertex(245, 36);vertex(258, 24);vertex(256, 46);vertex(266, 70);vertex(265, 98);vertex(286, 86);vertex(288, 68);vertex(297, 60);vertex(307, 62);vertex(311, 72);vertex(305, 71);vertex(297, 74);vertex(297, 83);vertex(288, 99);vertex(279, 104);vertex(269, 108);vertex(262, 112);vertex(261, 117);vertex(259, 141);vertex(252, 162);vertex(244, 171);vertex(242, 189);vertex(246, 213);vertex(255, 218);vertex(262, 213);vertex(279, 203);vertex(292, 199);vertex(310, 191);vertex(320, 180);vertex(326, 166);vertex(331, 147);vertex(335, 129);vertex(342, 110);vertex(353, 101);vertex(373, 101);vertex(394, 107);vertex(403, 107);vertex(402, 115);vertex(386, 113);vertex(373, 113);vertex(359, 115);vertex(350, 122);vertex(347, 134);vertex(370, 130);vertex(368, 141);vertex(346, 142);vertex(335, 165);vertex(349, 167);vertex(363, 162);vertex(371, 154);vertex(386, 140);vertex(402, 134);vertex(414, 137);vertex(404, 141);vertex(396, 146);vertex(393, 156);vertex(407, 154);vertex(415, 151);vertex(417, 154);vertex(407, 158);vertex(391, 161);vertex(379, 161);vertex(374, 164);vertex(362, 171);vertex(346, 175);vertex(335, 176);vertex(329, 189);vertex(317, 203);vertex(304, 210);vertex(319, 211);vertex(335, 217);vertex(351, 222);vertex(376, 224);vertex(398, 225);vertex(413, 218);vertex(424, 210);vertex(448, 199);vertex(464, 201);vertex(469, 215);vertex(463, 215);vertex(452, 214);vertex(437, 221);vertex(420, 226);vertex(407, 232);vertex(423, 235);vertex(435, 239);vertex(435, 249);vertex(432, 246);vertex(415, 243);vertex(402, 236);vertex(388, 235);vertex(375, 235);vertex(357, 235);vertex(345, 233);vertex(346, 241);vertex(354, 248);vertex(367, 250);vertex(372, 248);vertex(373, 255);vertex(354, 257);vertex(342, 249);vertex(330, 235);vertex(325, 230);vertex(302, 227);vertex(290, 231);vertex(295, 378);vertex(296, 388);vertex(302, 397);vertex(243, 393);vertex(243, 398);
+        endShape();
+        popMatrix();
+        
+        noStroke();
+        for(var i = 0; i < 190; i += 10){
+            for(var j = 0; j < 130; j += 20){
+                fill(0, random(200, 255), 51, random(100, 255));
+                ellipse(random(-50, 50) + 320 + sin(i) * j * 1.6, 150 + cos(i) * j, 40, 40);
+            }
+        }
+        
+        filter(BLUR, 2);
+    
+        return get(0, 0, width, height);
+    },
+    "dirtBlock": function(){
+        noStroke();
+        fill(148, 92, 18);
+        rect(0, 0, 20, 20);
+        for(var i = 0; i < 20; i += 5){
+            for(var j = 0; j < 20; j += 5){
+                fill(0, 0, 0, random(30, 100));
+                rect(i+random(-2, 2), j+random(-2, 2), 2, 2);
+            }
+        }
+        fill(0, 0, 0, 30);
+        rect(0, 0, 5, 20);
+        fill(255, 255, 255, 30);
+        rect(15, 0, 5, 20);
+        
+        return get(0, 0, 20, 20);
+    },
+    "snowBlock": function(){
+        noStroke();
+        fill(148, 92, 18);
+        rect(0, 0, 20, 20);
+        fill(255, 255, 255);
+        rect(0, 0, 20, 5);
+        for(var i = 0; i < 20; i += 5){
+            for(var j = 0; j < 20; j += 5){
+                fill(0, 0, 0, random(30, 100));
+                rect(i+random(-2, 2), j+random(-2, 2), 2, 2);
+            }
+        }
+        fill(0, 0, 0, 30);
+        rect(0, 0, 5, 20);
+        fill(255, 255, 255, 30);
+        rect(15, 0, 5, 20);
+        
+        return get(0, 0, 20, 20);
+    },
+    "frozenEnemy": function(){
+        noStroke();
+        fill(46, 46, 46);
+        rect(0, 0, 30, 30, 3);
+        fill(255, 255, 255, 30);
+        rect(2, 0, 6, 30);
+        fill(0, 0, 0);
+        rect(0, 0, 30, 10, 3);
+        arc(24, 0, 30, 26, -270, -180);
+        fill(240, 40, 40);
+        rect(9,  16, 5, 4);
+        rect(18, 16, 5, 4);
+        
+        filter(BLUR, 1.5);
+        
+        fill(0, 230, 255, 90);
+        rect(0, 0, 30, 30, 3);
+        
+        pushMatrix();
+        translate(8, 8);
+        rotate(-45);
+        stroke(255, 255, 255, 50);
+        strokeWeight(6);
+        line(-15, 0, 15, 0);
+        strokeWeight(3);
+        line(-15, 7, 15, 7);
+        popMatrix();
+        
+        return get(0, 0, 30, 30);
+    },
+    "candycane": function(){
+        noFill();
+        background(255, 255, 255);
+        pushMatrix();
+        translate(15, 15);
+        rotate(-45);
+        strokeWeight(3);
+        stroke(235, 30, 30);
+        for(var i = -15; i < 20; i += 5){
+            line(-15, i, 15, i);
+        }
+        popMatrix();
+        var front = get(0, 0, 30, 35);
+        
+        background(0, 0, 0, 0);
+        pushMatrix();
+        translate(0, 0);
+        noFill();
+        stroke(0, 0, 0);
+        rect(0, 0, 30, 30);
+        stroke(255, 255, 255);
+        strokeWeight(5);
+        arc(15, 10, 14, 15, -180, 0);
+        line(22, 12, 22, 28);
+        popMatrix();
+        var back = get(0, 0, 30, 35);
+        
+        front.mask(back);
+        
+        background(0, 0, 0, 0);
+        image(front, 0, 0);
+        
+        return get(0, 0, 30, 35);
+    },
+    "icicle": function(){
+        noStroke();
+        
+        fill(143, 231, 247);
+        triangle(0, 0, 4, 15, 10, 0);
+        triangle(10, 0, 16, 15, 20, 0);
+        triangle(5, 0, 10, 25, 15, 0);
+        
+        fill(255, 255, 255, 60);
+        triangle(0, 0, 4, 15, 5, 0);
+        triangle(10, 0, 16, 15, 16, 0);
+        triangle(5, 0, 10, 25, 10, 0);
+        
+        return get(0, 0, 20, 20);
+    },
+};
+
+// This helps with key movement
+var keys = [];
+var keyPressed = function(){ keys[keyCode] = true; };
+var keyReleased = function(){ keys[keyCode] = false; };
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
+
+// The rectangle collision function
+var rectCollide = function(one, two){
+    if( one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h){
+        return true;
+    }
+};
+
+// Snow (the flakes falling from the sky, not the president)
+var Snow = function(){
+    this.x = random(300, width);
+    this.y = random(-20, -100);
+    this.sz = random(1, 20);
+    this.trans = random(100);
+    this.xSp = random(1);
+    this.rot = random(5);
+};
+var Snows = []; // sometimes you need to use bad grammar
+Snow.prototype.draw = function() {
+    noStroke();
+    pushMatrix();
+    translate(this.x, this.y);
+    if(this.x > 300){
+        fill(0, 255, 255, this.trans * 8);
+        rect(0, 0, this.sz / 4, this.sz / 2);
+    } else {
+        rotate(frameCount * this.rot);
+        fill(255, 255, 255, this.trans);
+        rect(0, 0, this.sz, this.sz, -5);
+    }
+    popMatrix();
+    
+    this.y += this.sz;
+    this.x += this.xSp * this.sz / 4;
+};
+
+// Vital variables
+var scene = 'Menu';
+var level = 0;
+var goBack = false, removeFreeze;
+var final = -200, snap = false;
+
+var trans = { active: false, plusX: 400, rot: 90, w: 590, out: false, type: 'Game'};
+
+// Candycane
+var Candycane = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.w = 30;
+    this.h = 30;
+    this.collected = false;
+};
+Candycane.prototype.draw = function() {
+    if(!this.collected){
+        pushMatrix();
+        translate(this.x, this.y);
+        noFill();
+        stroke(255, 255, 255, 15);
+        for(var i = 5; i < 16; i++){
+            strokeWeight(i);
+            arc(15, 10, 14, 15, -180, 0);
+            line(22, 12, 22, 28);
+        }
+        image(images.candycane, 0, 0);
+        popMatrix();
+    }
+};
+var candycane = new Candycane(110, 56);
+
+// Icicles
+var Icicle = function(x, y){
+    this.x = x; this.originalX = x;
+    this.y = y; this.originalY = y;
+    this.w = 20;
+    this.h = 20;
+    this.triggered = false;
+    this.reset = false;
+};
+Icicle.prototype.draw = function() {
+    image(images.icicle, this.x, this.y);
+    
+    if(this.triggered){
+        this.y += 4;
+    }
+    
+    if(goBack || this.reset){
+        this.triggered = false;
+        this.x = this.originalX;
+        this.y = this.originalY;
+        this.reset = false;
+    }
+};
+
+// Guards (don't ask why I called it Toaster).
+var Toaster = function(x, y, con){
+    this.originalX = x;
+    this.originalY = y;
+    this.x = x;
+    this.y = y;
+    this.w = 30;
+    this.h = 30;
+    this.xvel = 1;
+    this.con = con;
+    this.deleted = false;
+    
+    this.particle = function(x, y){
+        this.x = x;
+        this.y = y;
+        this.sz = random(10);
+        this.trans = 255;
+        this.rot = random(10);
+    };
+    this.particles = [];
+    this.particle.prototype.draw = function() {
+        noStroke();
+        fill(25, 25, 25, this.trans);
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(frameCount*this.rot);
+        rectMode(CENTER);
+        rect(0, 0, this.sz, this.sz);
+        rectMode(LEFT);
+        popMatrix();
+        
+        this.sz -= 0.01;
+        this.trans -= 3;
+    };
+};
+Toaster.prototype.draw = function() {
+    if(!this.deleted){
+        if(!removeLag){
+            if(frameCount % 5 === 0){
+                this.particles.push(new this.particle(this.x, this.y + random(this.h)));
+            }
+            
+            for(var i in this.particles){
+                this.particles[i].draw();
+                if(this.particles[i].trans < 0){
+                    this.particles.splice(i, 1);
+                }
+            }
+        }
+        
+        noStroke();
+        fill(46, 46, 46);
+        rect(this.x, this.y, this.w, this.h, 3);
+        fill(255, 255, 255, 30);
+        rect(this.x + 2, this.y, this.w / 5, this.h);
+        fill(0, 0, 0);
+        rect(this.x, this.y, this.w, this.h / 3, 3);
+        arc(this.x + 24, this.y, 30, 26, -270, -180);
+        fill(240, 40, 40);
+        rect(this.xvel + this.x + 9, this.y + 16, 5, 4);
+        rect(this.xvel + this.x + 18, this.y + 16, 5, 4);
+        
+        this.x += this.xvel;
+        if(this.x > this.originalX + this.con || this.x < this.originalX - this.con){
+            this.xvel = -this.xvel;
+        }
+    }
+};
+
+// Portal
+var Portal = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.w = 40;
+    this.h = 40;
+    
+    this.particle = function(x, y){
+        this.x = x;
+        this.y = y;
+        this.x2 = 60;
+        this.rot = random(360);
+        this.sz = random(10);
+        this.trans = 255;
+    };
+    this.particles = [];
+    this.particle.prototype.draw = function() {
+        noStroke();
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(this.rot);
+        fill(255, 255, 255, this.trans);
+        ellipse(this.x2, 0, this.sz, this.sz);
+        popMatrix();
+        
+        this.x2 -= this.sz/3;
+        this.trans -= this.sz;
+    };
+};
+Portal.prototype.draw = function() {
+    if(!removeLag){
+        this.particles.push(new this.particle(this.x + 25, this.y + 25));
+        
+        for(var i in this.particles){
+            this.particles[i].draw();
+            if(this.particles[i].trans < 0){
+                this.particles.splice(i, 1);
+            }
+        }
+    }
+    noFill();
+    stroke(255, 255, 255, 100);
+    strokeWeight(5);
+    ellipse(this.x + 20, this.y + 20, 40, 40);
+    noStroke();
+    fill(255, 255, 255, 10);
+    for(var i = 0; i < 77; i += 5){
+        ellipse(this.x + 20, this.y + 20, i, i);
+    }
+    
+    pushMatrix();
+    translate(this.x + 20, this.y + 20);
+    rotate(frameCount * 5);
+    scale(0.6);
+    noStroke();
+    fill(255, 255, 255, 200);
+    ellipse(0, 0, 60, 60);
+    for(var i = 0; i < 360; i += 90){
+        rotate(i);
+        fill(224, 27, 27, 100);
+        beginShape();
+        vertex(0, 0);
+        bezierVertex(-43, -4, -20, -28, -4, -29);
+        bezierVertex(-11, -11, -9, -10, 0, 0);
+        endShape(CLOSE);
+    }
+    popMatrix();
+};
+
+// [Almost] everything about the blocks (blox)
+var block = function(x, y, w, h, type){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.type = type || 'NORMAL';
+};
+block.prototype.draw = function() {
+    if(this.type !== 'FROZEN'){
+        noStroke();
+        fill(217, 217, 217);
+        quad(this.x, this.y, this.x + this.w, this.y, this.x + this.w - (this.x + this.w === 600 ? 0 : 5), this.y - 4, this.x + (this.x === 0 ? 0 : 5), this.y - 4);
+        
+        for(var i = 0; i < this.w; i += 20){
+            for(var j = 0; j < this.h; j += 20){
+                image(j === 0 ? images.snowBlock : images.dirtBlock, this.x + i, this.y + j, 20, 20);
+            }
+        }
+    } else {
+        image(images.frozenEnemy, this.x, this.y);
+    }
+};
+
+var blox;
+
+var Player = function(x, y, w, h){
+    this.x = x; this.originalX = x;
+    this.y = y; this.originalY = y;
+    this.w = 30;
+    this.h = 30;
+    
+    this.xvel = 0;
+    this.yvel = 0;
+    this.speed = 5;
+    
+    this.slow = false;
+    this.slowTimer = 0;
+    
+    this.jumping = false;
+    
+    this.dir = 'left';
+    this.particle = function(x, y, dir){
+        this.x = x;
+        this.y = y;
+        this.dir = dir;
+        this.w = this.h = random(10);
+        this.trans = 255;
+        this.rot = random(10);
+        this.colo = floor(random(2));
+    };
+    this.particles = [];
+    this.particle.prototype.draw = function() {
+        noStroke();
+        if(this.colo === 0){
+            fill(255, 255, 255, this.trans);
+        } else {
+            fill(212, 45, 45, this.trans);
+        }
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(frameCount*this.rot);
+        ellipse(0, 0, this.w, this.h);
+        popMatrix();
+        
+        this.sz -= 0.01;
+        this.trans -= 10;
+        if(this.dir === 'left'){
+            this.x -= this.w / 2;
+        } else {
+            this.x += this.w / 2;
+        }
+        for(var i in blox[level].toaster){
+            if(rectCollide(blox[level].toaster[i], this) && !blox[level].toaster[i].deleted && this.trans > 100){
+                blox[level].blox.push(new block(blox[level].toaster[i].x, blox[level].toaster[i].y, 30, 30, 'FROZEN'));
+                blox[level].toaster[i].deleted = true;
+            }
+        }
+    };
+};
+
+blox = [
+    {
+        player: new Player(50, 315),
+        portal: new Portal(55, 25),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(0, 290, 100, 20),
+            new block(200, 290, 100, 20),
+            new block(400, 290, 100, 20),
+            new block(100, 230, 100, 20),
+            new block(300, 230, 100, 20),
+            new block(500, 230, 100, 20),
+            new block(400, 160, 100, 20),
+            new block(0, 90, 400, 20)
+        ],
+    }, // level 0
+    {
+        player: new Player(100, 320),
+        portal: new Portal(55, 25),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(180, 240, 20, 110),
+            new block(280, 200, 20, 150),
+            new block(380, 200, 20, 150),
+            new block(480, 200, 20, 150),
+            new block(0, 290, 100, 20),
+            new block(500, 130, 100, 20),
+            new block(0, 80, 400, 20)
+        ],
+    }, // level 1
+    {
+        player: new Player(100, 320),
+        portal: new Portal(545, 295),
+        blox: [
+            new block(0, 350, 600, 50),
+        ],
+    }, // level 2
+    {
+        player: new Player(100, 320),
+        portal: new Portal(45, 145),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(0, 200, 400, 120),
+            new block(400, 260, 100, 60),
+            new block(500, 280, 40, 40),
+        ],
+        toaster: [new Toaster(180, 170, 180)],
+    }, // level 3
+    {
+        player: new Player(100, 320),
+        portal: new Portal(55, 25),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(0, 290, 100, 20),
+            new block(200, 290, 100, 20),
+            new block(400, 290, 100, 20),
+            new block(100, 230, 100, 20),
+            new block(300, 230, 100, 20),
+            new block(500, 230, 100, 20),
+            new block(400, 160, 100, 20),
+            new block(0, 90, 400, 20)
+        ],
+        toaster: [new Toaster(35, 265, 35), new Toaster(235, 265, 35), new Toaster(435, 265, 35)],
+    }, // level 4
+    {
+        player: new Player(100, 320),
+        portal: new Portal(500, 115),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(300, 300, 100, 20),
+            new block(200, 265, 100, 20),
+            new block(100, 230, 100, 20),
+            new block(350, 230, 100, 20),
+            new block(460, 175, 100, 20),
+        ],
+        toaster: [new Toaster(135, 200, 35), new Toaster(235, 235, 35)],
+    }, // level 5
+    {
+        player: new Player(550, 10),
+        portal: new Portal(500, 115),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(300, 300, 40, 20),
+            new block(250, 280, 40, 20),
+            new block(200, 260, 40, 20),
+            new block(150, 240, 40, 20),
+            new block(100, 220, 40, 20),
+            new block(50, 200, 40, 20),
+            new block(0, 180, 40, 20),
+            new block(50, 130, 40, 20),
+            new block(100, 120, 40, 20),
+            new block(150, 100, 40, 20),
+            new block(200, 80, 40, 20),
+            new block(250, 60, 40, 20),
+            new block(300, 40, 300, 20),
+            new block(580, -60, 20, 100),
+            new block(450, 230, 40, 20),
+        ],
+    }, // level 6
+    {
+        player: new Player(100, 200),
+        portal: new Portal(530, 225),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(160, 0, 20, 300),
+            new block(60, 260, 20, 20),
+            new block(140, 280, 20, 20),
+            new block(0, 200, 60, 20),
+            new block(0, 140, 40, 20),
+            new block(100, 90, 60, 20),
+        ],
+        toaster: [new Toaster(235, 320, 200), new Toaster(275, 320, 200), new Toaster(315, 320, 200), new Toaster(355, 320, 200)],
+    }, // level 7
+    {
+        player: new Player(100, 320),
+        portal: new Portal(420, 115),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(400, 260, 100, 20),
+        ],
+        toaster: [new Toaster(235, 320, 200), ],
+    }, // level 8
+    {
+        player: new Player(100, 320),
+        portal: new Portal(500, 115),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(0, 290, 100, 20),
+            new block(500, 290, 100, 20),
+            new block(100, 270, 400, 20),
+            new block(100, 200, 400, 20),
+            new block(481, 200, 20, 90),
+        ],
+    }, // level 9
+    {
+        player: new Player(30, 300),
+        portal: new Portal(500, 10),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(100, 250, 100, 20),
+            new block(200, 150, 100, 20),
+            new block(300, 50, 300, 20),
+        ],
+        toaster: [new Toaster(100, 320, 100), new Toaster(135, 220, 35), new Toaster(235, 120, 35),],
+    }, // level 10
+    {
+        player: new Player(40, 320),
+        portal: new Portal(30, 220),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(0, 280, 200, 40),
+            new block(0, 280, 40, 80),
+            new block(200, 240, 200, 40),
+            new block(400, 280, 160, 40),
+            new block(180, 200, 40, 100),
+            new block(380, 200, 40, 100),
+        ],
+        toaster: [new Toaster(275, 320, 240), new Toaster(480, 250, 50)],
+    }, // level 11
+    {
+        player: new Player(30, 320),
+        portal: new Portal(540, 310),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(100, 300, 20, 20),
+            new block(160, 225, 20, 20),
+            new block(100, 150, 20, 20),
+            new block(160, 75, 20, 20),
+            new block(180, 60, 340, 20),
+            new block(500, 60, 20, 340),
+            new block(560, 285, 40, 20),
+        ],
+        toaster: [],
+    }, // level 12
+    {
+        player: new Player(30, 320),
+        portal: new Portal(540, 310),
+        blox: [
+            new block(0, 350, 600, 50),
+            new block(0, 220, 600, 20),
+        ],
+        icicles: [],
+    },// level 13
+    {
+        player: new Player(30, 320),
+        portal: new Portal(530, 20),
+        blox: [
+            new block(0, 350, 100, 50),
+            new block(100, 300, 40, 200),
+            new block(140, 280, 40, 200),
+            new block(180, 260, 40, 200),
+            new block(220, 240, 40, 200),
+            new block(260, 220, 40, 200),
+            new block(300, 200, 40, 200),
+            new block(340, 180, 40, 260),
+            new block(380, 160, 40, 260),
+            new block(420, 140, 40, 260),
+            new block(460, 120, 40, 280),
+            new block(500, 100, 40, 300),
+            new block(540, 80, 40, 320),
+            new block(580, 60, 40, 340),
+        ],
+    }, // level 14
+    {
+        portal: new Portal(-100, 100),
+        player: new Player(100, 320),
+        blox: [
+            new block(0, 350, 600, 50),
+        ],
+    }, // level 15
+];
+
+for(var i = 0; i < 600; i += 20){
+    if(i / 20 !== 1 && i / 20 !== 2){
+        blox[13].icicles.push(new Icicle(i, 240));
+    }
+}
+
+var story = "I have to get back to my family.|I haven't seen them for seven hundred and thirty dreadful days.|And now, on the eve of Christmas, I am finally on my way back to my home.|Oh no, it's one of Them. I didn't think they'd be patrolling this far away from the mines.|They're looking for me.|After watching them guard us for two years in the mines, they have no weaknesses that I can see.|I wonder how fast they figured out how I escaped from the mines.|What's that candy cane? Maybe it'll be of some use.|I'm so glad I got that candy cane. Maybe I can get home for Christmas after all!|My escape from the mines would have been so much easier with this thing...|If I had it back then, maybe Hector and Oskar could have made it, too.|Hm, now that I think about it, I wonder why something this useful was just lying on that hill.|What if someone left it there for ME?|Well, I can't think about that now. I'm almost home!|This is the hill right up to our house!|Where is it?? My house...it's...gone!".split("|");
+
+// [Almost] everything about the player
+Player.prototype.applyCollisions = function(xvel, yvel) {
+    for (var i = 0; i < blox[level].blox.length; i++) {
+        if (!rectCollide(this, blox[level].blox[i])) { continue; }
+        if (xvel < 0) {
+            this.x = blox[level].blox[i].x + blox[level].blox[i].w;
+            this.xvel = 0;
+        }
+        if (xvel > 0) {
+            this.x = blox[level].blox[i].x - this.w;
+            this.xvel = 0;
+        }
+        if (yvel < 0) {
+            this.y = blox[level].blox[i].y + blox[level].blox[i].h;
+            this.yvel = 0;
+        }
+        if (yvel > 0) {
+            this.y = blox[level].blox[i].y - this.h;
+            this.yvel = 0;
+            this.jumping = false;
+        }
+    }
+    if (this.y >= 320 && this.yvel > 0) {
+        this.jumping = false;
+        this.yvel = 0;
+        this.y = 320;
+    }
+};
+Player.prototype.draw = function() {
+    if(mouseIsPressed && candycane.collected){
+        this.particles.push(new this.particle(this.x + 5, this.y + random(this.h), this.dir));
+    }
+    
+    for(var i in this.particles){
+        this.particles[i].draw();
+        if(this.particles[i].trans < 0){
+            this.particles.splice(i, 1);
+        }
+    }
+    
+    // The actual player
+    noStroke();
+    fill(224, 178, 119);
+    (rect)(this.x, this.y, this.w, this.h, 3);
+    fill(232, 232, 232);
+    (rect)(this.x, this.y, this.w, this.h / 3, 3);
+    (rect)(this.x, this.y + 5, 2, 10);
+    (rect)(this.x + 28, this.y + 5, 2, 10);
+    arc(this.x + 8, this.y, 30, 26, 0, 90);
+    fill(46, 46, 46);
+    rect(this.xvel + this.x + 9, this.y + 16, 5, 7);
+    rect(this.xvel + this.x + 18, this.y + 16, 5, 7);
+    
+    if(candycane.collected){
+        pushMatrix();
+        translate(this.x + 31, this.y + 15);
+        rotate(24);
+        imageMode(CENTER);
+        image(images.candycane, 0, 0, 20, 25);
+        imageMode(CORNER);
+        popMatrix();
+    }
+    
+    if(blox[level].icicles){
+        for(var i in blox[level].icicles){
+            if(this.x + this.w > blox[level].icicles[i].x && this.x < blox[level].icicles[i].x + blox[level].icicles[i].w){
+                blox[level].icicles[i].triggered = true;
+            }
+        }
+    }
+    
+    // Player movement
+    if(keys[LEFT] || keys[65]){
+        this.dir = 'left';
+        this.xvel -= 2;
+    }
+    if(keys[RIGHT] || keys[68]){
+        this.dir = 'right';
+        this.xvel += 2;
+    }
+    if(!keys[LEFT] && !keys[RIGHT] && !keys[65] && !keys[68]){
+        this.xvel = 0;
+    }
+    
+    if ((keys[UP] || keys[87]) && !this.jumping) {
+        this.yvel -= 10;
+        this.jumping = true;
+    }
+    if(this.xvel > this.speed){
+        this.xvel = this.speed;
+    }
+    if(this.xvel < -this.speed){
+        this.xvel = -this.speed;
+    }
+    this.jumping = true;
+    this.x += this.xvel;
+    this.applyCollisions(this.xvel, 0);
+    this.y += this.yvel;
+    this.applyCollisions(0, this.yvel);
+    this.yvel += 0.6;
+    
+    if(this.slow){
+        this.speed = 1;
+        this.slowTimer ++;
+    } else {
+        this.speed = 5;
+    }
+    if(this.slowTimer > 160){
+        this.slow = false;
+        this.slowTimer = 0;
+    }
+};
+
+var CaneInfo = function(){
+    this.s = 0.99;
+    this.leave = false;
+};
+CaneInfo.prototype.draw = function() {
+    pushStyle();
+    rectMode(CENTER);
+    pushMatrix();
+    translate(width / 2, height / 2);
+    scale(1 - this.s);
+    strokeWeight(6);
+    stroke(0, 0, 0, 50);
+    fill(255, 255, 255);
+    rect(0, 0, 300, 150, 10);
+    rect(-160, 0, 80, 120, 10);
+    strokeWeight(2);
+    line(-116, -28, 150, -28);
+    noFill();
+    stroke(207, 207, 207);
+    strokeWeight(23);
+    arc(-160, -21, 40, 40, -180, 0);
+    line(-140, -21, -140, 35);
+    image(images.candycane, -200, -50, 80, 100);
+    
+    fill(61, 61, 61);
+    textFont(fonts.h1, 29);
+    text('Freeze Stick', 0, -50);
+    textFont(fonts.h3, 15);
+    textLeading(19);
+    text('Disguised as a candy cane, this Freeze Stick can spew forth freezing air, turning anything in its path into ice. Press mouse to use.', -120, -45, 240, 111);
+    
+    if(mouseX > 445 - 12 && mouseX < 457 && mouseY > 130 - 12 && mouseY < 142){
+        strokeWeight(3);
+        stroke(161, 47, 47);
+        fill(230, 23, 23);
+        rect(145, -67, 25, 25, 5);
+        
+        textFont(fonts.h3, 18);
+        fill(255);
+        text('X', 145, -67);
+        if(clicked){
+            this.leave = true;
+        }
+    } else {
+        strokeWeight(3);
+        stroke(161, 47, 47);
+        fill(230, 23, 23);
+        rect(145, -67, 25, 25, 5);
+        rect(145, -70, 25, 25, 5);
+        
+        textFont(fonts.h3, 18);
+        fill(255);
+        text('X', 145, -70);
+    }
+    
+    popMatrix();
+    popStyle();
+    
+    if(this.s > 0.01 && !this.leave){ 
+        this.s /= 1.1; 
+    }
+    if(this.leave){
+        this.s *= 1.1;
+    }
+};
+var caneInfo = new CaneInfo();
+
+draw = function() {
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    if(scene === 'Menu'){
+        image(images.bg1, 0, 0);
+        
+        if(!removeLag){
+            Snows.push(new Snow(), new Snow(), new Snow(), new Snow(), new Snow());
+            
+            for(var i in Snows){
+                Snows[i].draw();
+                if(Snows[i].y > 420 || Snows[i].x < -20 || Snows[i].x > 620){
+                    Snows.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+        image(images.tree, 0, 0);
+        
+        pushMatrix();
+        translate(width / 2, height / 2);
+        if(keyIsPressed && key.toString().toLowerCase() === 'c'){
+            snap = true;
+        }
+        if(snap){
+            scale(1.5, 1);
+        }
+        fill(255, 255, 255);
+        textFont(fonts.h1, 60);
+        text('t h a w', 0, 0);
+        textFont(fonts.h3, 15);
+        text('s e a r c h   f o r   a n s w e r s', 0, 40);
+        popMatrix();
+        
+        noStroke();
+        for(var i = -400; i < 0; i += 60){
+            fill(255, 255, 255, 7);
+            rect(0, 0, 0.5, 0.5, i);
+            rect(width, 0, 0.5, 0.5, i);
+            fill(0, 0, 0, 15);
+            rect(0, height, 0.5, 0.5, i);
+            rect(width, height, 0.5, 0.5, i);
+        }
+        
+        if(clicked){
+            //trans.active = true;
+        }
+    }
+    if(scene === 'Game'){
+        image(images.bg1, 0, 0);
+        
+        if(!removeLag){
+            Snows.push(new Snow(), new Snow(), new Snow(), new Snow());
+            
+            for(var i in Snows){
+                Snows[i].draw();
+                if(Snows[i].y > 420 || Snows[i].x < -20 || Snows[i].x > 620){
+                    Snows.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+        
+        if(keys[82]){
+            blox[level].player.x = blox[level].player.originalX;
+            blox[level].player.y = blox[level].player.originalY;
+            if(blox[level].toaster){
+                for(var i in blox[level].toaster){
+                    blox[level].toaster[i].deleted = false;
+                    blox[level].toaster[i].x = blox[level].toaster[i].originalX;
+                    blox[level].toaster[i].y = blox[level].toaster[i].originalY;
+                    blox[level].toaster[i].xvel = 1;
+                }
+            }
+            if(blox[level].icicles){
+                for(var i in blox[level].icicles){
+                    blox[level].icicles[i].reset = true;
+                }
+            }
+            removeFreeze = true;
+        }
+        
+        for(var i in blox[level].blox){
+            blox[level].blox[i].draw();
+            if(removeFreeze){
+                if(blox[level].blox[i].type === 'FROZEN'){
+                    blox[level].blox.splice(i, 1);
+                    i --;
+                }
+            }
+        }
+        
+        if(blox[level].toaster){
+            for(var i in blox[level].toaster){
+                blox[level].toaster[i].draw();
+                if(rectCollide(blox[level].toaster[i], blox[level].player) && !blox[level].toaster[i].deleted){
+                    blox[level].player.x = blox[level].player.originalX;
+                    blox[level].player.y = blox[level].player.originalY;
+                    goBack = true;
+                }
+            }
+        }
+        
+        if(blox[level].icicles){
+            for(var i in blox[level].icicles){
+                if(rectCollide(blox[level].icicles[i], blox[level].player)){
+                    blox[level].player.x = blox[level].player.originalX;
+                    blox[level].player.y = blox[level].player.originalY;
+                    goBack = true;
+                }
+                blox[level].icicles[i].draw();
+            }
+        }
+        
+        if(blox[level].toaster){
+            for(var i in blox[level].toaster){
+                if(goBack){
+                    blox[level].toaster[i].x = blox[level].toaster[i].originalX;
+                    blox[level].toaster[i].y = blox[level].toaster[i].originalY;
+                }
+            }
+        }
+        
+        blox[level].portal.draw();
+        blox[level].player.draw();
+        
+        if(level === 7){
+            candycane.draw();
+            if(rectCollide(blox[level].player, candycane)){
+                candycane.collected = true;
+            }
+        }
+        
+        if(rectCollide(blox[level].player, blox[level].portal)){
+            trans.active = true;
+        }
+        
+        
+        fill(255, 255, 255);
+        textFont(fonts.h3, 14);
+        textLeading(14);
+        text(story[level], 30, 351, 540, 50);
+        
+        if(candycane.collected && caneInfo.s < 0.991){
+            caneInfo.draw();
+        }
+        
+        noStroke();
+        fill(255, 255, 255, final);
+        rect(0, 0, 600, 400);
+        
+        if(level > 14){
+            final += 3;
+            if(final > 255){
+                scene = 'Finish';
+            }
+        }
+    }
+    if(scene === 'Finish'){
+        background(255);
+        fill(74, 124, 168);
+        textSize(25);
+        text('t o   b e   c o n t i n u e d', 300, 200);
+        textSize(16);
+        text('t h a n k s   f o r   p l a y i n g', 300, 225);
+    }
+    
+    pushStyle();
+    pushMatrix();
+    translate(300, 200);
+    rectMode(CENTER);
+    noStroke();
+    fill(255, 255, 255);
+    if(!trans.out){
+        rotate(90 - trans.rot);
+        rect(0, 0, 400 - trans.plusX, 600 - trans.w);
+    } else {
+        rotate(trans.rot);
+        rect(0, 0, trans.plusX, 10 + trans.w);
+    }
+    popMatrix();
+    popStyle();
+    
+    if(trans.active){
+        trans.plusX /= 1.1;
+        if(trans.plusX < 100){
+            trans.rot /= 1.3;
+        }
+        if(trans.rot < 1){
+            trans.w /= 1.3;
+        }
+        if(trans.w < 0.1){
+            if(trans.type === 'level'){
+                level ++;
+            } else {
+                scene = trans.type;
+            }
+            trans = { active: true, plusX: 400, rot: 90, w: 590, out: true, type: 'level'};
+        }
+        if(trans.out && trans.w < 10){
+            trans = { active: false, plusX: 400, rot: 90, w: 590, out: false, type: 'level'};
+        }
+    }
+    
+    clicked = false;
+    goBack = false;
+    removeFreeze = false;
+};
