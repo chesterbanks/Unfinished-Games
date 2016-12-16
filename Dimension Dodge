@@ -4,6 +4,14 @@ textFont(createFont("Century Gothic Bold"));
 var scene = 'Menu';
 var clicked = false;
 mouseClicked = function(){ clicked = true; };
+var keys = [];
+keyPressed = function(){
+    keys[keyCode] = true;
+};
+keyReleased = function(){
+    keys[keyCode] = false;
+};
+var game;
 
 var Menu = function(){
     this.slide = 300;
@@ -69,7 +77,20 @@ Menu.prototype.draw = function() {
 };
 var menu = new Menu();
 
-var game;
+var Block = function(){
+    this.x = random(0, 400);
+    this.y = -50;
+    this.dimension = floor(random(2));
+};
+var Blocks = [];
+Block.prototype.draw = function() {
+    noStroke();
+    fill(this.dimension === 0 ? color(245) : color(25));
+    rect(this.x, this.y, 30, 30, 5);
+    
+    this.y += 5;
+};
+
 var Player = function(){
     this.x = 200;
     this.y = 320;
@@ -80,6 +101,13 @@ Player.prototype.draw = function() {
     noStroke();
     fill((game.dimension === 0) ? color(245) : color(25));
     rect(this.x, this.y, this.w, this.h);
+    
+    if(keys[RIGHT]){
+        this.x += 5;
+    }
+    if(keys[LEFT]){
+        this.x -= 5;
+    }
 };
 var player = new Player();
 
@@ -87,6 +115,10 @@ var Game = function(){
     this.dimension = 1;
 };
 Game.prototype.draw = function() {
+    if(frameCount % 30 === 5){
+        Blocks.push(new Block());
+    }
+    
     if(this.dimension === 0){
         background(25);
         
@@ -102,6 +134,18 @@ Game.prototype.draw = function() {
     }
     
     player.draw();
+    for(var i in Blocks){
+        if(this.dimension === 0 && Blocks[i].dimension === 0){
+            Blocks[i].draw();
+        }
+        if(this.dimension === 1 && Blocks[i].dimension === 1){
+            Blocks[i].draw();
+        }
+        if(Blocks[i].y > 430){
+            Blocks.splice(i, 1);
+            i --;
+        }
+    }
     
     if(clicked){
         this.dimension = (this.dimension === 0) ? 1 : 0;
