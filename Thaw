@@ -27,47 +27,13 @@ var fonts = {
     h3: createFont('Avenir'),
 };
 
-// Helpful little graphics functions
-var tree = function(x, y, sz){
-    pushMatrix();
-    translate(x, y);
-    scale(sz/10);
-    strokeCap(SQUARE);
-    strokeWeight(5);
-    noStroke();
-    fill(163, 102, 16);
-    rect(-10, 68, 20, 50);
-    fill(0, 122, 49);
-    triangle(0, -105, -60, 70, 60, 70);
-    for(var i = -57; i < 60; i += 5){
-        stroke(255, 255, 255, i/3 + 40);
-        line(0, -105, i, 70);
-    }
-    noStroke();
-    triangle(0, -105, -55, 25, 55, 25);
-    for(var i = -50; i < 55; i += 5){
-        stroke(255, 255, 255, i/3 + 40);
-        line(0, -105, i, 25);
-    }
-    noStroke();
-    triangle(0, -100, -50, -20, 50, -20);
-    for(var i = -44; i < 50; i += 5){
-        stroke(255, 255, 255, i/3 + 40);
-        line(0, -100, i, -20);
-    }
-    popMatrix();
-};
-
 var images = {
     "bg1": function(){
         noStroke();
         for(var i = 0; i < height; i += 20){
             fill(lerpColor(
-                color(12, 44, 59), color(65, 114, 138), i / height));
-            rect(0, i, 300, 20);
-            fill(lerpColor(
-                color(8, 33, 43), color(113, 201, 230), i / height));
-            rect(300, i, 300, 20);
+                color(19, 106, 143), color(154, 207, 230), i / height));
+            rect(0, i, 600, 20);
             for(var j = 0; j < width; j += 5){
                 fill(255, 255, 255, random(10));
                 rect(j, i, 5 + random(-2, 2), 20  + random(-2, 10));
@@ -101,10 +67,10 @@ var images = {
         popMatrix();
         
         noStroke();
-        for(var i = 0; i < 190; i += 10){
+        for(var i = 0; i < 360; i += 20){
             for(var j = 0; j < 130; j += 20){
-                fill(0, random(200, 255), 51, random(100, 255));
-                ellipse(random(-50, 50) + 320 + sin(i) * j * 1.6, 150 + cos(i) * j, 40, 40);
+                fill(0, random(180, 255), random(30, 60), random(50, 255));
+                ellipse(random(-50, 50) + 320 + sin(i) * j * 1.6, 170 + cos(i) * j, 40, 40);
             }
         }
         
@@ -129,18 +95,45 @@ var images = {
         
         return get(0, 0, 20, 20);
     },
-    "snowBlock": function(){
+    "flower": function(){
+        noStroke();
+        fill(255, 255, 255);
+        for(var i = 0; i < 360; i += 60){
+            ellipse(10 + sin(i) * 5, 10 + cos(i) * 5, 7, 7);
+        }
+        fill(71, 227, 32);
+        ellipse(10, 10, 5, 5);
+        
+        return get(0, 0, 20, 20);
+    },
+    "flower2": function(){
+        noStroke();
+        fill(204, 255, 0);
+        for(var i = 0; i < 360; i += 60){
+            ellipse(10 + sin(i) * 5, 10 + cos(i) * 5, 7, 7);
+        }
+        fill(255, 255, 255);
+        ellipse(10, 10, 5, 5);
+        
+        return get(0, 0, 20, 20);
+    },
+    "grassBlock": function(){
         noStroke();
         fill(148, 92, 18);
         rect(0, 0, 20, 20);
-        fill(255, 255, 255);
+        fill(102, 222, 108);
         rect(0, 0, 20, 5);
+        for(var i = 0; i < 20; i += 5){
+            triangle(i, 0, i + 5, 0, i + 2.5, random(15));
+        }
+        
         for(var i = 0; i < 20; i += 5){
             for(var j = 0; j < 20; j += 5){
                 fill(0, 0, 0, random(30, 100));
                 rect(i+random(-2, 2), j+random(-2, 2), 2, 2);
             }
         }
+        
         fill(0, 0, 0, 30);
         rect(0, 0, 5, 20);
         fill(255, 255, 255, 30);
@@ -246,32 +239,22 @@ var rectCollide = function(one, two){
     }
 };
 
-// Snow (the flakes falling from the sky, not the president)
-var Snow = function(){
-    this.x = random(300, width);
+// Rain (the flakes falling from the sky, not the president)
+var Rain = function(){
+    this.x = random(-50, width);
     this.y = random(-20, -100);
-    this.sz = random(1, 20);
+    this.w = random(3, 6);
+    this.h = random(5, 25);
     this.trans = random(100);
-    this.xSp = random(1);
-    this.rot = random(5);
 };
-var Snows = []; // sometimes you need to use bad grammar
-Snow.prototype.draw = function() {
+var Rains = []; // sometimes you need to use bad grammar
+Rain.prototype.draw = function() {
     noStroke();
-    pushMatrix();
-    translate(this.x, this.y);
-    if(this.x > 300){
-        fill(0, 255, 255, this.trans * 8);
-        rect(0, 0, this.sz / 4, this.sz / 2);
-    } else {
-        rotate(frameCount * this.rot);
-        fill(255, 255, 255, this.trans);
-        rect(0, 0, this.sz, this.sz, -5);
-    }
-    popMatrix();
+    fill(108, 205, 240, this.trans);
+    rect(this.x, this.y, this.w, this.h);
     
-    this.y += this.sz;
-    this.x += this.xSp * this.sz / 4;
+    this.x += this.h / 5;
+    this.y += this.h;
 };
 
 // Vital variables
@@ -459,7 +442,7 @@ Portal.prototype.draw = function() {
     ellipse(0, 0, 60, 60);
     for(var i = 0; i < 360; i += 90){
         rotate(i);
-        fill(224, 27, 27, 100);
+        fill(65, 186, 79, 150);
         beginShape();
         vertex(0, 0);
         bezierVertex(-43, -4, -20, -28, -4, -29);
@@ -476,16 +459,24 @@ var block = function(x, y, w, h, type){
     this.w = w;
     this.h = h;
     this.type = type || 'NORMAL';
+    this.flower = floor(random(3));
 };
 block.prototype.draw = function() {
     if(this.type !== 'FROZEN'){
         noStroke();
-        fill(217, 217, 217);
+        fill(82, 181, 85);
         quad(this.x, this.y, this.x + this.w, this.y, this.x + this.w - (this.x + this.w === 600 ? 0 : 5), this.y - 4, this.x + (this.x === 0 ? 0 : 5), this.y - 4);
         
         for(var i = 0; i < this.w; i += 20){
             for(var j = 0; j < this.h; j += 20){
-                image(j === 0 ? images.snowBlock : images.dirtBlock, this.x + i, this.y + j, 20, 20);
+                image(j === 0 ? images.grassBlock : images.dirtBlock, this.x + i, this.y + j, 20, 20);
+                if(j === 0){
+                    if(this.flower === 0){
+                        image(images.flower, (sin(i+frameCount*5)*5) + this.x + i, this.y + j - 19);
+                    } else if (this.flower === 1){
+                        image(images.flower2, (sin(i+frameCount*5)*5) + this.x + i, this.y + j - 19);
+                    }
+                }
             }
         }
     } else {
@@ -768,7 +759,7 @@ for(var i = 0; i < 600; i += 20){
     }
 }
 
-var story = "I have to get back to my family.|I haven't seen them for seven hundred and thirty dreadful days.|And now, on the eve of Christmas, I am finally on my way back to my home.|Oh no, it's one of Them. I didn't think they'd be patrolling this far away from the mines.|They're looking for me.|After watching them guard us for two years in the mines, they have no weaknesses that I can see.|I wonder how fast they figured out how I escaped from the mines.|What's that candy cane? Maybe it'll be of some use.|I'm so glad I got that candy cane. Maybe I can get home for Christmas after all!|My escape from the mines would have been so much easier with this thing...|If I had it back then, maybe Hector and Oskar could have made it, too.|Hm, now that I think about it, I wonder why something this useful was just lying on that hill.|What if someone left it there for ME?|Well, I can't think about that now. I'm almost home!|This is the hill right up to our house!|Where is it?? My house...it's...gone!".split("|");
+var story = "".split("|");
 
 // [Almost] everything about the player
 Player.prototype.applyCollisions = function(xvel, yvel) {
@@ -963,12 +954,12 @@ draw = function() {
         image(images.bg1, 0, 0);
         
         if(!removeLag){
-            Snows.push(new Snow(), new Snow(), new Snow(), new Snow(), new Snow());
+            Rains.push(new Rain(), new Rain(), new Rain(), new Rain(), new Rain());
             
-            for(var i in Snows){
-                Snows[i].draw();
-                if(Snows[i].y > 420 || Snows[i].x < -20 || Snows[i].x > 620){
-                    Snows.splice(i, 1);
+            for(var i in Rains){
+                Rains[i].draw();
+                if(Rains[i].y > 420 || Rains[i].x < -20 || Rains[i].x > 620){
+                    Rains.splice(i, 1);
                     i--;
                 }
             }
@@ -1001,19 +992,19 @@ draw = function() {
         }
         
         if(clicked){
-            //trans.active = true;
+            trans.active = true;
         }
     }
     if(scene === 'Game'){
         image(images.bg1, 0, 0);
         
         if(!removeLag){
-            Snows.push(new Snow(), new Snow(), new Snow(), new Snow());
+            Rains.push(new Rain(), new Rain(), new Rain(), new Rain());
             
-            for(var i in Snows){
-                Snows[i].draw();
-                if(Snows[i].y > 420 || Snows[i].x < -20 || Snows[i].x > 620){
-                    Snows.splice(i, 1);
+            for(var i in Rains){
+                Rains[i].draw();
+                if(Rains[i].y > 420 || Rains[i].x < -20 || Rains[i].x > 620){
+                    Rains.splice(i, 1);
                     i--;
                 }
             }
