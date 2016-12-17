@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>New Webpage</title>
+        <link href="https://fonts.googleapis.com/css?family=Molle:400i|Anton|Montserrat|Dosis" rel="stylesheet">
+        
+        <style>
+            body {
+                background: url("https://www.khanacademy.org/computer-programming/squarish/5295468854706176/5629499534213120.png") fixed;
+                background-size: 200px;
+            }
+            #overlay {
+                margin: -30px;
+                position: fixed;
+                width: 105%;
+                height: 100%;
+                animation-name: bg;
+                animation-duration: 10s;
+                animation-iteration-count: infinite;
+                z-index: -1;
+            }
+            h1 {
+                color: rgb(255, 255, 255);
+                text-align: CeNtEr;
+                font-family: 'Anton';
+                font-size: 40px;
+                text-shadow: 0px 0px 50px rgb(0, 0, 0);
+            }
+            h4 {
+                color: rgb(255, 255, 255);
+                font-family: 'Montserrat';
+                font-size: 30px;
+                text-shadow: 0px 0px 50px rgb(0, 0, 0);
+                padding: 10px;
+                border-bottom: 10px white solid;
+                margin-bottom: 0;
+            }
+            img {
+                float: left;
+                margin-left: 20px;
+                margin-right: 20px;
+                border-radius: 10px;
+                border: 5px rgba(255, 255, 255, 0.5) solid;
+            }
+            p {
+                color: white;
+                padding: 20px;
+                margin-top: 0px;
+                font-family: 'Dosis';
+            }
+            @keyframes bg {
+                0%      {background-color: rgba(255, 0, 0, 0.3);}
+                25%     {background-color: rgba(255, 255, 0, 0.3);}
+                50%     {background-color: rgba(0, 0, 255, 0.3);}
+                75%     {background-color: rgba(255), 255, 0, 0.3);}
+                100%    {background-color: rgba(255, 0, 0, 0.3);}
+            }
+        </style>
+    </head>
+    <body>
+        <div id="overlay"></div>
+        <h1>Chester Banks Game Gallery</h1>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/frost-a-winter-adventure/6162485307572224/5685265389584384.png">
+            <h4 class = "game-text">Frost: A Winter Adventure</h4>
+            <p><i>Frost: A Winter Adventure</i> was my first story-based platformer. It was the most voted of all my games. <br><br><br><br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/block-ninja-2-khantober/6071219690274816/5634387206995968.png">
+            <h4 class = "game-text">Block Ninja 2</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/doctors-vs-burgers/6343681513488384/5724160613416960.png">
+            <h4 class = "game-text">Doctors vs. Burgers</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/knight-monkey-khantober/6397323504582656/5757334940811264.png">
+            <h4 class = "game-text">Knight Monkey</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/river-raid/3040001761/5668600916475904.png">
+            <h4 class = "game-text">River Raid</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/descent-khantober/6379968292519936/5718998062727168.png">
+            <h4 class = "game-text">Descent</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/multi-click/4619327133/60001.png">
+            <h4 class = "game-text">Multi Click</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/cover-of-darkness/6630618465107968/5757334940811264.png">
+            <h4 class = "game-text">Cover of Darkness</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/the-little-hexagon/4827564127682560/5643440998055936.png">
+            <h4 class = "game-text">The Little Hexagon</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/gingerbread-fall/5309266323439616/1.png">
+            <h4 class = "game-text">Gingerbread Fall</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/life-of-a-square/5231013561499648/1.png">
+            <h4 class = "game-text">Life of a Square</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+    </body>
+</html>
