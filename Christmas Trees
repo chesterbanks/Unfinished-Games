@@ -3,6 +3,199 @@
 // REFERENCE
 // different christmas trees at https://www.colourbox.com/preview/11068049-christmas-tree-icons-flat.jpg
 
+var letter = function(which, x, y, sz){
+    noFill();
+    pushMatrix();
+    translate(x, y);
+    scale(sz/50);
+    switch(which.toUpperCase()){
+        case 'A':
+            line(0, -50, -40, 50);
+            line(0, -50, 40, 50);
+            line(-26, 20, 26, 20);
+            break;
+        case 'B':
+            line(-40, -50, -40, 50);
+            line(-40, -50, -10, -50);
+            line(-40, 0, 5, 0);
+            line(-40, 50, 5, 50);
+            arc(-10, -25, 50, 50, -90, 90);
+            arc(5, 25, 50, 50, -90, 90);
+            break;
+        case 'C':
+            arc(0, -15, 80, 70, -180, 0);
+            arc(0, 15, 80, 70, 0, 180);
+            line(-40, 13, -40, -13);
+            break;
+        case 'D':
+            arc(0, -15, 80, 70, -90, 0);
+            arc(0, 15, 80, 70, 0, 90);
+            line(-40, 50, -40, -50);
+            line(-40, 50, 0, 50);
+            line(-40, -50, 0, -50);
+            line(40, -15, 40, 15);
+            break;
+        case 'E':
+            line(-40, -50, -40, 50);
+            line(-40, -50, 40, -50);
+            line(-40, 10, 30, 10);
+            line(-40, 50, 40, 50);
+            break;
+        case 'F':
+            line(-40, -50, -40, 50);
+            line(-40, -50, 40, -50);
+            line(-40, 10, 30, 10);
+            break;
+        case 'G':
+            arc(0, -15, 80, 70, -180, 0);
+            arc(0, 15, 80, 70, 0, 180);
+            line(-40, 13, -40, -13);
+            line(-10, 15, 40, 15);
+            break;
+        case 'H':
+            line(-40, -50, -40, 50);
+            line(-40, 10, 40, 10);
+            line(40, -50, 40, 50);
+            break;
+        case 'I':
+            line(0, -50, 0, 50);
+            line(-40, -50, 40, -50);
+            line(-40, 50, 40, 50);
+            break;
+        case 'J':
+            arc(-30, 15, 80, 70, 0, 90);
+            line(-40, 50, -30, 50);
+            line(10, -50, 10, 15);
+            break;
+        case 'K':
+            line(-40, -50, -40, 50);
+            line(-40, 15, 40, -50);
+            line(-20, 0, 40, 50);
+            break;
+        case 'L':
+            line(-40, -50, -40, 50);
+            line(-40, 50, 40, 50);
+            break;
+        case 'M':
+            line(-40, -50, -40, 50);
+            line(0, 20, -40, -50);
+            line(0, 20, 40, -50);
+            line(40, -50, 40, 50);
+            break;
+        case 'N':
+            line(-40, -50, -40, 50);
+            line(40, 50, -40, -50);
+            line(40, -50, 40, 50);
+            break;
+        case 'O':
+            ellipse(0, 0, 80, 80);
+            break;
+        case 'P':
+            line(-40, -50, -40, 50);
+            line(-40, -50, 5, -50);
+            line(-40, 0, 5, 0);
+            arc(5, -25, 50, 50, -90, 90);
+            break;
+        case 'Q':
+            arc(0, -15, 80, 70, -180, 0);
+            arc(0, 15, 80, 70, 0, 180);
+            line(-40, 13, -40, -13);
+            line(40, 13, 40, -13);
+            arc(5, 45, 30, 30, -180, 0);
+            arc(30, 40, 20, 20, 0, 180);
+            break;
+        case 'R':
+            line(-40, -50, -40, 50);
+            line(-40, -50, 5, -50);
+            line(-40, 0, 5, 0);
+            arc(5, -25, 50, 50, -90, 90);
+            line(0, 0, 40, 50);
+            break;
+        case 'S':
+            line(-20, -50, 15, -50);
+            line(-15, 0, 15, 0);
+            line(-15, 50, 15, 50);
+            arc(-15, -25, 50, 50, -270, -90);
+            arc(15, 25, 50, 50, -90, 90);
+            arc(15, -25, 50, 50, -100, -30);
+            arc(-15, 25, 50, 50, 90, 150);
+            break;
+        case 'T':
+            line(0, -50, 0, 50);
+            line(-40, -50, 40, -50);
+            break;
+        case 'U':
+            line(-40, -50, -40, 10);
+            line(40, -50, 40, 10);
+            arc(0, 10, 80, 80, 0, 180);
+            break;
+        case 'V':
+            line(-40, -50, 0, 50);
+            line(40, -50, 0, 50);
+            break;
+        case 'W':
+            line(-40, -50, -25, 50);
+            line(40, -50, 25, 50);
+            line(0, 5, -25, 50);
+            line(0, 5, 25, 50);
+            break;
+        case 'X':
+            line(-40, -50, 40, 50);
+            line(-40, 50, 40, -50);
+            break;
+        case 'Y':
+            line(-40, -50, 0, 0);
+            line(0, 0, 40, -50);
+            line(0, 0, 0, 50);
+            break;
+        case 'Z':
+            line(-40, -50, 40, -50);
+            line(40, -50, -40, 50);
+            line(-40, 50, 40, 50);
+            break;
+        case '.':
+           ellipse(0, 42, 15, 15);
+            break;
+        case '\'':
+            line(0, -20, 10, -50);
+            break;
+        case '?':
+            arc(0, -30, 50, 50, 220, 440);
+            line(0, 20, 0, 0);
+            ellipse(0, 50, 10, 10);
+            break;
+        case '!':
+            line(0, 10, 0, -50);
+            ellipse(0, 50, 10, 10);
+            break;
+    }
+    popMatrix();
+};
+var word = function(which, x, y, sz){
+    var theWord = which.split("");
+    
+    
+    for(var i in theWord){
+        pushMatrix();
+        translate(x - ((theWord.length - 1)*sz), y);
+        if((theWord[i] === '\'' || theWord[i-1] === '\'') || (theWord[i] === '.' || theWord[i-1] === '.')){
+            letter(theWord[i], i*(sz*1.9), 0, sz);
+        } else {
+            letter(theWord[i], i*(sz*2), 0, sz);
+        }
+        popMatrix();
+    }
+};
+var word2 = function(which, x, y, sz){
+    strokeWeight(30);
+    word(which, x, y + 3, sz);
+    for(var i = 25; i > 0; i -= 3){
+        stroke(255, 255, 255, 20);
+        strokeWeight(i);
+        word(which, x, y, sz);
+    }
+};
+
 var tree = function(x, y, sz, which){
     textAlign(CENTER, CENTER);
     rectMode(CENTER);
@@ -69,11 +262,11 @@ var tree = function(x, y, sz, which){
             ellipse(-8, -23, 12, 12);
             fill(34, 161, 53);
             ellipse(7, -18, 15, 15);
-            fill(43, 214, 68);
+            fill(43, 201, 64);
             ellipse(16, -7, 8, 8);
             fill(30, 158, 49);
             ellipse(-14, -12, 8, 8);
-            fill(34, 156, 53);
+            fill(48, 176, 67);
             ellipse(-5, -11, 6, 6);
             ellipse(-8, 2, 12, 12);
             ellipse(5, -2, 12, 12);
@@ -94,4 +287,36 @@ var tree = function(x, y, sz, which){
     popMatrix();
 };
 
-tree(200, 200, 100, 2);
+draw = function() {
+    background(255, 255, 255);
+    noStroke();
+    fill(0, 0, 0, 20);
+    rect(0, 0, 0.5, 0, -600);
+    
+    tree(100, 200, 100, 0);
+    tree(200, 200, 150, 1);
+    tree(300, 200, 100, 2);
+    
+    strokeWeight(30);
+    stroke(209, 209, 209);
+    word('Merry', 200, 309, 25);
+    word('Christmas', 200, 359, 15);
+    
+    stroke(42, 209, 64);
+    word2('Merry', 200, 300, 25);
+    stroke(217, 54, 54);
+    word2('Christmas', 200, 350, 15);
+    
+    noStroke();
+    fill(222, 40, 40);
+    triangle(5, 5, 25, 5, 5, 25);
+    triangle(width - 5, 5, width - 25, 5, width - 5, 25);
+    triangle(width - 5, height - 5, width - 25, height - 5, width - 5, height - 25);
+    triangle(5, height - 5, 25, height - 5, 5, height - 25);
+    fill(235);
+    rect(16, 16, 15, 15);
+    rect(383, 16, 15, 15);
+    rect(16, 383, 15, 15);
+    fill(255);
+    rect(383, 383, 15, 15);
+};
