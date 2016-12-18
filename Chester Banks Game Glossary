@@ -42,6 +42,7 @@
                 margin-right: 20px;
                 border-radius: 10px;
                 border: 5px rgba(255, 255, 255, 0.5) solid;
+                box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.5);
             }
             p {
                 color: white;
@@ -125,6 +126,78 @@
         <div class = "game">
             <img class = "game-img" src="https://www.khanacademy.org/computer-programming/life-of-a-square/5231013561499648/1.png">
             <h4 class = "game-text">Life of a Square</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/jewel-catcher/6660324846600192/5730192894984192.png">
+            <h4 class = "game-text">Jewel Catcher</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/scoop-it-khantober/6493315925671936/5634387206995968.png">
+            <h4 class = "game-text">Scoop It</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/solid/6151503357280256/5718998062727168.png">
+            <h4 class = "game-text">Solid</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/polar-opposites-khantober/5451500160155648/5757334940811264.png">
+            <h4 class = "game-text">Polar Opposites</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/museum-heist/3980767602/100001.png">
+            <h4 class = "game-text">Museum Heist</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/block-ninja-khantober/4542135253204992/5741031244955648.png">
+            <h4 class = "game-text">Block Ninja</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/cyber-trek-lite-version/5746457726681088/5649050225344512.png">
+            <h4 class = "game-text">Cyber Trek</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/ascent/5054945499021312/5661458385862656.png">
+            <h4 class = "game-text">Ascent</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/press-it/5449387357634560/5657382461898752.png">
+            <h4 class = "game-text">Press It</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/level-down/5386283912/40001.png">
+            <h4 class = "game-text">Level Down</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/tiny-pixel/6727952529227776/5766466041282560.png">
+            <h4 class = "game-text">Tiny Pixel</h4>
+            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+        </div>
+        
+        <div class = "game">
+            <img class = "game-img" src="https://www.khanacademy.org/computer-programming/chance-khantober/5502899564707840/5741031244955648.png">
+            <h4 class = "game-text">Chance</h4>
             <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
         </div>
     </body>
