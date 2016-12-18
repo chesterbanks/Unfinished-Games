@@ -102,19 +102,19 @@
         <div class = "game">
             <img class = "game-img" src="https://www.khanacademy.org/computer-programming/multi-click/4619327133/60001.png">
             <h4 class = "game-text">Multi Click</h4>
-            <p><i>Multi Click</i> was <br><br><br><br><br><br></p>
+            <p><i>Multi Click</i> was a game built around a simple idea - the player controlled five characters at once, clicking to switch their directions and avoiding the edges and falling bombs. This game was recieved quite well, for its simple (but not easy) and unique gameplay and its clean graphics.<br><br><br><br></p>
         </div>
         
         <div class = "game">
             <img class = "game-img" src="https://www.khanacademy.org/computer-programming/cover-of-darkness/6630618465107968/5757334940811264.png">
             <h4 class = "game-text">Cover of Darkness</h4>
-            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+            <p><i>Cover of Darkness</i> was my third game made for Khantober 2016. The player controlled a soldier sneaking through a dark minefield. A searchlight exposed the mines occasionally. The player had to make it to the flag without being caught in the searchlight or stepping on a mine. People liked this game for its unique gameplay.<br><br></p>
         </div>
         
         <div class = "game">
             <img class = "game-img" src="https://www.khanacademy.org/computer-programming/the-little-hexagon/4827564127682560/5643440998055936.png">
             <h4 class = "game-text">The Little Hexagon</h4>
-            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+            <p><i>The Little Hexagon </i> was my first endless runner. The player controlled a hexagon-shaped character through dangerous terrain, jumping over buzzsaws and ducking under overhangs. There was also a shop in the game, where the player could buy more hexagons with better abilities.<br><br><br></p>
         </div>
         
         <div class = "game">
