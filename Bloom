@@ -759,7 +759,7 @@ for(var i = 0; i < 600; i += 20){
     }
 }
 
-var story = "".split("|");
+var story = "Winter is gone, and so is my family.|Seeing these guards is becoming more and more common, I’m guessing they’re getting more people to work in their mines.|I remember when they captured me in the forest seven hundred and fifty days ago.|I never even got to say goodbye to my wife and son.|Surprisingly, the candy cane can still freeze them when the weather isn’t so cold.|Hey! It’s my old neighbor, Frank!".split("|");
 
 // [Almost] everything about the player
 Player.prototype.applyCollisions = function(xvel, yvel) {
