@@ -126,19 +126,19 @@
         <div class = "game">
             <img class = "game-img" src="https://www.khanacademy.org/computer-programming/life-of-a-square/5231013561499648/1.png">
             <h4 class = "game-text">Life of a Square</h4>
-            <p><i>Life of a Square</i> was my first three-stage game - three minigames mashed into one big game. The first game had the same idea behind it as Agar.io, the second was a dodge game, and the third a typing<br><br></p>
+            <p><i>Life of a Square</i> was my first three-stage game - three minigames mashed into one big game. The first game had the same idea behind it as Agar.io, the second was a dodge game, and the third a typing game. People liked this game for its fun gameplay and smooth graphics.<br><br><br></p>
         </div>
         
         <div class = "game">
             <img class = "game-img" src="https://www.khanacademy.org/computer-programming/jewel-catcher/6660324846600192/5730192894984192.png">
             <h4 class = "game-text">Jewel Catcher</h4>
-            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+            <p><i>Jewel Catcher</i> was my first game made with OOP (object-oriented programming). It was the sequel to another game I had made in Khantober 2015 (the year before). It was a game where the player caught falling gems and deposited the basket once it was full. There were two game modes: Normal and Gem Crazy. People liked this game for its fun gameplay (and the friendly little jewel).<br></p>
         </div>
         
         <div class = "game">
             <img class = "game-img" src="https://www.khanacademy.org/computer-programming/scoop-it-khantober/6493315925671936/5634387206995968.png">
             <h4 class = "game-text">Scoop It</h4>
-            <p><i>Block Ninja 2</i> was my first game made for Khantober 2016. It was the sequel to another game I had made in Khantober 2015 (the year before). Both games were loosely based off of a Ketchapp game titled "Make Them Jump". Block Ninja 2  was far better than the first, with increasing numbers of ninjas, and cool transitions and animations.<br><br></p>
+            <p><i>Scoop It</i> was an ice-cream themed game made for Khantober 2015. It was loosely based off of a game I used to play on PBS Kids when I was younger. In the game, the player had to scoop ice cream onto a cone to complete each order correctly.<br><br></p>
         </div>
         
         <div class = "game">
