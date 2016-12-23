@@ -3,6 +3,8 @@
 // REFERENCE
 // different christmas trees at https://www.colourbox.com/preview/11068049-christmas-tree-icons-flat.jpg
 
+var bgColor = color(22, 97, 30);
+
 var letter = function(which, x, y, sz){
     noFill();
     pushMatrix();
@@ -233,7 +235,7 @@ var tree = function(x, y, sz, which){
             rect(0, 32, 20, 5);
             fill(35, 186, 58);
             triangle(-35, 30, 35, 30, 0, -70);
-            stroke(255);
+            stroke(bgColor);
             strokeWeight(5);
             line(-30, -30, 20, -70);
             line(-30, 0, 20, -40);
@@ -287,36 +289,39 @@ var tree = function(x, y, sz, which){
     popMatrix();
 };
 
+var sz1 = -150, sz2 = -100, sz3 = -100, sz4 = -25, sz5 = -15;
+
 draw = function() {
-    background(255, 255, 255);
+    background(bgColor);
     noStroke();
     fill(0, 0, 0, 20);
     rect(0, 0, 0.5, 0, -600);
     
-    tree(100, 200, 100, 0);
-    tree(200, 200, 150, 1);
-    tree(300, 200, 100, 2);
+    tree(100, 200, 100 + sz2, 0);
+    tree(200, 200, 150 + sz1, 1);
+    tree(300, 200, 100 + sz3, 2);
     
     strokeWeight(30);
-    stroke(209, 209, 209);
-    word('Merry', 200, 309, 25);
-    word('Christmas', 200, 359, 15);
+    stroke(0, 0, 0, 30);
+    word('Merry', 200, 309, 25 + sz4);
+    word('Christmas', 200, 359, 15 + sz5);
     
     stroke(42, 209, 64);
-    word2('Merry', 200, 300, 25);
+    word2('Merry', 200, 300, 25 + sz4);
     stroke(217, 54, 54);
-    word2('Christmas', 200, 350, 15);
+    word2('Christmas', 200, 350, 15 + sz5);
     
-    noStroke();
-    fill(222, 40, 40);
-    triangle(5, 5, 25, 5, 5, 25);
-    triangle(width - 5, 5, width - 25, 5, width - 5, 25);
-    triangle(width - 5, height - 5, width - 25, height - 5, width - 5, height - 25);
-    triangle(5, height - 5, 25, height - 5, 5, height - 25);
-    fill(235);
-    rect(16, 16, 15, 15);
-    rect(383, 16, 15, 15);
-    rect(16, 383, 15, 15);
-    fill(255);
-    rect(383, 383, 15, 15);
+    sz1 /= 1.2;
+    if(sz1 > -1){
+        sz2 /= 1.2;
+    }
+    if(sz2 > -1){
+        sz3 /= 1.2;
+    }
+    if(sz3 > -1){
+        sz4 /= 1.2;
+    }
+    if(sz4 > -1){
+        sz5 /= 1.2;
+    }
 };
