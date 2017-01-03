@@ -1,3 +1,14 @@
+/**
+ * That's Just An Expression
+ * Chester Banks
+ * January 4 2016
+ * 
+ * My first game in 2017! I hope to make 20+ games this year!
+ * 
+ * This program's LUCKY SUBSCRIBER is NAME HERE! Find their profile here: khanacademy.org/profile/namehere
+ * Liked this game? Subscribe to me here: khanacademy.org/cs/cb/4790207744704512
+*/
+
 var clicked = false, overButton = false;
 mouseClicked = function(){
     clicked = true;
@@ -28,6 +39,61 @@ var button = function(txt, x, y, next){
     }
     popStyle();
 };
+var button2 = function(x, y, txt, w, h, n, tSize, settings){
+    this.x = x;
+    this.y = y;
+    this.txt = txt;
+    this.trans = 20;
+    this.tSp = 20;
+    this.txtColor = 255;
+    this.w = w;
+    this.h = h;
+    this.n = n;
+    this.tSize = tSize;
+    this.settings = settings;
+};
+button2.prototype.draw = function() {
+    pushStyle();
+    rectMode(CENTER);
+    stroke(255); // White stroke
+    strokeWeight(2); // Thin stroke
+    fill(255, 255, 255, this.trans); // Fill it white with the current transparency (20)
+    (rect)(this.x, this.y, this.w, this.h, 0, 15, 0, 15); // Draw button
+    this.trans += this.tSp; // Transparency rising with the transparency speed (which is -20)
+    fill(this.txtColor, this.txtColor, this.txtColor); // Text color
+    this.txtColor -= this.tSp; // Text color decreasing with the transparency speed (which is -20)
+    textSize(this.tSize); // Text size
+    text(this.txt, this.x, this.y);
+    /* Checks if mouse is in button */
+    if(mouseX > this.x - this.w/2 && mouseX < this.x + this.w/2 && mouseY > this.y - this.h/2 && mouseY < this.y + this.h/2){
+        this.tSp = 10; // If mouse is in button, then set transparency speed to +10
+        if(clicked){ // If mouse is clicked,
+            this.trans = 0; // Transparency is zero
+            this.txtColor = 255; // Text color is white
+            trans.nextScene = this.n;
+            trans.active = true; // And we're off the current page.
+        }
+    } else { // If mouse isn't in button
+        this.tSp = -10; // Set transparency speed to -10
+        this.txtColor = 255; // And text color to white
+    }
+    if(this.trans > 255){ // If transparency is any more than 255,
+        this.trans = 255; // Then it will return back to 255.
+    }
+    if(this.trans < 20){ // If transparency is any less than 20,
+        this.trans = 20; // Then it will return back to 20.
+    }
+    popStyle();
+};
+var buttons = {
+    wrongTree: new button2(250, 100, "BARKING UP THE WRONG TREE", 430, 60, "Play", 20),
+    silverLining: new button2(250, 170, "EVERY CLOUD HAS A SILVER LINING", 430, 60, "Play", 20),
+    spillBeans: new button2(250, 240, "SPILL THE BEANS", 430, 60, "Play", 20),
+    catsAndDogs: new button2(250, 310, "IT'S RAINING CATS AND DOGS", 430, 60, 'Cats', 20),
+    greenerGrass: new button2(250, 380, "GRASS IS GREENER ON THE OTHER SIDE", 430, 60, "Play", 20),
+    disguisedBlessing: new button2(250, 450, "BLESSING IN DISGUISE", 430, 60, "Play", 20),
+};
+
 var colorfulBG = function(){
     noStroke();
     for(var i = 0; i < 250; i += 10){
@@ -99,9 +165,23 @@ draw = function() {
     }
     
     if(scene === 'Levels'){
-        fill(25);
-        textSize(20);
-        text('- "Barking up the wrong tree"\n- "Blessing in disguise"\n- "Don\'t judge a book by its cover"\n- "Every cloud has a silver lining"\n- "Feeling a bit under the weather"\n- "Made from scratch"\n- "Grass is greener on the other side"\n- "Raining cats and dogs"\n- "Spill the beans"\n- "You stole my thunder"', 250, 250);
+        fill(255);
+        textSize(50);
+        text('LEVELS.', 170, 50);
+        
+        buttons.wrongTree.draw();
+        buttons.silverLining.draw();
+        buttons.spillBeans.draw();
+        buttons.catsAndDogs.draw();
+        buttons.greenerGrass.draw();
+        buttons.disguisedBlessing.draw();
+    }
+    
+    if(scene === 'Cats'){
+        for(var i = 0; i < 600; i += 10){
+            fill(lerpColor(color(31, 113, 184), color(186, 226, 245), i/600));
+            rect(0, i, 600, 10);
+        }
     }
     
     cursor(overButton ? 'pointer' : 'default');
