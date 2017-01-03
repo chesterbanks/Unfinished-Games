@@ -1,0 +1,134 @@
+var clicked = false, overButton = false;
+mouseClicked = function(){
+    clicked = true;
+};
+
+var scene = 'Menu';
+
+var trans = {sz: 480, active: false, nextScene: 'Game', out: false};
+
+textFont(createFont('Avenir Bold'));
+
+var button = function(txt, x, y, next){
+    pushStyle();
+    textSize(25);
+    textAlign(LEFT, BASELINE);
+    if(mouseY > y - 17 && mouseY < y){
+        overButton = true;
+        fill(25);
+        text('> ' + txt, x, y);
+        if(clicked){
+            trans.nextScene = next;
+            trans.active = true;
+            clicked = false;
+        }
+    } else {
+        fill(255);
+        text(txt, x, y);
+    }
+    popStyle();
+};
+var colorfulBG = function(){
+    noStroke();
+    for(var i = 0; i < 250; i += 10){
+        fill(lerpColor(color(30, 184, 99), color(214, 217, 32), i/250));
+        rect(0, i, 600, 10);
+        
+        fill(lerpColor(color(214, 217, 32), color(74, 190, 240), i/250));
+        rect(0, i + 250, 600, 10);
+    }
+    for(var i = -80 + frameCount%40; i < width; i += 40){
+        for(var j = -80 + frameCount*2%40; j < height; j += 40){
+            fill(0, 0, 0, 30);
+            rect(i, j, 30, 30, -6);
+            rect(i+10, j+10, 20, 20, -5);
+        }
+    }
+};
+
+draw = function() {
+    textAlign(CENTER, CENTER);
+    
+    colorfulBG();
+    if(scene === 'Menu'){
+        pushStyle();
+        textAlign(LEFT, BASELINE);
+        fill(0, 0, 0, 30);
+        textSize(60);
+        textLeading(60);
+        text('THAT\'S\nJUST\nAN\nEXPRESSION', 40, 110);
+        fill(255);
+        text('THAT\'S\nJUST\nAN\nEXPRESSION', 40, 100);
+        textSize(20);
+        text('CHESTER BANKS | JANUARY 2016', 40, 310);
+        textSize(25);
+        button('PLAY', 40, 350, 'Levels');
+        button('INSTRUCTIONS', 40, 375, 'Instructions');
+        button('SETTINGS', 40, 400, 'Settings');
+        button('CREDITS', 40, 425, 'Credits');
+        button('UPDATE LOG', 40, 450, 'Updates');
+        popStyle();
+    }
+    if(scene === 'Instructions'){
+        fill(255);
+        textSize(45);
+        text('INSTRUCTIONS.', 250, 60); 
+        
+        button('BACK', 30, 470, 'Menu');
+    }
+    if(scene === 'Settings'){
+        fill(255);
+        textSize(45);
+        text('SETTINGS.', 250, 60); 
+        
+        button('BACK', 30, 470, 'Menu');
+    }
+    if(scene === 'Credits'){
+        fill(255);
+        textSize(45);
+        text('CREDITS.', 250, 60); 
+        
+        button('BACK', 30, 470, 'Menu');
+    }
+    if(scene === 'Updates'){
+        fill(255);
+        textSize(45);
+        text('UPDATE LOG.', 250, 60); 
+        
+        button('BACK', 30, 470, 'Menu');
+    }
+    
+    if(scene === 'Levels'){
+        fill(25);
+        textSize(20);
+        text('- "Barking up the wrong tree"\n- "Blessing in disguise"\n- "Don\'t judge a book by its cover"\n- "Every cloud has a silver lining"\n- "Feeling a bit under the weather"\n- "Made from scratch"\n- "Grass is greener on the other side"\n- "Raining cats and dogs"\n- "Spill the beans"\n- "You stole my thunder"', 250, 250);
+    }
+    
+    cursor(overButton ? 'pointer' : 'default');
+    
+    noFill();
+    stroke(255);
+    if(trans.out){
+        strokeWeight(trans.sz);
+    } else {
+        strokeWeight(500 - trans.sz);
+    }
+    rect(0, 0, width, height);
+    
+    if(trans.active){
+        trans.sz /= 1.5;
+        if(trans.sz < 10 && !trans.out){
+            trans.sz = 480;
+            trans.out = true;
+            scene = trans.nextScene;
+        }
+        if(trans.out && trans.sz < 20){
+            trans.active = false;
+            trans.sz = 480;
+            trans.out = false;
+        }
+    }
+    
+    clicked = false;
+    overButton = false;
+};
