@@ -10,11 +10,20 @@
 */
 
 var clicked = false, overButton = false;
-mouseClicked = function(){
-    clicked = true;
+mouseClicked = function(){ clicked = true; };
+
+var keys = [];
+keyPressed = function(){ keys[keyCode] = true; };
+keyReleased = function(){ keys[keyCode] = false; };
+
+var rectCollide = function(one, two){
+    if(one.x+one.w > two.x && one.y+one.h > two.y && one.x < two.x+two.w && one.y < two.y+two.h){
+        return true;
+    }
 };
 
 var scene = 'Menu';
+var lives = 3;
 
 var trans = {sz: 480, active: false, nextScene: 'Game', out: false};
 
@@ -64,7 +73,6 @@ button2.prototype.draw = function() {
     this.txtColor -= this.tSp; // Text color decreasing with the transparency speed (which is -20)
     textSize(this.tSize); // Text size
     text(this.txt, this.x, this.y);
-    /* Checks if mouse is in button */
     if(mouseX > this.x - this.w/2 && mouseX < this.x + this.w/2 && mouseY > this.y - this.h/2 && mouseY < this.y + this.h/2){
         this.tSp = 10; // If mouse is in button, then set transparency speed to +10
         if(clicked){ // If mouse is clicked,
@@ -111,6 +119,147 @@ var colorfulBG = function(){
         }
     }
 };
+
+var catsAndDogs = function(){
+    this.Block = function(){
+        this.x = random(width); 
+        this.y = -50;
+        this.w = 50;
+        this.h = 25;
+        this.r = random(-10, 10);
+        this.collidable = true;
+    };
+    this.Blocks = [];
+    this.Block.prototype.draw = function() {
+        noStroke();
+        pushMatrix();
+        translate(this.x, this.y);
+        fill(163, 113, 80);
+        rect(4, 18, 10, 15, 8);
+        rect(34, 18, 10, 15, 8);
+        fill(196, 136, 94);
+        rect(7, 20, 10, 15, 8);
+        rect(38, 20, 10, 15, 8);
+        rect(10, 30, 10, 5, 8);
+        rect(41, 30, 10, 5, 8);
+        fill(196, 136, 94);
+        rect(0, 0, this.w, this.h, 8);
+        fill(209, 150, 111);
+        rect(34, -23, 10, 15, 7);
+        rect(51, -21, 10, 15, 7);
+        fill(0, 0, 0, 30);
+        rect(36, -19, 7, 10, 7);
+        rect(53, -18, 7, 10, 7);
+        fill(209, 150, 111);
+        rect(35, -15, 25, 30, 7);
+        fill(45);
+        ellipse(43, -3, 5, 5);
+        ellipse(52, -3, 5, 5);
+        triangle(45, 2, 51, 2, 48, 5);
+        noFill();
+        stroke(45);
+        strokeWeight(1);
+        arc(45, 4, 5, 5, 0, 180);
+        arc(51, 4, 5, 5, 0, 180);
+        strokeWeight(5);
+        stroke(196, 136, 94);
+        arc(8, -9, 30, 26, 90, 228);
+        popMatrix();
+        
+        if(this.y < 418){
+            this.y += 5; 
+        } else {
+            this.x += 3;
+        }
+    };
+    
+    this.Player = function(){
+        this.x = 200;
+        this.y = 423; 
+        this.w = 25;
+        this.h = 30;
+        
+        this.yvel = -10;
+        this.jumping = false;
+    };
+    this.Player.prototype.draw = function() {
+        noStroke();
+        fill(245, 245, 245);
+        rect(this.x, this.y, this.w, this.h); 
+        if(keys[RIGHT]){ 
+            this.x += 5; 
+        }
+        if(keys[LEFT]){ 
+            this.x -= 5;
+        }
+        if(keys[UP]){
+            this.jumping = true;
+        }
+        
+        if(this.jumping){
+            this.y += this.yvel;
+            this.yvel += 0.3;
+        }
+        if(this.y > 423){
+            this.jumping = false;
+            this.yvel = -10;
+            this.y = 423;
+        }
+    };
+    this.player = new this.Player();
+};
+catsAndDogs.prototype.draw = function() {
+    for(var i = 0; i < 600; i += 10){
+        fill(lerpColor(color(31, 113, 184), color(186, 226, 245), i/600));
+        rect(0, i, 600, 10);
+    }
+    
+    for(var i in this.Blocks){
+        if(rectCollide(this.player, this.Blocks[i]) && this.Blocks[i].collidable){
+            lives --;
+            this.Blocks[i].collidable = false;
+        }
+    }
+    
+    if(frameCount % 30 === 5){
+        this.Blocks.push(new this.Block());
+    }
+
+    for(var i = 0; i < this.Blocks.length; i ++){
+        this.Blocks[i].draw();
+        if(this.Blocks[i].x > 530){
+            this.Blocks.splice(i, 1);
+            i --;
+        }
+    }
+    
+    // Platform
+    pushStyle();
+    rectMode(CENTER);
+    noStroke();
+    fill(100);
+    rect(250, 480, 600, 40);
+    fill(0, 0, 0, 50);
+    rect(300, 463, 600, 10);
+    fill(161, 161, 161);
+    rect(300, 460, 600, 10);
+    fill(145, 145, 145);
+    rect(300, 453, 600, 6);
+    popStyle();
+    
+    for(var i = 0; i < width; i += 20){
+        fill(176, 176, 176, random(150));
+        rect(i, 585 + random(-15, 10), random(4, 8), random(4, 8));
+        rect(i + 10, 585 + random(-15, 10), random(4, 8), random(4, 8));
+    }
+    
+    this.player.draw();
+    
+    fill(245);
+    textSize(15);
+    text('Lives: ' + lives, 50, 30);
+};
+var game1 = new catsAndDogs();
 
 draw = function() {
     textAlign(CENTER, CENTER);
@@ -178,10 +327,7 @@ draw = function() {
     }
     
     if(scene === 'Cats'){
-        for(var i = 0; i < 600; i += 10){
-            fill(lerpColor(color(31, 113, 184), color(186, 226, 245), i/600));
-            rect(0, i, 600, 10);
-        }
+        game1.draw();
     }
     
     cursor(overButton ? 'pointer' : 'default');
