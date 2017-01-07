@@ -54,10 +54,20 @@ var info = {
     title: 'Bounce',
     title_style: 0,
     creator: 'Chester Banks',
+    
+    changingTitle: false,
 };
 var whichInfo = 0;
 
 mouseClicked = function(){clicked = true;};
+
+keyPressed = function(){
+    if(keyCode === BACKSPACE && info.title.length > 0){
+        info.title = info.title.substring(0, info.title.length - 1);
+    } else {
+        info.title += key.toString();
+    }
+};
 
 draw = function() {
     background(info.bg_colors[abs(info.bg_color)%info.bg_colors.length]);
@@ -161,9 +171,13 @@ draw = function() {
             text(info.title.toUpperCase(), sin(i)*10 + width / 2, cos(i)*10 + height / 2);
         }
     } else if (info.title_style === 3){
-        fill(255, 255, 255, 15);
+        fill(163, 163, 163);
         for(var i = 0; i < 360; i += 30){
-            text(info.title.toUpperCase(), sin(i)*10 + width / 2, cos(i)*10 + height / 2);
+            text(info.title.toUpperCase(), sin(i)*4 + width / 2, 6 + cos(i)*4 + height / 2);
+        }
+        fill(201, 201, 201);
+        for(var i = 0; i < 360; i += 30){
+            text(info.title.toUpperCase(), sin(i)*4 + width / 2, cos(i)*4 + height / 2);
         }
     }
     fill(255);
@@ -241,6 +255,23 @@ draw = function() {
         text('Title style', 300, 110);
     }
     
+    // Title & Author
+    pushStyle();
+    textFont(createFont('Trebuchet MS'), 20);
+    textAlign(LEFT, CENTER);
+    stroke(224, 224, 224);
+    fill(255);
+    strokeWeight(3);
+    rect(70, 500, 200, 30, 5);
+    fill(45);
+    text(info.title, 80, 515);
+    
+    if(mouseX > 70 && mouseX < 270 && mouseY > 500 && mouseY < 530){
+        info.changingTitle = true;
+    }
+    
+    popStyle();
+    
     // Export code
     if(clicked && mouseButton === RIGHT){
         println('/** MENU MADE BY CHESTER BANKS\' MENU MAKER. CHECK OUT HIS PROFILE HERE: khanacademy.org/profile/chesterbanks */\n\n');
@@ -274,6 +305,12 @@ draw = function() {
         } else if (info.bg_style === 11){
             println('    for(var i = 0; i < 1000; i += 50){\n        strokeWeight(100);\n        stroke(0, 0, 0, 10);\n        line(0, i, 700, i/2);\n        line(i, 0, i/2, 700);\n    }');
         }
+        
+        // Mumbo jumbo for title styles
+        if (info.title_style === 3){    
+            println('    fill(163, 163, 163);\n    for(var i = 0; i < 360; i += 30){\n        text(info.title.toUpperCase(), sin(i)*4 + width / 2, 6 + cos(i)*4 + height / 2);\n    }\n    fill(201, 201, 201);\n    for(var i = 0; i < 360; i += 30){\n         text(info.title.toUpperCase(), sin(i)*4 + width / 2, cos(i)*4 + height / 2);\n    }\n');
+        }
+        
         println('    fill(255);\n    textSize(100);\n    text("' + info.title.toUpperCase() + '", width / 2, height / 2);\n    textSize(25);\n    text("Created by ' + info.creator + '", width / 2, height / 2 + 55);');
         println('};');
     }
