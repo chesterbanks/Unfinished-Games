@@ -1,7 +1,17 @@
 // Settings
 {
     textAlign(CENTER, CENTER);
-    textFont(createFont("Verdana Bold"));
+    
+    var myFont = 'Oswald';
+    var loadGoogleFont = (function () {
+        return this.Function ( "gflink", "callback", "isloaded", "var gfs = document.querySelectorAll('link[href=\"'+gflink+'\"]');if(!gfs.length){var f=document.createElement('link');f.setAttribute('rel','stylesheet');f.setAttribute('type','text/css');f.onload=callback;f.setAttribute('href',gflink);document.head.appendChild(f);}else if(isloaded){isloaded();}");
+    })();
+    
+    var fontloaded = false;
+    var callback = function () {
+        textFont(createFont(myFont), 30);
+        fontloaded = true;
+    };
 }
 
 // System objects
@@ -26,7 +36,8 @@
 }
 
 // Functions
-{   var tree = function(x, y, sz, h){
+{   
+    var tree = function(x, y, sz, h){
         fill(136, 255, 0);
         ellipse(x, y, sz, sz);
         fill(0, 0, 0, 30);
@@ -50,286 +61,7 @@
         ellipse(-25, -13, 30, 23);
         popMatrix();
     };
-    var flatCity = function(){
-        rectMode(CENTER);
-        noStroke();
-        
-        // Background
-        fill(55, 179, 154);
-        rect(300, 300, width, height);
-        
-        // Sun
-        fill(240, 230, 39);
-        ellipse(100, 100, 50, 50);
-        for(var i = 0; i < 360; i += 30){
-            ellipse(100 + sin(i)*35, 100 + cos(i)*35, 7, 7);
-        }
-        fill(0, 0, 0, 20);
-        arc(100, 100, 50, 50, -90, 90);
-        
-        // Clouds
-        cloud(495, 138, 4);
-        cloud(495, 359, 6);
-        cloud(292, 156, 13);
-        cloud(135, 205, 8);
-        cloud(157, 345, 5);
-        
-        // Ferris wheel
-        noFill();
-        stroke(85);
-        strokeWeight(4);
-        ellipse(135, 430, 120, 120);
-        ellipse(135, 430, 105, 105);
-        for(var i = -22; i < 360; i += 22){
-            strokeWeight(2);
-            line(135 + sin(i)*50, 430 + cos(i)*50, 135, 430);
-        }
-        noStroke();
-        fill(85);
-        for(var i = -22; i < 360; i += 22){
-            ellipse(135 + sin(i)*65, 430 + cos(i)*65, 10, 10);
-        }
-        
-        // Road, sidewalk & grass
-        fill(53, 217, 28);
-        rect(300, 560, 530, 50);
-        fill(115, 115, 115);
-        rect(300, 550, 550, 50);
-        fill(92, 92, 92);
-        rect(300, 550, 570, 30);
-        fill(235);
-        for(var i = 35; i < 580; i += 25){
-            rect(i, 550, 15, 4, 20);
-        }
-        
-        // Back buildings
-        fill(94);
-        rect(270, 400, 100, 250);
-        rect(380, 411, 80, 230);
-        
-        // Building #1
-        fill(240, 195, 136);
-        rect(95, 500, 60, 50);
-        fill(0, 0, 0, 30);
-        rect(95, 520, 60, 10);
-        fill(128, 97, 61);
-        rect(95, 465, 60, 20);
-        fill(99, 85, 67);
-        rect(95, 475, 66, 3, 5);
-        rect(63, 465, 3, 23, 5);
-        fill(235, 196, 146);
-        rect(75, 457, 9, 16);
-        fill(93, 122, 117);
-        for(var i = 77; i < 110; i += 15){
-                rect(i, 499, 8, 15);
-                arc(i, 492, 8, 8, -180, 0);
-        }
-        
-        // Building #3
-        fill(179, 252, 250);
-        rect(185, 475, 60, 100);
-        fill(0, 230, 255);
-        rect(185, 415, 60, 20);
-        fill(0, 191, 201);
-        rect(185, 426, 66, 3, 5);
-        rect(153, 415, 3, 23, 5);
-        fill(255, 255, 255);
-        rect(165, 405, 7, 16);
-        fill(176, 176, 176);
-        for(var i = 165; i < 204; i += 15){
-            for(var j = 447; j < 511; j += 29){
-                rect(i, j, 10, 15);
-                arc(i, j-7, 10, 10, -180, 0);
-            }
-        }
-        
-        // Building #2
-        fill(225);
-        rect(130, 495, 40, 60);
-        fill(255);
-        rect(160, 495, 20, 60);
-        triangle(170, 465, 150, 465, 160, 445);
-        fill(102, 75, 59);
-        quad(150, 465, 160, 445, 120, 445, 110, 465);
-        stroke(140, 110, 92);
-        strokeWeight(3);
-        line(150, 465, 160, 445);
-        line(150, 465, 110, 465);
-        line(110, 465, 120, 445);
-        strokeWeight(5);
-        point(160, 464);
-        noStroke();
-        fill(102, 128, 124);
-        for(var i = 120; i < 145; i += 9){
-            rect(i, 480, 6, 15);
-            rect(i, 502, 6, 15);
-        }
-        fill(130, 130, 130);
-        rect(131, 522, 45, 5);
-        fill(171, 171, 171);
-        rect(161, 522, 19, 5);
-        fill(235);
-        rect(125, 445, 3, 15, 5);
-        rect(130, 445, 3, 15, 5);
-        
-        // Building #4
-        fill(255, 255, 255);
-        rect(230, 460, 60, 130);
-        fill(30, 155, 186);
-        rect(230, 520, 68, 10);
-        rect(230, 385, 60, 20);
-        fill(45, 117, 130);
-        rect(230, 395, 66, 3, 5);
-        rect(198, 385, 3, 23, 5);
-        rect(260, 385, 3, 23, 5);
-        fill(232, 232, 232);
-        rect(245, 375, 3, 15, 5);
-        rect(250, 375, 3, 15, 5);
-        fill(163, 186, 182);
-        for(var i = 210; i < 255; i += 13){
-            for(var j = 417; j < 500; j += 25){
-                rect(i, j, 8, 15);
-                arc(i, j-7, 8, 8, -180, 0);
-            }
-        }
-        
-        // Building #9
-        pushMatrix();
-        translate(400, 0);
-        fill(125, 184, 151);
-        rect(130, 500, 40, 50);
-        fill(138, 209, 169);
-        rect(160, 500, 20, 50);
-        triangle(170, 475, 150, 475, 160, 455);
-        fill(102, 75, 59);
-        quad(150, 475, 160, 455, 120, 455, 110, 475);
-        stroke(140, 110, 92);
-        strokeWeight(3);
-        line(150, 475, 160, 455);
-        line(150, 475, 110, 475);
-        line(110, 475, 120, 455);
-        strokeWeight(5);
-        noStroke();
-        fill(102, 128, 124);
-        for(var i = 123; i < 145; i += 14){
-            rect(i, 495, 8, 15);
-            arc(i, 488, 8, 8, -180, 0);
-        }
-        popMatrix();
-        
-        // Building #8
-        pushMatrix();
-        translate(105, 0);
-        fill(230, 230, 230);
-        rect(380, 490, 60, 70);
-        fill(235, 184, 82);
-        rect(380, 507, 60, 35);
-        fill(128, 97, 61);
-        rect(380, 445, 60, 20);
-        fill(89, 75, 58);
-        rect(380, 455, 66, 4, 5);
-        rect(350, 445, 4, 23, 5);
-        rect(410, 445, 4, 23, 5);
-        fill(235);
-        rect(395, 435, 7, 20);
-        fill(123, 135, 133);
-        for(var i = 358; i < 406; i += 14){
-            for(var j = 475; j < 514; j += 35){
-                rect(i, j, 8, 15);
-                arc(i, j-7, 8, 8, -180, 0);
-            }
-        }
-        popMatrix();
-        
-        // Building #7
-        pushMatrix();
-        translate(295, 0);
-        fill(80, 210, 217);
-        rect(130, 495, 40, 60);
-        fill(68, 190, 196);
-        rect(160, 495, 20, 60);
-        triangle(170, 465, 150, 465, 160, 445);
-        fill(150, 150, 150);
-        quad(150, 465, 160, 445, 120, 445, 110, 465);
-        stroke(196, 196, 196);
-        strokeWeight(3);
-        line(150, 465, 160, 445);
-        line(150, 465, 110, 465);
-        line(110, 465, 120, 445);
-        strokeWeight(5);
-        noStroke();
-        fill(102, 128, 124);
-        for(var i = 123; i < 145; i += 14){
-            rect(i, 480, 8, 15);
-            rect(i, 502, 8, 15);
-            arc(i, 474, 8, 8, -180, 0);
-            arc(i, 495, 8, 8, -180, 0);
-        }
-        fill(185, 126, 126);
-        rect(125, 445, 3, 15, 5);
-        rect(130, 445, 3, 15, 5);
-        popMatrix();
-        
-        // Building #6
-        fill(255, 255, 255);
-        rect(380, 475, 60, 100);
-        fill(121, 178, 179);
-        rect(380, 520, 61, 10);
-        fill(201, 201, 201);
-        rect(380, 415, 60, 20);
-        fill(161, 161, 161);
-        rect(380, 426, 66, 4, 5);
-        rect(350, 415, 4, 23, 5);
-        rect(410, 415, 4, 23, 5);
-        rect(395, 405, 7, 16);
-        fill(209, 209, 209);
-        for(var i = 358; i < 406; i += 14){
-            for(var j = 447; j < 510; j += 27){
-                rect(i, j, 8, 15);
-                arc(i, j-7, 8, 8, -180, 0);
-            }
-        }
-        
-        // Building #5
-        fill(230, 227, 161);
-        rect(320, 485, 60, 80);
-        fill(138, 116, 88);
-        rect(320, 445, 68, 10);
-        rect(320, 520, 68, 10);
-        rect(320, 475, 68, 5);
-        fill(26, 143, 127);
-        for(var i = 300; i < 351; i += 13){
-            rect(i, 463, 8, 15);
-            arc(i, 456, 8, 8, -180, 0);
-            rect(i, 492, 8, 15);
-            arc(i, 485, 8, 8, -180, 0);
-        }
-        rect(320, 510, 50, 7);
-        fill(201, 212, 42);
-        rect(320, 505, 50, 7);
-        for(var i = 298; i < 345; i += 5){
-            arc(i, 509, 5, 5, 0, 180);
-        }
-        
-        // Trees
-        tree(75, 490, 30, 27);
-        tree(60, 501, 20, 19);
-        tree(275, 503, 20, 18);
-        tree(260, 490, 30, 27);
-        tree(400, 503, 20, 18);
-        tree(540, 495, 30, 23);
-        tree(525, 503, 20, 18);
-        
-        // Bushes
-        fill(107, 181, 22);
-        arc(114, 525, 30, 30, -180, 0);
-        arc(129, 525, 20, 20, -180, 0);
-        arc(410, 525, 25, 25, -180, 0);
-        arc(425, 525, 20, 20, -180, 0);
-        arc(537, 525, 25, 25, -180, 0);
-        arc(521, 525, 20, 20, -180, 0);
-        rectMode(CORNER);
-    };
+    
     var button = function(x, y, sz, txt, next){
         this.x = x; 
         this.y = y;
@@ -363,6 +95,294 @@
     };
 }
 
+// Images
+{
+    var images = {
+        'flatCity': function(){
+            rectMode(CENTER);
+            noStroke();
+            
+            // Background
+            fill(55, 179, 154);
+            rect(300, 300, width, height);
+            
+            // Sun
+            fill(240, 230, 39);
+            ellipse(100, 100, 50, 50);
+            for(var i = 0; i < 360; i += 30){
+                ellipse(100 + sin(i)*35, 100 + cos(i)*35, 7, 7);
+            }
+            fill(0, 0, 0, 20);
+            arc(100, 100, 50, 50, -90, 90);
+            
+            // Clouds
+            cloud(495, 138, 4);
+            cloud(495, 359, 6);
+            cloud(292, 156, 13);
+            cloud(135, 205, 8);
+            cloud(157, 345, 5);
+            
+            // Ferris wheel
+            noFill();
+            stroke(85);
+            strokeWeight(4);
+            ellipse(135, 430, 120, 120);
+            ellipse(135, 430, 105, 105);
+            for(var i = -22; i < 360; i += 22){
+                strokeWeight(2);
+                line(135 + sin(i)*50, 430 + cos(i)*50, 135, 430);
+            }
+            noStroke();
+            fill(85);
+            for(var i = -22; i < 360; i += 22){
+                ellipse(135 + sin(i)*65, 430 + cos(i)*65, 10, 10);
+            }
+            
+            // Road, sidewalk & grass
+            fill(53, 217, 28);
+            rect(300, 560, 530, 50);
+            fill(115, 115, 115);
+            rect(300, 550, 550, 50);
+            fill(92, 92, 92);
+            rect(300, 550, 570, 30);
+            fill(235);
+            for(var i = 35; i < 580; i += 25){
+                rect(i, 550, 15, 4, 20);
+            }
+            
+            // Back buildings
+            fill(94);
+            rect(270, 400, 100, 250);
+            rect(380, 411, 80, 230);
+            
+            // Building #1
+            fill(240, 195, 136);
+            rect(95, 500, 60, 50);
+            fill(0, 0, 0, 30);
+            rect(95, 520, 60, 10);
+            fill(128, 97, 61);
+            rect(95, 465, 60, 20);
+            fill(99, 85, 67);
+            rect(95, 475, 66, 3, 5);
+            rect(63, 465, 3, 23, 5);
+            fill(235, 196, 146);
+            rect(75, 457, 9, 16);
+            fill(93, 122, 117);
+            for(var i = 77; i < 110; i += 15){
+                    rect(i, 499, 8, 15);
+                    arc(i, 492, 8, 8, -180, 0);
+            }
+            
+            // Building #3
+            fill(179, 252, 250);
+            rect(185, 475, 60, 100);
+            fill(0, 230, 255);
+            rect(185, 415, 60, 20);
+            fill(0, 191, 201);
+            rect(185, 426, 66, 3, 5);
+            rect(153, 415, 3, 23, 5);
+            fill(255, 255, 255);
+            rect(165, 405, 7, 16);
+            fill(176, 176, 176);
+            for(var i = 165; i < 204; i += 15){
+                for(var j = 447; j < 511; j += 29){
+                    rect(i, j, 10, 15);
+                    arc(i, j-7, 10, 10, -180, 0);
+                }
+            }
+            
+            // Building #2
+            fill(225);
+            rect(130, 495, 40, 60);
+            fill(255);
+            rect(160, 495, 20, 60);
+            triangle(170, 465, 150, 465, 160, 445);
+            fill(102, 75, 59);
+            quad(150, 465, 160, 445, 120, 445, 110, 465);
+            stroke(140, 110, 92);
+            strokeWeight(3);
+            line(150, 465, 160, 445);
+            line(150, 465, 110, 465);
+            line(110, 465, 120, 445);
+            strokeWeight(5);
+            point(160, 464);
+            noStroke();
+            fill(102, 128, 124);
+            for(var i = 120; i < 145; i += 9){
+                rect(i, 480, 6, 15);
+                rect(i, 502, 6, 15);
+            }
+            fill(130, 130, 130);
+            rect(131, 522, 45, 5);
+            fill(171, 171, 171);
+            rect(161, 522, 19, 5);
+            fill(235);
+            rect(125, 445, 3, 15, 5);
+            rect(130, 445, 3, 15, 5);
+            
+            // Building #4
+            fill(255, 255, 255);
+            rect(230, 460, 60, 130);
+            fill(30, 155, 186);
+            rect(230, 520, 68, 10);
+            rect(230, 385, 60, 20);
+            fill(45, 117, 130);
+            rect(230, 395, 66, 3, 5);
+            rect(198, 385, 3, 23, 5);
+            rect(260, 385, 3, 23, 5);
+            fill(232, 232, 232);
+            rect(245, 375, 3, 15, 5);
+            rect(250, 375, 3, 15, 5);
+            fill(163, 186, 182);
+            for(var i = 210; i < 255; i += 13){
+                for(var j = 417; j < 500; j += 25){
+                    rect(i, j, 8, 15);
+                    arc(i, j-7, 8, 8, -180, 0);
+                }
+            }
+            
+            // Building #9
+            pushMatrix();
+            translate(400, 0);
+            fill(125, 184, 151);
+            rect(130, 500, 40, 50);
+            fill(138, 209, 169);
+            rect(160, 500, 20, 50);
+            triangle(170, 475, 150, 475, 160, 455);
+            fill(102, 75, 59);
+            quad(150, 475, 160, 455, 120, 455, 110, 475);
+            stroke(140, 110, 92);
+            strokeWeight(3);
+            line(150, 475, 160, 455);
+            line(150, 475, 110, 475);
+            line(110, 475, 120, 455);
+            strokeWeight(5);
+            noStroke();
+            fill(102, 128, 124);
+            for(var i = 123; i < 145; i += 14){
+                rect(i, 495, 8, 15);
+                arc(i, 488, 8, 8, -180, 0);
+            }
+            popMatrix();
+            
+            // Building #8
+            pushMatrix();
+            translate(105, 0);
+            fill(230, 230, 230);
+            rect(380, 490, 60, 70);
+            fill(235, 184, 82);
+            rect(380, 507, 60, 35);
+            fill(128, 97, 61);
+            rect(380, 445, 60, 20);
+            fill(89, 75, 58);
+            rect(380, 455, 66, 4, 5);
+            rect(350, 445, 4, 23, 5);
+            rect(410, 445, 4, 23, 5);
+            fill(235);
+            rect(395, 435, 7, 20);
+            fill(123, 135, 133);
+            for(var i = 358; i < 406; i += 14){
+                for(var j = 475; j < 514; j += 35){
+                    rect(i, j, 8, 15);
+                    arc(i, j-7, 8, 8, -180, 0);
+                }
+            }
+            popMatrix();
+            
+            // Building #7
+            pushMatrix();
+            translate(295, 0);
+            fill(80, 210, 217);
+            rect(130, 495, 40, 60);
+            fill(68, 190, 196);
+            rect(160, 495, 20, 60);
+            triangle(170, 465, 150, 465, 160, 445);
+            fill(150, 150, 150);
+            quad(150, 465, 160, 445, 120, 445, 110, 465);
+            stroke(196, 196, 196);
+            strokeWeight(3);
+            line(150, 465, 160, 445);
+            line(150, 465, 110, 465);
+            line(110, 465, 120, 445);
+            strokeWeight(5);
+            noStroke();
+            fill(102, 128, 124);
+            for(var i = 123; i < 145; i += 14){
+                rect(i, 480, 8, 15);
+                rect(i, 502, 8, 15);
+                arc(i, 474, 8, 8, -180, 0);
+                arc(i, 495, 8, 8, -180, 0);
+            }
+            fill(185, 126, 126);
+            rect(125, 445, 3, 15, 5);
+            rect(130, 445, 3, 15, 5);
+            popMatrix();
+            
+            // Building #6
+            fill(255, 255, 255);
+            rect(380, 475, 60, 100);
+            fill(121, 178, 179);
+            rect(380, 520, 61, 10);
+            fill(201, 201, 201);
+            rect(380, 415, 60, 20);
+            fill(161, 161, 161);
+            rect(380, 426, 66, 4, 5);
+            rect(350, 415, 4, 23, 5);
+            rect(410, 415, 4, 23, 5);
+            rect(395, 405, 7, 16);
+            fill(209, 209, 209);
+            for(var i = 358; i < 406; i += 14){
+                for(var j = 447; j < 510; j += 27){
+                    rect(i, j, 8, 15);
+                    arc(i, j-7, 8, 8, -180, 0);
+                }
+            }
+            
+            // Building #5
+            fill(230, 227, 161);
+            rect(320, 485, 60, 80);
+            fill(138, 116, 88);
+            rect(320, 445, 68, 10);
+            rect(320, 520, 68, 10);
+            rect(320, 475, 68, 5);
+            fill(26, 143, 127);
+            for(var i = 300; i < 351; i += 13){
+                rect(i, 463, 8, 15);
+                arc(i, 456, 8, 8, -180, 0);
+                rect(i, 492, 8, 15);
+                arc(i, 485, 8, 8, -180, 0);
+            }
+            rect(320, 510, 50, 7);
+            fill(201, 212, 42);
+            rect(320, 505, 50, 7);
+            for(var i = 298; i < 345; i += 5){
+                arc(i, 509, 5, 5, 0, 180);
+            }
+            
+            // Trees
+            tree(75, 490, 30, 27);
+            tree(60, 501, 20, 19);
+            tree(275, 503, 20, 18);
+            tree(260, 490, 30, 27);
+            tree(400, 503, 20, 18);
+            tree(540, 495, 30, 23);
+            tree(525, 503, 20, 18);
+            
+            // Bushes
+            fill(107, 181, 22);
+            arc(114, 525, 30, 30, -180, 0);
+            arc(129, 525, 20, 20, -180, 0);
+            arc(410, 525, 25, 25, -180, 0);
+            arc(425, 525, 20, 20, -180, 0);
+            arc(537, 525, 25, 25, -180, 0);
+            arc(521, 525, 20, 20, -180, 0);
+            rectMode(CORNER);
+            
+            return get(0, 0, width, height);
+        },
+    };
+}
+
 // Processing events
 {
     keyPressed = function() {system.keys[keyCode] = true;};
@@ -380,7 +400,7 @@
         ];
     };
     menu.prototype.draw = function() {
-        flatCity();
+        image(images.flatCity, 0, 0);
         strokeWeight(5);
         for(var i = -300; i < 0; i += 5){
             for(var j = 0; j < 360; j += 90){
@@ -393,8 +413,8 @@
         }
         fill(255);
         textSize(25);
-        text("THE TREASURE OF", 250, 270);
-        textSize(50);
+        text("THE TREASURE OF", 220, 255);
+        textSize(70);
         text("DIAMOND HILL", 300, 300);
         
         for(var i in this.buttons){
@@ -410,9 +430,9 @@
         
         this.creds = [
             {
-                name: 'Aidabaida',
-                img: getImage("avatars/aqualine-ultimate"),
-                cred: 'For all of the awesome clues'
+                name: 'Eric Balingit',
+                img: getImage("avatars/piceratops-ultimate"),
+                cred: 'For the code to load google fonts'
             },
             {
                 name: '17mloges',
@@ -423,29 +443,30 @@
     };
     credits.prototype.draw = function() {
         background(55, 179, 154);
-        // flatCity();
         strokeWeight(5);
         for(var i = -300; i < 0; i += 5){
             for(var j = 0; j < 360; j += 90){
                 stroke(255, 255, 255, -150 - i);
                 pushMatrix();
-                translate(300, 300);rotate(j);
+                translate(300, 300);
+                rotate(j);
                 line(-300, i, 300, i);
                 popMatrix();
             }
         }
         fill(0, 0, 0, 30);
-        textSize(50);
-        text("CREDITS", 300, 75);
+        for(var i in this.creds){
+            textSize(100);
+            text(this.creds[i].name.toLowerCase(), 300, i*70 + 200);
+        }
         fill(255);
-        textSize(50);
-        text("CREDITS", 300, 70);
+        textSize(80);
+        text("CREDITS", 300, 100);
         for(var i in this.creds){
             textSize(40);
             text(this.creds[i].name.toLowerCase(), 300, i*70 + 200);
-            textFont(createFont('Verdana'), 14);
+            textSize(15);
             text(this.creds[i].cred.toLowerCase(), 300, i*70 + 225);
-            textFont(createFont('Verdana Bold'));
         }
         
         for(var i in this.buttons){
@@ -521,10 +542,10 @@
         }
         noStroke();
         fill(255);
-        textSize(45);
+        textSize(55);
         text('DIAMOND HILL', 300, 70);
-        textSize(25);
-        text('the map of', 183, 40);
+        textSize(20);
+        text('the map of', 205, 30);
         
         noFill();
         stroke(158, 158, 158);
@@ -576,6 +597,19 @@
         text('HEDGEWOOD\nPARK', 0, 0);
         popMatrix();
         
+        if(dist(mouseX, mouseY, 215, 340) < 10){
+            fill(242, 242, 242, 150);
+            textSize(30);
+            text('\u2605', 215, 340);
+            if(mouse.clicked){
+                system.switchingScenes = true;
+                system.nextScene = 'Hedgewood';
+            }
+        }
+        fill(255, 255, 0);
+        textSize(20);
+        text('\u2605', 215, 340);
+        
         fill(235);
         textSize(15);
         text('The clue the discoverer left should lead to somewhere in one of the places on this map. Click on a star to be transported to that place.', 50, 385, 500, 300);
@@ -584,6 +618,20 @@
 }
 
 draw = function() {
+    // Load images
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    // Load font
+    if (!fontloaded){
+        loadGoogleFont("https://fonts.googleapis.com/css?family=" + myFont, callback, callback);
+    }
+    
+    // Draw scenes
     switch(system.scene){
         case 'Menu':
             Menu.draw();
