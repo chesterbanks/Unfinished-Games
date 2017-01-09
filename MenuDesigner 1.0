@@ -44,7 +44,7 @@
 var clicked = false;
 
 var info = {
-    bg_colors: [color(219, 44, 44), color(31, 194, 69), color(16, 199, 175), color(35, 130, 194), color(217, 147, 60), color(158, 66, 194), color(183, 217, 46), color(232, 102, 197), color(235, 235, 235), color(26, 26, 26),],
+    bg_colors: [color(219, 44, 44), color(31, 194, 69), color(16, 199, 175), color(35, 130, 194), color(217, 147, 60), color(158, 66, 194), color(204, 204, 53), color(232, 102, 197), color(235, 235, 235), color(26, 26, 26),],
     bg_color: 0,
     bg_style: 1,
     
@@ -62,10 +62,12 @@ var whichInfo = 0;
 mouseClicked = function(){clicked = true;};
 
 keyPressed = function(){
-    if(keyCode === BACKSPACE && info.title.length > 0){
-        info.title = info.title.substring(0, info.title.length - 1);
-    } else {
-        info.title += key.toString();
+    if(info.changingTitle){
+        if(keyCode === BACKSPACE && info.title.length > 0){
+            info.title = info.title.substring(0, info.title.length - 1);
+        } else {
+            info.title += key.toString();
+        }
     }
 };
 
@@ -264,10 +266,13 @@ draw = function() {
     strokeWeight(3);
     rect(70, 500, 200, 30, 5);
     fill(45);
-    text(info.title, 80, 515);
+    text(info.title + (info.changingTitle && frameCount % 40 < 20 ? 'I' : ''), 80, 515);
+    text('info.changingTitle: ' + info.changingTitle, 300, 500);
     
     if(mouseX > 70 && mouseX < 270 && mouseY > 500 && mouseY < 530){
         info.changingTitle = true;
+    } else if (clicked){
+        info.changingTitle = false;
     }
     
     popStyle();
