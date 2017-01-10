@@ -23,11 +23,11 @@ var images = {
         noFill();
         for(var i = 150; i < 300; i += 33){
             stroke(111, 195, 212, 300 - i);
-            ellipse(250, 300, i, i);
+            ellipse(180, 200, i, i);
         }
         stroke(111, 195, 212, 30);
         fill(235, 252, 255, 200);
-        ellipse(250, 300, 150, 150);
+        ellipse(180, 200, 150, 150);
         
         fill(137, 142, 143);
         rect(0, 468, width, 200);
@@ -94,7 +94,7 @@ var images = {
             }
         }
         
-        filter(BLUR, 2);
+        filter(BLUR, 1);
         
         return get(0, 0, width, height);
     },
@@ -149,68 +149,67 @@ var Buttons = {
     play: new Button(300, 535, 300, 50, 'BEGIN', 'Story'),
 };
 
-var Tree = function(angle){
-    this.angle = angle;
-    this.x = (width / 2) + (sin(this.angle) * 150);
-    this.y = (height / 2) + (cos(this.angle) * 150);
-    this.sz = 20;
+var Menu = function(){
+    this.x1 = 600;
+    this.x2 = -600;
+    this.y1 = 300;
+    this.s = 100000;
 };
-Tree.prototype.draw = function() {
-    pushMatrix();
-    translate(width / 2, height / 2);
-    rotate(-this.angle + 180);
-    stroke(150, 91, 27);
-    strokeWeight(5);
-    line(0, -135, 0, -140);
-    popMatrix();
+Menu.prototype.draw = function() {
+    pushStyle();
+    rectMode(CENTER);
+    imageMode(CENTER);
+    image(images.bg1, 300, 300, 600 + this.s, 600 + this.s);
+    noFill();
+    stroke(25);
+    strokeWeight(15);
+    rect(300, 300, 600 + this.s, 600 + this.s);
+    popStyle();
     
-    noStroke();
-    fill(41, 179, 87);
-    ellipse(this.x, this.y, this.sz, this.sz);
-};
-var Trees = [];
-for(var i = 0; i < 3; i ++){
-    Trees.push(new Tree(random(360)));
-}
-
-var Player = function(){
-    this.howFarOut = 150;
-    this.angle = -180;
-    
-    this.x = sin(this.angle) * this.howFarOut;
-    this.y = cos(this.angle) * this.howFarOut;
-    this.sz = 30;
-    
-    this.hop = false;
-    this.minus = 10;
-};
-Player.prototype.draw = function() {
-    this.x = sin(this.angle) * this.howFarOut;
-    this.y = cos(this.angle) * this.howFarOut;
-    
-    noStroke();
-    pushMatrix();
-    translate(width / 2, height / 2);
-    fill(240, 240, 240);
-    ellipse(this.x, this.y, this.sz, this.sz);
-    popMatrix();
-    
-    if(clicked){
-        this.hop = true;
+    textSize(70);
+    fill(0);
+    for(var i = 0; i < 360; i += 30){
+        text('THE GREAT', this.x1 + 300 + sin(i)*3, 213 + cos(i)*3);
+        text('ADVENTURE', this.x1 + 300 + sin(i)*3, 400 + cos(i)*3);
     }
-    if(this.hop){
-        this.howFarOut += this.minus;
-        this.minus --;
+    fill(25);
+    for(var i = 0; i < 360; i += 30){
+        text('THE GREAT', this.x1 + 300 + sin(i)*3, 210 + cos(i)*3);
+        text('ADVENTURE', this.x1 + 300 + sin(i)*3, 397 + cos(i)*3);
     }
-    if(this.howFarOut < 150 && this.hop){
-        this.howFarOut = 150;
-        this.minus = 10;
-        this.hop = false;
-    }
+    fill(245);
+    text('THE GREAT', this.x1 + 300, 210);
+    text('ADVENTURE', this.x1 + 300, 397);
     
-    this.angle -= 2;
+    textSize(150);
+    fill(210);
+    for(var i = 0; i < 360; i += 30){
+        text('KHAN', this.x2 + 300 + sin(i)*5, 305 + cos(i)*5);
+    }
+    fill(245);
+    for(var i = 0; i < 360; i += 30){
+        text('KHAN', this.x2 + 300 + sin(i)*5, 300 + cos(i)*5);
+    }
+    fill(25);
+    text('KHAN', this.x2 + 300, 300);
+    
+    fill(25);
+    textSize(25);
+    text('CHESTER BANKS |            2016', 300, this.y1 + 450);
+    fill(245);
+    text('JANUARY', 381, this.y1 + 450);
+    
+    Buttons.play.y = 535 + this.y1;
+    Buttons.play.draw();
+    
+    this.s /= 1.1;
+    if(this.s < 1){
+        this.x1 /= 1.1;
+        this.x2 /= 1.1;
+        this.y1 /= 1.1;
+    }
 };
-var player = new Player();
+var menu = new Menu();
 
 draw = function() {
     if ( !fontloaded ) {
@@ -226,31 +225,7 @@ draw = function() {
     }
     
     if(scene === 'Menu'){
-        image(images.bg1, 0, 0);
-        
-        textSize(150);
-        fill(245);
-        for(var i = 0; i < 360; i += 30){
-            text('KHAN', 300 + sin(i)*5, 300 + cos(i)*5);
-        }
-        fill(25);
-        text('KHAN', 300, 300);
-        
-        textSize(70);
-        for(var i = 0; i < 360; i += 30){
-            text('THE GREAT', 300 + sin(i)*3, 210 + cos(i)*3);
-            text('ADVENTURE', 300 + sin(i)*3, 397 + cos(i)*3);
-        }
-        fill(245);
-        text('THE GREAT', 300, 210);
-        text('ADVENTURE', 300, 397);
-        fill(25);
-        textSize(25);
-        text('CHESTER BANKS |            2016', 300, 450);
-        fill(245);
-        text('JANUARY', 381, 450);
-        
-        Buttons.play.draw();
+        menu.draw();
     }
     if(scene === 'Story'){
         background(245);
