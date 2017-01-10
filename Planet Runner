@@ -1,0 +1,118 @@
+var myFont = "Chelsea Market";
+var loadGoogleFont = (function () {
+    return this.Function ( "gflink", "callback", "isloaded", "var gfs = document.querySelectorAll('link[href=\"'+gflink+'\"]');if(!gfs.length){var f=document.createElement('link');f.setAttribute('rel','stylesheet');f.setAttribute('type','text/css');f.onload=callback;f.setAttribute('href',gflink);document.head.appendChild(f);}else if(isloaded){isloaded();}");
+})();
+
+var fontloaded = false;
+var callback = function () {
+    textFont(createFont(myFont), 30);
+    fontloaded = true;
+};
+textAlign(CENTER, CENTER);
+
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
+
+var Tree = function(angle){
+    this.angle = angle;
+    this.x = (width / 2) + (sin(this.angle) * 150);
+    this.y = (height / 2) + (cos(this.angle) * 150);
+    this.sz = 20;
+};
+Tree.prototype.draw = function() {
+    pushMatrix();
+    translate(width / 2, height / 2);
+    rotate(-this.angle + 180);
+    stroke(150, 91, 27);
+    strokeWeight(5);
+    line(0, -135, 0, -140);
+    popMatrix();
+    
+    noStroke();
+    fill(41, 179, 87);
+    ellipse(this.x, this.y, this.sz, this.sz);
+};
+var Trees = [];
+for(var i = 0; i < 3; i ++){
+    Trees.push(new Tree(random(360)));
+}
+
+var Player = function(){
+    this.howFarOut = 150;
+    this.angle = -180;
+    
+    this.x = sin(this.angle) * this.howFarOut;
+    this.y = cos(this.angle) * this.howFarOut;
+    this.sz = 30;
+    
+    this.hop = false;
+    this.minus = 10;
+};
+Player.prototype.draw = function() {
+    this.x = sin(this.angle) * this.howFarOut;
+    this.y = cos(this.angle) * this.howFarOut;
+    
+    noStroke();
+    pushMatrix();
+    translate(width / 2, height / 2);
+    fill(240, 240, 240);
+    ellipse(this.x, this.y, this.sz, this.sz);
+    popMatrix();
+    
+    if(clicked){
+        this.hop = true;
+    }
+    if(this.hop){
+        this.howFarOut += this.minus;
+        this.minus --;
+    }
+    if(this.howFarOut < 150 && this.hop){
+        this.howFarOut = 150;
+        this.minus = 10;
+        this.hop = false;
+    }
+    
+    this.angle -= 2;
+};
+var player = new Player();
+
+draw = function() {
+    if ( !fontloaded ) {
+        loadGoogleFont('https://fonts.googleapis.com/css?family=' + myFont, callback, callback);
+    }
+    
+    background(31, 45, 54);
+    
+    for(var i in Trees){
+        Trees[i].draw();
+    }
+    
+    
+    noStroke();
+    pushMatrix();
+    translate(width / 2, height / 2);
+    fill(255, 255, 255, 5);
+    for(var i = 270; i < 400; i += 15){
+        ellipse(0, 0, i, i);
+    }
+    fill(53, 156, 204);
+    ellipse(0, 0, 270, 270);
+    fill(0, 0, 0, 30);
+    arc(0, 0, 270, 270, -90, 90);
+    fill(255, 255, 255, 20);
+    arc(0, 0, 270, 270, -270, -90);
+    fill(53, 156, 204);
+    ellipse(0, 0, 210, 270);
+    popMatrix();
+
+    player.draw();
+    
+    textSize(60);
+    fill(0, 0, 0, 30);
+    //text('PLANET\nRUNNER', 200 + 5, 200 + 5);
+    textSize(60);
+    fill(255);
+    //text('PLANET\nRUNNER', 200, 200);
+    
+    clicked = false;
+};
