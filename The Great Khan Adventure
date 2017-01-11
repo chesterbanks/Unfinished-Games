@@ -30,7 +30,7 @@ var callback = function () {
 textAlign(CENTER, CENTER);
 
 /* Variables */
-var scene = 'Menu';
+var scene = 'Story';
 
 /* Transition object */
 var trans = {active: false, nextScene: 'Story', minusPos: 300, out: false};
@@ -442,10 +442,62 @@ var images = {
         bezier(25, 100, 37, 34, 65, 107, 575, 100);
         bezier(25, 500, 557, 528, 567, 555, 575, 500);
         
+        noFill();
+        stroke(28, 28, 28, 50);
+        strokeWeight(1);
+        for(var i = 0; i < 360; i += 30){
+            ellipse(385 + sin(i+10) * 5, 313 + cos(i+5) * 10, 10, 10);
+            ellipse(385 + sin(i+10) * 25, 313 + cos(i+5) * 25, 10, 10);
+            ellipse(385 + sin(i) * 20, 313 + cos(i) * 20, 10, 10);
+            ellipse(385 + sin(i) * 30, 313 + cos(i) * 30, 10, 10);
+            ellipse(385 + sin(i) * 15, 313 + cos(i) * 40, 10, 10);
+        }
+        
         textSize(20);
-        fill(0, 0, 0, 50);
+        fill(0, 0, 0, 70);
         text('SEVENTH\nSEA', 100, 300);
-        text('MYSTIC\nISLAND', 400, 300);
+        textSize(30);
+        text('MYSTIC\nISLAND', 438, 256);
+        textSize(15);
+        text('MOUNT\nMAGMA', 414, 360);
+        text('AQUA\nMEADOW', 296, 304);
+        text('SINKING\nSANDS', 339, 131);
+        text('BLOSSOM\nFOREST', 387, 313);
+        text('ICE\nPRARIES', 509, 163);
+        textSize(12);
+        text('SHINE\nBEACH', 221, 264);
+        
+        stroke(0, 0, 0, 50);
+        strokeWeight(5);
+        mapMountain(440, 380, 75);
+        mapMountain(486, 392, 55);
+        mapMountain(395, 402, 35);
+        mapMountain(463, 442, 20);
+        mapMountain(443, 433, 20);
+        mapMountain(392, 442, 15);
+        mapMountain(375, 433, 15);
+        mapMountain(372, 410, 15);
+        mapMountain(386, 392, 15);
+        mapMountain(466, 401, 15);
+        mapMountain(412, 396, 15);
+        mapMountain(456, 392, 10);
+        mapMountain(401, 383, 15);
+        
+        stroke(166, 30, 30);
+        strokeCap(SQUARE);
+        strokeWeight(5);
+        for(var i = 72; i < 205; i += 30){
+            line(400 + sin(i) * 50, 400 + cos(i) * 100, 400 + sin(i + 15) * 50, 400 + cos(i + 15) * 100);
+        }
+        for(var i = -67; i < 15; i += 30){
+            line(500 + sin(i) * 50, 400 + cos(i) * 100, 500 + sin(i + 15) * 50, 400 + cos(i + 15) * 100);
+        }
+        for(var i = -18; i < 15; i += 10){
+            line(300 + sin(i) * 200, 130 + cos(i) * 200, 300 + sin(i + 5) * 200, 130 + cos(i + 5) * 200);
+        }
+        fill(166, 30, 30);
+        textSize(50);
+        text('X', 531, 499);
         
         return get(0, 0, width, height);
     },
@@ -570,6 +622,8 @@ var Story = function(){
     
     this.handX = 400;
     this.textI = 0;
+    this.textI2 = -20;
+    this.mapW = 600;
 };
 Story.prototype.draw = function() {
     imageMode(CENTER);
@@ -627,6 +681,7 @@ Story.prototype.draw = function() {
         }
         popMatrix();
         
+        textSize(25);
         fill(255);
         text('What\'s this?'.substring(0, this.textI), 300, 550);
         this.handX /= 1.1;
@@ -637,73 +692,16 @@ Story.prototype.draw = function() {
     if(this.page === 1){
         image(images.woodBG, 300, 300, 800, 800);
         
-        rectMode(CORNER);
-        noStroke();
-        fill(-3553086);
-        rect(25, 100, 550, 400);
-        bezier(25, 100, 37, 34, 65, 107, 575, 100);
-        bezier(25, 500, 557, 528, 567, 555, 575, 500);
+        imageMode(CORNER);
+        image(images.map, 0, 0, 600 - this.mapW, 600);
+        imageMode(CENTER);
         
-        noStroke();
-        fill(36, 140, 64);
-        rect(323, 100, 252, 400);
-        rect(300, 168, 27, 349);
-        triangle(272, 300, 300, 185, 300, 384);
-        triangle(291, 226, 300, 185, 279, 203);
-        triangle(253, 262, 273, 306, 288, 249);
-        triangle(246, 246, 273, 306, 288, 257);
-        bezier(301, 518, 539, 528, 567, 555, 575, 500);
-        triangle(301, 518, 301, 498, 575, 500);
-        triangle(325, 97, 575, 100, 322, 101);
+        textSize(25);
+        fill(255);
+        text('I can\'t believe it! A treasure map!'.substring(0, this.textI2), 300, 560);
         
-        strokeWeight(3);
-        stroke(24, 82, 40);
-        bezier(300, 516, 170, 495, 297, 455, 300, 380);
-        bezier(300, 380, 105, 307, 220, 138, 250, 238);
-        bezier(278, 204, 282, 182, 169, 188, 323, 166);
-        bezier(323, 166, 298, 127, 220, 160, 323, 97);
-        
-        noFill();
-        bezier(278, 204, 314, 258, 252, 267, 250, 235);
-        stroke(214, 198, 182);
-        strokeWeight(9);
-        rect(575, 100, 0, 400);
-        rect(25, 100, 0, 400);
-        bezier(25, 100, 37, 34, 65, 107, 575, 100);
-        bezier(25, 500, 557, 528, 567, 555, 575, 500);
-        
-        textSize(20);
-        fill(0, 0, 0, 70);
-        text('SEVENTH\nSEA', 100, 300);
-        textSize(30);
-        text('MYSTIC\nISLAND', 438, 256);
-        textSize(15);
-        text('MOUNT\nMAGMA', 414, 360);
-        text('AQUA\nMEADOW', 296, 304);
-        text('SINKING\nSANDS', 339, 131);
-        text('BLUE\nFOREST', 387, 313);
-        textSize(12);
-        text('SHINE\nBEACH', 221, 264);
-        
-        fill(166, 30, 30);
-        textSize(50);
-        text('X', 524, 487);
-        
-        stroke(0, 0, 0, 50);
-        strokeWeight(5);
-        mapMountain(440, 380, 75);
-        mapMountain(486, 392, 55);
-        mapMountain(395, 402, 35);
-        mapMountain(463, 442, 20);
-        mapMountain(443, 433, 20);
-        mapMountain(392, 442, 15);
-        mapMountain(375, 433, 15);
-        mapMountain(372, 410, 15);
-        mapMountain(386, 392, 15);
-        mapMountain(466, 401, 15);
-        mapMountain(412, 396, 15);
-        mapMountain(456, 392, 10);
-        mapMountain(401, 383, 15);
+        this.textI2 += 0.5;
+        this.mapW /= 1.05;
     }
     
     if(clicked){
