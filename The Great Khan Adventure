@@ -503,17 +503,29 @@ Menu.prototype.draw = function() {
 var menu = new Menu();
 
 var Story = function(){
-    
+    this.handX = 400;
+    this.textI = 0;
 };
 Story.prototype.draw = function() {
     imageMode(CENTER);
     background(45);
     image(images.woodBG, 300, 300);
     
-    // Scroll
     pushMatrix();
-    translate(300, 300);
-    rotate(-10);
+    translate(300 + this.handX, 300);
+    rotate(10);
+    
+    // Hand
+    noStroke();
+    fill(227, 196, 145);
+    rect(0, 0, 400, 60);
+    rect(7, -36, 30, 60, 10);
+    fill(0, 0, 0, 5);
+    for(var i = 50; i > 0; i -= 5){
+        rect(24, 0, i, 60);
+    }
+    
+    // Scroll
     noStroke();
     rectMode(CENTER);
     fill(204, 183, 163);
@@ -533,7 +545,28 @@ Story.prototype.draw = function() {
         point(sin(i) * (i/30), -150 + cos(i) * (i/50));
     }
     line(-20, -142, -19, 159);
+    
+    // Fingers
+    noStroke();
+    fill(227, 196, 145);
+    ellipse(-33, 10, 30, 100);
+    rect(-39, -40, 53, 25, 10);
+    rect(-39, -12, 60, 25, 10);
+    rect(-39, 16, 54, 25, 10);
+    rect(-39, 42, 46, 19, 18);
+    fill(0, 0, 0, 5);
+    for(var i = 50; i > 0; i -= 5){
+        arc(-48, 11, i, 103, -67, 72);
+    }
     popMatrix();
+    
+    fill(255);
+    text('What\'s this?'.substring(0, this.textI), 300, 550);
+    
+    this.handX /= 1.1;
+    if(this.handX < 10){
+        this.textI += 0.5;
+    }
 };
 var story = new Story();
 
