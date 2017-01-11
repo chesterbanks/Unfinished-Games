@@ -30,7 +30,7 @@ var callback = function () {
 textAlign(CENTER, CENTER);
 
 /* Variables */
-var scene = 'Story';
+var scene = 'Menu';
 
 /* Transition object */
 var trans = {active: false, nextScene: 'Story', minusPos: 300, out: false};
@@ -507,6 +507,113 @@ var images = {
         
         return get(0, 0, width, height);
     },
+    'pirate_body': function(){
+        pushMatrix();
+        translate(100, 100);
+        scale(0.6);
+        
+        // Peg leg
+        noStroke();
+        fill(99, 69, 36);
+        quad(13, 360, 25, 408, 42, 409, 53, 367);
+        ellipse(33, 418, 30, 30);
+        
+        // Pants & Shoe
+        noStroke();
+        fill(48, 46, 42);
+        rect(-80, 397, 75, 35, 20);
+        fill(240, 231, 214);
+        rect(-58, 330, 50, 80, 20);
+        rect(7, 330, 50, 50, 20);
+        
+        // Torso
+        noStroke();
+        fill(140, 52, 41);
+        rect(-75, 150, 150, 200, 50);
+        fill(89, 35, 30);
+        ellipse(0, 230, 100, 100);
+        ellipse(0, 277, 53, 70);
+        fill(240, 231, 214);
+        triangle(-25, 200, 25, 200, 0, 340);
+        stroke(0, 0, 0, 60);
+        strokeWeight(3);
+        line(0, 200, 0, 340);
+        strokeWeight(10);
+        point(10, 230);
+        point(10, 255);
+        point(10, 280);
+        popMatrix();
+        
+        return get(0, 0, 200, 400);
+    },
+    'pirate_head': function(){
+        pushMatrix();
+        translate(100, 100);
+        scale(0.6);
+        
+        // Head
+        noStroke();
+        fill(201, 171, 131);
+        rect(-100, 5, 200, 200, 50);
+        noStroke();
+        ellipse(-105, 105, 40, 50);
+        ellipse(105, 105, 40, 50);
+        
+        // Eye(s)
+        fill(25);
+        ellipse(-40, 110, 25, 30);
+        
+        // Eyebrows
+        noFill();
+        stroke(125, 78, 31);
+        strokeWeight(20);
+        arc(0, 0, 200, 196, 100, 128);
+        arc(0, -5, 200, 196, 53, 92);
+        stroke(0, 0, 0, 30);
+        strokeWeight(8);
+        arc(0, 0, 200, 196, 100, 128);
+        arc(0, -5, 200, 196, 53, 92);
+        
+        // Eye patch
+        noFill();
+        strokeWeight(3);
+        stroke(0, 0, 0);
+        arc(0, 64, 200, 50, 0, 180);
+        noStroke();
+        fill(0);
+        arc(28, 89, 80, 80, -11, 180);
+        
+        // Beard
+        noFill();
+        stroke(89, 67, 39);
+        strokeWeight(23);
+        arc(0, 129, 185, 141, 0, 180);
+        
+        // Mustache
+        noStroke();
+        fill(61, 40, 18);
+        bezier(13, 170, -28, 100, -49, 166, -150, 180);
+        bezier(-13, 170, 28, 100, 49, 166, 150, 180);
+        bezier(13, 170, -28, 202, -49, 266, -150, 175);
+        bezier(-13, 170, 28, 202, 49, 266, 150, 175);
+        fill(255, 255, 255, 30);
+        bezier(4, 162, -28, 100, -49, 166, -150, 187);
+        bezier(-3, 161, 28, 100, 49, 166, 150, 184);
+        
+        // Pirate hat mumbo jumbo
+        strokeWeight(5);
+        stroke(82, 82, 82);
+        fill(18, 18, 18);
+        beginShape();
+        curveVertex(-149,-9); curveVertex(-119,23); curveVertex(-77,-17); curveVertex(-104,-85); curveVertex(-65,-147); curveVertex(18,-151); curveVertex(71,-131); curveVertex(25,-118); curveVertex(29,-81); curveVertex(63,-64); curveVertex(98,-80); curveVertex(81,-12); curveVertex(98,24); curveVertex(134,13); curveVertex(121,56); curveVertex(-133,53); curveVertex(-149,-9); curveVertex(-119,23); curveVertex(-77,-17);
+        endShape();
+        textSize(110);
+        fill(255, 255, 255, 50);
+        text('C', -6, -43);
+        popMatrix();
+        
+        return get(0, 0, 200, 400);
+    },
 };
 
 var clicked = false;
@@ -624,12 +731,13 @@ var menu = new Menu();
 
 /* Story */
 var Story = function(){
-    this.page = 1;
+    this.page = 0;
     
     this.handX = 400;
     this.textI = 0;
     this.textI2 = -20;
     this.mapW = 600;
+    this.pirateI = 0;
 };
 Story.prototype.draw = function() {
     imageMode(CENTER);
@@ -716,72 +824,21 @@ Story.prototype.draw = function() {
     }
     if(this.page === 2){
         background(176, 217, 235);
-        
-        // Captain
+        image(images.pirate_body, 400, 300);
         pushMatrix();
-        translate(300, 300);
-        scale(0.6);
-        
-        // Head
-        noStroke();
-        fill(201, 171, 131);
-        rect(-100, 5, 200, 200, 50);
-        noStroke();
-        ellipse(-105, 105, 40, 50);
-        ellipse(105, 105, 40, 50);
-        
-        // Eye(s)
-        fill(25);
-        ellipse(-40, 110, 25, 30);
-        
-        // Eyebrows
-        noFill();
-        stroke(125, 78, 31);
-        strokeWeight(20);
-        arc(0, 0, 200, 196, 100, 128);
-        arc(0, -5, 200, 196, 53, 92);
-        stroke(0, 0, 0, 30);
-        strokeWeight(8);
-        arc(0, 0, 200, 196, 100, 128);
-        arc(0, -5, 200, 196, 53, 92);
-        
-        // Eye patch
-        noFill();
-        strokeWeight(3);
-        stroke(0, 0, 0);
-        arc(0, 64, 200, 50, 0, 180);
-        noStroke();
-        fill(0);
-        arc(28, 89, 80, 80, -11, 180);
-        
-        // Beard
-        noFill();
-        stroke(89, 67, 39);
-        strokeWeight(23);
-        arc(0, 129, 185, 141, 0, 180);
-        
-        // Mustache
-        noStroke();
-        fill(61, 40, 18);
-        bezier(13, 170, -28, 100, -49, 166, -150, 180);
-        bezier(-13, 170, 28, 100, 49, 166, 150, 180);
-        bezier(13, 170, -28, 202, -49, 266, -150, 175);
-        bezier(-13, 170, 28, 202, 49, 266, 150, 175);
-        fill(255, 255, 255, 30);
-        bezier(4, 162, -28, 100, -49, 166, -150, 187);
-        bezier(-3, 161, 28, 100, 49, 166, 150, 184);
-        
-        // Pirate hat mumbo jumbo
-        strokeWeight(5);
-        stroke(82, 82, 82);
-        fill(18, 18, 18);
-        beginShape();
-        curveVertex(-149,-9); curveVertex(-119,23); curveVertex(-77,-17); curveVertex(-104,-85); curveVertex(-65,-147); curveVertex(18,-151); curveVertex(71,-131); curveVertex(25,-118); curveVertex(29,-81); curveVertex(63,-64); curveVertex(98,-80); curveVertex(81,-12); curveVertex(98,24); curveVertex(134,13); curveVertex(121,56); curveVertex(-133,53); curveVertex(-149,-9); curveVertex(-119,23); curveVertex(-77,-17);
-        endShape();
-        textSize(110);
-        fill(255, 255, 255, 50);
-        text('C', -6, -43);
+        translate(400, 290);
+        if(this.pirateI > 0 && this.pirateI < 50){
+            translate(0, sin(frameCount * 15) * 5);
+            rotate(sin(frameCount * 15) * 5);
+        }
+        image(images.pirate_head, 0, 0);
         popMatrix();
+        
+        textSize(20);
+        fill(25);
+        text('Ahoy there! Where do ye\nneed to travel to, matey?'.substring(0, this.pirateI), 195, 90);
+        
+        this.pirateI += 0.5;
     }
     
     if(clicked){
