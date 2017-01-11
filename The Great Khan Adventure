@@ -1,5 +1,14 @@
 /**
+ * The Great Khan Adventure
+ * Chester Banks
+ * January ? 2017
  * 
+ * In my opinion, this is my BEST game yet.
+ * 
+ * I put easter eggs/references into pretty much every scene in this game. How many can you find?
+ * 
+ * Did you like this game? Subscribe to me here:
+ * This program's LUCKY SUBSCRIBER is NAME HERE! Check out his profile here: khanacademy.org/profile/namehere
  * 
  * EASTER EGGS & REFERENCES
     - Tree with blue leaves (Blue Leaf) on menu.
@@ -24,7 +33,7 @@ textAlign(CENTER, CENTER);
 var scene = 'Menu';
 
 /* Transition object */
-var trans = {active: false, nextScene: 'Intro', minusPos: 300, out: false};
+var trans = {active: false, nextScene: 'Story', minusPos: 300, out: false};
 
 /* HLGF (Helpful Little Graphics Functions */
 var crate = function(x, y){
@@ -76,6 +85,10 @@ var cobweb = function(x, y, s, r){
         popMatrix();
     }
     popMatrix();
+};
+var mapMountain = function(x, y, s){
+    line(x, y, x - (s/2), y + s);
+    line(x, y, x + (s/2), y + s);
 };
 
 /* Images */
@@ -393,6 +406,49 @@ var images = {
         
         return get(0, 0, width, height);
     },
+    'map': function(){
+        rectMode(CORNER);
+        noStroke();
+        fill(-3553086);
+        rect(25, 100, 550, 400);
+        bezier(25, 100, 37, 34, 65, 107, 575, 100);
+        bezier(25, 500, 557, 528, 567, 555, 575, 500);
+        
+        noStroke();
+        fill(36, 140, 64);
+        rect(323, 100, 252, 400);
+        rect(300, 168, 27, 349);
+        triangle(272, 300, 300, 185, 300, 384);
+        triangle(291, 226, 300, 185, 279, 203);
+        triangle(253, 262, 273, 306, 288, 249);
+        triangle(246, 246, 273, 306, 288, 257);
+        bezier(301, 518, 539, 528, 567, 555, 575, 500);
+        triangle(301, 518, 301, 498, 575, 500);
+        triangle(325, 97, 575, 100, 322, 101);
+        
+        strokeWeight(3);
+        stroke(24, 82, 40);
+        bezier(300, 516, 170, 495, 297, 455, 300, 380);
+        bezier(300, 380, 105, 307, 220, 138, 250, 238);
+        bezier(278, 204, 282, 182, 169, 188, 323, 166);
+        bezier(323, 166, 298, 127, 220, 160, 323, 97);
+        
+        noFill();
+        bezier(278, 204, 314, 258, 252, 267, 250, 235);
+        stroke(214, 198, 182);
+        strokeWeight(9);
+        rect(575, 100, 0, 400);
+        rect(25, 100, 0, 400);
+        bezier(25, 100, 37, 34, 65, 107, 575, 100);
+        bezier(25, 500, 557, 528, 567, 555, 575, 500);
+        
+        textSize(20);
+        fill(0, 0, 0, 50);
+        text('SEVENTH\nSEA', 100, 300);
+        text('MYSTIC\nISLAND', 400, 300);
+        
+        return get(0, 0, width, height);
+    },
 };
 
 var clicked = false;
@@ -492,7 +548,7 @@ Menu.prototype.draw = function() {
     
     fill(25);
     textSize(25);
-    text('CHESTER BANKS |            2016', 300, this.y1 + 450);
+    text('CHESTER BANKS |            2017', 300, this.y1 + 450);
     fill(245);
     text('JANUARY', 381, this.y1 + 450);
     
@@ -510,69 +566,150 @@ var menu = new Menu();
 
 /* Story */
 var Story = function(){
+    this.page = 0;
+    
     this.handX = 400;
     this.textI = 0;
 };
 Story.prototype.draw = function() {
     imageMode(CENTER);
     background(45);
-    image(images.woodBG, 300, 300);
     
-    pushMatrix();
-    translate(300 + this.handX, 300);
-    rotate(10);
-    
-    // Hand
-    noStroke();
-    fill(227, 196, 145);
-    rect(0, 0, 400, 60);
-    rect(7, -36, 30, 60, 10);
-    fill(0, 0, 0, 5);
-    for(var i = 50; i > 0; i -= 5){
-        rect(24, 0, i, 60);
+    if(this.page === 0){
+        image(images.woodBG, 300, 300);
+        
+        pushMatrix();
+        translate(300 + this.handX, 300);
+        rotate(10);
+        
+        // Hand
+        noStroke();
+        fill(227, 196, 145);
+        rect(0, 0, 400, 60);
+        rect(7, -36, 30, 60, 10);
+        fill(0, 0, 0, 5);
+        for(var i = 50; i > 0; i -= 5){
+            rect(24, 0, i, 60);
+        }
+        
+        // Scroll
+        noStroke();
+        rectMode(CENTER);
+        fill(204, 183, 163);
+        rect(0, 0, 50, 300);
+        ellipse(0, 150, 50, 30);
+        rectMode(CORNER);
+        fill(0, 0, 0, 10);
+        for(var i = 50; i > 0; i -= 5){
+            rect(-25, -150, i, 300 + sin(i*2)*16);
+        }
+        fill(171, 153, 137);
+        ellipse(0, -150, 50, 30);
+        
+        strokeWeight(2);
+        stroke(0, 0, 0, 50);
+        for(var i = 0; i < 658; i += 17){
+            point(sin(i) * (i/30), -150 + cos(i) * (i/50));
+        }
+        line(-20, -142, -19, 159);
+        
+        // Fingers
+        noStroke();
+        fill(227, 196, 145);
+        ellipse(-33, 10, 30, 100);
+        rect(-39, -40, 53, 25, 10);
+        rect(-39, -12, 60, 25, 10);
+        rect(-39, 16, 54, 25, 10);
+        rect(-39, 42, 46, 19, 18);
+        fill(0, 0, 0, 5);
+        for(var i = 50; i > 0; i -= 5){
+            arc(-48, 11, i, 103, -67, 72);
+        }
+        popMatrix();
+        
+        fill(255);
+        text('What\'s this?'.substring(0, this.textI), 300, 550);
+        this.handX /= 1.1;
+        if(this.handX < 10){
+            this.textI += 0.5;
+        }
+    }
+    if(this.page === 1){
+        image(images.woodBG, 300, 300, 800, 800);
+        
+        rectMode(CORNER);
+        noStroke();
+        fill(-3553086);
+        rect(25, 100, 550, 400);
+        bezier(25, 100, 37, 34, 65, 107, 575, 100);
+        bezier(25, 500, 557, 528, 567, 555, 575, 500);
+        
+        noStroke();
+        fill(36, 140, 64);
+        rect(323, 100, 252, 400);
+        rect(300, 168, 27, 349);
+        triangle(272, 300, 300, 185, 300, 384);
+        triangle(291, 226, 300, 185, 279, 203);
+        triangle(253, 262, 273, 306, 288, 249);
+        triangle(246, 246, 273, 306, 288, 257);
+        bezier(301, 518, 539, 528, 567, 555, 575, 500);
+        triangle(301, 518, 301, 498, 575, 500);
+        triangle(325, 97, 575, 100, 322, 101);
+        
+        strokeWeight(3);
+        stroke(24, 82, 40);
+        bezier(300, 516, 170, 495, 297, 455, 300, 380);
+        bezier(300, 380, 105, 307, 220, 138, 250, 238);
+        bezier(278, 204, 282, 182, 169, 188, 323, 166);
+        bezier(323, 166, 298, 127, 220, 160, 323, 97);
+        
+        noFill();
+        bezier(278, 204, 314, 258, 252, 267, 250, 235);
+        stroke(214, 198, 182);
+        strokeWeight(9);
+        rect(575, 100, 0, 400);
+        rect(25, 100, 0, 400);
+        bezier(25, 100, 37, 34, 65, 107, 575, 100);
+        bezier(25, 500, 557, 528, 567, 555, 575, 500);
+        
+        textSize(20);
+        fill(0, 0, 0, 70);
+        text('SEVENTH\nSEA', 100, 300);
+        textSize(30);
+        text('MYSTIC\nISLAND', 438, 256);
+        textSize(15);
+        text('MOUNT\nMAGMA', 414, 360);
+        text('AQUA\nMEADOW', 296, 304);
+        text('SINKING\nSANDS', 339, 131);
+        text('BLUE\nFOREST', 387, 313);
+        textSize(12);
+        text('SHINE\nBEACH', 221, 264);
+        
+        fill(166, 30, 30);
+        textSize(50);
+        text('X', 524, 487);
+        
+        stroke(0, 0, 0, 50);
+        strokeWeight(5);
+        mapMountain(440, 380, 75);
+        mapMountain(486, 392, 55);
+        mapMountain(395, 402, 35);
+        mapMountain(463, 442, 20);
+        mapMountain(443, 433, 20);
+        mapMountain(392, 442, 15);
+        mapMountain(375, 433, 15);
+        mapMountain(372, 410, 15);
+        mapMountain(386, 392, 15);
+        mapMountain(466, 401, 15);
+        mapMountain(412, 396, 15);
+        mapMountain(456, 392, 10);
+        mapMountain(401, 383, 15);
     }
     
-    // Scroll
-    noStroke();
-    rectMode(CENTER);
-    fill(204, 183, 163);
-    rect(0, 0, 50, 300);
-    ellipse(0, 150, 50, 30);
-    rectMode(CORNER);
-    fill(0, 0, 0, 10);
-    for(var i = 50; i > 0; i -= 5){
-        rect(-25, -150, i, 300 + sin(i*2)*16);
-    }
-    fill(171, 153, 137);
-    ellipse(0, -150, 50, 30);
-    
-    strokeWeight(2);
-    stroke(0, 0, 0, 50);
-    for(var i = 0; i < 658; i += 17){
-        point(sin(i) * (i/30), -150 + cos(i) * (i/50));
-    }
-    line(-20, -142, -19, 159);
-    
-    // Fingers
-    noStroke();
-    fill(227, 196, 145);
-    ellipse(-33, 10, 30, 100);
-    rect(-39, -40, 53, 25, 10);
-    rect(-39, -12, 60, 25, 10);
-    rect(-39, 16, 54, 25, 10);
-    rect(-39, 42, 46, 19, 18);
-    fill(0, 0, 0, 5);
-    for(var i = 50; i > 0; i -= 5){
-        arc(-48, 11, i, 103, -67, 72);
-    }
-    popMatrix();
-    
-    fill(255);
-    text('What\'s this?'.substring(0, this.textI), 300, 550);
-    
-    this.handX /= 1.1;
-    if(this.handX < 10){
-        this.textI += 0.5;
+    if(clicked){
+        trans.active = true;
+        trans.nextScene = 'Story';
+        clicked = false;
     }
 };
 var story = new Story();
@@ -625,9 +762,15 @@ draw = function() {
     if(trans.active){
         trans.minusPos /= 1.3;
         if(trans.minusPos < 0.1 && !trans.out){
+            if(scene === 'Story'){ story.page ++; }
             scene = trans.nextScene;
             trans.minusPos = 300;
             trans.out = true;
+        }
+        if(trans.minusPos < 0.1 && trans.out){
+            trans.minusPos = 300;
+            trans.active = false;
+            trans.out = false;
         }
     }
     
