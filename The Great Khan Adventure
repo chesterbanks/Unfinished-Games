@@ -554,7 +554,7 @@ var images = {
         // Head
         noStroke();
         fill(201, 171, 131);
-        rect(-100, 5, 200, 200, 50);
+        rect(-100, 5, 200, 200, 100);
         noStroke();
         ellipse(-105, 105, 40, 50);
         ellipse(105, 105, 40, 50);
@@ -613,6 +613,50 @@ var images = {
         popMatrix();
         
         return get(0, 0, 200, 400);
+    },
+    'ship_BG': function(){
+        background(176, 217, 235);
+        noStroke();
+        for(var i = 0; i < height; i += 20){
+            fill(lerpColor(
+                color(54, 154, 194), color(156, 204, 224), i/height));
+            rect(0, i, 600, 20);
+        }
+        
+        strokeWeight(5);
+        stroke(117, 64, 26);
+        fill(173, 94, 41);
+        for(var i = 370; i < 600; i += 40){
+            rect(0, i, 600, 40);
+            line(300 + sin(i*10)*250, i, 300+ sin(i*10)*250, i + 50);
+            point(310 + sin(i*10)*250, i + 10);
+            point(310 + sin(i*10)*250, i + 30);
+        }
+        
+        strokeWeight(3);
+        for(var i = 35; i < width; i += 100){
+            rect(i, 270, 15, 117);
+        }
+        rect(0, 270, 600, 15);
+        
+        noStroke();
+        fill(0, 0, 0, 5);
+        for(var i = 370; i < 600; i += 40){
+            for(var j = 100; j > 0; j -= 5){
+                rect(300 + sin(i*10)*250, i, j, 40);
+                rect(0, i, j, 40);
+            }
+        }
+        fill(0, 0, 0, 10);
+        for(var i = 35; i < width; i += 100){
+            for(var j = 15; j > 0; j -= 1){
+                rect(i, 287, j, 100);
+            }
+        }
+        
+        filter(BLUR, 2);
+        
+        return get(0, 0, width, height);
     },
 };
 
@@ -823,7 +867,8 @@ Story.prototype.draw = function() {
         this.mapW /= 1.05;
     }
     if(this.page === 2){
-        background(176, 217, 235);
+        image(images.ship_BG, 300, 300);
+        
         image(images.pirate_body, 400, 300);
         pushMatrix();
         translate(400, 290);
