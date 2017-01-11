@@ -622,6 +622,21 @@ var images = {
                 color(54, 154, 194), color(156, 204, 224), i/height));
             rect(0, i, 600, 20);
         }
+        for(var i = 200; i < height; i += 20){
+            fill(lerpColor(
+                color(17, 52, 92), color(59, 125, 212), i/400));
+            rect(0, i, 600, 20);
+        }
+        
+        noFill();
+        for(var i = 0; i < 30; i ++){
+            stroke(255, 255, 255, random(100));
+            pushMatrix();
+            translate(random(600), random(170, 300));
+            arc(0, 0, 50, 100, 90, 120);
+            arc(-25, 0, 50, 100, 60, 90);
+            popMatrix();
+        }
         
         strokeWeight(5);
         stroke(117, 64, 26);
@@ -654,7 +669,7 @@ var images = {
             }
         }
         
-        filter(BLUR, 2);
+        filter(BLUR, 1);
         
         return get(0, 0, width, height);
     },
@@ -782,6 +797,7 @@ var Story = function(){
     this.textI2 = -20;
     this.mapW = 600;
     this.pirateI = 0;
+    this.myI = 0;
 };
 Story.prototype.draw = function() {
     imageMode(CENTER);
@@ -872,7 +888,7 @@ Story.prototype.draw = function() {
         image(images.pirate_body, 400, 300);
         pushMatrix();
         translate(400, 290);
-        if(this.pirateI > 0 && this.pirateI < 50){
+        if(this.pirateI > 0 && this.pirateI < 130){
             translate(0, sin(frameCount * 15) * 5);
             rotate(sin(frameCount * 15) * 5);
         }
@@ -881,9 +897,25 @@ Story.prototype.draw = function() {
         
         textSize(20);
         fill(25);
-        text('Ahoy there! Where do ye\nneed to travel to, matey?'.substring(0, this.pirateI), 195, 90);
+        text('Ahoy there! I be the captain\nof this fine vessel, but my friends\ncall me Captain. Where do ye\nneed to travel to, matey?'.substring(0, this.pirateI), 186, 90);
+        fill(245);
+        text('Mystic Island, sir...er,\nCaptain.'.substring(0, this.myI), 420, 530);
+        
+        noStroke();
+        fill(237, 202, 165);
+        rect(50, 300, 200, 250, 70);
+        rect(35, 415, 50, 70, 70);
+        rect(216, 415, 50, 70, 70);
+        rect(100, 525, 100, 50);
+        fill(110, 76, 43);
+        rect(50, 300, 200, 210, 59);
+        fill(49, 110, 176);
+        rect(0, 575, 300, 50, 70);
         
         this.pirateI += 0.5;
+        if(this.pirateI > 100){
+            this.myI += 0.5;
+        }
     }
     
     if(clicked){
