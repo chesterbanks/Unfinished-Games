@@ -4,6 +4,7 @@
  * EASTER EGGS & REFERENCES
     - Tree with blue leaves (Blue Leaf) on menu.
     - Picture of Teeny in background of first scene in the story. (credit to Splo)
+    - Picture of Blobby in background of first scene in the story. (credit to Jacob)
 */
 
 var myFont = "Chelsea Market";
@@ -50,6 +51,26 @@ var paper = function(x, y, r){
     translate(x, y);
     rotate(r);
     quad(12, -5, -12, -5, -15, 5, 15, 5);
+    popMatrix();
+};
+var cobweb = function(x, y, s, r){
+    pushMatrix();
+    translate(x, y);
+    scale(s);
+    rotate(r);
+    noFill();
+    strokeWeight(1/s);
+    stroke(255, 255, 255, 100);
+    for(var i = 0; i < 360; i += 40){
+        pushMatrix();
+        rotate(i);
+        arc(-50, 0, 10, 40, -90, 90);
+        arc(-40, 0, 10, 30, -90, 90);
+        arc(-30, 0, 10, 20, -90, 90);
+        arc(-20, 0, 10, 15, -90, 90);
+        line(0, 0, 10, 50);
+        popMatrix();
+    }
     popMatrix();
 };
 
@@ -215,6 +236,67 @@ var images = {
         
         return get(0, 0, 150, 100);
     },
+    'blobby': function(){
+        background(255);
+        
+        noStroke();
+        for(var i = 0; i <= 150; i += 10){
+            for(var j = 0; j <= 100; j += 10){
+                fill(0, random(255), 0, random(100));
+                rect(i + random(-20, 20), j, 30, 30);
+            }
+        }
+        
+        filter(BLUR, 2);
+        
+        pushMatrix();
+        translate(70,50);
+        scale(1.1);
+        translate(-200,-200);
+        fill(0, 255, 0);
+        strokeWeight(2);
+        stroke(0, 168, 39);
+        beginShape();//begin body
+        curveVertex(235, 216);
+        curveVertex(232, 189);
+        curveVertex(225, 171);
+        curveVertex(212, 163);
+        curveVertex(197, 161);
+        curveVertex(185, 165);
+        curveVertex(174, 178);
+        curveVertex(169, 206);
+        curveVertex(166, 229);
+        curveVertex(158, 240);
+        curveVertex(170, 242);
+        curveVertex(182, 240);
+        curveVertex(191, 243);
+        curveVertex(200, 245);
+        curveVertex(207, 240);
+        curveVertex(212, 239);
+        curveVertex(219, 242);
+        curveVertex(224, 243);
+        curveVertex(228, 240);
+        curveVertex(232, 239);
+        curveVertex(235, 239);
+        curveVertex(240, 239);
+        curveVertex(240, 232);
+        curveVertex(236, 223);
+        curveVertex(232, 189);
+        endShape(CLOSE);
+        fill(255, 255, 255);
+        stroke(0);
+        ellipse(190, 190, 18, 20);
+        ellipse(215, 190, 18, 20);
+        fill(0, 0, 0);
+        ellipse(190, 192, 8, 10);
+        ellipse(215, 192, 8, 10);
+        noFill();
+        strokeWeight(1);
+        arc(202, 208, 20, 3, 36, 121);
+        popMatrix();
+        
+        return get(0, 0, 150, 100);
+    },
     'woodBG': function(){
         for (var i = 0; i <= 400; i ++) {
             strokeWeight(1);
@@ -232,56 +314,54 @@ var images = {
             line(i/2 + 175, 0, i/2 + 175, 400);
         }
         
+        // Teeny
         pushMatrix();
         translate(100, 150);
         scale(0.7);
         rotate(-10);
         image(images.teeny, 0, 0);
         
+        strokeWeight(1);
+        stroke(255, 255, 255, 100);
+        line(0, 0, 75, -75);
+        line(150, 0, 75, -75);
+        
         noFill();
         stroke(54, 54, 54);
         strokeWeight(10);
+        point(75, -75);
         rect(0, 0, 150, 100);
         stroke(0);
         strokeWeight(5);
         rect(0, 0, 150, 100);
         popMatrix();
         
+        // Blobby
         pushMatrix();
-        translate(550, 50);
-        scale(2);
-        noFill();
+        translate(300, 250);
+        scale(0.5);
+        rotate(15);
+        image(images.blobby, 0, 0);
+        
+        strokeWeight(1);
         stroke(255, 255, 255, 100);
-        for(var i = 0; i < 360; i += 40){
-            pushMatrix();
-            rotate(i);
-            arc(0, 0, 10, 10, 0, 90);
-            arc(-15, -15, 30, 30, 0, 90);
-            arc(-30, -30, 50, 50, 0, 90);
-            arc(-50, -50, 80, 80, 0, 90);
-            popMatrix();
-        }
+        line(0, 0, 75, -75);
+        line(150, 0, 75, -75);
+        
+        noFill();
+        stroke(54, 54, 54);
+        strokeWeight(10);
+        point(75, -75);
+        rect(0, 0, 150, 100);
+        stroke(0);
+        strokeWeight(5);
+        rect(0, 0, 150, 100);
         popMatrix();
         
-        // Broom
-        pushMatrix();
-        translate(131, 331);
-        rotate(20);
-        noStroke();
-        fill(240, 209, 125);
-        rectMode(CENTER);
-        rect(0, 0, 10, 200, 15);
-        fill(0, 0, 0, 30);
-        rect(2, 0, 5, 200, 15);
-        fill(220, 224, 107);
-        arc(0, 80, 40, 70, -180, 0);
-        quad(-20, 80, 20, 80, 25, 110, -25, 110);
-        for(var i = -22; i < 22; i += 3){
-            strokeWeight(i/10 + 1);
-            stroke(0, 0, 0, i/3 + 30);
-            line(i/1.3, 50, i, 110);
+        // Cobweb
+        for(var i = 0; i <= width; i += 100){
+            cobweb(i + random(-70, 70), 44 + random(-50, 150), random(0.5, 2));
         }
-        popMatrix();
         
         // Crates
         crate(180, 430);
@@ -289,6 +369,10 @@ var images = {
         crate(185, 306);
         crate(530, 430);
         crate(270, 430);
+        crate(50, 430);
+        crate(110, 430);
+        crate(60, 306);
+        crate(70, 368);
         
         // Table
         noStroke();
@@ -300,30 +384,6 @@ var images = {
         quad(275, 360, 525, 360, 500, 340, 300, 340);
         rect(320, 415, 15, 70);
         rect(480, 415, 15, 70);
-        
-        // Papers on table
-        fill(232, 232, 232);
-        paper(381, 348, -4);
-        fill(243, 255, 138);
-        fill(239, 242, 208);
-        paper(432, 349, 5);
-        fill(243, 255, 138);
-        paper(417, 346, -10);
-        fill(251, 255, 219);
-        paper(400, 350, 0);
-        
-        // Rug
-        fill(35, 116, 153);
-        ellipse(300, 550, 300, 100);
-        fill(0, 0, 0, 20);
-        ellipse(300, 545, 250, 76);
-        ellipse(300, 540, 200, 50);
-        
-        // Clue ... no cheating
-        noFill();
-        stroke(161, 90, 9);
-        strokeWeight(1.5);
-        arc(420, 560, 10, 10, -5, 135);
         
         filter(BLUR, 3);
         
@@ -449,6 +509,31 @@ Story.prototype.draw = function() {
     imageMode(CENTER);
     background(45);
     image(images.woodBG, 300, 300);
+    
+    // Scroll
+    pushMatrix();
+    translate(300, 300);
+    rotate(-10);
+    noStroke();
+    rectMode(CENTER);
+    fill(204, 183, 163);
+    rect(0, 0, 50, 300);
+    ellipse(0, 150, 50, 30);
+    rectMode(CORNER);
+    fill(0, 0, 0, 10);
+    for(var i = 50; i > 0; i -= 5){
+        rect(-25, -150, i, 300 + sin(i*2)*16);
+    }
+    fill(171, 153, 137);
+    ellipse(0, -150, 50, 30);
+    
+    strokeWeight(2);
+    stroke(0, 0, 0, 50);
+    for(var i = 0; i < 658; i += 17){
+        point(sin(i) * (i/30), -150 + cos(i) * (i/50));
+    }
+    line(-20, -142, -19, 159);
+    popMatrix();
 };
 var story = new Story();
 
