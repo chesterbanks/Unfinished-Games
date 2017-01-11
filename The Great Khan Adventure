@@ -3,7 +3,7 @@
  * Chester Banks
  * January ? 2017
  * 
- * In my opinion, this is my BEST game yet.
+ * In my opinion, this is my biggest and best game yet.
  * 
  * I put easter eggs/references into pretty much every scene in this game. How many can you find?
  * 
@@ -499,6 +499,12 @@ var images = {
         textSize(50);
         text('X', 531, 499);
         
+        noStroke();
+        fill(0, 0, 0, 5);
+        for(var i = 100; i > 0; i -= 10){
+            rect(24, 70, i, 430);
+        }
+        
         return get(0, 0, width, height);
     },
 };
@@ -618,7 +624,7 @@ var menu = new Menu();
 
 /* Story */
 var Story = function(){
-    this.page = 0;
+    this.page = 1;
     
     this.handX = 400;
     this.textI = 0;
@@ -692,6 +698,11 @@ Story.prototype.draw = function() {
     if(this.page === 1){
         image(images.woodBG, 300, 300, 800, 800);
         
+        noStroke();
+        fill(227, 196, 145);
+        rect(0, 300, 60, 60);
+        rect(12, 278, 15, 60, 5);
+        
         imageMode(CORNER);
         image(images.map, 0, 0, 600 - this.mapW, 600);
         imageMode(CENTER);
@@ -702,6 +713,75 @@ Story.prototype.draw = function() {
         
         this.textI2 += 0.5;
         this.mapW /= 1.05;
+    }
+    if(this.page === 2){
+        background(176, 217, 235);
+        
+        // Captain
+        pushMatrix();
+        translate(300, 300);
+        scale(0.6);
+        
+        // Head
+        noStroke();
+        fill(201, 171, 131);
+        rect(-100, 5, 200, 200, 50);
+        noStroke();
+        ellipse(-105, 105, 40, 50);
+        ellipse(105, 105, 40, 50);
+        
+        // Eye(s)
+        fill(25);
+        ellipse(-40, 110, 25, 30);
+        
+        // Eyebrows
+        noFill();
+        stroke(125, 78, 31);
+        strokeWeight(20);
+        arc(0, 0, 200, 196, 100, 128);
+        arc(0, -5, 200, 196, 53, 92);
+        stroke(0, 0, 0, 30);
+        strokeWeight(8);
+        arc(0, 0, 200, 196, 100, 128);
+        arc(0, -5, 200, 196, 53, 92);
+        
+        // Eye patch
+        noFill();
+        strokeWeight(3);
+        stroke(0, 0, 0);
+        arc(0, 64, 200, 50, 0, 180);
+        noStroke();
+        fill(0);
+        arc(28, 89, 80, 80, -11, 180);
+        
+        // Beard
+        noFill();
+        stroke(89, 67, 39);
+        strokeWeight(23);
+        arc(0, 129, 185, 141, 0, 180);
+        
+        // Mustache
+        noStroke();
+        fill(61, 40, 18);
+        bezier(13, 170, -28, 100, -49, 166, -150, 180);
+        bezier(-13, 170, 28, 100, 49, 166, 150, 180);
+        bezier(13, 170, -28, 202, -49, 266, -150, 175);
+        bezier(-13, 170, 28, 202, 49, 266, 150, 175);
+        fill(255, 255, 255, 30);
+        bezier(4, 162, -28, 100, -49, 166, -150, 187);
+        bezier(-3, 161, 28, 100, 49, 166, 150, 184);
+        
+        // Pirate hat mumbo jumbo
+        strokeWeight(5);
+        stroke(82, 82, 82);
+        fill(18, 18, 18);
+        beginShape();
+        curveVertex(-149,-9); curveVertex(-119,23); curveVertex(-77,-17); curveVertex(-104,-85); curveVertex(-65,-147); curveVertex(18,-151); curveVertex(71,-131); curveVertex(25,-118); curveVertex(29,-81); curveVertex(63,-64); curveVertex(98,-80); curveVertex(81,-12); curveVertex(98,24); curveVertex(134,13); curveVertex(121,56); curveVertex(-133,53); curveVertex(-149,-9); curveVertex(-119,23); curveVertex(-77,-17);
+        endShape();
+        textSize(110);
+        fill(255, 255, 255, 50);
+        text('C', -6, -43);
+        popMatrix();
     }
     
     if(clicked){
