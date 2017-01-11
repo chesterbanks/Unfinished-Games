@@ -7,6 +7,7 @@
     - Picture of Blobby in background of first scene in the story. (credit to Jacob)
 */
 
+/* Google Font code (thanks to Eric Balingit) */
 var myFont = "Chelsea Market";
 var loadGoogleFont = (function () {
     return this.Function ( "gflink", "callback", "isloaded", "var gfs = document.querySelectorAll('link[href=\"'+gflink+'\"]');if(!gfs.length){var f=document.createElement('link');f.setAttribute('rel','stylesheet');f.setAttribute('type','text/css');f.onload=callback;f.setAttribute('href',gflink);document.head.appendChild(f);}else if(isloaded){isloaded();}");
@@ -19,7 +20,10 @@ var callback = function () {
 };
 textAlign(CENTER, CENTER);
 
-var scene = 'Story';
+/* Variables */
+var scene = 'Menu';
+
+/* Transition object */
 var trans = {active: false, nextScene: 'Intro', minusPos: 300, out: false};
 
 /* HLGF (Helpful Little Graphics Functions */
@@ -394,6 +398,7 @@ var images = {
 var clicked = false;
 mouseClicked = function(){ clicked = true; };
 
+/* Button function */
 var Button = function(x, y, w, h, txt, nxt){
     this.x = x;
     this.y = y;
@@ -440,6 +445,7 @@ var Buttons = {
     play: new Button(300, 535, 300, 50, 'BEGIN', 'Story'),
 };
 
+/* Menu */
 var Menu = function(){
     this.x1 = 600;
     this.x2 = -600;
@@ -502,6 +508,7 @@ Menu.prototype.draw = function() {
 };
 var menu = new Menu();
 
+/* Story */
 var Story = function(){
     this.handX = 400;
     this.textI = 0;
@@ -571,10 +578,12 @@ Story.prototype.draw = function() {
 var story = new Story();
 
 draw = function() {
+    /* Load Google Font */
     if ( !fontloaded ) {
         loadGoogleFont('https://fonts.googleapis.com/css?family=' + myFont, callback, callback);
     }
     
+    /* Load images */
     for(var i in images){
         if (typeof images[i] !== "object") {
             colorMode(RGB, 255);
@@ -583,6 +592,7 @@ draw = function() {
         }
     }
     
+    /* Draw scenes */
     if(scene === 'Menu'){
         menu.draw();
     }
@@ -597,6 +607,7 @@ draw = function() {
         text('You find a treasure map and decide to try to find the treasure. You ride on Captain\'s ship to Mystic Island. After traveling across a meadow of aqua orchids, you enter the forest.\n\nInside the forest, you meet an elf archer named Legolas Greenleaf who agrees to accompany you on your journey if he gets a share of the treasure. While you and Legolas are trekking through the forest (by a tree with blue leaves), a panther bounds toward you and Legolas is about to shoot him with an arrow when the Panther says, "Wait! Don\'t shoot!". \n\nSurprised that the Panther can talk, you decide to hear what it has to say.\n\n"I am the Mighty Panther," it says. "I have lived on this island for a hundred years, and I know it like the back of my paw. I would like to join you for a share of the treasure. You will avoid perilous dangers thanks to my warnings."\n\nYou and Legolas agree to let him join. Soon you are out of the forest and in a meadow at the foot of Mount Magma. A cow is grazing in the field, and to your surprise, it is bright red!\n\n"Holy cow!" you say. "It\'s red!"\n\n"Hello there," says the cow. "It would seem the three of you are on some sort of quest?"\n\n"Correct," you answer. "We have a map that leads to treasure on the other side of the mountain!"\n\n"That\'s nice," says the cow. "But I\'ve got other top secret things to attend to, so I\'m afraid I can\'t join you. Good luck!"\n\nYou, Legolas, and the Mighty Panther continue in your way through the meadow. The Mighty Panther informs you that the only way to the other side of the mountain is to go up the mountain. Surrounding the mountain are leagues of dangerous creatures called Tegoons.\n\nThe three of you start to climb the mountain, but soon find that it is too hard and will take far too long. The Mighty Panther admits that there is a way through the mountain, and you and Legolas quickly agree to go that way.', 25, -380, 550, 1500);
     }
     
+    /* Transition */
     rectMode(CORNER);
     noStroke();
     fill(255);
@@ -620,5 +631,6 @@ draw = function() {
         }
     }
     
+    /* Reset clicked */
     clicked = false;
 };
