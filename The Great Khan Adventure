@@ -30,7 +30,7 @@ var callback = function () {
 textAlign(CENTER, CENTER);
 
 /* Variables */
-var scene = 'Menu';
+var scene = 'Story';
 
 /* Transition object */
 var trans = {active: false, nextScene: 'Story', minusPos: 300, out: false};
@@ -673,6 +673,47 @@ var images = {
         
         return get(0, 0, width, height);
     },
+    'ocean': function(){
+        background(47, 129, 196);
+        noStroke();
+        for(var i = -1; i < width; i += 20){
+            for(var j = 0; j < height; j += 10){
+                fill(255, 255, 255, noise(0.1, i*15*j)*155);
+                rect(i, j, 20, 10);
+            }
+        }
+        
+        pushMatrix();
+        translate(350, 200);
+        strokeWeight(6);
+        stroke(81, 120, 56, 200);
+        fill(97, 158, 61);
+        // Another mumbo jumbo! This time it's the island.
+        beginShape();
+        curveVertex(-87,48); curveVertex(-74,20); curveVertex(-98,2); curveVertex(-84,-23); curveVertex(-72,1); curveVertex(-43,-1); curveVertex(-56,-76); curveVertex(-31,-110); curveVertex(81,-147); curveVertex(49,-89); curveVertex(141,-59); curveVertex(163,69); curveVertex(123,85); curveVertex(133,113); curveVertex(70,75); curveVertex(37,106); curveVertex(69,137); curveVertex(6,133); curveVertex(-29,125); curveVertex(-51,110); curveVertex(-32,91); curveVertex(-38,68); curveVertex(-87,48); curveVertex(-74,20); curveVertex(-98,2); 
+        endShape();
+        
+        noStroke();
+        fill(255, 255, 255, 15);
+        for(var i = 1.0; i > 0.1; i -= 0.2){
+            pushMatrix();
+            // Another mumbo jumbo! This time it's the island. 
+            scale(i);
+            beginShape();
+            curveVertex(-87,48); curveVertex(-74,20); curveVertex(-98,2); curveVertex(-84,-23); curveVertex(-72,1); curveVertex(-43,-1); curveVertex(-56,-76); curveVertex(-31,-110); curveVertex(81,-147); curveVertex(49,-89); curveVertex(141,-59); curveVertex(163,69); curveVertex(123,85); curveVertex(133,113); curveVertex(70,75); curveVertex(37,106); curveVertex(69,137); curveVertex(6,133); curveVertex(-29,125); curveVertex(-51,110); curveVertex(-32,91); curveVertex(-38,68); curveVertex(-87,48); curveVertex(-74,20); curveVertex(-98,2); 
+            endShape();
+            popMatrix();
+        }
+        popMatrix();
+        
+        // Mainland
+        strokeWeight(6);
+        stroke(81, 120, 56, 200);
+        fill(97, 158, 61);
+        bezier(-20, 600, 20, 493, 191, 580, 357, 600);
+        
+        return get(0, 0, 600, 600);
+    },
 };
 
 var clicked = false;
@@ -790,14 +831,17 @@ var menu = new Menu();
 
 /* Story */
 var Story = function(){
-    this.page = 0;
+    this.page = 3;
     
     this.handX = 400;
     this.textI = 0;
     this.textI2 = -20;
     this.mapW = 600;
     this.pirateI = 0;
-    this.myI = 0;
+    this.myI = -130;
+    
+    this.shipX = 100;
+    this.shipY = 500;
 };
 Story.prototype.draw = function() {
     imageMode(CENTER);
@@ -888,16 +932,27 @@ Story.prototype.draw = function() {
         image(images.pirate_body, 400, 300);
         pushMatrix();
         translate(400, 290);
-        if(this.pirateI > 0 && this.pirateI < 130){
-            translate(0, sin(frameCount * 15) * 5);
-            rotate(sin(frameCount * 15) * 5);
+        if(this.myI < 30){
+            if(this.pirateI > 0 && this.pirateI < 130){
+                translate(0, sin(frameCount * 15) * 5);
+                rotate(sin(frameCount * 15) * 5);
+            }
+        } else {
+            if(this.pirateI > 0 && this.pirateI < 59){
+                translate(0, sin(frameCount * 15) * 5);
+                rotate(sin(frameCount * 15) * 5);
+            }
         }
         image(images.pirate_head, 0, 0);
         popMatrix();
         
         textSize(20);
         fill(25);
-        text('Ahoy there! I be the captain\nof this fine vessel, but my friends\ncall me Captain. Where do ye\nneed to travel to, matey?'.substring(0, this.pirateI), 186, 90);
+        if(this.myI > 30){
+            text('Aye, that works perfect!\nI be going to Mystic\nIsland right now!'.substring(0, this.pirateI), 186, 90);
+        } else {
+            text('Ahoy there! I be the captain\nof this fine vessel, but my friends\ncall me Captain. Where do ye\nneed to travel to, matey?'.substring(0, this.pirateI), 186, 90);
+        }
         fill(245);
         text('Mystic Island, sir...er,\nCaptain.'.substring(0, this.myI), 420, 530);
         
@@ -913,8 +968,56 @@ Story.prototype.draw = function() {
         rect(0, 575, 300, 50, 70);
         
         this.pirateI += 0.5;
-        if(this.pirateI > 100){
-            this.myI += 0.5;
+        this.myI += 0.5;
+        if(this.myI === 30){
+            this.pirateI = 0;
+        }
+    }
+    if(this.page === 3){
+        image(images.ocean, 300, 300);
+        
+        // Dashed line
+        stroke(255, 255, 255, 100);
+        strokeWeight(2);
+        for(var i = 60; i < this.shipX; i += 10){
+            line(i + 5, 600 - i, 10 + i, 595 - i);
+        }
+        
+        // Ship
+        rectMode(CENTER);
+        pushMatrix();
+        if(this.shipX < 300){
+            translate(this.shipX, this.shipY);
+            rotate(35 + sin(frameCount*15)*5);
+        } else {
+            translate(300, 300);
+            rotate(35);
+        }
+        strokeWeight(3);
+        stroke(120, 39, 39);
+        fill(125, 84, 52);
+        bezier(0, 30, -15, 23, -10, 0, 0, -20);
+        bezier(0, 30, 15, 23, 10, 0, 0, -20);
+        strokeWeight(1);
+        stroke(0, 0, 0, 100);
+        line(-8, 25, -8, 0);
+        line(-4, 30, -4, -10);
+        line(0, 30, 0, -20);
+        line(4, 30, 4, -10);
+        line(8, 20, 8, 0);
+        noStroke();
+        fill(232, 227, 186);
+        arc(0, -2, 50, 15, -180, 0);
+        arc(0, 14, 40, 11, -180, 0);
+        fill(156, 113, 78);
+        rect(0, 0, 50, 5);
+        rect(0, 15, 40, 3);
+        popMatrix();
+        rectMode(CORNER);
+        
+        if(this.shipX <= 300){
+            this.shipX += 2;
+            this.shipY -= 2;
         }
     }
     
