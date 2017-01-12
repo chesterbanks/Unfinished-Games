@@ -30,7 +30,7 @@ var callback = function () {
 textAlign(CENTER, CENTER);
 
 /* Variables */
-var scene = 'Game';
+var scene = 'Menu';
 
 /* Transition object */
 var trans = {active: false, nextScene: 'Story', minusPos: 300, out: false};
@@ -102,6 +102,7 @@ var mapMountain = function(x, y, s){
 
 /* Images */
 var images = {
+    /* Menu images */
     'bg1': function(){
         background(178, 183, 184);
         
@@ -187,6 +188,7 @@ var images = {
         return get(0, 0, width, height);
     },
     
+    /* Story images */
     'teeny': function(){
         background(255);
         
@@ -466,7 +468,7 @@ var images = {
         fill(0, 0, 0, 70);
         text('SEVENTH\nSEA', 100, 300);
         textSize(30);
-        text('MYSTIC\nISLAND', 438, 256);
+        text('KHAN\nISLAND', 438, 256);
         textSize(15);
         text('MOUNT\nMAGMA', 414, 360);
         text('AQUA\nMEADOW', 296, 304);
@@ -723,6 +725,77 @@ var images = {
         
         return get(0, 0, 600, 600);
     },
+    
+    /* Game images */
+    'woods': function(){
+        noStroke();
+        fill(39, 94, 56);
+        rect(0, 0, 50, 50);
+        
+        for(var i = 0; i < 50; i += 5){
+            for(var j = 0; j < 50; j += 5){
+                fill(0, 0, 0, random(30));
+                rect(i, j, 5, 5);
+            }
+        }
+        
+        filter(BLUR, 1);
+        
+        fill(0, 0, 0, 30);
+        triangle(0, 0, 0, 50, 5, 0);
+        triangle(0, 0, 0, 5, 50, 0);
+        fill(255, 255, 255, 30);
+        triangle(50, 50, 50, 0, 45, 50);
+        triangle(50, 50, 50, 45, 0, 50);
+        
+        return get(0, 0, 50, 50);
+    },
+    'grass': function(){
+        noStroke();
+        fill(68, 179, 75);
+        rect(0, 0, 50, 50);
+        
+        for(var i = 0; i < 50; i += 5){
+            for(var j = 0; j < 50; j += 5){
+                fill(0, 0, 0, random(30));
+                rect(i, j, 5, 5);
+            }
+        }
+        
+        filter(BLUR, 1);
+        
+        fill(0, 0, 0, 30);
+        triangle(0, 0, 0, 50, 5, 0);
+        triangle(0, 0, 0, 5, 50, 0);
+        fill(255, 255, 255, 30);
+        triangle(50, 50, 50, 0, 45, 50);
+        triangle(50, 50, 50, 45, 0, 50);
+        
+        return get(0, 0, 50, 50);
+    },
+    'sand': function(){
+        noStroke();
+        fill(235, 231, 123);
+        rect(0, 0, 50, 50);
+        
+        for(var i = 0; i < 50; i += 5){
+            for(var j = 0; j < 50; j += 5){
+                fill(0, 0, 0, random(30));
+                rect(i, j, 5, 5);
+            }
+        }
+        
+        filter(BLUR, 1);
+        
+        fill(0, 0, 0, 30);
+        triangle(0, 0, 0, 50, 5, 0);
+        triangle(0, 0, 0, 5, 50, 0);
+        fill(255, 255, 255, 30);
+        triangle(50, 50, 50, 0, 45, 50);
+        triangle(50, 50, 50, 45, 0, 50);
+        
+        return get(0, 0, 50, 50);
+    },
 };
 
 var clicked = false;
@@ -840,7 +913,7 @@ var menu = new Menu();
 
 /* Story */
 var Story = function(){
-    this.page = 3;
+    this.page = 0;
     
     this.handX = 400;
     this.textI = 0;
@@ -958,12 +1031,12 @@ Story.prototype.draw = function() {
         textSize(20);
         fill(25);
         if(this.myI > 30){
-            text('Aye, that works perfect!\nI be going to Mystic\nIsland right now!'.substring(0, this.pirateI), 186, 90);
+            text('Aye, that works perfect!\nI be going to Khan\nIsland right now!'.substring(0, this.pirateI), 186, 90);
         } else {
             text('Ahoy there! I be the captain\nof this fine vessel, but my friends\ncall me Captain. Where do ye\nneed to travel to, matey?'.substring(0, this.pirateI), 186, 90);
         }
         fill(245);
-        text('Mystic Island, sir...er,\nCaptain.'.substring(0, this.myI), 420, 530);
+        text('Khan Island, sir...er,\nCaptain.'.substring(0, this.myI), 420, 530);
         
         noStroke();
         fill(237, 202, 165);
@@ -1045,26 +1118,27 @@ Story.prototype.draw = function() {
 var story = new Story();
 
 /* Blocks */
+var blockSz = 50;
 var Block = function(x, y, type){
-    this.x = x; this.w = 30;
-    this.y = y; this.h = 30;
+    this.x = x; this.w = blockSz;
+    this.y = y; this.h = blockSz;
     this.type = type;
 };
 Block.prototype.draw = function() {
     rectMode(CORNER);
     noStroke();
     if(this.type === 'sand'){
-        fill(237, 200, 113);
+        image(images.sand, this.x, this.y, this.w, this.h);
     }
     if(this.type === 'grass'){
-        fill(62, 209, 87);
+        image(images.grass, this.x, this.y, this.w, this.h);
     }
     if(this.type === 'woods'){
-        fill(57, 135, 72);
+        image(images.woods, this.x, this.y, this.w, this.h);
     }
-    rect(this.x, this.y, this.w, this.h);
+    /*rect(this.x, this.y, this.w, this.h);
     fill(0, 0, 0, 30);
-    triangle(this.x, this.y, this.x + this.w, this.y, this.x, this.y + this.h);
+    triangle(this.x, this.y, this.x + this.w, this.y, this.x, this.y + this.h);*/
 };
 
 /* Maps */
@@ -1109,13 +1183,13 @@ var loadMap = function(which){
         for(var j in which[i]){
             switch(which[i][j]){
                 case 's':
-                    blocks.push(new Block(j * 30, i * 30, 'sand'));
+                    blocks.push(new Block(j * blockSz, i * blockSz, 'sand'));
                     break;
                 case 'g':
-                    blocks.push(new Block(j * 30, i * 30, 'grass'));
+                    blocks.push(new Block(j * blockSz, i * blockSz, 'grass'));
                     break;
                 case 'd':
-                    blocks.push(new Block(j * 30, i * 30, 'woods'));
+                    blocks.push(new Block(j * blockSz, i * blockSz, 'woods'));
                     break;
             }
         }
@@ -1126,7 +1200,7 @@ loadMap(blockMap);
 /* Player */
 var Player = function(){
     this.x = 300;
-    this.y = 300;
+    this.y = 1200;
     this.w = 40;
     this.h = 40;
 };
@@ -1156,14 +1230,15 @@ var Game = function(){
 Game.prototype.draw = function() {
     background(200);
     
+    imageMode(CORNER);
     pushMatrix();
     translate(this.camera.x, this.camera.y);
     
-    this.camera.x = constrain(-(player.x) + (width / 2), -(blockMap.length * 30), 0);
-    this.camera.y = constrain(-(player.y) + (width / 2), -(blocks.length * 30), 0);
+    this.camera.x = constrain(-(player.x) + (width / 2), -(blockMap.length * blockSz), 0);
+    this.camera.y = constrain(-(player.y) + (width / 2), -1047, 0);
     
     for(var i in blocks){
-        if(blocks[i].x + this.camera.x >= -30 && blocks[i].x + this.camera.x < width && blocks[i].y + this.camera.y >= -30 && blocks[i].y + this.camera.y < height){
+        if(blocks[i].x + this.camera.x >= -blockSz && blocks[i].x + this.camera.x < width && blocks[i].y + this.camera.y >= -blockSz && blocks[i].y + this.camera.y < height){
             blocks[i].draw();
         }
     }
@@ -1185,7 +1260,6 @@ draw = function() {
     /* Load images */
     for(var i in images){
         if (typeof images[i] !== "object") {
-            colorMode(RGB, 255);
             background(0, 0, 0, 0);
             images[i] = images[i]();
         }
@@ -1203,7 +1277,7 @@ draw = function() {
         
         fill(25);
         textSize(13);
-        text('You find a treasure map and decide to try to find the treasure. You ride on Captain\'s ship to Mystic Island. After traveling across a meadow of aqua orchids, you enter the forest.\n\nInside the forest, you meet an elf archer named Legolas Greenleaf who agrees to accompany you on your journey if he gets a share of the treasure. While you and Legolas are trekking through the forest (by a tree with blue leaves), a panther bounds toward you and Legolas is about to shoot him with an arrow when the Panther says, "Wait! Don\'t shoot!". \n\nSurprised that the Panther can talk, you decide to hear what it has to say.\n\n"I am the Mighty Panther," it says. "I have lived on this island for a hundred years, and I know it like the back of my paw. I would like to join you for a share of the treasure. You will avoid perilous dangers thanks to my warnings."\n\nYou and Legolas agree to let him join. Soon you are out of the forest and in a meadow at the foot of Mount Magma. A cow is grazing in the field, and to your surprise, it is bright red!\n\n"Holy cow!" you say. "It\'s red!"\n\n"Hello there," says the cow. "It would seem the three of you are on some sort of quest?"\n\n"Correct," you answer. "We have a map that leads to treasure on the other side of the mountain!"\n\n"That\'s nice," says the cow. "But I\'ve got other top secret things to attend to, so I\'m afraid I can\'t join you. Good luck!"\n\nYou, Legolas, and the Mighty Panther continue in your way through the meadow. The Mighty Panther informs you that the only way to the other side of the mountain is to go up the mountain. Surrounding the mountain are leagues of dangerous creatures called Tegoons.\n\nThe three of you start to climb the mountain, but soon find that it is too hard and will take far too long. The Mighty Panther admits that there is a way through the mountain, and you and Legolas quickly agree to go that way.', 25, -380, 550, 1500);
+        text('You find a treasure map and decide to try to find the treasure. You ride on Captain\'s ship to Khan Island. After traveling across a meadow of aqua orchids, you enter the forest.\n\nInside the forest, you meet an elf archer named Legolas Greenleaf who agrees to accompany you on your journey if he gets a share of the treasure. While you and Legolas are trekking through the forest (by a tree with blue leaves), a panther bounds toward you and Legolas is about to shoot him with an arrow when the Panther says, "Wait! Don\'t shoot!". \n\nSurprised that the Panther can talk, you decide to hear what it has to say.\n\n"I am the Mighty Panther," it says. "I have lived on this island for a hundred years, and I know it like the back of my paw. I would like to join you for a share of the treasure. You will avoid perilous dangers thanks to my warnings."\n\nYou and Legolas agree to let him join. Soon you are out of the forest and in a meadow at the foot of Mount Magma. A cow is grazing in the field, and to your surprise, it is bright red!\n\n"Holy cow!" you say. "It\'s red!"\n\n"Hello there," says the cow. "It would seem the three of you are on some sort of quest?"\n\n"Correct," you answer. "We have a map that leads to treasure on the other side of the mountain!"\n\n"That\'s nice," says the cow. "But I\'ve got other top secret things to attend to, so I\'m afraid I can\'t join you. Good luck!"\n\nYou, Legolas, and the Mighty Panther continue in your way through the meadow. The Mighty Panther informs you that the only way to the other side of the mountain is to go up the mountain. Surrounding the mountain are leagues of dangerous creatures called Tegoons.\n\nThe three of you start to climb the mountain, but soon find that it is too hard and will take far too long. The Mighty Panther admits that there is a way through the mountain, and you and Legolas quickly agree to go that way.', 25, -380, 550, 1500);
     }
     if(scene === 'Game'){
         game.draw();
