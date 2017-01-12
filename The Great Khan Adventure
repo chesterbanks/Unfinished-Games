@@ -30,10 +30,19 @@ var callback = function () {
 textAlign(CENTER, CENTER);
 
 /* Variables */
-var scene = 'Story';
+var scene = 'Game';
 
 /* Transition object */
 var trans = {active: false, nextScene: 'Story', minusPos: 300, out: false};
+
+/* Key movement */
+var keys = [];
+keyPressed = function(){
+    keys[keyCode] = true;
+};
+keyReleased = function(){
+    keys[keyCode] = false;
+};
 
 /* HLGF (Helpful Little Graphics Functions */
 var crate = function(x, y){
@@ -1019,6 +1028,12 @@ Story.prototype.draw = function() {
             this.shipX += 2;
             this.shipY -= 2;
         }
+        
+        if(clicked){
+            trans.active = true;
+            trans.nextScene = 'Game';
+            clicked = false;
+        }
     }
     
     if(clicked){
@@ -1028,6 +1043,138 @@ Story.prototype.draw = function() {
     }
 };
 var story = new Story();
+
+/* Blocks */
+var Block = function(x, y, type){
+    this.x = x; this.w = 30;
+    this.y = y; this.h = 30;
+    this.type = type;
+};
+Block.prototype.draw = function() {
+    rectMode(CORNER);
+    noStroke();
+    if(this.type === 'sand'){
+        fill(237, 200, 113);
+    }
+    if(this.type === 'grass'){
+        fill(62, 209, 87);
+    }
+    if(this.type === 'woods'){
+        fill(57, 135, 72);
+    }
+    rect(this.x, this.y, this.w, this.h);
+    fill(0, 0, 0, 30);
+    triangle(this.x, this.y, this.x + this.w, this.y, this.x, this.y + this.h);
+};
+
+/* Maps */
+var blockMap = [
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddgggddddddddddddddddddgggddddddddddddd",
+    "ddddddddddddddddddddddddddddddddddggggggddddddgdddddddgggggggddddggggddd",
+    "dddddddddddddddddddddddddddddddgggggggggggdddggddddddgggggggggggggggggdd",
+    "ddddddddddddddddddddgggggggggggggggggggggggddggggdddgggggggggggggggggggg",
+    "ddddgdddddddddddgggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gddgggddddddgdgggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "ggdgggdggdgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggsgggggggggggggg",
+    "ggggggggggggggggggggggggggggggggggggggggggggggggsggggggggsggggggggsggggg",
+    "ggggggssggggggggssgggggssgggggsgggggggggggggsgggggggsgggsggggggggssggggg",
+    "ggggggssssssssssssssssssssggggssggssgggssggssggsgsggssgggggggssgggsssssg",
+    "sssssssssssssssssssssssssssssssssssssssssggssggsgsgsggsssssssssssgssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+];
+var blocks = [];
+var loadMap = function(which){
+    for(var i in which){
+        for(var j in which[i]){
+            switch(which[i][j]){
+                case 's':
+                    blocks.push(new Block(j * 30, i * 30, 'sand'));
+                    break;
+                case 'g':
+                    blocks.push(new Block(j * 30, i * 30, 'grass'));
+                    break;
+                case 'd':
+                    blocks.push(new Block(j * 30, i * 30, 'woods'));
+                    break;
+            }
+        }
+    }
+};
+loadMap(blockMap);
+
+/* Player */
+var Player = function(){
+    this.x = 300;
+    this.y = 300;
+    this.w = 40;
+    this.h = 40;
+};
+Player.prototype.draw = function() {
+    fill(230, 198, 159);
+    rect(this.x, this.y, this.w, this.h);
+    
+    if(keys[LEFT]){
+        this.x -= 3;
+    }
+    if(keys[RIGHT]){
+        this.x += 3;
+    }
+    if(keys[UP]){
+        this.y -= 3;
+    }
+    if(keys[DOWN]){
+        this.y += 3;
+    }
+};
+var player = new Player();
+
+/* Game */
+var Game = function(){
+    this.camera = {x: 0, y: 0};
+};
+Game.prototype.draw = function() {
+    background(200);
+    
+    pushMatrix();
+    translate(this.camera.x, this.camera.y);
+    
+    this.camera.x = constrain(-(player.x) + (width / 2), -(blockMap.length * 30), 0);
+    this.camera.y = constrain(-(player.y) + (width / 2), -(blocks.length * 30), 0);
+    
+    for(var i in blocks){
+        if(blocks[i].x + this.camera.x >= -30 && blocks[i].x + this.camera.x < width && blocks[i].y + this.camera.y >= -30 && blocks[i].y + this.camera.y < height){
+            blocks[i].draw();
+        }
+    }
+    player.draw();
+    popMatrix();
+    
+    fill(255);
+    textSize(15);
+    text('camera.x: ' + this.camera.x + '\ncamera.y: ' + this.camera.y, 100, 50);
+};
+var game = new Game();
 
 draw = function() {
     /* Load Google Font */
@@ -1057,6 +1204,9 @@ draw = function() {
         fill(25);
         textSize(13);
         text('You find a treasure map and decide to try to find the treasure. You ride on Captain\'s ship to Mystic Island. After traveling across a meadow of aqua orchids, you enter the forest.\n\nInside the forest, you meet an elf archer named Legolas Greenleaf who agrees to accompany you on your journey if he gets a share of the treasure. While you and Legolas are trekking through the forest (by a tree with blue leaves), a panther bounds toward you and Legolas is about to shoot him with an arrow when the Panther says, "Wait! Don\'t shoot!". \n\nSurprised that the Panther can talk, you decide to hear what it has to say.\n\n"I am the Mighty Panther," it says. "I have lived on this island for a hundred years, and I know it like the back of my paw. I would like to join you for a share of the treasure. You will avoid perilous dangers thanks to my warnings."\n\nYou and Legolas agree to let him join. Soon you are out of the forest and in a meadow at the foot of Mount Magma. A cow is grazing in the field, and to your surprise, it is bright red!\n\n"Holy cow!" you say. "It\'s red!"\n\n"Hello there," says the cow. "It would seem the three of you are on some sort of quest?"\n\n"Correct," you answer. "We have a map that leads to treasure on the other side of the mountain!"\n\n"That\'s nice," says the cow. "But I\'ve got other top secret things to attend to, so I\'m afraid I can\'t join you. Good luck!"\n\nYou, Legolas, and the Mighty Panther continue in your way through the meadow. The Mighty Panther informs you that the only way to the other side of the mountain is to go up the mountain. Surrounding the mountain are leagues of dangerous creatures called Tegoons.\n\nThe three of you start to climb the mountain, but soon find that it is too hard and will take far too long. The Mighty Panther admits that there is a way through the mountain, and you and Legolas quickly agree to go that way.', 25, -380, 550, 1500);
+    }
+    if(scene === 'Game'){
+        game.draw();
     }
     
     /* Transition */
