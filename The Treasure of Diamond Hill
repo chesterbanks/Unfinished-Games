@@ -150,7 +150,7 @@
                 rect(i, 550, 15, 4, 20);
             }
             
-            // Back buildings
+            //  Back buildings
             fill(94);
             rect(270, 400, 100, 250);
             rect(380, 411, 80, 230);
