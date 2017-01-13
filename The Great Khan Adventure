@@ -1114,6 +1114,16 @@ Story.prototype.draw = function() {
 };
 var story = new Story();
 
+/* The rectangle collision function */
+var rectCollide = function(one, two){
+    if( one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h){
+        return true;
+    }
+};
+
 /* Blocks */
 var blockSz = 50;
 var Block = function(x, y, type){
@@ -1158,7 +1168,7 @@ var blockMap = [
     "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
     "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
     "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
-    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "ggggggggggggggggggggggggggggggdggggggggggggggggggggggggggggggggggggggggg",
     "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
     "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
     "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
@@ -1239,19 +1249,17 @@ Player.prototype.draw = function() {
     if(!keys[UP]){
         noStroke();
         fill(0, 0, 0);
-        rect(keys[RIGHT] ? 13 : 10, 20, 7, 12, 10);
-        rect(keys[LEFT] ? 22 : 25, 20, 7, 12, 10);
+        rect(10 + this.xvel, 20, 7, 12, 10);
+        rect(25 + this.xvel, 20, 7, 12, 10);
         fill(255, 255, 255, 100);
-        rect(keys[RIGHT] ? 13 : 10, 20, 4, 5, 10);
-        rect(keys[LEFT] ? 22 : 25, 20, 4, 5, 10);
+        rect(10 + this.xvel, 20, 4, 5, 10);
+        rect(25 + this.xvel, 20, 4, 5, 10);
     }
     popMatrix();
     
     this.xvel = constrain(this.xvel, -3, 3);
     this.yvel = constrain(this.yvel, -3, 3);
     
-    this.x += this.xvel;
-    this.y += this.yvel;
     if(keys[LEFT]){
         this.xvel -= 0.5;
     }
@@ -1265,7 +1273,6 @@ Player.prototype.draw = function() {
         this.yvel += 0.5;
     }
     
-    
     if(!keys[LEFT] && !keys[RIGHT]){ 
         this.xvel /= 1.05; 
     }
@@ -1277,6 +1284,34 @@ Player.prototype.draw = function() {
     }
     if(this.yvel > -0.1 && this.yvel < 0.1){ 
         this.yvel = 0; 
+    }
+    
+    this.x += this.xvel;
+    for(var i in blocks){
+        if(rectCollide(this, blocks[i]) && blocks[i].type === 'woods'){
+            if(this.xvel < 0){
+                this.xvel = 0;
+                this.x = blocks[i].x + blocks[i].w;
+            }
+            if(this.xvel > 0){
+                this.xvel = 0;
+                this.x = blocks[i].x - this.w;
+            }
+        }
+    }
+    
+    this.y += this.yvel;
+    for(var i in blocks){
+        if(rectCollide(this, blocks[i]) && blocks[i].type === 'woods'){
+            if(this.yvel < 0){
+                this.yvel = 0;
+                this.y = blocks[i].y + blocks[i].h;
+            }
+            if(this.yvel > 0){
+                this.yvel = 0;
+                this.y = blocks[i].y - this.h;
+            }
+        }
     }
 };
 var player = new Player();
@@ -1305,7 +1340,7 @@ Game.prototype.draw = function() {
     
     fill(255);
     textSize(15);
-    text('camera.x: ' + this.camera.x + '\ncamera.y: ' + this.camera.y, 100, 50);
+    text('camera.x: ' + this.camera.x.toFixed() + '\ncamera.y: ' + this.camera.y.toFixed() + '\nplayer.xvel: ' + player.xvel.toFixed() + '\nplayer.yvel: ' + player.yvel.toFixed(), 100, 50);
 };
 var game = new Game();
 
