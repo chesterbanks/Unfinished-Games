@@ -17,20 +17,15 @@
 */
 
 /* Google Font code (thanks to Eric Balingit) */
-var myFont = "Chelsea Market";
 var loadGoogleFont = (function () {
-    return this.Function ( "gflink", "callback", "isloaded", "var gfs = document.querySelectorAll('link[href=\"'+gflink+'\"]');if(!gfs.length){var f=document.createElement('link');f.setAttribute('rel','stylesheet');f.setAttribute('type','text/css');f.onload=callback;f.setAttribute('href',gflink);document.head.appendChild(f);}else if(isloaded){isloaded();}");
+    return this.Function ( "gfName", "gfName = gfName.replace ( /\\s+/g, '+' );var subsets = Array.prototype.slice.call ( arguments, 1, arguments.length - 1 ), url = 'https://fonts.googleapis.com/css?family=' + gfName + ( subsets.length > 0 ? '&amp;subset=' + subsets : '' ), callback = arguments [ arguments.length - 1 ], gfs = document.querySelectorAll('link[href=\"'+url+'\"]');if(!gfs.length){var f=document.createElement('link');f.setAttribute('rel','stylesheet');f.setAttribute('type','text/css');f.onload=callback;f.setAttribute('href',url);document.head.appendChild(f);}else if ( typeof callback === 'function' ) { callback.call ( gfs [ 0 ] ); }");
 })();
-
 var fontloaded = false;
-var callback = function () {
-    textFont(createFont(myFont), 30);
-    fontloaded = true;
-};
+
 textAlign(CENTER, CENTER);
 
 /* Variables */
-var scene = 'Menu';
+var scene = 'Game';
 
 /* Transition object */
 var trans = {active: false, nextScene: 'Story', minusPos: 300, out: false};
@@ -418,6 +413,7 @@ var images = {
         return get(0, 0, width, height);
     },
     'map': function(){
+        textFont(createFont('Trade Winds'));
         rectMode(CORNER);
         noStroke();
         fill(-3553086);
@@ -515,6 +511,7 @@ var images = {
         for(var i = 100; i > 0; i -= 10){
             rect(24, 70, i, 430);
         }
+        textFont(createFont('Chelsea Market'));
         
         return get(0, 0, width, height);
     },
@@ -1199,26 +1196,87 @@ loadMap(blockMap);
 
 /* Player */
 var Player = function(){
-    this.x = 300;
-    this.y = 1200;
+    this.x = 300; this.xvel = 0;
+    this.y = 1200; this.yvel = 0;
     this.w = 40;
     this.h = 40;
 };
 Player.prototype.draw = function() {
-    fill(230, 198, 159);
-    rect(this.x, this.y, this.w, this.h);
-    
-    if(keys[LEFT]){
-        this.x -= 3;
-    }
-    if(keys[RIGHT]){
-        this.x += 3;
+    pushMatrix();
+    translate(this.x, this.y);
+    strokeWeight(2);
+    stroke(71, 71, 71);
+    fill(97, 97, 97);
+    rect(10, 50, 7, 20, 2);
+    rect(22, 50, 7, 20, 2);
+    stroke(46, 46, 46);
+    fill(51, 51, 51);
+    if(keys[RIGHT] || keys[LEFT] || keys[UP] || keys[DOWN]){
+        rect(keys[RIGHT] ? 10 : 4, 68 + sin(frameCount*10)*3, 13, 5, 2);
+        rect(keys[LEFT] ? 17 : 22, 68 + cos(frameCount*10)*3, 13, 5, 2);
+    } else {
+        rect(keys[RIGHT] ? 10 : 4, 68, 13, 5, 2);
+        rect(keys[LEFT] ? 17 : 22, 68, 13, 5, 2);
     }
     if(keys[UP]){
-        this.y -= 3;
+        stroke(71, 71, 71);
+        fill(97, 97, 97);
+        rect(10, 50, 7, 22 + sin(frameCount*10)*3, 2);
+        rect(22, 50, 7, 22 + cos(frameCount*10)*3, 2);
+    }
+    stroke(30, 72, 102);
+    fill(51, 111, 156);
+    rect(2, 39, 35, 20, 5);
+    rect(7, 30, 25, 30, 5);
+    stroke(133, 114, 92);
+    fill(230, 198, 159);
+    rect(0, 0, this.w, this.h, 10);
+    stroke(102, 81, 56);
+    fill(156, 109, 54);
+    rect(0, 0, 5, 18, 4);
+    rect(35, 0, 5, 18, 4);
+    rect(0, 0, 40, keys[UP] ? 30 : 12, 4);
+    if(!keys[UP]){
+        noStroke();
+        fill(0, 0, 0);
+        rect(keys[RIGHT] ? 13 : 10, 20, 7, 12, 10);
+        rect(keys[LEFT] ? 22 : 25, 20, 7, 12, 10);
+        fill(255, 255, 255, 100);
+        rect(keys[RIGHT] ? 13 : 10, 20, 4, 5, 10);
+        rect(keys[LEFT] ? 22 : 25, 20, 4, 5, 10);
+    }
+    popMatrix();
+    
+    this.xvel = constrain(this.xvel, -3, 3);
+    this.yvel = constrain(this.yvel, -3, 3);
+    
+    this.x += this.xvel;
+    this.y += this.yvel;
+    if(keys[LEFT]){
+        this.xvel -= 0.5;
+    }
+    if(keys[RIGHT]){
+        this.xvel += 0.5;
+    }
+    if(keys[UP]){
+        this.yvel -= 0.5;
     }
     if(keys[DOWN]){
-        this.y += 3;
+        this.yvel += 0.5;
+    }
+    
+    
+    if(!keys[LEFT] && !keys[RIGHT]){ 
+        this.xvel /= 1.05; 
+    }
+    if(!keys[UP] && !keys[DOWN]){ 
+        this.yvel /= 1.05; 
+    }
+    if(this.xvel > -0.1 && this.xvel < 0.1){ 
+        this.xvel = 0; 
+    }
+    if(this.yvel > -0.1 && this.yvel < 0.1){ 
+        this.yvel = 0; 
     }
 };
 var player = new Player();
@@ -1252,10 +1310,11 @@ Game.prototype.draw = function() {
 var game = new Game();
 
 draw = function() {
-    /* Load Google Font */
-    if ( !fontloaded ) {
-        loadGoogleFont('https://fonts.googleapis.com/css?family=' + myFont, callback, callback);
+    /* Load Google Font(s) */
+    if (!fontloaded) {
+        loadGoogleFont('Chelsea Market|Trade Winds', 'latin-ext', 'vietnamese');
     }
+    textFont(createFont('Chelsea Market'));
     
     /* Load images */
     for(var i in images){
