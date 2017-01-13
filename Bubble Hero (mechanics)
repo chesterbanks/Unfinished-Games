@@ -1,0 +1,225 @@
+// This helps with key movement
+var keys = [];
+var keyPressed = function(){ keys[keyCode] = true; };
+var keyReleased = function(){ keys[keyCode] = false; };
+
+// The rectangle collision function
+var rectCollide = function(one, two){
+    if( one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h){
+        return true;
+    }
+};
+
+// Setting the text align, text font, etc.
+textAlign(CENTER, CENTER);
+textFont(createFont("Century"));
+
+// [Almost] everything about the blocks (blox)
+var block = function(x, y, w, h){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+};
+block.prototype.draw = function() {
+    noStroke();
+    fill(255, 255, 255);
+    rect(this.x, this.y, this.w, this.h);
+};
+var blox = [];
+var bloxArray = [
+    "11     111111     11",
+    "1                  1",
+    "1                  1",
+    "1      111111      1",
+    "1  11111111111111  1",
+    "1                  1",
+    "1                  1",
+    "111              111",
+    "1                  1",
+    "1                  1",
+    "111111        111111",
+    "1                  1",
+    "1                  1",
+    "11111111   111111111",
+    "1                  1",
+    "1                  1",
+    "1  11111   11111   1",
+    "1                  1",
+    "1                  1",
+    "11   1111111111   11",
+];
+var bloxLevel = function(level) {
+    /* jshint ignore:start */
+    var row = level.length;
+    while (row) {
+        var lastRow = level[--row - 1] || '',
+            rowString = level[row],
+            col = rowString.length;
+        while (col) {
+            var gridPointAbove = lastRow.charAt(--col),
+                currentGridPoint = Number(rowString[col]),
+                x = col * 20,
+                y = row * 20;
+            
+            switch (currentGridPoint) {
+                case 1:
+                    blox.push(new block(x, y, 20, 20,
+                        gridPointAbove == 1 ? 'dirt' : 'grass'));
+                break;
+            }
+        }
+    }
+    /* jshint ignore:end */
+};
+
+bloxLevel(bloxArray);
+
+var Bubble = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.w = 30;
+    this.h = 30;
+    this.trans = 0;
+};
+var Bubbles = [];
+Bubble.prototype.draw = function() {
+    noStroke();
+    fill(255, 255, 255, this.trans);
+    ellipseMode(CORNER);
+    ellipse(this.x, this.y, this.w, this.h);
+    ellipseMode(CENTER);
+    
+    this.y -= 3;
+    if(this.trans < 160){ this.trans += 5; }
+};
+
+// [Almost] everything about the player
+var Player = function(x, y, w, h){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    
+    this.xvel = 0;
+    this.yvel = 0;
+    
+    this.jumping = false;
+    this.gravity = this.speed*2.5;
+    this.gravityPull = 1;
+};
+
+Player.prototype.applyCollisions = function(xvel, yvel) {
+    for (var i = 0; i < blox.length; i++) {
+        if (!rectCollide(this, blox[i])) { continue; }
+        if (xvel < 0) {
+            this.x = blox[i].x + blox[i].w;
+            this.xvel = 0;
+        }
+        if (xvel > 0) {
+            this.x = blox[i].x - this.w;
+            this.xvel = 0;
+        }
+        if (yvel < 0) {
+            this.y = blox[i].y + blox[i].h;
+            this.yvel = 0;
+        }
+        if (yvel > 0) {
+            this.y = blox[i].y - this.h;
+            this.yvel = 0;
+            this.jumping = false;
+        }
+    }
+};
+
+Player.prototype.draw = function() {
+    // The actual player
+    noStroke();
+    fill(255, 255, 255);
+    rect(this.x, this.y, this.w, this.h);
+    
+    // Player movement
+    if(keys[LEFT]){
+        this.xvel -= 1;
+    }
+    if(keys[RIGHT]){
+        this.xvel += 1;
+    }
+    if(!keys[LEFT] && !keys[RIGHT]){
+        this.xvel = 0;
+    }
+    
+    if (keys[UP] && !this.jumping) {
+        this.yvel -= 8;
+        this.jumping = true;
+    }
+    if(this.xvel > 3){
+        this.xvel = 3;
+    }
+    if(this.xvel < -3){
+        this.xvel = -3;
+    }
+    this.jumping = true;
+    this.x += this.xvel;
+    this.applyCollisions(this.xvel, 0);
+    this.y += this.yvel;
+    this.applyCollisions(0, this.yvel);
+    this.yvel += 0.4;
+    
+    if(this.y > height + this.h){
+        this.y = -this.h;
+    }
+};
+
+var player = new Player(100, 320, 20, 20);
+
+var scene = "Playing";
+
+keyTyped = function(){
+    if(key.toString() === " "){
+        Bubbles.push(new Bubble(player.x, player.y));
+    }
+};
+
+draw = function() {
+    if(scene === "Playing"){
+        // Uncomment following code for a laggy but awesome background
+        /*background(0, 0, 0);
+        for(var i = 0; i < width; i += 30){
+            for(var j = 0; j < height; j += 30){
+                strokeWeight(3);
+                stroke(224, 22, 22, 50);
+                fill(255, 255, 255, (i+j)/10);
+                rect(i+sin((j+frameCount)*5)*5, j+sin((i+frameCount)*5)*5, 25, 25);
+            }
+        }*/
+        strokeWeight(15);
+        for(var i = 0; i < 400; i += 15){
+            stroke(lerpColor(
+                color(119, 0, 158), // The top color
+                color(0, 75, 102), // The bottom color
+                i/height
+            ));
+            line(0, i, 400, i);
+        }
+        
+        for(var i in blox){
+            blox[i].draw();
+        }
+        
+        for(var i in Bubbles){
+            Bubbles[i].draw();
+            if(Bubbles[i].y < -100){
+                Bubbles.splice(i, 1);
+            }
+        }
+        
+        player.draw();
+        
+        fill(255);
+        text("player.x: " + player.x.toFixed(0) + "\nplayer.y: " + player.y.toFixed(0) + "\nplayer.xvel: " + player.xvel.toFixed(0) + "\nplayer.yvel: " + player.yvel.toFixed(0), 200, 100);
+    }
+};
