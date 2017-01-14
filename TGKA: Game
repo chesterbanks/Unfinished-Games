@@ -1,0 +1,750 @@
+/**
+ * The Great Khan Adventure
+ * Chester Banks
+ * January ? 2017
+ * 
+ * In my opinion, this is my biggest and best game yet.
+ * 
+ * I put easter eggs/references into pretty much every scene in this game. How many can you find?
+ * 
+ * Did you like this game? Subscribe to me here:
+ * This program's LUCKY SUBSCRIBER is NAME HERE! Check out his profile here: khanacademy.org/profile/namehere
+ * 
+ * EASTER EGGS & REFERENCES
+    - Tree with blue leaves (Blue Leaf) on menu.
+    - Picture of Teeny in background of first scene in the story. (credit to Splo)
+    - Picture of Blobby in background of first scene in the story. (credit to Jacob)
+*/
+
+/* Google Font code (thanks to Eric Balingit) */
+var loadGoogleFont = (function () {
+    return this.Function ( "gfName", "gfName = gfName.replace ( /\\s+/g, '+' );var subsets = Array.prototype.slice.call ( arguments, 1, arguments.length - 1 ), url = 'https://fonts.googleapis.com/css?family=' + gfName + ( subsets.length > 0 ? '&amp;subset=' + subsets : '' ), callback = arguments [ arguments.length - 1 ], gfs = document.querySelectorAll('link[href=\"'+url+'\"]');if(!gfs.length){var f=document.createElement('link');f.setAttribute('rel','stylesheet');f.setAttribute('type','text/css');f.onload=callback;f.setAttribute('href',url);document.head.appendChild(f);}else if ( typeof callback === 'function' ) { callback.call ( gfs [ 0 ] ); }");
+})();
+var fontloaded = false;
+
+textAlign(CENTER, CENTER);
+
+/* Variables */
+var scene = 'Menu';
+
+/* Transition object */
+var trans = {active: false, nextScene: 'Story', minusPos: 300, out: false};
+
+/* Key movement */
+var keys = [];
+keyPressed = function(){
+    keys[keyCode] = true;
+};
+keyReleased = function(){
+    keys[keyCode] = false;
+};
+
+/* HLGF (Helpful Little Graphics Functions) */
+var birchTrunk = function(x, y, thickness){
+    strokeCap(SQUARE);
+    strokeWeight(thickness/10);
+    stroke(191, 190, 184);
+    fill(247, 246, 234);
+    pushMatrix();
+    translate(x, y);
+    beginShape();
+    for(var i = -300; i < 302; i += 20){
+        vertex(-thickness + noise(i, 1.8)*70, i);
+    }
+    for(var i = 300; i > -302; i -= 20){
+        vertex(0 + noise(i, 1.8)*70, i);
+    }
+    endShape(CLOSE);
+    beginShape();
+    for(var i = -300; i < 302; i += 20){
+        vertex(-thickness + noise(i, 1.8)*70, i);
+        vertex(-thickness + (thickness/3.5) + noise(i, 1.8)*70, i);
+        vertex(-thickness + noise(i, 1.8)*70, i+6);
+    }
+    stroke(0, 0, 0, thickness);
+    for(var i = -300; i < 302; i += 20){
+        line(-thickness + noise(i, 1.8)*70, i, 
+        (thickness/(noise(i*2, 2.55)*5)) - 
+        thickness + noise(i, 1.8)*70, i);
+    }
+    noStroke();
+    fill(0, 0, 0, 20);
+    vertex(thickness/3, 3-300);
+    endShape(CLOSE);
+    popMatrix();
+};
+
+/* Images */
+var images = {
+    /* Menu images */
+    'bg1': function(){
+        background(178, 183, 184);
+        
+        color(111, 195, 212);
+        
+        strokeWeight(15);
+        noFill();
+        for(var i = 150; i < 300; i += 33){
+            stroke(111, 195, 212, 300 - i);
+            ellipse(180, 200, i, i);
+        }
+        stroke(111, 195, 212, 30);
+        fill(235, 252, 255, 200);
+        ellipse(180, 200, 150, 150);
+        
+        fill(137, 142, 143);
+        rect(0, 468, width, 200);
+        
+        strokeWeight(3);
+        stroke(255, 255, 255, 200);
+        for(var i = 0; i < 133; i += 3){
+            line(250 + i + random(-5, 5), 470 + i, 250 - i - random(-5, 5), 470 + i);
+        }
+        for(var i = 0; i < 133; i += 3){
+            stroke(111, 195, 212, random(100));
+            line(250 + i + random(-i, 5), 470 + i, 250 - i - random(-5, 5), 470 + i);
+            stroke(0, 0, 0, random(20));
+            line(250 + i + random(-5, 5), 470 + i, 250 - i - random(-10, 5), 470 + i);
+        }
+        
+        for(var i = 0; i < 200; i += 20){
+            noStroke();
+            fill(137 - (i / 3), 145 - (i / 4), 146 - (i / 4), 240);
+            pushMatrix();
+            translate(i, 150 + i);
+            beginShape();
+            vertex(380, 253);
+            bezierVertex(461, 277, 524, 91, 666, 324);
+            bezierVertex(397, 304, 347, 323, 250, 320);
+            bezierVertex(326, 298, 294, 281, 365, 253);
+            endShape(CLOSE);
+            popMatrix();
+        }
+        for(var i = 0; i < 200; i += 20){
+            noStroke();
+            fill(137 - (i / 3), 145 - (i / 4), 146 - (i / 4));
+            pushMatrix();
+            translate(500 - i, 150 + i);
+            scale(-1, 1.0);
+            beginShape();
+            vertex(380, 253);
+            bezierVertex(461, 277, 524, 91, 592, 324);
+            bezierVertex(397, 304, 347, 323, 250, 320);
+            bezierVertex(326, 298, 294, 281, 365, 253);
+            endShape(CLOSE);
+            popMatrix();
+        }
+        
+        
+        pushMatrix();
+        translate(139, 5);
+        scale(1, 1.5);
+        strokeWeight(2);
+        stroke(120, 120, 120);
+        fill(38, 38, 38);
+        
+        // WHAT A MUMBO JUMBO. o_O
+        beginShape();
+        vertex(263, 393);vertex(250, 379);vertex(248, 340);vertex(250, 295);vertex(249, 269);vertex(250, 252);vertex(224, 225);vertex(187, 218);vertex(135, 225);vertex(114, 240);vertex(102, 262);vertex(93, 276);vertex(74, 267);vertex(90, 263);vertex(99, 248);vertex(103, 238);vertex(59, 242);vertex(34, 220);vertex(63, 229);vertex(104, 226);vertex(131, 216);vertex(140, 210);vertex(102, 199);vertex(78, 187);vertex(61, 167);vertex(53, 150);vertex(41, 142);vertex(46, 135);vertex(56, 143);vertex(69, 152);vertex(70, 163);vertex(76, 163);vertex(75, 146);vertex(75, 133);vertex(81, 130);vertex(83, 143);vertex(82, 154);vertex(83, 166);vertex(83, 175);vertex(96, 184);vertex(124, 194);vertex(150, 198);vertex(171, 202);vertex(157, 161);vertex(141, 148);vertex(126, 140);vertex(107, 125);vertex(98, 104);vertex(90, 97);vertex(70, 89);vertex(64, 72);vertex(75, 83);vertex(88, 90);vertex(94, 81);vertex(91, 66);vertex(78, 50);vertex(101, 65);vertex(102, 85);vertex(100, 93);vertex(107, 106);vertex(116, 122);vertex(125, 128);vertex(126, 117);vertex(130, 103);vertex(141, 97);vertex(153, 94);vertex(154, 83);vertex(159, 99);vertex(152, 104);vertex(142, 110);vertex(137, 113);vertex(135, 126);vertex(134, 131);vertex(146, 143);vertex(157, 146);vertex(167, 155);vertex(169, 145);vertex(173, 163);vertex(171, 167);vertex(174, 183);vertex(197, 203);vertex(214, 210);vertex(231, 214);vertex(229, 201);vertex(228, 182);vertex(235, 159);vertex(239, 150);vertex(233, 141);vertex(223, 127);vertex(213, 113);vertex(212, 101);vertex(212, 88);vertex(219, 82);vertex(223, 104);vertex(233, 125);vertex(244, 136);vertex(250, 130);vertex(250, 112);vertex(252, 92);vertex(259, 82);vertex(256, 66);vertex(246, 50);vertex(245, 36);vertex(258, 24);vertex(256, 46);vertex(266, 70);vertex(265, 98);vertex(286, 86);vertex(288, 68);vertex(297, 60);vertex(307, 62);vertex(311, 72);vertex(305, 71);vertex(297, 74);vertex(297, 83);vertex(288, 99);vertex(279, 104);vertex(269, 108);vertex(262, 112);vertex(261, 117);vertex(259, 141);vertex(252, 162);vertex(244, 171);vertex(242, 189);vertex(246, 213);vertex(255, 218);vertex(262, 213);vertex(279, 203);vertex(292, 199);vertex(310, 191);vertex(320, 180);vertex(326, 166);vertex(331, 147);vertex(335, 129);vertex(342, 110);vertex(353, 101);vertex(373, 101);vertex(394, 107);vertex(403, 107);vertex(402, 115);vertex(386, 113);vertex(373, 113);vertex(359, 115);vertex(350, 122);vertex(347, 134);vertex(370, 130);vertex(368, 141);vertex(346, 142);vertex(335, 165);vertex(349, 167);vertex(363, 162);vertex(371, 154);vertex(386, 140);vertex(402, 134);vertex(414, 137);vertex(404, 141);vertex(396, 146);vertex(393, 156);vertex(407, 154);vertex(415, 151);vertex(417, 154);vertex(407, 158);vertex(391, 161);vertex(379, 161);vertex(374, 164);vertex(362, 171);vertex(346, 175);vertex(335, 176);vertex(329, 189);vertex(317, 203);vertex(304, 210);vertex(319, 211);vertex(335, 217);vertex(351, 222);vertex(376, 224);vertex(398, 225);vertex(413, 218);vertex(424, 210);vertex(448, 199);vertex(464, 201);vertex(469, 215);vertex(463, 215);vertex(452, 214);vertex(437, 221);vertex(420, 226);vertex(407, 232);vertex(423, 235);vertex(435, 239);vertex(435, 249);vertex(432, 246);vertex(415, 243);vertex(402, 236);vertex(388, 235);vertex(375, 235);vertex(357, 235);vertex(345, 233);vertex(346, 241);vertex(354, 248);vertex(367, 250);vertex(372, 248);vertex(373, 255);vertex(354, 257);vertex(342, 249);vertex(330, 235);vertex(325, 230);vertex(302, 227);vertex(290, 231);vertex(295, 378);vertex(296, 388);vertex(302, 397);vertex(243, 393);vertex(243, 398);
+        endShape();
+        popMatrix();
+        
+        noStroke();
+        for(var i = 0; i < 360; i += 6){
+            for(var j = 0; j < 174; j += 12){
+                fill(111 + random(-50, 50), 195, 212 + random(-10, 50), random(50, 205));
+                ellipse(random(-50, 50) + 417 + sin(i) * j * 1.6, 240 + cos(i) * j, 20, 20);
+            }
+        }
+        
+        filter(BLUR, 1);
+        
+        return get(0, 0, width, height);
+    },
+    
+    /* (not) Story image */
+    'woodsBG': function(){
+        background(255, 255, 255);
+        noStroke();
+        for(var i = -140; i < 800; i += 40){
+            birchTrunk(i - (frameCount/1.2)%40, 300, 20);
+        }
+        fill(0, 0, 0, 30);
+        rect(0, 0, width, height);
+        for(var i = 60; i < 800; i += 140){
+            birchTrunk(i - (frameCount/1.6)%140, 300, 28);
+        }
+        fill(0, 0, 0, 30);
+        rect(0, 0, width, height);
+        for(var i = 98; i < 800; i += 140){
+            birchTrunk(i - (frameCount/1.8)%140, 300, 42);
+        }
+        fill(0, 0, 0, 30);
+        rect(0, 0, width, height);
+        for(var i = 35; i < 800; i += 140){
+            birchTrunk(i - frameCount%140, 300, 65);
+        }
+        
+        filter(BLUR, 3);
+        
+        return get(0, 0, width, height);
+    },
+    
+    /* Game images */
+    'woods': function(){
+        noStroke();
+        fill(39, 94, 56);
+        rect(0, 0, 50, 50);
+        
+        for(var i = 0; i < 50; i += 5){
+            for(var j = 0; j < 50; j += 5){
+                fill(0, 0, 0, random(30));
+                rect(i, j, 5, 5);
+            }
+        }
+        
+        filter(BLUR, 1);
+        
+        fill(0, 0, 0, 30);
+        triangle(0, 0, 0, 50, 5, 0);
+        triangle(0, 0, 0, 5, 50, 0);
+        fill(255, 255, 255, 30);
+        triangle(50, 50, 50, 0, 45, 50);
+        triangle(50, 50, 50, 45, 0, 50);
+        
+        return get(0, 0, 50, 50);
+    },
+    'grass': function(){
+        noStroke();
+        fill(68, 179, 75);
+        rect(0, 0, 50, 50);
+        
+        for(var i = 0; i < 50; i += 5){
+            for(var j = 0; j < 50; j += 5){
+                fill(0, 0, 0, random(30));
+                rect(i, j, 5, 5);
+            }
+        }
+        
+        filter(BLUR, 1);
+        
+        fill(0, 0, 0, 30);
+        triangle(0, 0, 0, 50, 5, 0);
+        triangle(0, 0, 0, 5, 50, 0);
+        fill(255, 255, 255, 30);
+        triangle(50, 50, 50, 0, 45, 50);
+        triangle(50, 50, 50, 45, 0, 50);
+        
+        return get(0, 0, 50, 50);
+    },
+    'sand': function(){
+        noStroke();
+        fill(235, 231, 123);
+        rect(0, 0, 50, 50);
+        
+        for(var i = 0; i < 50; i += 5){
+            for(var j = 0; j < 50; j += 5){
+                fill(0, 0, 0, random(30));
+                rect(i, j, 5, 5);
+            }
+        }
+        
+        filter(BLUR, 1);
+        
+        fill(0, 0, 0, 30);
+        triangle(0, 0, 0, 50, 5, 0);
+        triangle(0, 0, 0, 5, 50, 0);
+        fill(255, 255, 255, 30);
+        triangle(50, 50, 50, 0, 45, 50);
+        triangle(50, 50, 50, 45, 0, 50);
+        
+        return get(0, 0, 50, 50);
+    },
+};
+
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
+
+/* Button function */
+var Button = function(x, y, w, h, txt, nxt){
+    this.x = x;
+    this.y = y;
+    this.w = w; this.w2 = w;
+    this.h = h; this.h2 = h;
+    this.txt = txt;
+    this.nxt = nxt;
+};
+Button.prototype.draw = function() {
+    if(this.h2 > this.h){ this.h2 = this.h; }
+    if(this.h2 < 1){ this.h2 = 1; }
+    if(this.w2 > this.w){ this.w2 = this.w; }
+    if(this.w2 < 1){ this.w2 = 1; }
+    
+    pushStyle();
+    noFill();
+    rectMode(CENTER);
+    strokeWeight(3);
+    stroke(28, 28, 28, 200);
+    rect(this.x, this.y, this.w, this.h, 5);
+    noStroke();
+    fill(255, 255, 255, 200);
+    rect(this.x, this.y, this.w - this.w2, this.h - this.h2, 5);
+    
+    if(mouseX > this.x - (this.w / 2) && mouseX < this.x + (this.w / 2) && mouseY > this.y - (this.h / 2) && mouseY < this.y + (this.h / 2)){
+        this.h2 /= 1.1;
+        this.w2 /= 1.1;
+        if(clicked){
+            trans.active = true;
+            trans.nextScene = this.nxt;
+            clicked = false;
+        }
+    } else {
+        this.h2 *= 1.1;
+        this.w2 *= 1.1;
+    }
+    
+    fill(25);
+    textSize(30);
+    text(this.txt, this.x, this.y);
+    popStyle();
+};
+var Buttons = {
+    play: new Button(300, 535, 300, 50, 'BEGIN', 'Story'),
+    play2: new Button(300, 535, 300, 50, 'CONTINUE', 'Game'),
+};
+
+/* Menu */
+var Menu = function(){
+    this.x1 = 600;
+    this.x2 = -600;
+    this.y1 = 300;
+    this.s = 100000;
+};
+Menu.prototype.draw = function() {
+    pushStyle();
+    rectMode(CENTER);
+    imageMode(CENTER);
+    image(images.bg1, 300, 300, 600 + this.s, 600 + this.s);
+    noFill();
+    stroke(25);
+    strokeWeight(15);
+    rect(300, 300, 600 + this.s, 600 + this.s);
+    popStyle();
+    
+    textSize(70);
+    fill(0);
+    for(var i = 0; i < 360; i += 30){
+        text('THE GREAT', this.x1 + 300 + sin(i)*3, 213 + cos(i)*3);
+        text('ADVENTURE', this.x1 + 300 + sin(i)*3, 400 + cos(i)*3);
+    }
+    fill(25);
+    for(var i = 0; i < 360; i += 30){
+        text('THE GREAT', this.x1 + 300 + sin(i)*3, 210 + cos(i)*3);
+        text('ADVENTURE', this.x1 + 300 + sin(i)*3, 397 + cos(i)*3);
+    }
+    fill(245);
+    text('THE GREAT', this.x1 + 300, 210);
+    text('ADVENTURE', this.x1 + 300, 397);
+    
+    textSize(150);
+    fill(210);
+    for(var i = 0; i < 360; i += 30){
+        text('KHAN', this.x2 + 300 + sin(i)*5, 305 + cos(i)*5);
+    }
+    fill(245);
+    for(var i = 0; i < 360; i += 30){
+        text('KHAN', this.x2 + 300 + sin(i)*5, 300 + cos(i)*5);
+    }
+    fill(25);
+    text('KHAN', this.x2 + 300, 300);
+    
+    fill(25);
+    textSize(25);
+    text('CHESTER BANKS |            2017', 300, this.y1 + 450);
+    fill(245);
+    text('JANUARY', 381, this.y1 + 450);
+    
+    Buttons.play.y = 535 + this.y1;
+    Buttons.play.draw();
+    
+    this.s /= 1.1;
+    if(this.s < 1){
+        this.x1 /= 1.1;
+        this.x2 /= 1.1;
+        this.y1 /= 1.1;
+    }
+};
+var menu = new Menu();
+
+/* Story */
+var Story = function(){
+    this.page = 0;
+    
+    this.handX = 400;
+    this.textI = 0;
+    this.textI2 = -20;
+    this.mapW = 600;
+    this.pirateI = 0;
+    this.myI = -130;
+    
+    this.shipX = 100;
+    this.shipY = 500;
+};
+Story.prototype.draw = function() {
+    imageMode(CENTER);
+    image(images.woodsBG, 300, 300);
+    textSize(20);
+    fill(20);
+    text('The story was not included in this program because it was lagging too much. Click anywhere for a link to the story.\n\nThe story shows how you found a treasure map that leads to treasure on Khan Island. You\'ve just arrived there.', 50, 50, 500, 500);
+    
+    Buttons.play2.draw();
+    
+    if(clicked){
+        println('khanacademy.org/cs/1234567890');
+    }
+};
+var story = new Story();
+
+/* The rectangle collision function */
+var rectCollide = function(one, two){
+    if( one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h){
+        return true;
+    }
+};
+
+/* Blocks */
+var blockSz = 50;
+var Block = function(x, y, type){
+    this.x = x; this.w = blockSz;
+    this.y = y; this.h = blockSz;
+    this.type = type;
+};
+Block.prototype.draw = function() {
+    rectMode(CORNER);
+    noStroke();
+    if(this.type === 'sand'){
+        image(images.sand, this.x, this.y, this.w, this.h);
+    }
+    if(this.type === 'grass'){
+        image(images.grass, this.x, this.y, this.w, this.h);
+    }
+    if(this.type === 'woods'){
+        image(images.woods, this.x, this.y, this.w, this.h);
+    }
+    /*rect(this.x, this.y, this.w, this.h);
+    fill(0, 0, 0, 30);
+    triangle(this.x, this.y, this.x + this.w, this.y, this.x, this.y + this.h);*/
+};
+
+/* Characters */
+
+/* Maps */
+var game;
+var blockMap = [
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddgggddddddddddddddddddgggddddddddddddd",
+    "ddddddddddddddddddddddddddddddddddggggggddddddgdddddddgggggggddddggggddd",
+    "dddddddddddddddddddddddddddddddgggggggggggdddggddddddgggggggggggggggggdd",
+    "ddddddddddddddddddddgggggggggggggggggggggggddggggdddgggggggggggggggggggg",
+    "ddddgdddddddddddgggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gddgggddddddgdgggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "ggdgggdggdgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggsgggggggggggggg",
+    "ggggggggggggggggggggggggggggggggggggggggggggggggsggggggggsggggggggsggggg",
+    "ggggggssggggggggssgggggssgggggsgggggggggggggsgggggggsgggsggggggggssggggg",
+    "ggggggssssssssssssssssssssggggssggssgggssggssggsgsggssgggggggssgggsssssg",
+    "sssssssssssssssssssssssssssssssssssssssssggssggsgsgsggsssssssssssgssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+];
+var blocks = [];
+var loadMap = function(which){
+    for(var i in which){
+        for(var j in which[i]){
+            switch(which[i][j]){
+                case 's':
+                    blocks.push(new Block(j * blockSz, i * blockSz, 'sand'));
+                    break;
+                case 'g':
+                    blocks.push(new Block(j * blockSz, i * blockSz, 'grass'));
+                    break;
+                case 'd':
+                    blocks.push(new Block(j * blockSz, i * blockSz, 'woods'));
+                    break;
+            }
+        }
+    }
+};
+loadMap(blockMap);
+
+/* Player */
+var Player = function(){
+    this.x = 300; this.xvel = 0;
+    this.y = 1200; this.yvel = 0;
+    this.w = 40;
+    this.h = 40;
+    
+    this.weapon = '';
+};
+Player.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    strokeWeight(2);
+    stroke(71, 71, 71);
+    fill(97, 97, 97);
+    rect(10, 50, 7, 20, 2);
+    rect(22, 50, 7, 20, 2);
+    stroke(46, 46, 46);
+    fill(51, 51, 51);
+    if(keys[RIGHT] || keys[LEFT] || keys[UP] || keys[DOWN]){
+        rect(keys[RIGHT] ? 10 : 4, 68 + sin(frameCount*10)*3, 13, 5, 2);
+        rect(keys[LEFT] ? 17 : 22, 68 + cos(frameCount*10)*3, 13, 5, 2);
+    } else {
+        rect(keys[RIGHT] ? 10 : 4, 68, 13, 5, 2);
+        rect(keys[LEFT] ? 17 : 22, 68, 13, 5, 2);
+    }
+    if(keys[UP]){
+        stroke(71, 71, 71);
+        fill(97, 97, 97);
+        rect(10, 50, 7, 22 + sin(frameCount*10)*3, 2);
+        rect(22, 50, 7, 22 + cos(frameCount*10)*3, 2);
+    }
+    stroke(30, 72, 102);
+    fill(51, 111, 156);
+    rect(2, 39, 35, 20, 5);
+    rect(7, 30, 25, 30, 5);
+    stroke(133, 114, 92);
+    fill(230, 198, 159);
+    rect(0, 0, this.w, this.h, 10);
+    stroke(102, 81, 56);
+    fill(156, 109, 54);
+    rect(0, 0, 5, 18, 4);
+    rect(35, 0, 5, 18, 4);
+    rect(0, 0, 40, keys[UP] ? 30 : 12, 4);
+    if(!keys[UP]){
+        noStroke();
+        fill(0, 0, 0);
+        rect(10 + this.xvel, 20, 7, 12, 10);
+        rect(25 + this.xvel, 20, 7, 12, 10);
+        fill(255, 255, 255, 100);
+        rect(10 + this.xvel, 20, 4, 5, 10);
+        rect(25 + this.xvel, 20, 4, 5, 10);
+    }
+    popMatrix();
+    
+    this.xvel = constrain(this.xvel, -3, 3);
+    this.yvel = constrain(this.yvel, -3, 3);
+    
+    if(keys[LEFT]){
+        this.xvel -= 0.5;
+    }
+    if(keys[RIGHT]){
+        this.xvel += 0.5;
+    }
+    if(keys[UP]){
+        this.yvel -= 0.5;
+    }
+    if(keys[DOWN]){
+        this.yvel += 0.5;
+    }
+    
+    if(!keys[LEFT] && !keys[RIGHT]){ 
+        this.xvel /= 1.05; 
+    }
+    if(!keys[UP] && !keys[DOWN]){ 
+        this.yvel /= 1.05; 
+    }
+    if(this.xvel > -0.1 && this.xvel < 0.1){ 
+        this.xvel = 0; 
+    }
+    if(this.yvel > -0.1 && this.yvel < 0.1){ 
+        this.yvel = 0; 
+    }
+    
+    this.x += this.xvel;
+    for(var i in blocks){
+        if(rectCollide(this, blocks[i]) && blocks[i].type === 'woods'){
+            game.showTxt = true;
+            if(this.xvel < 0){
+                this.xvel = 0;
+                this.x = blocks[i].x + blocks[i].w;
+            }
+            if(this.xvel > 0){
+                this.xvel = 0;
+                this.x = blocks[i].x - this.w;
+            }
+        }
+    }
+    
+    this.y += this.yvel;
+    for(var i in blocks){
+        if(rectCollide(this, blocks[i]) && blocks[i].type === 'woods'){
+            game.showTxt = true;
+            if(this.yvel < 0){
+                this.yvel = 0;
+                this.y = blocks[i].y + blocks[i].h;
+            }
+            if(this.yvel > 0){
+                this.yvel = 0;
+                this.y = blocks[i].y - this.h;
+            }
+        }
+    }
+};
+var player = new Player();
+
+/* Game */
+var Game = function(){
+    this.camera = {x: 0, y: 0};
+    
+    this.txt = function(txt){
+        this.txt = txt;
+        this.i = 0;
+        this.w = width;
+        this.y = 70;
+        this.fade = 255;
+    };
+    this.txt.prototype.draw = function() {
+        fill(0, 0, 0, 50);
+        textAlign(LEFT, TOP);
+        textSize(16);
+        noStroke();
+        rect(0, 600 - this.y, width - this.w, 100);
+        fill(255, 255, 255, this.fade);
+        text(this.txt.substring(0, this.i), 30, 545, 540, 100);
+        textAlign(CENTER, CENTER);
+        
+        this.i += 0.5;
+        this.w /= 1.1;
+        
+        if(this.i > this.txt.length + 20){
+            this.fade /= 1.1;
+            this.y /= 1.1;
+        }
+    };
+    this.txts = [
+        new this.txt('Those woods look dark and dangerous... I\'d better get a light before I continue.'),
+    ];
+    
+    this.showTxt = false;
+};
+Game.prototype.draw = function() {
+    background(200);
+    
+    imageMode(CORNER);
+    pushMatrix();
+    translate(this.camera.x, this.camera.y);
+    
+    this.camera.x = constrain(-(player.x) + (width / 2), -(blockMap.length * blockSz), 0);
+    this.camera.y = constrain(-(player.y) + (width / 2), -1047, 0);
+    
+    for(var i in blocks){
+        if(blocks[i].x + this.camera.x >= -blockSz && blocks[i].x + this.camera.x < width && blocks[i].y + this.camera.y >= -blockSz && blocks[i].y + this.camera.y < height){
+            blocks[i].draw();
+        }
+    }
+    player.draw();
+    popMatrix();
+    
+    if(this.showTxt){
+        this.txts[0].draw();
+    }
+    
+    noFill();
+    stroke(255, 255, 255, 200);
+    strokeWeight(2);
+    rect(557, 570, 35, 20);
+    rect(472, 570, 75, 20);
+    fill(255, 255, 255, 200);
+    textSize(12);
+    text('MAP', 575, 580);
+    text('INVENTORY', 510, 580);
+};
+game = new Game();
+
+draw = function() {
+    /* Load Google Font(s) */
+    if (!fontloaded) {
+        loadGoogleFont('Chelsea Market|Trade Winds', 'latin-ext', 'vietnamese');
+    }
+    textFont(createFont('Chelsea Market'));
+    
+    /* Load images */
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    /* Draw scenes */
+    if(scene === 'Menu'){
+        menu.draw();
+    }
+    if(scene === 'Story'){
+        story.draw();
+    }
+    if(scene === 'Story Overview'){
+        background(245);
+        
+        fill(25);
+        textSize(13);
+        text('You find a treasure map and decide to try to find the treasure. You ride on Captain\'s ship to Khan Island. After traveling across a meadow of aqua orchids, you enter the forest.\n\nInside the forest, you meet an elf archer named Legolas Greenleaf who agrees to accompany you on your journey if he gets a share of the treasure. While you and Legolas are trekking through the forest (by a tree with blue leaves), a panther bounds toward you and Legolas is about to shoot him with an arrow when the Panther says, "Wait! Don\'t shoot!". \n\nSurprised that the Panther can talk, you decide to hear what it has to say.\n\n"I am the Mighty Panther," it says. "I have lived on this island for a hundred years, and I know it like the back of my paw. I would like to join you for a share of the treasure. You will avoid perilous dangers thanks to my warnings."\n\nYou and Legolas agree to let him join. Soon you are out of the forest and in a meadow at the foot of Mount Magma. A cow is grazing in the field, and to your surprise, it is bright red!\n\n"Holy cow!" you say. "It\'s red!"\n\n"Hello there," says the cow. "It would seem the three of you are on some sort of quest?"\n\n"Correct," you answer. "We have a map that leads to treasure on the other side of the mountain!"\n\n"That\'s nice," says the cow. "But I\'ve got other top secret things to attend to, so I\'m afraid I can\'t join you. Good luck!"\n\nYou, Legolas, and the Mighty Panther continue in your way through the meadow. The Mighty Panther informs you that the only way to the other side of the mountain is to go up the mountain. Surrounding the mountain are leagues of dangerous creatures called Tegoons.\n\nThe three of you start to climb the mountain, but soon find that it is too hard and will take far too long. The Mighty Panther admits that there is a way through the mountain, and you and Legolas quickly agree to go that way.', 25, -380, 550, 1500);
+    }
+    if(scene === 'Game'){
+        game.draw();
+    }
+    
+    /* Transition */
+    rectMode(CORNER);
+    noStroke();
+    fill(255);
+    if(!trans.out){
+        rect(-trans.minusPos, -trans.minusPos, 300, 300);
+        rect(300 + trans.minusPos, -trans.minusPos, 300, 300);
+        rect(-trans.minusPos, 300 + trans.minusPos, 300, 300);
+        rect(300 + trans.minusPos, 300 + trans.minusPos, 300, 300);
+    } else {
+        rect(trans.minusPos - 300, trans.minusPos - 300, 300, 300);
+        rect(600 - trans.minusPos, trans.minusPos - 300, 300, 300);
+        rect(600 - trans.minusPos, 600 - trans.minusPos, 300, 300);
+        rect(trans.minusPos - 300, 600 - trans.minusPos, 300, 300);
+    }
+    if(trans.active){
+        trans.minusPos /= 1.3;
+        if(trans.minusPos < 0.1 && !trans.out){
+            scene = trans.nextScene;
+            trans.minusPos = 300;
+            trans.out = true;
+        }
+        if(trans.minusPos < 0.1 && trans.out){
+            trans.minusPos = 300;
+            trans.active = false;
+            trans.out = false;
+        }
+    }
+    
+    /* Reset clicked */
+    clicked = false;
+};
