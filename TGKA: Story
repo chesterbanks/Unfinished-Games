@@ -1,0 +1,1038 @@
+/**
+ * The Great Khan Adventure: Story
+ * Chester Banks
+ * January ? 2017
+ * 
+ * In my opinion, The Great Khan Adventure will my biggest and best game yet.
+ * 
+ * There's a few easter eggs / references in this as well as the game! Can you find them all?
+*/
+
+/* Google Font code (thanks to Eric Balingit) */
+var loadGoogleFont = (function () {
+    return this.Function ( "gfName", "gfName = gfName.replace ( /\\s+/g, '+' );var subsets = Array.prototype.slice.call ( arguments, 1, arguments.length - 1 ), url = 'https://fonts.googleapis.com/css?family=' + gfName + ( subsets.length > 0 ? '&amp;subset=' + subsets : '' ), callback = arguments [ arguments.length - 1 ], gfs = document.querySelectorAll('link[href=\"'+url+'\"]');if(!gfs.length){var f=document.createElement('link');f.setAttribute('rel','stylesheet');f.setAttribute('type','text/css');f.onload=callback;f.setAttribute('href',url);document.head.appendChild(f);}else if ( typeof callback === 'function' ) { callback.call ( gfs [ 0 ] ); }");
+})();
+var fontloaded = false;
+
+textAlign(CENTER, CENTER);
+
+/* Variables */
+var scene = 'Intro';
+
+/* Transition object */
+var trans = {active: false, nextScene: 'Story', minusPos: 300, out: false};
+
+/* HLGF (Helpful Little Graphics Functions */
+var crate = function(x, y){
+    rectMode(CENTER);
+    pushMatrix();
+    translate(x, y);
+    scale(1.2);
+    noStroke();
+    fill(153, 95, 25);
+    rect(0, 0, 50, 50);
+    fill(130, 79, 16);
+    quad(-25, -25, 25, -25, 15, -30, -15, -30);
+    
+    noFill();
+    strokeWeight(4);
+    stroke(138, 83, 19);
+    rect(0, 0, 45, 45);
+    line(-20, -20, 20, 20);
+    line(-20, 20, 20, -20);
+    
+    noStroke();
+    fill(0, 0, 0, 30);
+    triangle(20, -20, -20, 20, 20, 20);
+    popMatrix();
+};
+var cobweb = function(x, y, s, r){
+    pushMatrix();
+    translate(x, y);
+    scale(s);
+    rotate(r);
+    noFill();
+    strokeWeight(1/s);
+    stroke(255, 255, 255, 100);
+    for(var i = 0; i < 360; i += 40){
+        pushMatrix();
+        rotate(i);
+        arc(-50, 0, 10, 40, -90, 90);
+        arc(-40, 0, 10, 30, -90, 90);
+        arc(-30, 0, 10, 20, -90, 90);
+        arc(-20, 0, 10, 15, -90, 90);
+        line(0, 0, 10, 50);
+        popMatrix();
+    }
+    popMatrix();
+};
+var mapMountain = function(x, y, s){
+    line(x, y, x - (s/2), y + s);
+    line(x, y, x + (s/2), y + s);
+};
+var birchTrunk = function(x, y, thickness){
+    strokeCap(SQUARE);
+    strokeWeight(thickness/10);
+    stroke(191, 190, 184);
+    fill(247, 246, 234);
+    pushMatrix();
+    translate(x, y);
+    beginShape();
+    for(var i = -300; i < 302; i += 20){
+        vertex(-thickness + noise(i, 1.8)*70, i);
+        /*vertex(-thickness + (thickness/3.5) + noise(i, 1.8)*70, i);
+        vertex(-thickness + noise(i, 1.8)*70, i+6);*/
+    }
+    for(var i = 300; i > -302; i -= 20){
+        vertex(0 + noise(i, 1.8)*70, i);
+    }
+    endShape(CLOSE);
+    beginShape();
+    for(var i = -300; i < 302; i += 20){
+        vertex(-thickness + noise(i, 1.8)*70, i);
+        vertex(-thickness + (thickness/3.5) + noise(i, 1.8)*70, i);
+        vertex(-thickness + noise(i, 1.8)*70, i+6);
+    }
+    stroke(0, 0, 0, thickness);
+    for(var i = -300; i < 302; i += 20){
+        line(-thickness + noise(i, 1.8)*70, i, 
+        (thickness/(noise(i*2, 2.55)*5)) - 
+        thickness + noise(i, 1.8)*70, i);
+    }
+    noStroke();
+    fill(0, 0, 0, 20);
+    vertex(thickness/3, 3-300);
+    endShape(CLOSE);
+    popMatrix();
+};
+
+/* Images */
+var images = {
+    /* Menu images */
+    'woods': function(){
+        background(255, 255, 255);
+        noStroke();
+        for(var i = -140; i < 800; i += 40){
+            birchTrunk(i - (frameCount/1.2)%40, 300, 20);
+        }
+        fill(0, 0, 0, 30);
+        rect(0, 0, width, height);
+        for(var i = 60; i < 800; i += 140){
+            birchTrunk(i - (frameCount/1.6)%140, 300, 28);
+        }
+        fill(0, 0, 0, 30);
+        rect(0, 0, width, height);
+        for(var i = 98; i < 800; i += 140){
+            birchTrunk(i - (frameCount/1.8)%140, 300, 42);
+        }
+        fill(0, 0, 0, 30);
+        rect(0, 0, width, height);
+        for(var i = 35; i < 800; i += 140){
+            birchTrunk(i - frameCount%140, 300, 65);
+        }
+        
+        filter(BLUR, 3);
+        
+        return get(0, 0, width, height);
+    },
+    'bg': function(){
+        noStroke();
+        
+        for(var i = 0; i < height; i += 10){
+            fill(lerpColor(
+                color(219, 70, 90),
+                color(235, 116, 52),
+                i/height));
+            rect(0, i, width, 10);
+            for(var j = 0; j < width; j += 10){
+                fill(0, 0, 0, random(10));
+                rect(j, i, 10, 10);
+            }
+        }
+        
+        fill(255, 179, 0);
+        arc(250, 500, 200, 200, -180, 0);
+        for(var i = 0; i < 200; i += 10){
+            fill(255, 106, 0, 5);
+            arc(250, 500, i, i, -180, 0);
+        }
+        
+        for(var i = 500; i < height; i += 10){
+            fill(lerpColor(
+                color(0, 0, 0, 200),
+                color(0, 251, 255, 200),
+                i/height));
+            rect(0, i, width, 10);
+        }
+        
+        noFill();
+        for(var i = 0; i < 100; i ++){
+            stroke(255, 255, 255, random(50));
+            arc(random(width), random(500, height), random(200), random(5), -180, 0);
+        }
+        
+        filter(BLUR, 2);
+        
+        return get(0, 0, width, height);
+    },
+    
+    /* Story images */
+    'teeny': function(){
+        background(255);
+        
+        colorMode(HSB);
+        noStroke();
+        for(var i = 0; i <= 150; i += 10){
+            for(var j = 0; j <= 100; j += 20){
+                fill(random(255), 205, 105, random(100));
+                ellipse(i + random(-20, 20), j, 30, 30);
+            }
+        }
+        colorMode(RGB);
+        
+        filter(BLUR, 2);
+        
+        pushMatrix();
+        translate(50, 83);
+        scale(0.3);
+        rotate(10);
+        translate(-250, -250);
+        var body = function() {
+            ellipse(200, 125, 200, 200);
+            quad(185, 215, 215, 215, 260, 375, 140, 375);
+            bezier(140, 375, 155, 385, 185, 385, 200, 375);
+            bezier(260, 375, 245, 385, 215, 385, 200, 375);
+        };
+        stroke(0, 0, 0);
+        strokeJoin(ROUND);
+        strokeWeight(6);
+        body();
+        noStroke();
+        fill(255, 129, 0);
+        body();
+        stroke(0, 0, 0);
+        strokeWeight(1.5);
+        line(200, 225, 200, 375);
+        pushMatrix();
+        translate(200, 125);
+        translate(-200, -125);
+        translate(200, 80);
+        translate(-200, -80);
+        fill(255, 255, 255);
+        beginShape();
+        vertex(165, 35);
+        bezierVertex(145, 35, 140, 55, 140, 80);
+        bezierVertex(140, 105, 145, 125, 165, 125);
+        bezierVertex(185, 125, 190, 105, 190, 80);
+        bezierVertex(190, 55, 185, 35, 165, 35);
+        endShape(CLOSE);
+        beginShape();
+        vertex(235, 35);
+        bezierVertex(255, 35, 260, 55, 260, 80);
+        bezierVertex(260, 105, 255, 125, 235, 125);
+        bezierVertex(215, 125, 210, 105, 210, 80);
+        bezierVertex(210, 55, 215, 35, 235, 35);
+        endShape(CLOSE);
+        noFill();
+        beginShape();
+        vertex(135, 110);
+        bezierVertex(135, 150, 185, 150, 200, 150);
+        bezierVertex(215, 150, 265, 150, 265, 110);
+        endShape();
+        arc(165, 10, 40, 45, 181, 360);
+        arc(235, 10, 40, 45, 181, 360);
+        noStroke();
+        fill(0, 0, 0);
+        ellipse(175, 80, 20, 30);
+        ellipse(225, 80, 20, 30);
+        popMatrix();
+        popMatrix();
+
+        filter(BLUR, 2);
+        
+        return get(0, 0, 150, 100);
+    },
+    'blobby': function(){
+        background(255);
+        
+        noStroke();
+        for(var i = 0; i <= 150; i += 10){
+            for(var j = 0; j <= 100; j += 10){
+                fill(0, random(255), 0, random(100));
+                rect(i + random(-20, 20), j, 30, 30);
+            }
+        }
+        
+        filter(BLUR, 2);
+        
+        pushMatrix();
+        translate(70,50);
+        scale(1.1);
+        translate(-200,-200);
+        fill(0, 255, 0);
+        strokeWeight(2);
+        stroke(0, 168, 39);
+        beginShape();//begin body
+        curveVertex(235, 216);
+        curveVertex(232, 189);
+        curveVertex(225, 171);
+        curveVertex(212, 163);
+        curveVertex(197, 161);
+        curveVertex(185, 165);
+        curveVertex(174, 178);
+        curveVertex(169, 206);
+        curveVertex(166, 229);
+        curveVertex(158, 240);
+        curveVertex(170, 242);
+        curveVertex(182, 240);
+        curveVertex(191, 243);
+        curveVertex(200, 245);
+        curveVertex(207, 240);
+        curveVertex(212, 239);
+        curveVertex(219, 242);
+        curveVertex(224, 243);
+        curveVertex(228, 240);
+        curveVertex(232, 239);
+        curveVertex(235, 239);
+        curveVertex(240, 239);
+        curveVertex(240, 232);
+        curveVertex(236, 223);
+        curveVertex(232, 189);
+        endShape(CLOSE);
+        fill(255, 255, 255);
+        stroke(0);
+        ellipse(190, 190, 18, 20);
+        ellipse(215, 190, 18, 20);
+        fill(0, 0, 0);
+        ellipse(190, 192, 8, 10);
+        ellipse(215, 192, 8, 10);
+        noFill();
+        strokeWeight(1);
+        arc(202, 208, 20, 3, 36, 121);
+        popMatrix();
+        
+        return get(0, 0, 150, 100);
+    },
+    'woodBG': function(){
+        for (var i = 0; i <= 400; i ++) {
+            strokeWeight(1);
+            stroke(lerpColor(color(143, 102, 0), color(51, 43, 0), i/400));
+            line(0, i, height, i);
+            
+            stroke(lerpColor(color(0, 0, 0), color(87, 58, 0), i/300));
+            line(0, i+200, height, i+200);
+        }
+        
+        for(var i = -300; i < width*1.5; i += 50){
+            stroke(0, 0, 0, i/20 + 50);
+            strokeWeight(1);
+            line(i/2 + 150, 400, i, height);
+            line(i/2 + 175, 0, i/2 + 175, 400);
+        }
+        
+        // Teeny
+        pushMatrix();
+        translate(100, 150);
+        scale(0.7);
+        rotate(-10);
+        image(images.teeny, 0, 0);
+        
+        strokeWeight(1);
+        stroke(255, 255, 255, 100);
+        line(0, 0, 75, -75);
+        line(150, 0, 75, -75);
+        
+        noFill();
+        stroke(54, 54, 54);
+        strokeWeight(10);
+        point(75, -75);
+        rect(0, 0, 150, 100);
+        stroke(0);
+        strokeWeight(5);
+        rect(0, 0, 150, 100);
+        popMatrix();
+        
+        // Blobby
+        pushMatrix();
+        translate(300, 250);
+        scale(0.5);
+        rotate(15);
+        image(images.blobby, 0, 0);
+        
+        strokeWeight(1);
+        stroke(255, 255, 255, 100);
+        line(0, 0, 75, -75);
+        line(150, 0, 75, -75);
+        
+        noFill();
+        stroke(54, 54, 54);
+        strokeWeight(10);
+        point(75, -75);
+        rect(0, 0, 150, 100);
+        stroke(0);
+        strokeWeight(5);
+        rect(0, 0, 150, 100);
+        popMatrix();
+        
+        // Cobweb
+        for(var i = 0; i <= width; i += 100){
+            cobweb(i + random(-70, 70), 44 + random(-50, 150), random(0.5, 2));
+        }
+        
+        // Crates
+        crate(180, 430);
+        crate(175, 368);
+        crate(185, 306);
+        crate(530, 430);
+        crate(270, 430);
+        crate(50, 430);
+        crate(110, 430);
+        crate(60, 306);
+        crate(70, 368);
+        
+        // Table
+        noStroke();
+        fill(120, 71, 11);
+        rect(300, 420, 20, 120, 5);
+        rect(500, 420, 20, 120, 5);
+        rect(400, 370, 250, 20);
+        fill(107, 63, 8);
+        quad(275, 360, 525, 360, 500, 340, 300, 340);
+        rect(320, 415, 15, 70);
+        rect(480, 415, 15, 70);
+        
+        filter(BLUR, 3);
+        
+        return get(0, 0, width, height);
+    },
+    'map': function(){
+        textFont(createFont('Trade Winds'));
+        rectMode(CORNER);
+        noStroke();
+        fill(-3553086);
+        rect(25, 100, 550, 400);
+        bezier(25, 100, 37, 34, 65, 107, 575, 100);
+        bezier(25, 500, 557, 528, 567, 555, 575, 500);
+        
+        noStroke();
+        fill(36, 140, 64);
+        rect(323, 100, 252, 400);
+        rect(300, 168, 27, 349);
+        triangle(272, 300, 300, 185, 300, 384);
+        triangle(291, 226, 300, 185, 279, 203);
+        triangle(253, 262, 273, 306, 288, 249);
+        triangle(246, 246, 273, 306, 288, 257);
+        bezier(301, 518, 539, 528, 567, 555, 575, 500);
+        triangle(301, 518, 301, 498, 575, 500);
+        triangle(325, 97, 575, 100, 322, 101);
+        
+        strokeWeight(3);
+        stroke(24, 82, 40);
+        bezier(300, 516, 170, 495, 297, 455, 300, 380);
+        bezier(300, 380, 105, 307, 220, 138, 250, 238);
+        bezier(278, 204, 282, 182, 169, 188, 323, 166);
+        bezier(323, 166, 298, 127, 220, 160, 323, 97);
+        
+        noFill();
+        bezier(278, 204, 314, 258, 252, 267, 250, 235);
+        stroke(214, 198, 182);
+        strokeWeight(9);
+        rect(575, 100, 0, 400);
+        rect(25, 100, 0, 400);
+        bezier(25, 100, 37, 34, 65, 107, 575, 100);
+        bezier(25, 500, 557, 528, 567, 555, 575, 500);
+        
+        noFill();
+        stroke(28, 28, 28, 50);
+        strokeWeight(1);
+        for(var i = 0; i < 360; i += 30){
+            ellipse(385 + sin(i+10) * 5, 313 + cos(i+5) * 10, 10, 10);
+            ellipse(385 + sin(i+10) * 25, 313 + cos(i+5) * 25, 10, 10);
+            ellipse(385 + sin(i) * 20, 313 + cos(i) * 20, 10, 10);
+            ellipse(385 + sin(i) * 30, 313 + cos(i) * 30, 10, 10);
+            ellipse(385 + sin(i) * 15, 313 + cos(i) * 40, 10, 10);
+        }
+        
+        textSize(20);
+        fill(0, 0, 0, 70);
+        text('SEVENTH\nSEA', 100, 300);
+        textSize(30);
+        text('KHAN\nISLAND', 438, 256);
+        textSize(15);
+        text('MOUNT\nMAGMA', 414, 360);
+        text('AQUA\nMEADOW', 296, 304);
+        text('SINKING\nSANDS', 339, 131);
+        text('BLOSSOM\nFOREST', 387, 313);
+        text('ICE\nPRARIES', 509, 163);
+        textSize(12);
+        text('SHINE\nBEACH', 221, 264);
+        
+        stroke(0, 0, 0, 50);
+        strokeWeight(5);
+        mapMountain(440, 380, 75);
+        mapMountain(486, 392, 55);
+        mapMountain(395, 402, 35);
+        mapMountain(463, 442, 20);
+        mapMountain(443, 433, 20);
+        mapMountain(392, 442, 15);
+        mapMountain(375, 433, 15);
+        mapMountain(372, 410, 15);
+        mapMountain(386, 392, 15);
+        mapMountain(466, 401, 15);
+        mapMountain(412, 396, 15);
+        mapMountain(456, 392, 10);
+        mapMountain(401, 383, 15);
+        
+        stroke(166, 30, 30);
+        strokeCap(SQUARE);
+        strokeWeight(5);
+        for(var i = 72; i < 205; i += 30){
+            line(400 + sin(i) * 50, 400 + cos(i) * 100, 400 + sin(i + 15) * 50, 400 + cos(i + 15) * 100);
+        }
+        for(var i = -67; i < 15; i += 30){
+            line(500 + sin(i) * 50, 400 + cos(i) * 100, 500 + sin(i + 15) * 50, 400 + cos(i + 15) * 100);
+        }
+        for(var i = -18; i < 15; i += 10){
+            line(300 + sin(i) * 200, 130 + cos(i) * 200, 300 + sin(i + 5) * 200, 130 + cos(i + 5) * 200);
+        }
+        fill(166, 30, 30);
+        textSize(50);
+        text('X', 531, 499);
+        
+        noStroke();
+        fill(0, 0, 0, 5);
+        for(var i = 100; i > 0; i -= 10){
+            rect(24, 70, i, 430);
+        }
+        textFont(createFont('Chelsea Market'));
+        
+        return get(0, 0, width, height);
+    },
+    'pirate_body': function(){
+        pushMatrix();
+        translate(100, 100);
+        scale(0.6);
+        
+        // Peg leg
+        noStroke();
+        fill(99, 69, 36);
+        quad(13, 360, 25, 408, 42, 409, 53, 367);
+        ellipse(33, 418, 30, 30);
+        
+        // Pants & Shoe
+        noStroke();
+        fill(48, 46, 42);
+        rect(-80, 397, 75, 35, 20);
+        fill(240, 231, 214);
+        rect(-58, 330, 50, 80, 20);
+        rect(7, 330, 50, 50, 20);
+        
+        // Torso
+        noStroke();
+        fill(140, 52, 41);
+        rect(-75, 150, 150, 200, 50);
+        fill(89, 35, 30);
+        ellipse(0, 230, 100, 100);
+        ellipse(0, 277, 53, 70);
+        fill(240, 231, 214);
+        triangle(-25, 200, 25, 200, 0, 340);
+        stroke(0, 0, 0, 60);
+        strokeWeight(3);
+        line(0, 200, 0, 340);
+        strokeWeight(10);
+        point(10, 230);
+        point(10, 255);
+        point(10, 280);
+        popMatrix();
+        
+        return get(0, 0, 200, 400);
+    },
+    'pirate_head': function(){
+        pushMatrix();
+        translate(100, 100);
+        scale(0.6);
+        
+        // Head
+        noStroke();
+        fill(201, 171, 131);
+        rect(-100, 5, 200, 200, 100);
+        noStroke();
+        ellipse(-105, 105, 40, 50);
+        ellipse(105, 105, 40, 50);
+        
+        // Eye(s)
+        fill(25);
+        ellipse(-40, 110, 25, 30);
+        
+        // Eyebrows
+        noFill();
+        stroke(125, 78, 31);
+        strokeWeight(20);
+        arc(0, 0, 200, 196, 100, 128);
+        arc(0, -5, 200, 196, 53, 92);
+        stroke(0, 0, 0, 30);
+        strokeWeight(8);
+        arc(0, 0, 200, 196, 100, 128);
+        arc(0, -5, 200, 196, 53, 92);
+        
+        // Eye patch
+        noFill();
+        strokeWeight(3);
+        stroke(0, 0, 0);
+        arc(0, 64, 200, 50, 0, 180);
+        noStroke();
+        fill(0);
+        arc(28, 89, 80, 80, -11, 180);
+        
+        // Beard
+        noFill();
+        stroke(89, 67, 39);
+        strokeWeight(23);
+        arc(0, 129, 185, 141, 0, 180);
+        
+        // Mustache
+        noStroke();
+        fill(61, 40, 18);
+        bezier(13, 170, -28, 100, -49, 166, -150, 180);
+        bezier(-13, 170, 28, 100, 49, 166, 150, 180);
+        bezier(13, 170, -28, 202, -49, 266, -150, 175);
+        bezier(-13, 170, 28, 202, 49, 266, 150, 175);
+        fill(255, 255, 255, 30);
+        bezier(4, 162, -28, 100, -49, 166, -150, 187);
+        bezier(-3, 161, 28, 100, 49, 166, 150, 184);
+        
+        // Pirate hat mumbo jumbo
+        strokeWeight(5);
+        stroke(82, 82, 82);
+        fill(18, 18, 18);
+        beginShape();
+        curveVertex(-149,-9); curveVertex(-119,23); curveVertex(-77,-17); curveVertex(-104,-85); curveVertex(-65,-147); curveVertex(18,-151); curveVertex(71,-131); curveVertex(25,-118); curveVertex(29,-81); curveVertex(63,-64); curveVertex(98,-80); curveVertex(81,-12); curveVertex(98,24); curveVertex(134,13); curveVertex(121,56); curveVertex(-133,53); curveVertex(-149,-9); curveVertex(-119,23); curveVertex(-77,-17);
+        endShape();
+        textSize(110);
+        fill(255, 255, 255, 50);
+        text('C', -6, -43);
+        popMatrix();
+        
+        return get(0, 0, 200, 400);
+    },
+    'ship_BG': function(){
+        background(176, 217, 235);
+        noStroke();
+        for(var i = 0; i < height; i += 20){
+            fill(lerpColor(
+                color(54, 154, 194), color(156, 204, 224), i/height));
+            rect(0, i, 600, 20);
+        }
+        for(var i = 200; i < height; i += 20){
+            fill(lerpColor(
+                color(17, 52, 92), color(59, 125, 212), i/400));
+            rect(0, i, 600, 20);
+        }
+        
+        noFill();
+        for(var i = 0; i < 30; i ++){
+            stroke(255, 255, 255, random(100));
+            pushMatrix();
+            translate(random(600), random(170, 300));
+            arc(0, 0, 50, 100, 90, 120);
+            arc(-25, 0, 50, 100, 60, 90);
+            popMatrix();
+        }
+        
+        strokeWeight(5);
+        stroke(117, 64, 26);
+        fill(173, 94, 41);
+        for(var i = 370; i < 600; i += 40){
+            rect(0, i, 600, 40);
+            line(300 + sin(i*10)*250, i, 300+ sin(i*10)*250, i + 50);
+            point(310 + sin(i*10)*250, i + 10);
+            point(310 + sin(i*10)*250, i + 30);
+        }
+        
+        strokeWeight(3);
+        for(var i = 35; i < width; i += 100){
+            rect(i, 270, 15, 117);
+        }
+        rect(0, 270, 600, 15);
+        
+        noStroke();
+        fill(0, 0, 0, 5);
+        for(var i = 370; i < 600; i += 40){
+            for(var j = 100; j > 0; j -= 5){
+                rect(300 + sin(i*10)*250, i, j, 40);
+                rect(0, i, j, 40);
+            }
+        }
+        fill(0, 0, 0, 10);
+        for(var i = 35; i < width; i += 100){
+            for(var j = 15; j > 0; j -= 1){
+                rect(i, 287, j, 100);
+            }
+        }
+        
+        filter(BLUR, 1);
+        
+        return get(0, 0, width, height);
+    },
+    'ocean': function(){
+        background(47, 129, 196);
+        noStroke();
+        for(var i = -1; i < width; i += 20){
+            for(var j = 0; j < height; j += 10){
+                fill(255, 255, 255, noise(0.1, i*15*j)*155);
+                rect(i, j, 20, 10);
+            }
+        }
+        
+        pushMatrix();
+        translate(350, 200);
+        strokeWeight(6);
+        stroke(81, 120, 56, 200);
+        fill(97, 158, 61);
+        // Another mumbo jumbo! This time it's the island.
+        beginShape();
+        curveVertex(-87,48); curveVertex(-74,20); curveVertex(-98,2); curveVertex(-84,-23); curveVertex(-72,1); curveVertex(-43,-1); curveVertex(-56,-76); curveVertex(-31,-110); curveVertex(81,-147); curveVertex(49,-89); curveVertex(141,-59); curveVertex(163,69); curveVertex(123,85); curveVertex(133,113); curveVertex(70,75); curveVertex(37,106); curveVertex(69,137); curveVertex(6,133); curveVertex(-29,125); curveVertex(-51,110); curveVertex(-32,91); curveVertex(-38,68); curveVertex(-87,48); curveVertex(-74,20); curveVertex(-98,2); 
+        endShape();
+        
+        noStroke();
+        fill(255, 255, 255, 15);
+        for(var i = 1.0; i > 0.1; i -= 0.2){
+            pushMatrix();
+            // Another mumbo jumbo! This time it's the island. 
+            scale(i);
+            beginShape();
+            curveVertex(-87,48); curveVertex(-74,20); curveVertex(-98,2); curveVertex(-84,-23); curveVertex(-72,1); curveVertex(-43,-1); curveVertex(-56,-76); curveVertex(-31,-110); curveVertex(81,-147); curveVertex(49,-89); curveVertex(141,-59); curveVertex(163,69); curveVertex(123,85); curveVertex(133,113); curveVertex(70,75); curveVertex(37,106); curveVertex(69,137); curveVertex(6,133); curveVertex(-29,125); curveVertex(-51,110); curveVertex(-32,91); curveVertex(-38,68); curveVertex(-87,48); curveVertex(-74,20); curveVertex(-98,2); 
+            endShape();
+            popMatrix();
+        }
+        popMatrix();
+        
+        // Mainland
+        strokeWeight(6);
+        stroke(81, 120, 56, 200);
+        fill(97, 158, 61);
+        bezier(-20, 600, 20, 493, 191, 580, 357, 600);
+        
+        return get(0, 0, 600, 600);
+    },
+};
+
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
+
+/* Button function */
+var Button = function(x, y, w, h, txt, nxt){
+    this.x = x;
+    this.y = y;
+    this.w = w; this.w2 = w;
+    this.h = h; this.h2 = h;
+    this.txt = txt;
+    this.nxt = nxt;
+};
+Button.prototype.draw = function() {
+    if(this.h2 > this.h){ this.h2 = this.h; }
+    if(this.h2 < 1){ this.h2 = 1; }
+    if(this.w2 > this.w){ this.w2 = this.w; }
+    if(this.w2 < 1){ this.w2 = 1; }
+    
+    pushStyle();
+    noFill();
+    rectMode(CENTER);
+    strokeWeight(3);
+    stroke(28, 28, 28, 200);
+    rect(this.x, this.y, this.w, this.h, 5);
+    noStroke();
+    fill(255, 255, 255, 200);
+    rect(this.x, this.y, this.w - this.w2, this.h - this.h2, 5);
+    
+    if(mouseX > this.x - (this.w / 2) && mouseX < this.x + (this.w / 2) && mouseY > this.y - (this.h / 2) && mouseY < this.y + (this.h / 2)){
+        this.h2 /= 1.1;
+        this.w2 /= 1.1;
+        if(clicked){
+            trans.active = true;
+            trans.nextScene = this.nxt;
+            clicked = false;
+        }
+    } else {
+        this.h2 *= 1.1;
+        this.w2 *= 1.1;
+    }
+    
+    fill(25);
+    textSize(30);
+    text(this.txt, this.x, this.y);
+    popStyle();
+};
+var Buttons = {
+    start: new Button(300, 535, 300, 50, 'BEGIN', 'Story'),
+};
+
+/* Story */
+var Story = function(){
+    this.page = 0;
+    
+    this.handX = 400;
+    this.textI = 0;
+    this.textI2 = -20;
+    this.mapW = 600;
+    this.pirateI = 0;
+    this.myI = -130;
+    
+    this.shipX = 100;
+    this.shipY = 500;
+};
+Story.prototype.draw = function() {
+    imageMode(CENTER);
+    background(45);
+    
+    if(this.page === 0){
+        image(images.woodBG, 300, 300);
+        
+        pushMatrix();
+        translate(300 + this.handX, 300);
+        rotate(10);
+        
+        // Hand
+        noStroke();
+        fill(227, 196, 145);
+        rect(0, 0, 400, 60);
+        rect(7, -36, 30, 60, 10);
+        fill(0, 0, 0, 5);
+        for(var i = 50; i > 0; i -= 5){
+            rect(24, 0, i, 60);
+        }
+        
+        // Scroll
+        noStroke();
+        rectMode(CENTER);
+        fill(204, 183, 163);
+        rect(0, 0, 50, 300);
+        ellipse(0, 150, 50, 30);
+        rectMode(CORNER);
+        fill(0, 0, 0, 10);
+        for(var i = 50; i > 0; i -= 5){
+            rect(-25, -150, i, 300 + sin(i*2)*16);
+        }
+        fill(171, 153, 137);
+        ellipse(0, -150, 50, 30);
+        
+        strokeWeight(2);
+        stroke(0, 0, 0, 50);
+        for(var i = 0; i < 658; i += 17){
+            point(sin(i) * (i/30), -150 + cos(i) * (i/50));
+        }
+        line(-20, -142, -19, 159);
+        
+        // Fingers
+        noStroke();
+        fill(227, 196, 145);
+        ellipse(-33, 10, 30, 100);
+        rect(-39, -40, 53, 25, 10);
+        rect(-39, -12, 60, 25, 10);
+        rect(-39, 16, 54, 25, 10);
+        rect(-39, 42, 46, 19, 18);
+        fill(0, 0, 0, 5);
+        for(var i = 50; i > 0; i -= 5){
+            arc(-48, 11, i, 103, -67, 72);
+        }
+        popMatrix();
+        
+        textSize(25);
+        fill(255);
+        text('What\'s this?'.substring(0, this.textI), 300, 550);
+        this.handX /= 1.1;
+        if(this.handX < 10){
+            this.textI += 0.5;
+        }
+    }
+    if(this.page === 1){
+        image(images.woodBG, 300, 300, 800, 800);
+        
+        noStroke();
+        fill(227, 196, 145);
+        rect(0, 300, 60, 60);
+        rect(12, 278, 15, 60, 5);
+        
+        imageMode(CORNER);
+        image(images.map, 0, 0, 600 - this.mapW, 600);
+        imageMode(CENTER);
+        
+        textSize(25);
+        fill(255);
+        text('I can\'t believe it! A treasure map!'.substring(0, this.textI2), 300, 560);
+        
+        this.textI2 += 0.5;
+        this.mapW /= 1.05;
+    }
+    if(this.page === 2){
+        image(images.ship_BG, 300, 300);
+        
+        image(images.pirate_body, 400, 300);
+        pushMatrix();
+        translate(400, 290);
+        if(this.myI < 30){
+            if(this.pirateI > 0 && this.pirateI < 130){
+                translate(0, sin(frameCount * 15) * 5);
+                rotate(sin(frameCount * 15) * 5);
+            }
+        } else {
+            if(this.pirateI > 0 && this.pirateI < 59){
+                translate(0, sin(frameCount * 15) * 5);
+                rotate(sin(frameCount * 15) * 5);
+            }
+        }
+        image(images.pirate_head, 0, 0);
+        popMatrix();
+        
+        textSize(20);
+        fill(25);
+        if(this.myI > 30){
+            text('Aye, that works perfect!\nI be going to Khan\nIsland right now!'.substring(0, this.pirateI), 186, 90);
+        } else {
+            text('Ahoy there! I be the captain\nof this fine vessel, but my friends\ncall me Captain. Where do ye\nneed to travel to, matey?'.substring(0, this.pirateI), 186, 90);
+        }
+        fill(245);
+        text('Khan Island, sir...er,\nCaptain.'.substring(0, this.myI), 420, 530);
+        
+        noStroke();
+        fill(237, 202, 165);
+        rect(50, 300, 200, 250, 70);
+        rect(35, 415, 50, 70, 70);
+        rect(216, 415, 50, 70, 70);
+        rect(100, 525, 100, 50);
+        fill(110, 76, 43);
+        rect(50, 300, 200, 210, 59);
+        fill(49, 110, 176);
+        rect(0, 575, 300, 50, 70);
+        
+        this.pirateI += 0.5;
+        this.myI += 0.5;
+        if(this.myI === 30){
+            this.pirateI = 0;
+        }
+    }
+    if(this.page === 3){
+        image(images.ocean, 300, 300);
+        
+        // Dashed line
+        stroke(255, 255, 255, 100);
+        strokeWeight(2);
+        for(var i = 60; i < this.shipX; i += 10){
+            line(i + 5, 600 - i, 10 + i, 595 - i);
+        }
+        
+        // Ship
+        rectMode(CENTER);
+        pushMatrix();
+        if(this.shipX < 300){
+            translate(this.shipX, this.shipY);
+            rotate(35 + sin(frameCount*15)*5);
+        } else {
+            translate(300, 300);
+            rotate(35);
+        }
+        strokeWeight(3);
+        stroke(120, 39, 39);
+        fill(125, 84, 52);
+        bezier(0, 30, -15, 23, -10, 0, 0, -20);
+        bezier(0, 30, 15, 23, 10, 0, 0, -20);
+        strokeWeight(1);
+        stroke(0, 0, 0, 100);
+        line(-8, 25, -8, 0);
+        line(-4, 30, -4, -10);
+        line(0, 30, 0, -20);
+        line(4, 30, 4, -10);
+        line(8, 20, 8, 0);
+        noStroke();
+        fill(232, 227, 186);
+        arc(0, -2, 50, 15, -180, 0);
+        arc(0, 14, 40, 11, -180, 0);
+        fill(156, 113, 78);
+        rect(0, 0, 50, 5);
+        rect(0, 15, 40, 3);
+        popMatrix();
+        rectMode(CORNER);
+        
+        if(this.shipX <= 300){
+            this.shipX += 2;
+            this.shipY -= 2;
+        }
+    }
+    if(this.page > 3){
+        image(images.bg, 300, 300);
+        
+        fill(255);
+        textSize(30);
+        text('And then this is where the game will be.\n\nHope you liked this!', 50, 50, 500, 500);
+    }
+    
+    if(clicked){
+        trans.active = true;
+        trans.nextScene = 'Story';
+        clicked = false;
+    }
+};
+var story = new Story();
+
+draw = function() {
+    /* Load Google Font(s) */
+    if (!fontloaded) {
+        loadGoogleFont('Chelsea Market|Trade Winds', 'latin-ext', 'vietnamese');
+    }
+    textFont(createFont('Chelsea Market'));
+    
+    /* Load images */
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    /* Draw scenes */
+    if(scene === 'Intro'){
+        image(images.woods, 0, 0);
+        
+        textSize(21);
+        fill(20);
+        text('Hey guys! This is the story/intro for my upcoming game, The Great Khan Adventure.\n\nI\'m not including it in the game because its graphics caused a lot of lag.\n\nClick to move between scenes.\n\nEnjoy!', 50, 50, 500, 500);
+        
+        Buttons.start.draw();
+    }
+    if(scene === 'Story'){
+        story.draw();
+    }
+    
+    /* Transition */
+    rectMode(CORNER);
+    noStroke();
+    fill(255);
+    if(!trans.out){
+        rect(-trans.minusPos, -trans.minusPos, 300, 300);
+        rect(300 + trans.minusPos, -trans.minusPos, 300, 300);
+        rect(-trans.minusPos, 300 + trans.minusPos, 300, 300);
+        rect(300 + trans.minusPos, 300 + trans.minusPos, 300, 300);
+    } else {
+        rect(trans.minusPos - 300, trans.minusPos - 300, 300, 300);
+        rect(600 - trans.minusPos, trans.minusPos - 300, 300, 300);
+        rect(600 - trans.minusPos, 600 - trans.minusPos, 300, 300);
+        rect(trans.minusPos - 300, 600 - trans.minusPos, 300, 300);
+    }
+    if(trans.active){
+        trans.minusPos /= 1.3;
+        if(trans.minusPos < 0.1 && !trans.out){
+            if(scene === 'Story'){ story.page ++; }
+            scene = trans.nextScene;
+            trans.minusPos = 300;
+            trans.out = true;
+        }
+        if(trans.minusPos < 0.1 && trans.out){
+            trans.minusPos = 300;
+            trans.active = false;
+            trans.out = false;
+        }
+    }
+    
+    /* Reset clicked */
+    clicked = false;
+};
