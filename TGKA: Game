@@ -440,6 +440,72 @@ Block.prototype.draw = function() {
 };
 
 /* Characters */
+var character = function(x, y, name, txt){
+    this.x = x; this.xvel = 0;
+    this.y = y; this.yvel = 0;
+    this.w = 40;
+    this.h = 40;
+    this.name = name;
+    this.txt = txt;
+    
+    this.shirtColor = color(212, 212, 212);
+    this.hairColor = color(240, 242, 184);
+    
+    this.showTxt = false;
+};
+character.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    strokeWeight(2);
+    
+    stroke(71, 71, 71);
+    fill(97, 97, 97);
+    rect(10, 50, 7, 20, 2);
+    rect(22, 50, 7, 20, 2);
+    
+    stroke(46, 46, 46);
+    fill(51, 51, 51);
+    rect(4, 68, 13, 5, 2);
+    rect(22, 68, 13, 5, 2);
+    
+    stroke(0, 0, 0, 70);
+    fill(this.shirtColor);
+    rect(2, 39, 35, 20, 5);
+    rect(7, 30, 25, 30, 5);
+    
+    fill(0, 0, 0, 100);
+    textSize(15);
+    text(this.name.split('')[0], 20, 48);
+    
+    stroke(133, 114, 92);
+    fill(230, 198, 159);
+    rect(0, 0, this.w, this.h, 10);
+    
+    stroke(0, 0, 0, 70);
+    fill(this.hairColor);
+    beginShape();
+    vertex(1, 0);
+    vertex(40, 0);
+    vertex(40, 20);
+    for(var i = 37; i > 0; i -= 10){
+        vertex(i, 10);
+        vertex(i - 5, 15);
+    }
+    vertex(1, 20);
+    endShape(CLOSE);
+    
+    noStroke();
+    fill(0, 0, 0);
+    rect(10, frameCount % 90 > 85 ? 25 : 20, 7, frameCount % 90 > 85 ? 5 : 12, 10);
+    rect(25, frameCount % 90 > 85 ? 25 : 20, 7, frameCount % 90 > 85 ? 5 : 12, 10);
+    fill(255, 255, 255, 100);
+    rect(10, 20, 4, 5, 10);
+    rect(25, 20, 4, 5, 10);
+    popMatrix();
+};
+var Chars = {
+    seth: new character(180, 1120, 'Seth', 'Hi! I\'m Seth. I\'ll trade you a lantern for a bagel.'),
+};
 
 /* Maps */
 var game;
@@ -585,7 +651,9 @@ Player.prototype.draw = function() {
     this.x += this.xvel;
     for(var i in blocks){
         if(rectCollide(this, blocks[i]) && blocks[i].type === 'woods'){
-            game.showTxt = true;
+            if(game.txts.length === 0){
+                game.txts.push(new game.txt('Those woods look dark and dangerous... I\'d better get a light before I continue.', 'woods'));
+            }
             if(this.xvel < 0){
                 this.xvel = 0;
                 this.x = blocks[i].x + blocks[i].w;
@@ -600,7 +668,9 @@ Player.prototype.draw = function() {
     this.y += this.yvel;
     for(var i in blocks){
         if(rectCollide(this, blocks[i]) && blocks[i].type === 'woods'){
-            game.showTxt = true;
+            if(game.txts.length === 0){
+                game.txts.push(new game.txt('Those woods look dark and dangerous... I\'d better get a light before I continue.', 'woods'));
+            }
             if(this.yvel < 0){
                 this.yvel = 0;
                 this.y = blocks[i].y + blocks[i].h;
@@ -611,6 +681,14 @@ Player.prototype.draw = function() {
             }
         }
     }
+    
+    for(var i in Chars){
+        if(rectCollide(this, Chars[i])){
+            if(game.txts.length === 0){
+                game.txts.push(new game.txt('Hi! I\'m Seth. I\'ll trade you a lantern for a bagel.', 'seth'));
+            }
+        }
+    }
 };
 var player = new Player();
 
@@ -618,36 +696,73 @@ var player = new Player();
 var Game = function(){
     this.camera = {x: 0, y: 0};
     
-    this.txt = function(txt){
+    this.button = function(x, y, w, h, txt, type){
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
         this.txt = txt;
+        this.type = type;
+        this.trans = 255;
+    };
+    this.button.prototype.draw = function() {
+        strokeWeight(2);
+        stroke(255);
+        fill(255, 255, 255, 255 - this.trans);
+        rect(this.x, this.y, this.w, this.h);
+        textSize(12);
+        fill(255);
+        text(this.txt, this.x + (this.w / 2), this.y + (this.h / 2));
+        if(mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h){
+            this.trans /= 1.1;
+            if(clicked){
+                if(this.type === 'dismiss'){
+                    game.txts[0].leave = true;
+                }
+                
+                clicked = false;
+            }
+        } else {
+            
+        }
+    };
+    
+    this.txt = function(txt, type){
+        this.txt = txt;
+        this.type = type;
         this.i = 0;
         this.w = width;
-        this.y = 70;
+        this.y = 90;
         this.fade = 255;
+        this.leave = false;
+        this.buttons = [];
+        
+        if(this.type === 'seth'){
+            this.buttons.push(new game.button(200, 660 - this.y, 70, 20, 'DISMISS', 'dismiss')); 
+        }
     };
     this.txt.prototype.draw = function() {
         fill(0, 0, 0, 50);
         textAlign(LEFT, TOP);
         textSize(16);
         noStroke();
-        rect(0, 600 - this.y, width - this.w, 100);
+        rect(0, 600 - this.y, width - this.w, 120);
         fill(255, 255, 255, this.fade);
-        text(this.txt.substring(0, this.i), 30, 545, 540, 100);
+        text(this.txt.substring(0, this.i), 30, 530, 540, 100);
         textAlign(CENTER, CENTER);
+        for(var i in this.buttons){
+            this.buttons[i].draw();
+        }
         
         this.i += 0.5;
         this.w /= 1.1;
         
-        if(this.i > this.txt.length + 20){
+        if(this.leave && this.i > this.txt.length + 20){
             this.fade /= 1.1;
             this.y /= 1.1;
         }
     };
-    this.txts = [
-        new this.txt('Those woods look dark and dangerous... I\'d better get a light before I continue.'),
-    ];
-    
-    this.showTxt = false;
+    this.txts = [];
 };
 Game.prototype.draw = function() {
     background(200);
@@ -665,21 +780,26 @@ Game.prototype.draw = function() {
         }
     }
     player.draw();
+    
+    Chars.seth.draw();
     popMatrix();
     
-    if(this.showTxt){
+    if(this.txts.length > 0){
         this.txts[0].draw();
+        if(this.txts[0].fade < 1){
+            this.txts.splice(0, 1);
+        }
     }
     
     noFill();
     stroke(255, 255, 255, 200);
     strokeWeight(2);
-    rect(557, 570, 35, 20);
-    rect(472, 570, 75, 20);
+    rect(557, 10, 35, 20);
+    rect(472, 10, 75, 20);
     fill(255, 255, 255, 200);
     textSize(12);
-    text('MAP', 575, 580);
-    text('INVENTORY', 510, 580);
+    text('MAP', 575, 20);
+    text('INVENTORY', 510, 20);
 };
 game = new Game();
 
