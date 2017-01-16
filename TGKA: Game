@@ -507,6 +507,23 @@ var Chars = {
     seth: new character(180, 1120, 'Seth', 'Hi! I\'m Seth. I\'ll trade you a lantern for a bagel.'),
 };
 
+/* Item */
+var Item = function(x, y, name){
+    this.x = x;
+    this.y = y;
+    this.w = 30;
+    this.h = 30;
+    this.name = name;
+};
+Item.prototype.draw = function() {
+    fill(0);
+    rect(this.x, this.y, this.w, this.h);
+    fill(255);
+    textSize(10);
+    text(this.name, this.x + (this.w / 2), this.y + (this.h / 2));
+};
+var Items = [new Item(100, 1000, 'bagel')];
+
 /* Maps */
 var game;
 var blockMap = [
@@ -565,6 +582,7 @@ var loadMap = function(which){
 loadMap(blockMap);
 
 /* Player */
+var inventory = [];
 var Player = function(){
     this.x = 300; this.xvel = 0;
     this.y = 1200; this.yvel = 0;
@@ -617,7 +635,6 @@ Player.prototype.draw = function() {
         rect(10 + this.xvel, 20, 4, 5, 10);
         rect(25 + this.xvel, 20, 4, 5, 10);
     }
-    text('this.x: ' + this.x + '\nthis.y : ' + this.y, 0, -50);
     popMatrix();
     
     this.xvel = constrain(this.xvel, -3, 3);
@@ -690,6 +707,13 @@ Player.prototype.draw = function() {
             }
         }
     }
+    
+    for(var i in Items){
+        if(rectCollide(this, Items[i])){
+            inventory.push({name: Items[i].name});
+            Items.splice(i, 1);
+        }
+    }
 };
 var player = new Player();
 
@@ -726,6 +750,8 @@ var Game = function(){
         text(this.txt, this.x + (this.w / 2), this.y + (this.h / 2));
         
     };
+    
+    this.inventoryBtn = new this.button(510, 20, 75, 20, 'INVENTORY', 'inventory');
     
     this.txt = function(txt, type){
         this.txt = txt;
@@ -787,6 +813,11 @@ Game.prototype.draw = function() {
             blocks[i].draw();
         }
     }
+    
+    for(var i in Items){
+        Items[i].draw();
+    }
+    
     player.draw();
     
     Chars.seth.draw();
