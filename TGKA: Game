@@ -376,7 +376,7 @@ Menu.prototype.draw = function() {
 };
 var menu = new Menu();
 
-/* Story */
+/* (Not) Story */
 var Story = function(){
     this.page = 0;
     
@@ -617,6 +617,7 @@ Player.prototype.draw = function() {
         rect(10 + this.xvel, 20, 4, 5, 10);
         rect(25 + this.xvel, 20, 4, 5, 10);
     }
+    text('this.x: ' + this.x + '\nthis.y : ' + this.y, 0, -50);
     popMatrix();
     
     this.xvel = constrain(this.xvel, -3, 3);
@@ -708,23 +709,22 @@ var Game = function(){
     this.button.prototype.draw = function() {
         strokeWeight(2);
         stroke(255);
-        fill(255, 255, 255, 255 - this.trans);
-        rect(this.x, this.y, this.w, this.h);
-        textSize(12);
-        fill(255);
-        text(this.txt, this.x + (this.w / 2), this.y + (this.h / 2));
-        if(mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h){
-            this.trans /= 1.1;
+        if(mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y + (600 - game.txts[0].y) && mouseY < this.y + this.h + (600 - game.txts[0].y)){
+            fill(255, 255, 255, 50);
             if(clicked){
                 if(this.type === 'dismiss'){
                     game.txts[0].leave = true;
                 }
-                
                 clicked = false;
             }
         } else {
-            
+            fill(255, 255, 255, 0);
         }
+        rect(this.x, this.y, this.w, this.h);
+        textSize(12);
+        fill(255);
+        text(this.txt, this.x + (this.w / 2), this.y + (this.h / 2));
+        
     };
     
     this.txt = function(txt, type){
@@ -738,7 +738,12 @@ var Game = function(){
         this.buttons = [];
         
         if(this.type === 'seth'){
-            this.buttons.push(new game.button(200, 660 - this.y, 70, 20, 'DISMISS', 'dismiss')); 
+            this.buttons.push(new game.button(200, 60, 70, 20, 'DISMISS', 'dismiss')); 
+            this.buttons.push(new game.button(300, 60, 70, 20, 'TRADE', 'trade')); 
+        }
+        
+        if(this.buttons.length === 0){
+            this.leave = true;
         }
     };
     this.txt.prototype.draw = function() {
@@ -746,13 +751,16 @@ var Game = function(){
         textAlign(LEFT, TOP);
         textSize(16);
         noStroke();
-        rect(0, 600 - this.y, width - this.w, 120);
+        pushMatrix();
+        translate(0, 600 - this.y);
+        rect(0, 0, width - this.w, 120);
         fill(255, 255, 255, this.fade);
-        text(this.txt.substring(0, this.i), 30, 530, 540, 100);
+        text(this.txt.substring(0, this.i), 30, 20, 540, 100);
         textAlign(CENTER, CENTER);
         for(var i in this.buttons){
             this.buttons[i].draw();
         }
+        popMatrix();
         
         this.i += 0.5;
         this.w /= 1.1;
