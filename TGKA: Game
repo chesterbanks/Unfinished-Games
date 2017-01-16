@@ -721,11 +721,13 @@ var player = new Player();
 var Game = function(){
     this.camera = {x: 0, y: 0};
     
-    this.button = function(x, y, w, h, txt, type){
+    this.button = function(x, y, w, h, txt, type, whatToTrade, whatToGet){
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
+        this.whatToTrade = whatToTrade;
+        this.whatToGet = whatToGet;
         this.txt = txt;
         this.type = type;
         this.trans = 255;
@@ -738,6 +740,17 @@ var Game = function(){
             if(clicked){
                 if(this.type === 'dismiss'){
                     game.txts[0].leave = true;
+                }
+                if(this.type === 'trade'){
+                    for(var i in inventory){
+                        if(inventory[i].name === this.whatToTrade){
+                            inventory.splice(i, 1);
+                            inventory.push({name: this.whatToGet});
+                            game.txts[0].leave = true;
+                        } else {
+                            
+                        }
+                    }
                 }
                 clicked = false;
             }
@@ -765,7 +778,7 @@ var Game = function(){
         
         if(this.type === 'seth'){
             this.buttons.push(new game.button(200, 60, 70, 20, 'DISMISS', 'dismiss')); 
-            this.buttons.push(new game.button(300, 60, 70, 20, 'TRADE', 'trade')); 
+            this.buttons.push(new game.button(300, 60, 70, 20, 'TRADE', 'trade', 'bagel', 'lantern')); 
         }
         
         if(this.buttons.length === 0){
@@ -873,6 +886,13 @@ draw = function() {
     }
     if(scene === 'Game'){
         game.draw();
+    }
+    
+    fill(255);
+    textSize(15);
+    text('inventory:', 60, 20);
+    for(var i in inventory){
+        text(inventory[i].name, 60, 50);
     }
     
     /* Transition */
