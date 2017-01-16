@@ -25,7 +25,8 @@ var fontloaded = false;
 textAlign(CENTER, CENTER);
 
 /* Variables */
-var scene = 'Menu';
+var scene = 'Game';
+var level = 0;
 
 /* Transition object */
 var trans = {active: false, nextScene: 'Story', minusPos: 300, out: false};
@@ -503,9 +504,9 @@ character.prototype.draw = function() {
     rect(25, 20, 4, 5, 10);
     popMatrix();
 };
-var Chars = {
-    seth: new character(180, 1120, 'Seth', 'Hi! I\'m Seth. I\'ll trade you a lantern for a bagel.'),
-};
+var Chars = [
+    [new character(780, 820, 'Seth', 'Hi! I\'m Seth. I\'ll trade you a lantern for a bagel.')],
+];
 
 /* Item */
 var Item = function(x, y, name){
@@ -516,18 +517,21 @@ var Item = function(x, y, name){
     this.name = name;
 };
 Item.prototype.draw = function() {
-    fill(0);
-    rect(this.x, this.y, this.w, this.h);
-    fill(255);
-    textSize(10);
-    text(this.name, this.x + (this.w / 2), this.y + (this.h / 2));
+    if(this.name === 'bagel'){
+        noFill();
+        stroke(235, 178, 129);
+        strokeWeight(10);
+        ellipse(this.x + (this.w / 2), this.y + (this.h / 2), this.w - 10, this.h -10);
+        stroke(255, 255, 255, 100);
+        arc(this.x + (this.w / 2), this.y + (this.h / 2), this.w -10, this.h - 10, -180, 0);
+    }
 };
-var Items = [new Item(100, 1000, 'bagel')];
+var Items = [[new Item(2000, 1000, 'bagel')]];
 
 /* Maps */
 var game;
 var blockMap = [
-    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    ["dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
     "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
     "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
     "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
@@ -559,7 +563,41 @@ var blockMap = [
     "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
     "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
     "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
-    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+    "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"],
+    [	"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",    
+	"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggsgggggggggggggg",
+    "ggggggggggggggggggggggggggggggggggggggggggggggggsggggggggsggggggggsggggg",],
 ];
 var blocks = [];
 var loadMap = function(which){
@@ -579,7 +617,7 @@ var loadMap = function(which){
         }
     }
 };
-loadMap(blockMap);
+loadMap(blockMap[level]);
 
 /* Player */
 var inventory = [];
@@ -589,9 +627,15 @@ var Player = function(){
     this.w = 40;
     this.h = 40;
     
-    this.weapon = '';
+    this.canGoInWoods = '';
 };
 Player.prototype.draw = function() {
+    for(var i in inventory){
+        if(inventory[i].name === 'lantern'){
+            this.canGoInWoods = true;
+        }
+    }
+    
     pushMatrix();
     translate(this.x, this.y);
     strokeWeight(2);
@@ -667,18 +711,25 @@ Player.prototype.draw = function() {
     }
     
     this.x += this.xvel;
-    for(var i in blocks){
+    for(var i = 0; i < blocks.length; i ++){
         if(rectCollide(this, blocks[i]) && blocks[i].type === 'woods'){
-            if(game.txts.length === 0){
-                game.txts.push(new game.txt('Those woods look dark and dangerous... I\'d better get a light before I continue.', 'woods'));
-            }
-            if(this.xvel < 0){
-                this.xvel = 0;
-                this.x = blocks[i].x + blocks[i].w;
-            }
-            if(this.xvel > 0){
-                this.xvel = 0;
-                this.x = blocks[i].x - this.w;
+            if(this.canGoInWoods){
+                if(level === 0){
+                    trans.active = true;
+                    trans.nextScene = 'Game';
+                }
+            } else {
+                if(game.txts.length === 0){
+                    game.txts.push(new game.txt('Those woods look dark and dangerous... I\'d better get a light before I continue.', 'woods'));
+                }
+                if(this.xvel < 0){
+                    this.xvel = 0;
+                    this.x = blocks[i].x + blocks[i].w;
+                }
+                if(this.xvel > 0){
+                    this.xvel = 0;
+                    this.x = blocks[i].x - this.w;
+                }
             }
         }
     }
@@ -686,32 +737,39 @@ Player.prototype.draw = function() {
     this.y += this.yvel;
     for(var i in blocks){
         if(rectCollide(this, blocks[i]) && blocks[i].type === 'woods'){
-            if(game.txts.length === 0){
-                game.txts.push(new game.txt('Those woods look dark and dangerous... I\'d better get a light before I continue.', 'woods'));
-            }
-            if(this.yvel < 0){
-                this.yvel = 0;
-                this.y = blocks[i].y + blocks[i].h;
-            }
-            if(this.yvel > 0){
-                this.yvel = 0;
-                this.y = blocks[i].y - this.h;
+            if(this.canGoInWoods){
+                if(level === 0){
+                    trans.active = true;
+                    trans.nextScene = 'Game';
+                }
+            } else {
+                if(game.txts.length === 0){
+                    game.txts.push(new game.txt('Those woods look dark and dangerous... I\'d better get a light before I continue.', 'woods'));
+                }
+                if(this.yvel < 0){
+                    this.yvel = 0;
+                    this.y = blocks[i].y + blocks[i].h;
+                }
+                if(this.yvel > 0){
+                    this.yvel = 0;
+                    this.y = blocks[i].y - this.h;
+                }
             }
         }
     }
     
-    for(var i in Chars){
-        if(rectCollide(this, Chars[i])){
+    for(var i in Chars[level]){
+        if(rectCollide(this, Chars[level][i])){
             if(game.txts.length === 0){
                 game.txts.push(new game.txt('Hi! I\'m Seth. I\'ll trade you a lantern for a bagel.', 'seth'));
             }
         }
     }
     
-    for(var i in Items){
-        if(rectCollide(this, Items[i])){
-            inventory.push({name: Items[i].name});
-            Items.splice(i, 1);
+    for(var i in Items[level]){
+        if(rectCollide(this, Items[level][i])){
+            inventory.push({name: Items[level][i].name});
+            Items[level].splice(i, 1);
         }
     }
 };
@@ -763,8 +821,6 @@ var Game = function(){
         text(this.txt, this.x + (this.w / 2), this.y + (this.h / 2));
         
     };
-    
-    this.inventoryBtn = new this.button(510, 20, 75, 20, 'INVENTORY', 'inventory');
     
     this.txt = function(txt, type){
         this.txt = txt;
@@ -818,7 +874,7 @@ Game.prototype.draw = function() {
     pushMatrix();
     translate(this.camera.x, this.camera.y);
     
-    this.camera.x = constrain(-(player.x) + (width / 2), -(blockMap.length * blockSz), 0);
+    this.camera.x = constrain(-(player.x) + (width / 2), -(blockMap[level].length * blockSz), 0);
     this.camera.y = constrain(-(player.y) + (width / 2), -1047, 0);
     
     for(var i in blocks){
@@ -827,13 +883,15 @@ Game.prototype.draw = function() {
         }
     }
     
-    for(var i in Items){
-        Items[i].draw();
+    for(var i in Items[level]){
+        Items[level][i].draw();
     }
     
     player.draw();
     
-    Chars.seth.draw();
+    for(var i in Chars[level]){
+        Chars[level][i].draw();
+    }
     popMatrix();
     
     if(this.txts.length > 0){
@@ -913,6 +971,7 @@ draw = function() {
     if(trans.active){
         trans.minusPos /= 1.3;
         if(trans.minusPos < 0.1 && !trans.out){
+            if(scene === 'Game'){ level ++; loadMap(blockMap[level]); }
             scene = trans.nextScene;
             trans.minusPos = 300;
             trans.out = true;
