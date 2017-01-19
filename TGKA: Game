@@ -5,15 +5,16 @@
  * 
  * In my opinion, this is my biggest and best game yet.
  * 
- * I put easter eggs/references into pretty much every scene in this game. How many can you find?
+ * I put quite a few easter eggs/references to Khan things into this game. How many can you find?
  * 
  * Did you like this game? Subscribe to me here:
  * This program's LUCKY SUBSCRIBER is NAME HERE! Check out his profile here: khanacademy.org/profile/namehere
  * 
  * EASTER EGGS & REFERENCES
     - Tree with blue leaves (Blue Leaf) on menu.
-    - Picture of Teeny in background of first scene in the story. (credit to Splo)
-    - Picture of Blobby in background of first scene in the story. (credit to Jacob)
+    - Seth W / Circle Box in game
+    - Legolas Greenleaf (Obviously xD)
+    - Aqua orchids
 */
 
 /* Google Font code (thanks to Eric Balingit) */
@@ -261,6 +262,23 @@ var images = {
         
         return get(0, 0, 50, 50);
     },
+    'orchid': function(){
+        strokeWeight(3);
+        stroke(60, 207, 107);
+        line(15, 5, 15, 30);
+        noStroke();
+        fill(60, 207, 107);
+        rect(15, 20, 7, 6, 5);
+        rect(10, 25, 5, 3, 5);
+        fill(0, 225, 255);
+        for(var i = 0; i < 360; i += 40){
+            ellipse(15 + sin(i) * 5, 10 + cos(i) * 5, 10, 3);
+        }
+        fill(255);
+        ellipse(15, 10, 5, 5);
+        
+        return get(0, 0, 30, 30);
+    },
 };
 
 var clicked = false;
@@ -422,6 +440,15 @@ var Block = function(x, y, type){
     this.x = x; this.w = blockSz;
     this.y = y; this.h = blockSz;
     this.type = type;
+    if(this.type === 'grass'){
+        this.orchid = floor(random(5));
+        this.orchidX = random(30);
+        this.orchidY = random(30);
+        if(this.orchid === 1){
+            this.orchidX2 = random(30);
+            this.orchidY2 = random(30);
+        }
+    }
 };
 Block.prototype.draw = function() {
     rectMode(CORNER);
@@ -431,6 +458,13 @@ Block.prototype.draw = function() {
     }
     if(this.type === 'grass'){
         image(images.grass, this.x, this.y, this.w, this.h);
+        if(this.orchid === 0){
+            image(images.orchid, this.x + this.orchidX, this.y + this.orchidY, 20, 20);
+        }
+        if(this.orchid === 1){
+            image(images.orchid, this.x + this.orchidX, this.y + this.orchidY, 20, 20);
+            image(images.orchid, this.x + this.orchidX2, this.y + this.orchidY2, 20, 20);
+        }
     }
     if(this.type === 'woods'){
         image(images.woods, this.x, this.y, this.w, this.h);
