@@ -485,6 +485,10 @@ var character = function(x, y, name, txt){
     
     this.shirtColor = color(212, 212, 212);
     this.hairColor = color(240, 242, 184);
+    if(this.name === 'Jake'){
+        this.shirtColor = color(204, 140, 45);
+        this.hairColor = color(43, 47, 48);
+    }
     
     this.showTxt = false;
 };
@@ -539,7 +543,7 @@ character.prototype.draw = function() {
     popMatrix();
 };
 var Chars = [
-    [new character(780, 820, 'Seth', 'Hi! I\'m Seth. I\'ll trade you a lantern for a bagel.')],
+    [new character(780, 820, 'Seth', 'Hi! I\'m Seth. I\'ll trade you a lantern for a bagel.'), new character(1300, 1000, 'Jake', 'My name\'s Jake. I\'ll trade you a bagel for its superior - a donut.')],
 ];
 
 /* Item */
@@ -795,7 +799,7 @@ Player.prototype.draw = function() {
     for(var i in Chars[level]){
         if(rectCollide(this, Chars[level][i])){
             if(game.txts.length === 0){
-                game.txts.push(new game.txt('Hi! I\'m Seth. I\'ll trade you a lantern for a bagel.', 'seth'));
+                game.txts.push(new game.txt(Chars[level][i].txt, 'seth'));
             }
         }
     }
