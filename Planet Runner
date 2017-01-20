@@ -1,25 +1,56 @@
-var myFont = "Chelsea Market";
-var loadGoogleFont = (function () {
-    return this.Function ( "gflink", "callback", "isloaded", "var gfs = document.querySelectorAll('link[href=\"'+gflink+'\"]');if(!gfs.length){var f=document.createElement('link');f.setAttribute('rel','stylesheet');f.setAttribute('type','text/css');f.onload=callback;f.setAttribute('href',gflink);document.head.appendChild(f);}else if(isloaded){isloaded();}");
-})();
+// working o this 
 
-var fontloaded = false;
-var callback = function () {
-    textFont(createFont(myFont), 30);
-    fontloaded = true;
-};
+textFont(createFont("Arial Black"));
 textAlign(CENTER, CENTER);
 
+var lives = 3;
 var clicked = false;
-mouseClicked = function(){ clicked = true; };
+mousePressed = function(){ clicked = true; };
+
+var circleCollide = function(object1, object2){
+    return dist(object1.x, object1.y, object2.x, object2.y) <= (object1.sz / 2) + (object2.sz / 2);
+};
+
+var myEllipse = function(x, y, w, h, colo){
+    fill(colo);
+    ellipse(x, y, w, h);
+    fill(0, 0, 0, 50);
+    arc(x, y, w, h, -90, 90);
+    fill(255, 255, 255, 50);
+    arc(x, y, w, h, 90, 270);
+    fill(colo);
+    ellipse(x, y, w / 1.3, h);
+};
+
+var Asteroid = function(){
+    this.angle = random(360);
+    this.howFarOut = 200;
+};
+Asteroid.prototype.draw = function() {
+    this.x = (width / 2) + (sin(this.angle) * this.howFarOut);
+    this.y = (height / 2) + (cos(this.angle) * this.howFarOut);
+    
+    noStroke();
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(frameCount * 7);
+    myEllipse(0, 0, 30, 30, color(145, 145, 145));
+    popMatrix();
+    
+    this.howFarOut -= 5;
+};
+var Asteroids = [];
 
 var Tree = function(angle){
     this.angle = angle;
-    this.x = (width / 2) + (sin(this.angle) * 150);
-    this.y = (height / 2) + (cos(this.angle) * 150);
+    this.howFarOut = 60;
     this.sz = 20;
+    this.collidable = true;
 };
 Tree.prototype.draw = function() {
+    this.x = (width / 2) + (sin(this.angle) * (150 - this.howFarOut));
+    this.y = (height / 2) + (cos(this.angle) *  (150 - this.howFarOut));
+    
     pushMatrix();
     translate(width / 2, height / 2);
     rotate(-this.angle + 180);
@@ -29,24 +60,24 @@ Tree.prototype.draw = function() {
     popMatrix();
     
     noStroke();
-    fill(41, 179, 87);
-    ellipse(this.x, this.y, this.sz, this.sz);
+    myEllipse(this.x, this.y, this.sz, this.sz, color(41, 179, 87));
+    
+    this.howFarOut /= 1.1;
 };
 var Trees = [];
-for(var i = 0; i < 3; i ++){
-    Trees.push(new Tree(random(360)));
-}
 
 var Player = function(){
-    this.howFarOut = 150;
+    this.howFarOut = 140;
     this.angle = -180;
     
     this.x = sin(this.angle) * this.howFarOut;
     this.y = cos(this.angle) * this.howFarOut;
-    this.sz = 30;
+    this.sz = 10;
     
     this.hop = false;
     this.minus = 10;
+    
+    this.forward = true;
 };
 Player.prototype.draw = function() {
     this.x = sin(this.angle) * this.howFarOut;
@@ -67,26 +98,36 @@ Player.prototype.draw = function() {
         this.minus --;
     }
     if(this.howFarOut < 150 && this.hop){
-        this.howFarOut = 150;
+        this.howFarOut = 140;
         this.minus = 10;
         this.hop = false;
     }
     
-    this.angle -= 2;
+    if(this.forward){
+        this.angle -= 1.5;
+    } else {
+        this.angle += 1.5;
+    }
 };
 var player = new Player();
 
+keyTyped = function(){
+    player.forward = !player.forward;
+};
+
 draw = function() {
-    if ( !fontloaded ) {
-        loadGoogleFont('https://fonts.googleapis.com/css?family=' + myFont, callback, callback);
-    }
-    
     background(31, 45, 54);
     
+    if(frameCount % 200 === 0){
+        Trees.push(new Tree(random(360)));
+    }
     for(var i in Trees){
         Trees[i].draw();
+        if(circleCollide(player, Trees[i]) && Trees[i].collidable){
+            lives --;
+            //Trees[i].collidable = false;
+        }
     }
-    
     
     noStroke();
     pushMatrix();
@@ -95,24 +136,37 @@ draw = function() {
     for(var i = 270; i < 400; i += 15){
         ellipse(0, 0, i, i);
     }
-    fill(53, 156, 204);
-    ellipse(0, 0, 270, 270);
-    fill(0, 0, 0, 30);
-    arc(0, 0, 270, 270, -90, 90);
-    fill(255, 255, 255, 20);
-    arc(0, 0, 270, 270, -270, -90);
-    fill(53, 156, 204);
-    ellipse(0, 0, 210, 270);
+    myEllipse(0, 0, 270, 270, color(53, 156, 204));
     popMatrix();
 
     player.draw();
     
-    textSize(60);
+    if(frameCount % 100 === 0){
+        Asteroids.push(new Asteroid());
+    }
+    for(var i in Asteroids){
+        Asteroids[i].draw();
+        if(Asteroids[i].howFarOut < -300){
+            Asteroids.splice(i, 1);
+        }
+    }
+    
+    textSize(40);
+    textLeading(35);
     fill(0, 0, 0, 30);
-    //text('PLANET\nRUNNER', 200 + 5, 200 + 5);
-    textSize(60);
+    text('PLANET\nRUNNER', 200 + 5, 200 + 5);
+    textSize(40);
     fill(255);
-    //text('PLANET\nRUNNER', 200, 200);
+    text('PLANET\nRUNNER', 200, 200);
+    textSize(12);
+    text('| created by chester banks |', 200, 245);
+    
+    fill(232, 75, 75, 200);
+    for(var i = 0; i < lives; i ++){
+        textSize(25);
+        text("\u2764", 30 + i * 30, 20);
+    }
+    
     
     clicked = false;
 };
