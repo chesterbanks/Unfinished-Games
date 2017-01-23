@@ -4,12 +4,28 @@ var numbers = '13321424185131139111144849'.split('');
 rectMode(CENTER);
 textAlign(CENTER, CENTER);
 
-var tile = function(letter, x, y, sz){
+var keys = [];
+keyPressed = function() {
+    keys[keyCode] = true;
+};
+keyReleased = function() {
+    keys[keyCode] = false;
+};
+var rectCollide = function(one,two) {
+     if( one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h){
+        return true;
+    }    
+};
+
+var tileGraphic = function(letter, x, y, sz){
     textFont(createFont('Arial Narrow'));
     pushMatrix();
     translate(x, y);
     scale(sz / 100 || 0.4);
-    rotate(random(-5, 5));
+    //rotate(random(-5, 5));
     noStroke();
     fill(209, 178, 132);
     rect(0, 0, 220, 220);
@@ -34,29 +50,89 @@ var tile = function(letter, x, y, sz){
     popMatrix();
 };
 
+var images = {
+    'menu': function(){
+        background(222, 222, 222);
+
+        for(var i = 0; i < width; i += 30){
+            for(var j = 0; j < height; j += 30){
+                tileGraphic(letters[floor(random(letters.length))], i, j, 13);
+            }
+        }
+        
+        fill(255, 255, 255, 200);
+        rect(200, 163, 400, 230);
+        
+        tileGraphic('T', 65, 110);
+        tileGraphic('I', 155, 110);
+        tileGraphic('L', 245, 110);
+        tileGraphic('E', 335, 110);
+        tileGraphic('F', 65, 200);
+        tileGraphic('A', 155, 200);
+        tileGraphic('L', 245, 200);
+        tileGraphic('L', 335, 200);
+        
+        textFont(createFont('Avenir Bold'));
+        textSize(15);
+        fill(25);
+        text('A   C H E S T E R   B A N K S   P R O D U C T I O N', 200, 260);
+        
+        return get(0, 0, width, height);
+    },
+};
+
+var Tile = function(letter){
+    this.letter = letter;
+    this.x = random(0, 350);
+    this.y = random(-45, -100);
+    this.w = 45;
+    this.h = 45;
+};
+Tile.prototype.draw = function() {
+    fill(0);
+    tileGraphic(this.letter, this.x, this.y, 20);
+    
+    this.y += 3;
+};
+var Tiles = [];
+
+var Paddle = function(){
+    this.x = 200;
+    this.y = 380;
+    this.w = 200;
+    this.h = 10;
+};
+Paddle.prototype.draw = function() {
+    noStroke();
+    fill(122, 71, 47);
+    rect(this.x, this.y, this.w, this.h);
+    
+    if(keys[LEFT]){ this.x -= 3; }
+    if(keys[RIGHT]){ this.x += 3; }
+};
+var paddle = new Paddle();
+
 draw = function() {
-background(222, 222, 222);
-
-for(var i = 0; i < width; i += 30){
-    for(var j = 0; j < height; j += 30){
-        tile(letters[floor(random(letters.length))], i, j, 13);
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
     }
-}
-
-fill(255, 255, 255, 200);
-rect(200, 163, 400, 230);
-
-tile('T', 65, 110);
-tile('I', 155, 110);
-tile('L', 245, 110);
-tile('E', 335, 110);
-tile('F', 65, 200);
-tile('A', 155, 200);
-tile('L', 245, 200);
-tile('L', 335, 200);
-
-textFont(createFont('Avenir Bold'));
-textSize(15);
-fill(25);
-text('A   C H E S T E R   B A N K S   P R O D U C T I O N', 200, 260);
+    
+    //image(images.menu, 0, 0);
+    background(235, 235, 235);
+    
+    if(frameCount % 70 === 0){
+        Tiles.push(new Tile(letters[floor(random(letters.length))]));
+    }
+    for(var i in Tiles){
+        Tiles[i].draw();
+        if(Tiles[i].y > 490){
+            Tiles.splice(i, 1);
+            i --;
+        }
+    }
+    paddle.draw();
 };
