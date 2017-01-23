@@ -26,7 +26,7 @@ var fontloaded = false;
 textAlign(CENTER, CENTER);
 
 /* Variables */
-var scene = 'Game';
+var scene = 'Menu';
 var level = 0;
 
 /* Transition object */
@@ -379,7 +379,7 @@ Menu.prototype.draw = function() {
     
     fill(25);
     textSize(25);
-    text('CHESTER BANKS |            2017', 300, this.y1 + 450);
+    text('CHESTER BANKS |                  2017', 300, this.y1 + 450);
     fill(245);
     text('JANUARY', 381, this.y1 + 450);
     
@@ -543,7 +543,8 @@ character.prototype.draw = function() {
     popMatrix();
 };
 var Chars = [
-    [new character(780, 820, 'Seth', 'Hi! I\'m Seth. I\'ll trade you a lantern for a bagel.'), new character(1300, 1000, 'Jake', 'My name\'s Jake. I\'ll trade you a bagel for its superior - a donut.')],
+    [new character(780, 820, 'Seth', 'Hi! I\'m Seth. I\'ll trade you a lantern for a bagel.'), new character(1300, 1000, 'Jake', 'My name\'s Jake. I\'ll give you a bagel if you give me its superior - a donut.')],
+    [new character(780, 820, 'Legolas', '')],
 ];
 
 /* Item */
@@ -555,16 +556,17 @@ var Item = function(x, y, name){
     this.name = name;
 };
 Item.prototype.draw = function() {
-    if(this.name === 'bagel'){
+    if(this.name === 'donut'){
         noFill();
+        strokeCap(ROUND);
         stroke(235, 178, 129);
         strokeWeight(10);
         ellipse(this.x + (this.w / 2), this.y + (this.h / 2), this.w - 10, this.h -10);
-        stroke(255, 255, 255, 100);
+        stroke(240, 104, 231, 100);
         arc(this.x + (this.w / 2), this.y + (this.h / 2), this.w -10, this.h - 10, -180, 0);
     }
 };
-var Items = [[new Item(2000, 1000, 'bagel')]];
+var Items = [[new Item(2000, 1000, 'donut')]];
 
 /* Maps */
 var game;
@@ -799,7 +801,7 @@ Player.prototype.draw = function() {
     for(var i in Chars[level]){
         if(rectCollide(this, Chars[level][i])){
             if(game.txts.length === 0){
-                game.txts.push(new game.txt(Chars[level][i].txt, 'seth'));
+                game.txts.push(new game.txt(Chars[level][i].txt, Chars[level][i].name));
             }
         }
     }
@@ -870,9 +872,13 @@ var Game = function(){
         this.leave = false;
         this.buttons = [];
         
-        if(this.type === 'seth'){
+        if(this.type === 'Seth'){
             this.buttons.push(new game.button(200, 60, 70, 20, 'DISMISS', 'dismiss')); 
             this.buttons.push(new game.button(300, 60, 70, 20, 'TRADE', 'trade', 'bagel', 'lantern')); 
+        }
+        if(this.type === 'Jake'){
+            this.buttons.push(new game.button(200, 60, 70, 20, 'DISMISS', 'dismiss')); 
+            this.buttons.push(new game.button(300, 60, 70, 20, 'TRADE', 'trade', 'donut', 'bagel')); 
         }
         
         if(this.buttons.length === 0){
@@ -903,7 +909,9 @@ var Game = function(){
             this.y /= 1.1;
         }
     };
-    this.txts = [];
+    this.txts = [new this.txt('You\'ve arrived at Khan Island. Use the arrow keys to move around. Collect things, talk with other people. Oh, and press I to see your inventory.')];
+    
+    this.inventory = false;
 };
 Game.prototype.draw = function() {
     background(200);
@@ -954,9 +962,9 @@ game = new Game();
 draw = function() {
     /* Load Google Font(s) */
     if (!fontloaded) {
-        loadGoogleFont('Chelsea Market|Trade Winds', 'latin-ext', 'vietnamese');
+        loadGoogleFont('Chelsea Market', 'latin-ext', 'vietnamese');
     }
-    textFont(createFont('Chelsea Market'));
+    textFont(createFont('Avenir Bold'));
     
     /* Load images */
     for(var i in images){
