@@ -7,15 +7,9 @@
  * 
  * I put quite a few easter eggs/references to Khan things into this game. How many can you find?
  * 
- * Did you like this game? Subscribe to me here:
- * This program's LUCKY SUBSCRIBER is NAME HERE! Check out his profile here: khanacademy.org/profile/namehere
- * 
- * EASTER EGGS & REFERENCES
-    - Tree with blue leaves (Blue Leaf) on menu.
-    - Seth W / Circle Box in game
-    - Legolas Greenleaf (Obviously xD)
-    - Aqua orchids
+ * Did you like this game? Subscribe to me here: khanacademy.org/cs/cb/4790207744704512
 */
+// This program's LUCKY SUBSCRIBER is NAME!
 
 /* Google Font code (thanks to Eric Balingit) */
 var loadGoogleFont = (function () {
@@ -26,7 +20,7 @@ var fontloaded = false;
 textAlign(CENTER, CENTER);
 
 /* Variables */
-var scene = 'Menu';
+var scene = 'Game';
 var level = 0;
 
 /* Transition object */
@@ -278,6 +272,19 @@ var images = {
         ellipse(15, 10, 5, 5);
         
         return get(0, 0, 30, 30);
+    },
+    'light': function(){
+        noFill();
+        stroke(0);
+        strokeWeight(width*1.50);
+        ellipse(350,340, width * 2, height*2);
+        strokeWeight(10.3);
+        for(var i = 292; i > 0; i -= 20){
+            stroke(0, 0, 0, i/1.3);
+            ellipse(350, 340, i, i);
+        }
+        
+        return get(0, 0, width, height);
     },
 };
 
@@ -678,6 +685,9 @@ Player.prototype.draw = function() {
     
     pushMatrix();
     translate(this.x, this.y);
+    if(level === 1){
+        image(images.light, -300, -300);
+    }
     strokeWeight(2);
     stroke(71, 71, 71);
     fill(97, 97, 97);
@@ -912,6 +922,8 @@ var Game = function(){
     this.txts = [new this.txt('You\'ve arrived at Khan Island. Use the arrow keys to move around. Collect things, talk with other people. Oh, and press I to see your inventory.')];
     
     this.inventory = false;
+    this.inventoryY = 600;
+    this.inventoryOut = false;
 };
 Game.prototype.draw = function() {
     background(200);
@@ -933,11 +945,11 @@ Game.prototype.draw = function() {
         Items[level][i].draw();
     }
     
-    player.draw();
-    
     for(var i in Chars[level]){
         Chars[level][i].draw();
     }
+    
+    player.draw();
     popMatrix();
     
     if(this.txts.length > 0){
@@ -947,15 +959,51 @@ Game.prototype.draw = function() {
         }
     }
     
-    noFill();
-    stroke(255, 255, 255, 200);
-    strokeWeight(2);
-    rect(557, 10, 35, 20);
-    rect(472, 10, 75, 20);
-    fill(255, 255, 255, 200);
-    textSize(12);
-    text('MAP', 575, 20);
-    text('INVENTORY', 510, 20);
+    if(this.inventory){
+        pushMatrix();
+        translate(100, 100 + this.inventoryY);
+        noStroke();
+        fill(255);
+        rect(0, 0, 400, 400);
+        fill(200);
+        rect(0, 110, 400, 10);
+        textSize(50);
+        text('INVENTORY', 200, 60);
+        textSize(20);
+        textAlign(CENTER, TOP);
+        if(inventory.length > 0){
+            text('You currently have these things:', 200, 170);
+            for(var i in inventory){
+                text('- ' + inventory[i].name.substring(0, 1).toUpperCase() + inventory[i].name.substring(20, 1), 200, 210 + (i * 25));
+            }
+        } else {
+            text('You currently have nothing.\n\nGo collect some stuff!', 200, 170);
+        }
+        textAlign(CENTER, CENTER);
+        textSize(14);
+        text('CLICK ANYWHERE TO EXIT', 200, 374);
+        popMatrix();
+        
+        this.inventoryY = constrain(this.inventoryY, 10, 600);
+        if(!this.inventoryOut){
+            this.inventoryY /= 1.1;
+            if(clicked){
+                this.inventoryOut = true;
+            }
+        } else {
+            this.inventoryY *= 1.2;
+        }
+    }
+    
+    if(this.inventoryOut && this.inventoryY > 590){
+        this.inventoryY = 600;
+        this.inventoryOut = false;
+        this.inventory = false;
+    }
+    
+    if(keyIsPressed && key.toString().toUpperCase() === 'I'){
+        this.inventory = true;
+    }
 };
 game = new Game();
 
@@ -990,13 +1038,6 @@ draw = function() {
     }
     if(scene === 'Game'){
         game.draw();
-    }
-    
-    fill(255);
-    textSize(15);
-    text('inventory:', 60, 20);
-    for(var i in inventory){
-        text(inventory[i].name, 60, 50);
     }
     
     /* Transition */
