@@ -1,44 +1,13 @@
 /**
  * MenuMaker v1.0
  * Chester Banks
- * October 2 2016
+ * January 28 2017
  * 
- * Made for Khantober!
+ * Make your own menus with this program!
+ * Includes 10 background colors, 12 background styles, 6 fonts, and 3 title styles!
+ * Change styling up top, and words down below.
  * 
-    @Features
-        Background color
-            - Orange
-            - Red
-            - Green
-            - Blue
-            - Purple
-            - Yellow
-            - Teal
-            - White
-            - Black
-        Background style
-            - Solid
-            - Flat triangle
-            - Flat curve
-            - Transparent pixel overlay
-            - Dark to light gradient
-            - Light to dark gradient
-        Title
-            - Solid
-            - Shadow
-            - Outline
-            - 3D-ish (Jump Cubed)
-        Creator
-        Font
-            - Trebuchet MS
-            - Helvetica Neue Ultra Light
-            - Courier
-            - Impact
-            - Avenir Bold
-        Button layout
-            - Two circles (play & how to)
-            - One big circle, with two beside (play, how to, and credits)
-            - 
+ * Right click to get code!
 */
 
 var clicked = false;
@@ -48,7 +17,7 @@ var info = {
     bg_color: 0,
     bg_style: 1,
     
-    fonts: ["Trebuchet MS", "HelveticaNeue-UltraLight", "Impact", "Courier", "Avenir Bold"],
+    fonts: ["Trebuchet MS", "HelveticaNeue-UltraLight", "Impact", "Courier", "Avenir Bold", "Times New Roman"],
     font: 1,
     
     title: 'Bounce',
@@ -56,6 +25,7 @@ var info = {
     creator: 'Chester Banks',
     
     changingTitle: false,
+    changingCreator: false,
 };
 var whichInfo = 0;
 
@@ -67,6 +37,14 @@ keyPressed = function(){
             info.title = info.title.substring(0, info.title.length - 1);
         } else {
             info.title += key.toString();
+        }
+    }
+    
+    if(info.changingCreator){
+        if(keyCode === BACKSPACE && info.title.length > 0){
+            info.creator = info.creator.substring(0, info.creator.length - 1);
+        } else {
+            info.creator += key.toString();
         }
     }
 };
@@ -265,17 +243,31 @@ draw = function() {
     fill(255);
     strokeWeight(3);
     rect(70, 500, 200, 30, 5);
+    rect(325, 500, 200, 30, 5);
+    fill(224);
+    text('TITLE', 75, 491);
+    text('CREATOR', 330, 491);
     fill(45);
     text(info.title + (info.changingTitle && frameCount % 40 < 20 ? 'I' : ''), 80, 515);
-    text('info.changingTitle: ' + info.changingTitle, 300, 500);
+    text(info.creator + (info.changingCreator && frameCount % 40 < 20 ? 'I' : ''), 335, 515);
     
-    if(mouseX > 70 && mouseX < 270 && mouseY > 500 && mouseY < 530){
+    if(mouseX > 70 && mouseX < 270 && mouseY > 500 && mouseY < 530 && clicked){
         info.changingTitle = true;
     } else if (clicked){
         info.changingTitle = false;
     }
     
+    if(mouseX > 325 && mouseX < 525 && mouseY > 500 && mouseY < 530 && clicked){
+        info.changingCreator = true;
+    } else if (clicked){
+        info.changingCreator = false;
+    }
+    
     popStyle();
+    
+    fill(255);
+    textSize(18);
+    text('[ RIGHT CLICK TO GET CODE ]', 300, 565);
     
     // Export code
     if(clicked && mouseButton === RIGHT){
