@@ -1,0 +1,456 @@
+var fonts = {
+    h1: createFont('AvenirNext-UltraLight'),
+    h3: createFont('Avenir'),
+};
+
+var clicked = false;
+
+var scene = "Menu";
+
+var keys = [];
+mouseClicked = function(){clicked = true;};
+keyPressed = function(){keys[keyCode]=true;};
+keyReleased = function(){keys[keyCode]=false;};
+
+var images = {
+    bg1: function(){
+        noStroke();
+        for(var i = 0; i < height; i += 20){
+            fill(lerpColor(
+                color(107, 152, 189), color(87, 15, 105), i / height));
+            rect(0, i, width, 20);
+        }
+        
+        return get(0, 0, width, height);
+    },
+    snap1: function(){
+        background(135, 135, 135);
+        
+        noStroke();
+        for(var i = 0; i < 300; i ++){
+            fill(0, 0, 0, random(50));
+            ellipse(random(600), random(200), random(100), random(100));
+        }
+        
+        pushMatrix();
+        translate(200, 100);
+        rotate(26);
+        scale(9);
+        strokeWeight(2);
+        fill(227, 143, 143);
+        stroke(130, 75, 33);
+        ellipse(-14, 0, 10, 10);
+        ellipse(14, 0, 10, 10);
+        noFill();
+        stroke(0, 0, 0, 60);
+        arc(0, 0, 30, 30, -195, -161);
+        arc(0, 0, 30, 30, -18, 16);
+        noStroke();
+        fill(130, 76, 33);
+        ellipse(0, 0, 30, 30);
+        fill(0, 0, 0, 30);
+        arc(0, 0, 30, 30, -90, 90);
+        fill(232, 189, 132);
+        ellipse(-5, 0, 15, 15);
+        ellipse(5, 0, 15, 15);
+        ellipse(0, 5, 15, 15);
+        fill(43, 43, 43);
+        ellipse(-5, 0, 5, 5);
+        ellipse(5, 0, 5, 5);
+        fill(43, 43, 43, 100);
+        ellipse(-1.5, 4, 2, 2);
+        ellipse(1.5, 4, 2, 2);
+        stroke(45);
+        noFill();
+        strokeWeight(1);
+        arc(0, 7, 7, 5, 0, 180);
+        popMatrix();
+        
+        pushMatrix();
+        translate(445, 80);
+        rotate(-26);
+        scale(9);
+        strokeWeight(2);
+        fill(158, 158, 158);
+        stroke(128, 128, 128);
+        ellipse(-14, 0, 10, 10);
+        ellipse(14, 0, 10, 10);
+        noFill();
+        stroke(0, 0, 0, 60);
+        arc(0, 0, 30, 30, -195, -161);
+        arc(0, 0, 30, 30, -16, 15);
+        noStroke();
+        fill(128);
+        ellipse(0, 0, 30, 30);
+        fill(0, 0, 0, 30);
+        arc(0, 0, 30, 30, -90, 90);
+        fill(94);
+        ellipse(-5, 0, 15, 15);
+        ellipse(5, 0, 15, 15);
+        ellipse(0, 5, 15, 15);
+        fill(128);
+        ellipse(-5, 0, 5, 5);
+        ellipse(5, 0, 5, 5);
+        fill(94);
+        arc(0, -4, 20, 8, 0, 180);
+        fill(43, 43, 43, 100);
+        ellipse(-1.5, 4, 2, 2);
+        ellipse(1.5, 4, 2, 2);
+        stroke(128);
+        noFill();
+        strokeWeight(1);
+        arc(0, 7, 7, 5, 0, 180);
+        popMatrix();
+        
+        filter(BLUR, 2);
+        
+        fill(255);
+        textFont(fonts.h1, 100);
+        text('ARENA', 300, 160);
+        
+        return get(0, 0, width, 200);
+    },
+    snap2: function(){
+        background(56, 90, 107);
+        
+        stroke(255, 255, 255, 100);
+        strokeWeight(5);
+        for(var i = 0; i < 30; i ++){
+            fill(209, 209, 52);
+            pushMatrix();
+            translate(random(width), random(200, 400));
+            scale(random(0.5, 1.3));
+            rotate(random(-30, 30));
+            beginShape();
+            vertex(5, -10);
+            vertex(20, 0);
+            vertex(-10, 70);
+            vertex(-5, 10);
+            vertex(-20, 0);
+            vertex(10, -70);
+            endShape(CLOSE);
+            popMatrix();
+        }
+        
+        noStroke();
+        for(var i = 0; i < 30; i ++){
+            fill(92, 92, 92);
+            pushMatrix();
+            translate(random(600), random(200, 400));
+            scale(random(0.1, 1.3));
+            rotate(random(-30, 30));
+            bezier(-40, -10, 25, -50, -25, -50, 40, -10);
+            arc(0, -10, 80, 135, 0, 180);
+            fill(120);
+            bezier(0, -11, 2, -53, -12, -42, 43, -10);
+            arc(0, -10, 80, 135, 90, 180);
+            popMatrix();
+        }
+        
+        filter(BLUR, 2);
+        
+        fill(255);
+        textFont(fonts.h1, 100);
+        text('SHOP', 300, 360);
+        
+        return get(0, 200, width, 200);
+    },
+    snap3: function(){
+        background(64, 72, 79);
+        
+        stroke(255, 255, 255);
+        strokeWeight(5);
+        pushMatrix();
+        translate(300, 300);
+        scale(5);
+        noFill();
+        stroke(205, 222, 77);
+        ellipse(0, 0, 50, 50);
+        noStroke();
+        fill(205, 222, 77);
+        ellipse(0, 0, 40, 40);
+        fill(255);
+        textSize(30);
+        text('\u2605', 0, 0);
+        popMatrix();
+        pushMatrix();
+        translate(100, 300);
+        scale(2);
+        noFill();
+        stroke(205, 222, 77);
+        ellipse(0, 0, 50, 50);
+        noStroke();
+        fill(205, 222, 77);
+        ellipse(0, 0, 40, 40);
+        fill(255);
+        textSize(30);
+        text('\u2605', 0, 0);
+        popMatrix();
+        pushMatrix();
+        translate(500, 300);
+        scale(2);
+        noFill();
+        stroke(205, 222, 77);
+        ellipse(0, 0, 50, 50);
+        noStroke();
+        fill(205, 222, 77);
+        ellipse(0, 0, 40, 40);
+        fill(255);
+        textSize(30);
+        text('\u2605', 0, 0);
+        popMatrix();
+        
+        filter(BLUR, 2);
+        
+        fill(255);
+        textFont(fonts.h1, 60);
+        text('ACHIEVEMENTS', 300, 375);
+        
+        return get(0, 200, width, 200);
+    },
+};
+
+var Alert = function(title, description, img){
+    this.title = title;
+    this.description = description;
+    this.img = img;
+    
+    this.s = 0.99;
+    this.leave = false;
+};
+Alert.prototype.draw = function() {
+    pushStyle();
+    rectMode(CENTER);
+    pushMatrix();
+    translate(width / 2, height / 2);
+    scale(1 - this.s);
+    strokeWeight(6);
+    stroke(0, 0, 0, 50);
+    fill(255, 255, 255);
+    rect(0, 0, 300, 150, 10);
+    strokeWeight(2);
+    line(-150, -28, 150, -28);
+    if(this.img){
+        rect(-160, 0, 80, 120, 10);
+        image(images[this.img], -200, -50, 80, 100);
+    }
+    
+    fill(61, 61, 61);
+    textFont(fonts.h1, 29);
+    text(this.title, 0, -50);
+    textFont(fonts.h3, 15);
+    textLeading(19);
+    text(this.description, -120, -45, 240, 111);
+    
+    if(mouseX > 445 - 12 && mouseX < 457 && mouseY > 230 - 12 && mouseY < 242){
+        strokeWeight(3);
+        stroke(161, 47, 47);
+        fill(230, 23, 23);
+        rect(145, -67, 25, 25, 5);
+        
+        textFont(fonts.h3, 18);
+        fill(255);
+        text('X', 145, -67);
+        if(clicked){
+            this.leave = true;
+        }
+    } else {
+        strokeWeight(3);
+        stroke(161, 47, 47);
+        fill(230, 23, 23);
+        rect(145, -67, 25, 25, 5);
+        rect(145, -70, 25, 25, 5);
+        
+        textFont(fonts.h3, 18);
+        fill(255);
+        text('X', 145, -70);
+    }
+    
+    popMatrix();
+    popStyle();
+    
+    if(this.s > 0.01 && !this.leave){ 
+        this.s /= 1.1; 
+    }
+    if(this.leave){
+        this.s *= 1.1;
+    }
+};
+var Alerts = [];
+
+draw = function() {
+    textAlign(CENTER, CENTER);
+    textFont(createFont('Arial Black'));
+    
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    if(scene === "Home"){
+        image(images.bg1, 0, 0);
+        
+        noStroke();
+        for(var i = 0; i < width; i += 20){
+            for(var j = 0; j < height; j += 20){
+                fill(0, 0, 0, noise(i + noise(j, 1.1)*(sin(frameCount/10)*15), 1.1)*90);
+                rect(i, j, 20, 20);
+            }
+        }
+        pushMatrix();
+        translate(width / 2, height / 2);
+        rotate(13);
+        fill(0, 0, 0, 30);
+        textSize(100);
+        text("BATTLES", 7, 6);
+        fill(255, 255, 255);
+        text("BATTLES", 0, 0);
+        textSize(30);
+        text('KNIGHT MONKEY:', 0, -55);
+        textSize(15);
+        text('|| CHESTER BANKS || KHANTOBER 2016 ||', 0, 55);
+        popMatrix();
+        
+        noStroke();
+        triangle(-400, 0, 600, 0, 600, 200);
+        triangle(0, 400, 0, 600, 1000, 600);
+        
+        pushMatrix();
+        translate(200, 550);
+        rotate(15);
+        scale(1.5);
+        strokeWeight(2);
+        fill(227, 143, 143);
+        stroke(79, 45, 20);
+        ellipse(-14, 0, 10, 10);
+        ellipse(14, 0, 10, 10);
+        noFill();
+        stroke(0, 0, 0, 60);
+        arc(0, 0, 30, 30, -195, -161);
+        arc(0, 0, 30, 30, -18, 16);
+        noStroke();
+        fill(77, 46, 23);
+        ellipse(0, 0, 30, 30);
+        fill(0, 0, 0, 30);
+        arc(0, 0, 30, 30, -90, 90);
+        fill(168, 134, 89);
+        ellipse(-5, 0, 15, 15);
+        ellipse(5, 0, 15, 15);
+        ellipse(0, 5, 15, 15);
+        fill(43, 43, 43);
+        ellipse(-5, 0, 5, 5);
+        ellipse(5, 0, 5, 5);
+        fill(43, 43, 43, 100);
+        ellipse(-1.5, 4, 2, 2);
+        ellipse(1.5, 4, 2, 2);
+        stroke(45);
+        noFill();
+        strokeWeight(1);
+        line(-1, 8, 3, 8);
+        noStroke();
+        fill(59, 51, 42);
+        bezier(-15, 2, -12, 24, 14, 17, 15, 3);
+        bezier(-15, -1, -12, -23, 14, -17, 15, -2);
+        fill(0, 0, 0, 30);
+        bezier(-15, 2, -9, 18, -8, 17, 4, 3);
+        bezier(-15, -1, -12, -23, 14, -17, 7, -2);
+        popMatrix();
+        
+        pushMatrix();
+        translate(100, 530);
+        rotate(-5);
+        scale(3.5);
+        strokeWeight(2);
+        fill(227, 143, 143);
+        stroke(130, 75, 33);
+        ellipse(-14, 0, 10, 10);
+        ellipse(14, 0, 10, 10);
+        noFill();
+        stroke(0, 0, 0, 60);
+        arc(0, 0, 30, 30, -195, -161);
+        arc(0, 0, 30, 30, -18, 16);
+        noStroke();
+        fill(130, 76, 33);
+        ellipse(0, 0, 30, 30);
+        fill(0, 0, 0, 30);
+        arc(0, 0, 30, 30, -90, 90);
+        fill(232, 189, 132);
+        ellipse(-5, 0, 15, 15);
+        ellipse(5, 0, 15, 15);
+        ellipse(0, 5, 15, 15);
+        fill(43, 43, 43);
+        ellipse(-5, 0, 5, 5);
+        ellipse(5, 0, 5, 5);
+        fill(43, 43, 43, 100);
+        ellipse(-1.5, 4, 2, 2);
+        ellipse(1.5, 4, 2, 2);
+        stroke(45);
+        noFill();
+        strokeWeight(1);
+        arc(0, 7, 7, 5, 0, 180);
+        popMatrix();
+        
+        pushMatrix();
+        translate(510, 80);
+        scale(3.5);
+        strokeWeight(2);
+        fill(158, 158, 158);
+        stroke(128, 128, 128);
+        ellipse(-14, 0, 10, 10);
+        ellipse(14, 0, 10, 10);
+        noFill();
+        stroke(0, 0, 0, 60);
+        arc(0, 0, 30, 30, -195, -161);
+        arc(0, 0, 30, 30, -16, 15);
+        noStroke();
+        fill(128);
+        ellipse(0, 0, 30, 30);
+        fill(0, 0, 0, 30);
+        arc(0, 0, 30, 30, -90, 90);
+        fill(94);
+        ellipse(-5, 0, 15, 15);
+        ellipse(5, 0, 15, 15);
+        ellipse(0, 5, 15, 15);
+        fill(128);
+        ellipse(-5, 0, 5, 5);
+        ellipse(5, 0, 5, 5);
+        fill(94);
+        arc(0, -4, 20, 8, 0, 180);
+        fill(43, 43, 43, 100);
+        ellipse(-1.5, 4, 2, 2);
+        ellipse(1.5, 4, 2, 2);
+        stroke(128);
+        noFill();
+        strokeWeight(1);
+        arc(0, 7, 7, 5, 0, 180);
+        popMatrix();
+        
+        if(clicked){
+            scene = 'Intro';
+        }
+    }
+    if(scene === 'Menu'){
+        background(0);
+        
+        image(images.snap1, 0, 0);
+        image(images.snap2, 0, 200);
+        image(images.snap3, 0, 400);
+        
+        noStroke();
+        fill(255);
+        rect(0, 197, width, 5);
+        rect(0, 397, width, 5);
+    }
+    
+    for(var i in Alerts){
+        Alerts[i].draw();
+        if(Alerts[i].s > 1){
+            Alerts.splice(i, 1);
+        }
+    }
+    
+    clicked = false;
+};
