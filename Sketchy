@@ -525,6 +525,60 @@ draw = function() {
         endShape(CLOSE);
         popMatrix();
         
+        // Health
+        pushMatrix();
+        translate(360, 100);
+        pushMatrix();
+        translate(-3, -2);
+        noStroke();
+        fill(235, 108, 108);
+        beginShape();
+        vertex(10, -10);
+        vertex(30, -10);
+        vertex(30, 10);
+        vertex(10, 10);
+        vertex(10, 30);
+        vertex(-10, 30);
+        vertex(-10, 10);
+        vertex(-30, 10);
+        vertex(-30, -10);
+        vertex(-10, -10);
+        vertex(-10, -30);
+        vertex(10, -30);
+        endShape(CLOSE);
+        popMatrix();
+        noFill();
+        strokeWeight(2);
+        stroke(176, 176, 176);
+        beginShape();
+        vertex(10, -10);
+        vertex(30, -10);
+        vertex(30, 10);
+        vertex(10, 10);
+        vertex(10, 30);
+        vertex(-10, 30);
+        vertex(-10, 10);
+        vertex(-30, 10);
+        vertex(-30, -10);
+        vertex(-10, -10);
+        vertex(-10, -30);
+        vertex(10, -30);
+        endShape(CLOSE);
+        popMatrix();
+        
+        // Forcefield
+        pushMatrix();
+        translate(480, 100);
+        noStroke();
+        fill(222, 248, 255);
+        ellipse(-3, 4, 70, 70);
+        noFill();
+        strokeWeight(2);
+        stroke(176, 176, 176);
+        ellipse(0, 0, 70, 70);
+        arc(0, 0, 55, 55, -80, 0);
+        popMatrix();
+        
         // Shield
         pushMatrix();
         translate(120, 100);
