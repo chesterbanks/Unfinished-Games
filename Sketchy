@@ -1,11 +1,12 @@
 textAlign(CENTER, CENTER);
 var fonts = {
     titles: createFont('HelveticaNeue-UltraLight'),
+    small: createFont('HelveticaNeue-Thin'),
     coin: createFont('Verdana'),
 };
 
-var scene = 'Menu';
-var coins = 0;
+var scene = 'Shop';
+var coins = 100;
 
 var keys = [];
 var keyPressed = function(){ keys[keyCode] = true; };
@@ -17,18 +18,19 @@ var circleCollide = function(object1, object2){
     return dist(object1.x, object1.y, object2.x, object2.y) <= (object1.sz / 2) + (object2.sz / 2);
 };
 
-var button = function(x, y, w, h, txt, nxt){
+var button = function(x, y, w, h, txt, nxt, txtSz){
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
     this.txt = txt;
     this.nxt = nxt;
+    this.txtSz = txtSz || 30;
     this.lineX = this.w / 2;
     this.move = false;
 };
 button.prototype.draw = function() {
-    textFont(fonts.titles, 30);
+    textFont(fonts.titles, this.txtSz);
     text(this.txt, this.x, this.y);
     
     stroke(0);
@@ -61,7 +63,90 @@ var buttons = {
     play: new button(300, 370, 120, 50, 'P L A Y', 'Game'),
     shop: new button(300, 420, 120, 50, 'S H O P', 'Game'),
     back: new button(80, 560, 120, 50, 'B A C K', 'Menu'),
+    
+    play2: new button(300, 300, 250, 80, 'P L A Y', 'Game', 80),
+    shop2: new button(300, 380, 120, 50, 'S H O P', 'Shop'),
 };
+
+var Alert = function(title, desc, img){
+    this.title = title;
+    this.desc = desc;
+    this.img = img;
+    
+    this.s = 0.99;
+    this.leave = false;
+};
+Alert.prototype.draw = function() {
+    pushStyle();
+    rectMode(CENTER);
+    pushMatrix();
+    translate(width / 2, height / 2);
+    scale(1 - this.s);
+    strokeWeight(6);
+    stroke(0, 0, 0, 50);
+    fill(255, 255, 255);
+    rect(0, 0, 300, 150, 10);
+    strokeWeight(2);
+    line(-150, -28, 150, -28);
+    if(this.img){
+        strokeWeight(6);
+        rect(-160, 0, 80, 120, 10);
+        //image(images.candycane, -200, -50, 80, 100);
+    }
+    
+    fill(61, 61, 61);
+    textFont(fonts.titles, 29);
+    text(this.title, 0, -50);
+    textFont(fonts.small, 15);
+    textLeading(19);
+    text(this.desc, -120, -45, 240, 111);
+    
+    if(mouseX > 445 - 12 && mouseX < 457 && mouseY > 230 - 12 && mouseY < 242){
+        strokeWeight(3);
+        stroke(161, 47, 47);
+        fill(230, 23, 23);
+        rect(145, -67, 25, 25, 5);
+        
+        textFont(fonts.small, 18);
+        fill(255);
+        text('X', 145, -67);
+        if(clicked){
+            this.leave = true;
+        }
+    } else {
+        strokeWeight(3);
+        stroke(161, 47, 47);
+        fill(230, 23, 23);
+        rect(145, -67, 25, 25, 5);
+        rect(145, -70, 25, 25, 5);
+        
+        textFont(fonts.small, 18);
+        fill(255);
+        text('X', 145, -70);
+    }
+    
+    popMatrix();
+    popStyle();
+    
+    if(this.s > 0.01 && !this.leave){ 
+        this.s /= 1.1; 
+    }
+    if(this.leave){
+        this.s *= 1.1;
+    }
+};
+var Alerts = [new Alert('Speed', 'This power-up makes you twice as fast for six seconds.')];
+
+var shop = [
+    {name: 'Shield', price: 5, bought: false, y: 100},
+    {name: 'Speed', price: 5, bought: false, y: 100},
+    {name: 'Health', price: 5, bought: false, y: 100},
+    {name: 'Forcefield', price: 5, bought: false, y: 100},
+    {name: 'Bomb', price: 5, bought: false, y: 250},
+    {name: 'Cloak', price: 5, bought: false, y: 250},
+    {name: 'Magnet', price: 5, bought: false, y: 250},
+    {name: 'Block', price: 5, bought: false, y: 250},
+];
 
 var Player = function(){
     this.x = 300;
@@ -174,8 +259,9 @@ Coin.prototype.draw = function() {
 var Coins = [];
 
 draw = function() {
+    background(255);
+    
     if(scene === 'Menu'){
-        background(255);
         noFill();
         stroke(0);
         strokeWeight(1);
@@ -263,7 +349,7 @@ draw = function() {
         buttons.shop.draw();
     }
     if(scene === 'Game'){
-        if(frameCount % 15 === 0){
+        if(frameCount % 30 === 0){
             Rocks.push(new Rock());
         }
         if(frameCount % 90 === 0){
@@ -302,8 +388,78 @@ draw = function() {
         rect(0, 0, width, 49);
         rect(0, 451, width, 150);
         
+        noStroke();
+        fill(222, 222, 113);
+        strokeWeight(2);
+        ellipse(562, 572, 23, 23);  
+        noFill();
+        stroke(0, 0, 0);
+        strokeWeight(1);
+        ellipse(560,  570, 25, 25);
+        
+        fill(0, 0, 0, 100);
+        textFont(fonts.coin, 10);
+        text('C', 560, 570);
+        
+        pushStyle();
+        textAlign(RIGHT, CENTER);
+        textFont(fonts.small, 20);
+        text(coins, 540, 570);
+        popStyle();
+        
         fill(0);
         buttons.back.draw();
+    }
+    if(scene === 'Lose'){
+        fill(0);
+        buttons.play2.draw();
+        buttons.shop2.draw();
+    }
+    if(scene === 'Shop'){
+        for(var i = 0; i < shop.length; ++i){
+            shop[i].x = 120 + ((i * 120) % 480);
+            
+            pushMatrix();
+            translate(shop[i].x, shop[i].y);
+            noFill();
+            if(dist(mouseX, mouseY, shop[i].x, shop[i].y) < 50){
+                fill(0, 0, 0, 20);
+            }
+            stroke(156, 156, 156);
+            strokeWeight(1);
+            ellipse(0, 0, 100, 100);
+            
+            fill(156);
+            textFont(fonts.small, 20);
+            text(shop[i].name, 0, 70);
+            popMatrix();
+        }
+        
+        noStroke();
+        fill(222, 222, 113);
+        strokeWeight(2);
+        ellipse(562, 572, 23, 23);  
+        noFill();
+        stroke(0, 0, 0);
+        strokeWeight(1);
+        ellipse(560,  570, 25, 25);
+        
+        fill(0, 0, 0, 100);
+        textFont(fonts.coin, 10);
+        text('C', 560, 570);
+        
+        pushStyle();
+        textAlign(RIGHT, CENTER);
+        textFont(fonts.small, 20);
+        text(coins, 540, 570);
+        popStyle();
+        
+        fill(0);
+        buttons.back.draw();
+    }
+    
+    for(var i = 0; i < Alerts.length; ++i){
+        Alerts[i].draw();
     }
     
     clicked = false;
