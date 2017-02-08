@@ -1,3 +1,11 @@
+/**
+ * Sketchy
+ * Chester Banks
+ * February 15 2017
+ * 
+ * Trying out a couple new things with this program! The "sketchy" graphics style and a shop.
+*/
+
 textAlign(CENTER, CENTER);
 var fonts = {
     titles: createFont('HelveticaNeue-UltraLight'),
@@ -5,7 +13,7 @@ var fonts = {
     coin: createFont('Verdana'),
 };
 
-var scene = 'Shop';
+var scene = 'Menu';
 var coins = 100;
 
 var keys = [];
@@ -16,6 +24,93 @@ mouseClicked = function(){ clicked = true; };
 
 var circleCollide = function(object1, object2){
     return dist(object1.x, object1.y, object2.x, object2.y) <= (object1.sz / 2) + (object2.sz / 2);
+};
+
+var images = {
+    'homeBG': function(){
+        background(255);
+        noFill();
+        stroke(0);
+        strokeWeight(1);
+        bezier(5, 435, 138, 399, 202, 525, 327, 527);
+        bezier(591, 492, 506, 453, 402, 525, 350, 527);
+        noStroke();
+        fill(255);
+        ellipse(200, 500, 70, 86);
+        fill(217, 237, 86);
+        ellipse(456, 80, 90, 91);
+        fill(38, 227, 79);
+        ellipse(480, 462, 31, 47);
+        ellipse(191, 500, 59, 82);
+        fill(217, 167, 126);
+        bezier(284, 600, 310, 552, 294, 567, 350, 530);
+        bezier(282, 600, 333, 581, 297, 551, 350, 530);
+        noFill();
+        stroke(217, 167, 126);
+        strokeWeight(5);
+        arc(353, 434, 395, 284, -322, -310);
+        strokeWeight(8);
+        arc(361, 434, 395, 284, -337, -308);
+        stroke(0);
+        strokeWeight(1);
+        
+        // Sun beams
+        for(var i = 0; i < 360; i += 30){
+            pushMatrix();
+            translate(470, 85);
+            rotate(i);
+            stroke(0);
+            line(0, 60, 0, 75 + noise(i, i + -6.1)*5);
+            popMatrix();
+        }
+        
+        // Hill
+        bezier(5, 591, 213, 582, 285, 450, 587, 594);
+        
+        // Paths
+        arc(298, 427, 519, 276, -335, -306);
+        arc(376, 427, 382, 312, -337, -308);
+        arc(566, 600, 650, 222, -179, -142);
+        arc(500, 600, 369, 222, -180, -142);
+        
+        // Trees
+        ellipse(200, 500, 70, 85);
+        ellipse(475, 457, 40, 55);
+        
+        // Sun
+        ellipse(470, 85, 100, 100);
+        
+        // Clouds
+        strokeWeight(1);
+        pushMatrix();
+        translate(-145, 53);
+        arc(300, 100, 200, 30, 10, 170);
+        arc(223, 90, 50, 50, 150, 340);
+        arc(294, 64, 100, 100, 161, 361);
+        arc(371, 65, 55, 55, 184, 401);
+        arc(407, 88, 30, 30, 202, 476);
+        popMatrix();
+        pushMatrix();
+        translate(332, 185);
+        scale(0.5);
+        strokeWeight(1);
+        arc(300, 100, 200, 30, 10, 170);
+        arc(223, 90, 50, 50, 150, 340);
+        arc(294, 64, 100, 100, 161, 361);
+        arc(371, 65, 55, 55, 184, 401);
+        arc(407, 88, 30, 30, 202, 476);
+        popMatrix();
+        
+        // Tree trunks
+        fill(255);
+        triangle(200, 530, 195, 573, 205, 570);
+        triangle(476, 479, 482, 506, 474, 502);
+        line(195, 568, 200, 566);
+        line(199, 558, 203, 556);
+        line(479, 500, 474, 497);
+        
+        return get(0, 0, width, height);
+    },
 };
 
 var button = function(x, y, w, h, txt, nxt, txtSz){
@@ -61,10 +156,10 @@ button.prototype.draw = function() {
 };
 var buttons = {
     play: new button(300, 370, 120, 50, 'P L A Y', 'Game'),
-    shop: new button(300, 420, 120, 50, 'S H O P', 'Game'),
+    shop: new button(300, 420, 120, 50, 'S H O P', 'Shop'),
     back: new button(80, 560, 120, 50, 'B A C K', 'Menu'),
     
-    play2: new button(300, 300, 250, 80, 'P L A Y', 'Game', 80),
+    play2: new button(300, 300, 120, 50, 'P L A Y', 'Game'),
     shop2: new button(300, 380, 120, 50, 'S H O P', 'Shop'),
 };
 
@@ -261,86 +356,16 @@ var Coins = [];
 draw = function() {
     background(255);
     
-    if(scene === 'Menu'){
-        noFill();
-        stroke(0);
-        strokeWeight(1);
-        bezier(5, 435, 138, 399, 202, 525, 327, 527);
-        bezier(591, 492, 506, 453, 402, 525, 350, 527);
-        noStroke();
-        fill(255);
-        ellipse(200, 500, 70, 86);
-        fill(217, 237, 86);
-        ellipse(456, 80, 90, 91);
-        fill(38, 227, 79);
-        ellipse(480, 462, 31, 47);
-        ellipse(191, 500, 59, 82);
-        fill(217, 167, 126);
-        bezier(284, 600, 310, 552, 294, 567, 350, 530);
-        bezier(282, 600, 333, 581, 297, 551, 350, 530);
-        noFill();
-        stroke(217, 167, 126);
-        strokeWeight(5);
-        arc(353, 434, 395, 284, -322, -310);
-        strokeWeight(8);
-        arc(361, 434, 395, 284, -337, -308);
-        stroke(0);
-        strokeWeight(1);
-        
-        // Sun beams
-        for(var i = 0; i < 360; i += 30){
-            pushMatrix();
-            translate(470, 85);
-            rotate(i);
-            stroke(0);
-            line(0, 60, 0, 75 + noise(i, i + -6.1)*5);
-            popMatrix();
+    for(var i in images){
+        if(typeof images[i] !== 'object'){
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
         }
+    }
+    
+    if(scene === 'Menu'){
+        image(images.homeBG, 0, 0);
         
-        // Hill
-        bezier(5, 591, 213, 582, 285, 450, 587, 594);
-        
-        // Paths
-        arc(298, 427, 519, 276, -335, -306);
-        arc(376, 427, 382, 312, -337, -308);
-        arc(566, 600, 650, 222, -179, -142);
-        arc(500, 600, 369, 222, -180, -142);
-        
-        // Trees
-        ellipse(200, 500, 70, 85);
-        ellipse(475, 457, 40, 55);
-        
-        // Sun
-        ellipse(470, 85, 100, 100);
-        
-        // Clouds
-        strokeWeight(1);
-        pushMatrix();
-        translate(-145, 53);
-        arc(300, 100, 200, 30, 10, 170);
-        arc(223, 90, 50, 50, 150, 340);
-        arc(294, 64, 100, 100, 161, 361);
-        arc(371, 65, 55, 55, 184, 401);
-        arc(407, 88, 30, 30, 202, 476);
-        popMatrix();
-        pushMatrix();
-        translate(332, 185);
-        scale(0.5);
-        strokeWeight(1);
-        arc(300, 100, 200, 30, 10, 170);
-        arc(223, 90, 50, 50, 150, 340);
-        arc(294, 64, 100, 100, 161, 361);
-        arc(371, 65, 55, 55, 184, 401);
-        arc(407, 88, 30, 30, 202, 476);
-        popMatrix();
-        
-        // Tree trunks
-        fill(255);
-        triangle(200, 530, 195, 573, 205, 570);
-        triangle(476, 479, 482, 506, 474, 502);
-        line(195, 568, 200, 566);
-        line(199, 558, 203, 556);
-        line(479, 500, 474, 497);
         textFont(fonts.titles, 40);
         fill(0);
         text('S   K   E   T   C   H   Y', 300, 300);
@@ -421,10 +446,105 @@ draw = function() {
         
         // Buttons
         fill(0);
+        textSize(50);
+        text('You got hit! :(', 300, 200);
+        
         buttons.play2.draw();
         buttons.shop2.draw();
     }
     if(scene === 'Shop'){
+        noStroke();
+        fill(222, 222, 113);
+        strokeWeight(2);
+        ellipse(562, 572, 23, 23);  
+        noFill();
+        stroke(0, 0, 0);
+        strokeWeight(1);
+        ellipse(560,  570, 25, 25);
+        
+        fill(0, 0, 0, 100);
+        textFont(fonts.coin, 10);
+        text('C', 560, 570);
+        
+        pushStyle();
+        textAlign(RIGHT, CENTER);
+        textFont(fonts.small, 20);
+        text(coins, 540, 570);
+        popStyle();
+        
+        // Magnet
+        strokeCap(SQUARE);
+        pushMatrix();
+        translate(360, 245);
+        noFill();
+        strokeWeight(15);
+        stroke(240, 153, 153);
+        arc(3, 2, 30, 30, -180, 0);
+        line(-12, 2, -11, 16);
+        line(18, 2, 17, 16);
+        strokeWeight(2);
+        stroke(176, 176, 176);
+        arc(0, 0, 50, 50, -180, 0);
+        arc(0, 0, 10, 10, -180, 0);
+        line(-5, 0, -5, 30);
+        line(-25, 0, -20, 30);
+        line(25, 0, 20, 30);
+        line(5, 0, 5, 30);
+        line(-5, 30, -20, 30);
+        line(5, 30, 20, 30);
+        line(-5, 20, -20, 20);
+        line(5, 20, 20, 20);
+        popMatrix();
+        
+        // Speed
+        pushMatrix();
+        translate(233, 100);
+        pushMatrix();
+        translate(4, -3);
+        noStroke();
+        fill(224, 237, 107);
+        beginShape();
+        vertex(8, 0);
+        vertex(15, 0);
+        vertex(2, 30);
+        vertex(2, 0);
+        vertex(-6, 0);
+        vertex(8, -30);
+        endShape(CLOSE);
+        popMatrix();
+        noFill();
+        strokeWeight(2);
+        stroke(176, 176, 176);
+        beginShape();
+        vertex(8, 0);
+        vertex(15, 0);
+        vertex(2, 30);
+        vertex(2, 0);
+        vertex(-6, 0);
+        vertex(8, -30);
+        endShape(CLOSE);
+        popMatrix();
+        
+        // Shield
+        pushMatrix();
+        translate(120, 100);
+        noStroke();
+        fill(0, 179, 255, 100);
+        arc(-3, 3, 41, 58, 90, 180);
+        arc(-4, -21, 50, 110, 0, 90);
+        fill(255);
+        arc(0, 0, 41, 58, 0, 90);
+        arc(25, -30, 50, 20, 90, 170);
+        noFill();
+        strokeWeight(2);
+        stroke(176, 176, 176);
+        arc(-25, -30, 50, 20, 0, 90);
+        arc(25, -30, 50, 20, 90, 170);
+        arc(0, -20, 50, 100, 0, 180);
+        line(0, -30, 0, 30);
+        line(-23, 0, 23, 0);
+        popMatrix();
+        
         for(var i = 0; i < shop.length; ++i){
             shop[i].x = 120 + ((i * 120) % 480);
             
@@ -452,25 +572,6 @@ draw = function() {
             text('$' + shop[i].price, 0, 80);
             popMatrix();
         }
-        
-        noStroke();
-        fill(222, 222, 113);
-        strokeWeight(2);
-        ellipse(562, 572, 23, 23);  
-        noFill();
-        stroke(0, 0, 0);
-        strokeWeight(1);
-        ellipse(560,  570, 25, 25);
-        
-        fill(0, 0, 0, 100);
-        textFont(fonts.coin, 10);
-        text('C', 560, 570);
-        
-        pushStyle();
-        textAlign(RIGHT, CENTER);
-        textFont(fonts.small, 20);
-        text(coins, 540, 570);
-        popStyle();
         
         fill(0);
         buttons.back.draw();
