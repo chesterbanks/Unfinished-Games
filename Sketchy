@@ -135,17 +135,17 @@ Alert.prototype.draw = function() {
         this.s *= 1.1;
     }
 };
-var Alerts = [new Alert('Speed', 'This power-up makes you twice as fast for six seconds.')];
+var Alerts = [];
 
 var shop = [
     {name: 'Shield', price: 5, bought: false, y: 100},
-    {name: 'Speed', price: 5, bought: false, y: 100},
-    {name: 'Health', price: 5, bought: false, y: 100},
-    {name: 'Forcefield', price: 5, bought: false, y: 100},
-    {name: 'Bomb', price: 5, bought: false, y: 250},
-    {name: 'Cloak', price: 5, bought: false, y: 250},
-    {name: 'Magnet', price: 5, bought: false, y: 250},
-    {name: 'Block', price: 5, bought: false, y: 250},
+    {name: 'Speed', price: 10, bought: false, y: 100},
+    {name: 'Health', price: 10, bought: false, y: 100},
+    {name: 'Forcefield', price: 30, bought: false, y: 100},
+    {name: 'Bomb', price: 10, bought: false, y: 250},
+    {name: 'Cloak', price: 15, bought: false, y: 250},
+    {name: 'Magnet', price: 10, bought: false, y: 250},
+    {name: 'Block', price: 10, bought: false, y: 250},
 ];
 
 var Player = function(){
@@ -365,6 +365,9 @@ draw = function() {
         
         for(var i in Rocks){
             Rocks[i].draw();
+            if(circleCollide(Rocks[i], player)){
+                scene = 'Lose';
+            }
             if((Rocks[i].x < 0 || Rocks[i].x > 600 || Rocks[i].y < 0 || Rocks[i].y > 600) && Rocks[i].out < 0){
                 Rocks.splice(i, 1);
                 i--;
@@ -411,6 +414,12 @@ draw = function() {
         buttons.back.draw();
     }
     if(scene === 'Lose'){
+        // Reset stuff
+        Coins = [];
+        Rocks = [];
+        player = new Player();
+        
+        // Buttons
         fill(0);
         buttons.play2.draw();
         buttons.shop2.draw();
@@ -424,14 +433,23 @@ draw = function() {
             noFill();
             if(dist(mouseX, mouseY, shop[i].x, shop[i].y) < 50){
                 fill(0, 0, 0, 20);
+                if(clicked){
+                    if(coins >= shop[i].price){
+                        coins -= shop[i].price;
+                    } else {
+                        Alerts.push(new Alert('Too Pricey', 'Uh-oh! You don\'t have enough money to buy this item!'));
+                    }
+                }
             }
             stroke(156, 156, 156);
             strokeWeight(1);
             ellipse(0, 0, 100, 100);
             
             fill(156);
-            textFont(fonts.small, 20);
-            text(shop[i].name, 0, 70);
+            textFont(fonts.small, 17);
+            text(shop[i].name, 0, 60);
+            textSize(18);
+            text('$' + shop[i].price, 0, 80);
             popMatrix();
         }
         
@@ -460,6 +478,9 @@ draw = function() {
     
     for(var i = 0; i < Alerts.length; ++i){
         Alerts[i].draw();
+        if(Alerts[i].s > 1){
+            Alerts.splice(i, 1);
+        }
     }
     
     clicked = false;
