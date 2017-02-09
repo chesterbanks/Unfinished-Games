@@ -233,14 +233,14 @@ Alert.prototype.draw = function() {
 var Alerts = [];
 
 var shop = [
-    {name: 'Shield', price: 5, bought: false, y: 100},
-    {name: 'Speed', price: 10, bought: false, y: 100},
-    {name: 'Health', price: 10, bought: false, y: 100},
-    {name: 'Forcefield', price: 30, bought: false, y: 100},
-    {name: 'Bomb', price: 10, bought: false, y: 250},
-    {name: 'Cloak', price: 15, bought: false, y: 250},
-    {name: 'Magnet', price: 10, bought: false, y: 250},
-    {name: 'Block', price: 10, bought: false, y: 250},
+    {name: 'Shield', price: 5, bought: false, y: 100, info: 'A protective shield spins around you for five seconds.'},
+    {name: 'Speed', price: 10, bought: false, y: 100, info: 'Move twice as fast for five seconds.'},
+    {name: 'Health', price: 10, bought: false, y: 100, info: 'Refill your health'},
+    {name: 'Forcefield', price: 30, bought: false, y: 100, info: 'Protective bubble surrounds you for five seconds.'},
+    {name: 'Bomb', price: 10, bought: false, y: 250, info: 'Destroys all objects (excluding you) within a five foot raidus.'},
+    {name: 'Cloak', price: 15, bought: false, y: 250, info: 'Hides you from everything that follows you.'},
+    {name: 'Magnet', price: 10, bought: false, y: 250, info: 'Attracts nearby coins.'},
+    {name: 'Block', price: 10, bought: false, y: 250, info: 'A stationary block that everything bounces off of.'},
 ];
 
 var Player = function(){
@@ -482,8 +482,8 @@ draw = function() {
         arc(3, 2, 30, 30, -180, 0);
         line(-12, 2, -11, 16);
         line(18, 2, 17, 16);
-        strokeWeight(2);
-        stroke(176, 176, 176);
+        strokeWeight(1);
+        stroke(117);
         arc(0, 0, 50, 50, -180, 0);
         arc(0, 0, 10, 10, -180, 0);
         line(-5, 0, -5, 30);
@@ -495,6 +495,8 @@ draw = function() {
         line(-5, 20, -20, 20);
         line(5, 20, 20, 20);
         popMatrix();
+        
+        strokeWeight(1);
         
         // Speed
         pushMatrix();
@@ -513,8 +515,7 @@ draw = function() {
         endShape(CLOSE);
         popMatrix();
         noFill();
-        strokeWeight(2);
-        stroke(176, 176, 176);
+        stroke(117);
         beginShape();
         vertex(8, 0);
         vertex(15, 0);
@@ -531,7 +532,7 @@ draw = function() {
         pushMatrix();
         translate(-3, -2);
         noStroke();
-        fill(235, 108, 108);
+        fill(237, 116, 116);
         beginShape();
         vertex(10, -10);
         vertex(30, -10);
@@ -548,8 +549,7 @@ draw = function() {
         endShape(CLOSE);
         popMatrix();
         noFill();
-        strokeWeight(2);
-        stroke(176, 176, 176);
+        stroke(117);
         beginShape();
         vertex(10, -10);
         vertex(30, -10);
@@ -571,12 +571,68 @@ draw = function() {
         translate(480, 100);
         noStroke();
         fill(222, 248, 255);
-        ellipse(-3, 4, 70, 70);
+        ellipse(-5, 6, 70, 70);
         noFill();
-        strokeWeight(2);
-        stroke(176, 176, 176);
+        stroke(117);
         ellipse(0, 0, 70, 70);
         arc(0, 0, 55, 55, -80, 0);
+        arc(0, 0, 55, 55, -96, -89);
+        popMatrix();
+        
+        // Bomb
+        pushMatrix();
+        translate(120, 250);
+        noStroke();
+        fill(189, 189, 189);
+        ellipse(5, 8, 50, 50);
+        rect(-7, -24, 20, 7);
+        noFill();
+        stroke(117, 117, 117);
+        ellipse(0, 5, 50, 50);
+        rect(-10, -27, 20, 7);
+        arc(-25, -27, 50, 50, -26, 0);
+        arc(0, 5, 40, 40, -180, -120);
+        arc(0, 5, 40, 40, -115, -103);
+        popMatrix();
+        
+        // Cloak
+        pushMatrix();
+        translate(240, 250);
+        noFill();
+        stroke(173, 173, 173);
+        bezier(0, -30, -35, -20, -10, 10, -30, 20);
+        bezier(0, -30, 35, -20, 10, 10, 30, 20);
+        arc(-25, 20, 10, 10, 0, 180);
+        arc(-12, 20, 15, 15, 0, 180);
+        arc(6, 20, 20, 20, 0, 180);
+        arc(22, 20, 12, 12, 0, 180);
+        popMatrix();
+        
+        // Block
+        pushMatrix();
+        translate(480, 250);
+        noStroke();
+        fill(222, 199, 199);
+        pushMatrix();
+        translate(3, 3);
+        rect(-25, -15, 26, 10, 2);
+        rect(5, -15, 20, 10, 2);
+        rect(-16, -2, 30, 10, 2);
+        rect(-25, -2, 5, 10, 2);
+        rect(18, -2, 7, 10, 2);
+        rect(-25, 12, 26, 8, 2);
+        rect(5, 12, 20, 8, 2);
+        popMatrix();
+        noFill();
+        stroke(173, 173, 173);
+        rect(-25, -20, 50, 40, 5);
+        rect(-25, -15, 26, 10, 2);
+        rect(5, -15, 20, 10, 2);
+        rect(-16, -2, 30, 10, 2);
+        rect(-25, -2, 5, 10, 2);
+        rect(18, -2, 7, 10, 2);
+        rect(-25, 12, 26, 8, 2);
+        rect(5, 12, 20, 8, 2);
         popMatrix();
         
         // Shield
@@ -590,8 +646,7 @@ draw = function() {
         arc(0, 0, 41, 58, 0, 90);
         arc(25, -30, 50, 20, 90, 170);
         noFill();
-        strokeWeight(2);
-        stroke(176, 176, 176);
+        stroke(117);
         arc(-25, -30, 50, 20, 0, 90);
         arc(25, -30, 50, 20, 90, 170);
         arc(0, -20, 50, 100, 0, 180);
@@ -625,7 +680,15 @@ draw = function() {
             textSize(18);
             text('$' + shop[i].price, 0, 80);
             popMatrix();
+            
+            if(dist(mouseX, mouseY, shop[i].x, shop[i].y) < 50){
+                fill(184, 184, 184);
+                textFont(fonts.small, 20);
+                text(shop[i].info, 50, 200, 500, 500);
+            }
         }
+        
+        
         
         fill(0);
         buttons.back.draw();
