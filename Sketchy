@@ -1,9 +1,11 @@
 /**
- * Sketchy
+ * S K E T C H Y
  * Chester Banks
  * February 15 2017
  * 
  * Trying out a couple new things with this program! The "sketchy" graphics style and a shop.
+ * 
+ * Have a complaint? Compliment? Constructive criticism? Destructive criticism? Question? Suggestion? Advice? Rating? Review? Leave them all in the Tips & Thanks (except for questions, those can go in the Questions)!
 */
 
 textAlign(CENTER, CENTER);
@@ -243,6 +245,8 @@ var shop = [
     {name: 'Block', price: 10, bought: false, y: 250, info: 'A stationary block that everything bounces off of.'},
 ];
 
+var forcefield = false;
+
 var Player = function(){
     this.x = 300;
     this.y = 200;
@@ -259,8 +263,15 @@ Player.prototype.draw = function() {
     fill(240, 217, 163);
     ellipse(this.x + 3, this.y + 3, this.sz / 1.1, this.sz / 1.1);
     noFill();
-    stroke(18, 18, 18);
     strokeWeight(1);
+    stroke(115, 190, 209);
+    // Forcefield
+    if(forcefield){
+        ellipse(this.x, this.y, this.sz * 1.8, this.sz * 1.8);
+    }
+    
+    stroke(18, 18, 18);
+    // Player
     ellipse(this.x, this.y, this.sz, this.sz);
     fill(38, 38, 38);
     ellipse(this.x - 5 + this.xvel, this.y + this.yvel, 3, 8);
@@ -328,7 +339,11 @@ Rock.prototype.draw = function() {
     strokeWeight(1);
     ellipse(this.x, this.y, this.sz, this.sz);
     
-    this.out -= this.speed;
+    if(this.switchDir){
+        this.out += this.speed;
+    } else {
+        this.out -= this.speed;
+    }
 };
 var Rocks = [];
 
@@ -364,6 +379,11 @@ draw = function() {
     }
     
     if(scene === 'Menu'){
+        // Reset stuff
+        Coins = [];
+        Rocks = [];
+        player = new Player();
+        
         image(images.homeBG, 0, 0);
         
         textFont(fonts.titles, 40);
@@ -391,7 +411,11 @@ draw = function() {
         for(var i in Rocks){
             Rocks[i].draw();
             if(circleCollide(Rocks[i], player)){
-                scene = 'Lose';
+                if(forcefield){
+                    Rocks[i].switchDir = true;
+                } else {
+                    //scene = 'Menu';
+                }
             }
             if((Rocks[i].x < 0 || Rocks[i].x > 600 || Rocks[i].y < 0 || Rocks[i].y > 600) && Rocks[i].out < 0){
                 Rocks.splice(i, 1);
@@ -437,20 +461,6 @@ draw = function() {
         
         fill(0);
         buttons.back.draw();
-    }
-    if(scene === 'Lose'){
-        // Reset stuff
-        Coins = [];
-        Rocks = [];
-        player = new Player();
-        
-        // Buttons
-        fill(0);
-        textSize(50);
-        text('You got hit! :(', 300, 200);
-        
-        buttons.play2.draw();
-        buttons.shop2.draw();
     }
     if(scene === 'Shop'){
         noStroke();
