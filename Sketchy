@@ -315,6 +315,10 @@ Player.prototype.draw = function() {
 var player = new Player();
 
 var Rock = function(){
+    this.timer = 0;
+    this.trans = 255;
+    this.fade = false;
+    
     this.centerX = random(100, 500);
     this.centerY = random(100, 400);
     this.angle = random(360);
@@ -331,11 +335,11 @@ Rock.prototype.draw = function() {
     this.y = this.centerY + (cos(this.angle) * this.out);
     
     noStroke();
-    fill(173, 173, 173);
+    fill(173, 173, 173, this.trans);
     strokeWeight(2);
     ellipse(this.x + 2, this.y + 2, this.sz / 1.1, this.sz / 1.1);  
     noFill();
-    stroke(0, 0, 0);
+    stroke(0, 0, 0, this.trans);
     strokeWeight(1);
     ellipse(this.x, this.y, this.sz, this.sz);
     
@@ -344,8 +348,63 @@ Rock.prototype.draw = function() {
     } else {
         this.out -= this.speed;
     }
+    
+    if(this.fade){
+        this.trans /= 1.1;
+    }
 };
 var Rocks = [];
+
+var Rocket = function(){
+    this.speed = 3;
+    
+    this.x = 400;
+    this.y = 200;
+    this.sz = 30;
+    
+    this.timer = 0;
+    this.trans = 255;
+    this.fade = false;
+};
+Rocket.prototype.draw = function() {
+    this.d = Math.sqrt((player.x - this.x) * (player.x - this.x) + (player.y - this.y) * (player.y - this.y));
+    pushStyle();
+    rectMode(CENTER);
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate( 0 + atan2(this.y - player.y, this.x - player.x));
+    noStroke();
+    fill(224, 32, 32, this.trans);
+    rect(3, -2, 10, 20);
+    triangle(-4, 7, 11, 7, 3, 17);
+    strokeWeight(1);
+    noFill();
+    stroke(0, 0, 0, this.trans);
+    rect(0, -5, 10, 20);
+    triangle(-7, 5, 8, 5, 0, 15);
+    popMatrix();
+    popStyle();
+    
+    this.x += (player.x - this.x) / this.d * this.speed;
+    this.y += (player.y - this.y) / this.d * this.speed;
+    
+    this.timer += 0.1;
+    
+    if(this.timer > 30){
+        this.fade = true;
+    }
+    for(var i in Rocks){
+        if(circleCollide(this, Rocks[i])){
+            this.fade = true;
+            Rocks[i].fade = true;
+        }
+    }
+    
+    if(this.fade){
+        this.trans /= 1.1;
+    }
+};
+var Rockets = [];
 
 var Coin = function(){
     this.x = random(100, 500);
@@ -397,6 +456,9 @@ draw = function() {
         if(frameCount % 30 === 0){
             Rocks.push(new Rock());
         }
+        if(frameCount % 100 === 0){
+            Rockets.push(new Rocket());
+        }
         if(frameCount % 90 === 0){
             Coins.push(new Coin());
         }
@@ -417,8 +479,23 @@ draw = function() {
                     //scene = 'Menu';
                 }
             }
-            if((Rocks[i].x < 0 || Rocks[i].x > 600 || Rocks[i].y < 0 || Rocks[i].y > 600) && Rocks[i].out < 0){
+            if(((Rocks[i].x < 0 || Rocks[i].x > 600 || Rocks[i].y < 0 || Rocks[i].y > 600) && Rocks[i].out < 0) || Rocks[i].trans < 0.1){
                 Rocks.splice(i, 1);
+                i--;
+            }
+        }
+        
+        for(var i in Rockets){
+            Rockets[i].draw();
+            if(circleCollide(Rockets[i], player)){
+                if(forcefield){
+                    Rockets[i].switchDir = true;
+                } else {
+                    //scene = 'Menu';
+                }
+            }
+            if(Rockets[i].x < 0 || Rockets[i].x > 600 || Rockets[i].y < 0 || Rockets[i].y > 600 || Rockets[i].trans < 5){
+                Rockets.splice(i, 1);
                 i--;
             }
         }
