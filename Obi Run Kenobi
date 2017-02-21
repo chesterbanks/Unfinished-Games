@@ -1,0 +1,209 @@
+// This helps with key movement
+var keys = [];
+var keyPressed = function(){ keys[keyCode] = true; };
+var keyReleased = function(){ keys[keyCode] = false; };
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
+
+// The rectangle collision function
+var rectCollide = function(one, two){
+    if( one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h){
+        return true;
+    }
+};
+
+var Block = function(x, y, w, h){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+};
+Block.prototype.draw = function() {
+    noStroke();
+    fill(66, 66, 66);
+    quad(this.x, this.y,
+        this.x + this.w, this.y,
+        this.x + this.w/2 + (200 - this.x) / 2, this.y - 30 + (300 - this.y) / 2,
+        this.x + (200 - this.x) / 2, this.y - 30+ (300 - this.y) / 2);
+    quad(this.x + this.w, this.y + this.h,
+        this.x + this.w, this.y,
+        this.x + this.w/2 + (200 - this.x) / 2, this.y - 30 + (300 - this.y) / 2,
+        this.x + this.w/2 + (200 - this.x) / 2, this.y - 30 + this.h/2 + (300 - this.y) / 2);
+    quad(this.x, this.y + this.h,
+        this.x, this.y,
+        this.x + (200 - this.x) / 2, this.y - 30 + (300 - this.y) / 2,
+        this.x + (200 - this.x) / 2, this.y - 30 + this.h/2 + (300 - this.y) / 2);
+    
+    fill(0, 0, 0);
+    rect(this.x, this.y, this.w, this.h);
+    
+    fill(48, 48, 48);
+    rect(this.x, this.y, this.w, this.h / 5);
+    
+    this.x -= 5;
+};
+var Blocks = [new Block(0, 370, width, 30)];
+
+var Player = function(){
+    this.x = 77;
+    this.y = 300;
+    this.w = 30;
+    this.h = 30;
+    
+    this.xvel = 0;
+    this.yvel = 0;
+    this.speed = 5;
+    
+    this.jumping = true;
+};
+Player.prototype.draw = function() {
+    noStroke();
+    fill(204, 159, 134);
+    quad(this.x + this.w, this.y + this.h,
+        this.x + this.w, this.y,
+        this.x + this.w/2 + (200 - this.x) / 6, this.y - 30 + (380 - this.y) / 2,
+        this.x + this.w/2 + (200 - this.x) / 6, this.y - 30 + this.h/2 + (380 - this.y) / 2);
+    quad(this.x, this.y + this.h,
+        this.x, this.y,
+        this.x + (200 - this.x) / 6, this.y - 30 + (380 - this.y) / 2,
+        this.x + (200 - this.x) / 6, this.y - 30 + this.h/2 + (380 - this.y) / 2);
+    quad(this.x, this.y,
+        this.x + this.w, this.y,
+        this.x + this.w/2 + (200 - this.x) / 6, this.y - 30 + (380 - this.y) / 2,
+        this.x + (200 - this.x) / 6, this.y - 30+ (380 - this.y) / 2);
+    quad(this.x, this.y + this.h,
+        this.x + this.w, this.y + this.h,
+        this.x + this.w/2 + (200 - this.x) / 6, this.y - 30 + (380 - this.y) / 2 + (this.h/2),
+        this.x + (200 - this.x) / 6, this.y - 30+ (380 - this.y) / 2 + (this.h/2));
+    
+    fill(232, 181, 153);
+    rect(this.x, this.y, this.w, this.h);
+    
+    fill(168, 106, 62);
+    rect(this.x, this.y, this.w, this.h / 3);
+    
+    pushMatrix();
+    translate(this.x + this.w + 5, this.y + 15);
+    rotate(sin(frameCount*5)*15);
+    for(var i = 17; i > 5; i -= 5){
+        stroke(0, 196, 255, 50);
+        strokeWeight(i);
+        line(0, -35, 0, -2);
+    }
+    stroke(212, 237, 255);
+    strokeWeight(5);
+    line(0, -35, 0, -2);
+    stroke(194, 194, 194);
+    strokeWeight(5);
+    line(0, 0, 0, 10);
+    popMatrix();
+    
+    fill(25);
+    rect(this.x + (this.xvel/2) + 5, this.y + 15, 5, 10, 5);
+    rect(this.x + (this.xvel/2) + 20, this.y + 15, 5, 10, 5);
+    
+    // Player movement
+    if(keys[LEFT] || keys[65]){
+        this.dir = 'left';
+        this.xvel -= 2;
+    }
+    if(keys[RIGHT] || keys[68]){
+        this.dir = 'right';
+        this.xvel += 2;
+    }
+    if(!keys[LEFT] && !keys[RIGHT] && !keys[65] && !keys[68]){
+        this.xvel = 0;
+    }
+    
+    if ((keys[UP] || keys[87]) && !this.jumping) {
+        this.yvel -= 10;
+        this.jumping = true;
+    }
+    if(this.xvel > this.speed){
+        this.xvel = this.speed;
+    }
+    if(this.xvel < -this.speed){
+        this.xvel = -this.speed;
+    }
+    
+    for(var i in Blocks){
+        if(rectCollide(this, Blocks[i]) && this.y < Blocks[i].y + 5){
+            this.y = Blocks[i].y - this.h;
+            this.yvel = 0;
+            this.jumping = false;
+        }
+    }
+    
+    this.x += this.xvel;
+    this.y += this.yvel;
+    
+    this.yvel += 0.5;
+    
+    this.x = constrain(this.x, 0, width - this.w);
+};
+var player = new Player();
+
+var Fire = function(){
+    this.x = random(width);
+    this.y = random(350, 500);
+    this.trans = 255;
+    this.sz = random(15, 30);
+    this.xSp = random(-5, 5);
+    this.ySp = random(1, 5);
+};
+Fire.prototype.draw = function() {
+    noStroke();
+    fill(168, 37, 37, this.trans);
+    ellipse(this.x, this.y, this.sz, this.sz);
+    strokeWeight(1);
+    stroke(255, 255, 255, this.trans / 2);
+    arc(this.x, this.y, this.sz - 10, this.sz - 10, 0, 90);
+    
+    this.trans -= 10;
+    this.sz /= 1.06;
+    
+    this.x += this.xSp;
+    this.y -= this.ySp;
+};
+var Fires = [];
+
+draw = function() {
+    background(133, 22, 22);
+    
+    Fires.push(new Fire(), new Fire(), new Fire(), new Fire(), new Fire());
+    
+    for(var i in Fires){
+        Fires[i].draw();
+        if(Fires[i].trans < 0){
+            Fires.splice(i, 1);
+            i--;
+        }
+    }
+    
+    noStroke();
+    fill(31, 31, 31);
+    rect(0, 0, 400, 320);
+    fill(255, 0, 0, 10);
+    rectMode(CENTER);
+    for(var i = 0; i < 70; i += 5){
+        rect(200, 320, width, i);
+    }
+    rectMode(CORNER);
+    
+    if(frameCount % 120 === 10){
+        Blocks.push(new Block(600, 370, width, 30));
+    }
+    
+    for(var i in Blocks){
+        Blocks[i].draw();
+        if(Blocks[i].x + Blocks[i].w < -600){
+            Blocks.splice(i, 1);
+            i--;
+        }
+    }
+    
+    player.draw();
+};
