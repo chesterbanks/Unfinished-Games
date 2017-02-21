@@ -17,6 +17,7 @@ var fonts = {
 
 var scene = 'Menu';
 var coins = 100;
+var timer = 0;
 
 var keys = [];
 var keyPressed = function(){ keys[keyCode] = true; };
@@ -157,12 +158,10 @@ button.prototype.draw = function() {
     this.lineX = constrain(this.lineX, 0.1, this.w / 2);
 };
 var buttons = {
-    play: new button(300, 370, 120, 50, 'P L A Y', 'Game'),
-    shop: new button(300, 420, 120, 50, 'S H O P', 'Shop'),
+    play: new button(300, 340, 120, 50, 'P L A Y', 'Game'),
+    shop: new button(300, 390, 120, 50, 'S H O P', 'Shop'),
+    how: new button(300, 440, 120, 50, 'H O W', 'How'),
     back: new button(80, 560, 120, 50, 'B A C K', 'Menu'),
-    
-    play2: new button(300, 300, 120, 50, 'P L A Y', 'Game'),
-    shop2: new button(300, 380, 120, 50, 'S H O P', 'Shop'),
 };
 
 var Alert = function(title, desc, img){
@@ -539,16 +538,20 @@ draw = function() {
         
         textFont(fonts.titles, 40);
         fill(0);
-        text('S   K   E   T   C   H   Y', 300, 300);
+        text('S   K   E   T   C   H   Y', 300, 280);
         
         buttons.play.draw();
         buttons.shop.draw();
+        buttons.how.draw();
     }
     if(scene === 'Game'){
         if(frameCount % 30 === 0){
+            timer ++;
+        }
+        if(frameCount % 30 === 0 && timer > 2){
             Rocks.push(new Rock());
         }
-        if(frameCount % 100 === 0){
+        if(frameCount % 100 === 0 && timer > 10){
             Rockets.push(new Rocket());
         }
         if(frameCount % 90 === 0){
@@ -632,11 +635,13 @@ draw = function() {
         for(var i in Powers){
             Powers[i].draw();
         }
-        
-        fill(0);
-        buttons.back.draw();
     }
     if(scene === 'Shop'){
+        stroke(0);
+        for(var i = 0; i < 600; i += 15){
+            line(i, 520, i, 530);
+        }
+        
         noStroke();
         fill(222, 222, 113);
         strokeWeight(2);
