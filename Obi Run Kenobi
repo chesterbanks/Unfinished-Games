@@ -1,3 +1,8 @@
+var scene = 'Home';
+
+textAlign(CENTER, CENTER);
+textFont(createFont('Arial Black'));
+
 // This helps with key movement
 var keys = [];
 var keyPressed = function(){ keys[keyCode] = true; };
@@ -171,39 +176,73 @@ Fire.prototype.draw = function() {
 var Fires = [];
 
 draw = function() {
-    background(133, 22, 22);
-    
-    Fires.push(new Fire(), new Fire(), new Fire(), new Fire(), new Fire());
-    
-    for(var i in Fires){
-        Fires[i].draw();
-        if(Fires[i].trans < 0){
-            Fires.splice(i, 1);
-            i--;
+    if(scene === 'Home'){
+        background(133, 22, 22);
+        
+        Fires.push(new Fire(), new Fire(), new Fire(), new Fire(), new Fire());
+        
+        for(var i in Fires){
+            Fires[i].draw();
+            if(Fires[i].trans < 0){
+                Fires.splice(i, 1);
+                i--;
+            }
         }
-    }
-    
-    noStroke();
-    fill(31, 31, 31);
-    rect(0, 0, 400, 320);
-    fill(255, 0, 0, 10);
-    rectMode(CENTER);
-    for(var i = 0; i < 70; i += 5){
-        rect(200, 320, width, i);
-    }
-    rectMode(CORNER);
-    
-    if(frameCount % 120 === 10){
-        Blocks.push(new Block(600, 370, width, 30));
-    }
-    
-    for(var i in Blocks){
-        Blocks[i].draw();
-        if(Blocks[i].x + Blocks[i].w < -600){
-            Blocks.splice(i, 1);
-            i--;
+        
+        noStroke();
+        fill(31, 31, 31);
+        rect(0, 0, 400, 320);
+        fill(255, 0, 0, 10);
+        rectMode(CENTER);
+        for(var i = 0; i < 70; i += 5){
+            rect(200, 320, width, i);
         }
+        rectMode(CORNER);
+        
+        fill(179, 30, 30);
+        textSize(64);
+        textLeading(50);
+        text('OBI RUN\nKENOBI', 200, 200);
+        fill(222, 36, 36);
+        textSize(60);
+        textLeading(50);
+        text('OBI RUN\nKENOBI', 200, 200);
     }
-    
-    player.draw();
+    if(scene === 'Game'){
+        background(133, 22, 22);
+        
+        Fires.push(new Fire(), new Fire(), new Fire(), new Fire(), new Fire());
+        
+        for(var i in Fires){
+            Fires[i].draw();
+            if(Fires[i].trans < 0){
+                Fires.splice(i, 1);
+                i--;
+            }
+        }
+        
+        noStroke();
+        fill(31, 31, 31);
+        rect(0, 0, 400, 320);
+        fill(255, 0, 0, 10);
+        rectMode(CENTER);
+        for(var i = 0; i < 70; i += 5){
+            rect(200, 320, width, i);
+        }
+        rectMode(CORNER);
+        
+        if(frameCount % 120 === 10){
+            Blocks.push(new Block(600, 370, width, 30));
+        }
+        
+        for(var i in Blocks){
+            Blocks[i].draw();
+            if(Blocks[i].x + Blocks[i].w < -600){
+                Blocks.splice(i, 1);
+                i--;
+            }
+        }
+        
+        player.draw();
+    }
 };
