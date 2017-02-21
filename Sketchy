@@ -245,7 +245,8 @@ var shop = [
     {name: 'Block', price: 10, bought: false, y: 250, info: 'A stationary block that everything bounces off of.'},
 ];
 
-var forcefield = false;
+// Power ups
+var forcefield = false, magnet = false;
 
 var Player = function(){
     this.x = 300;
@@ -358,8 +359,8 @@ var Rocks = [];
 var Rocket = function(){
     this.speed = 3;
     
-    this.x = 400;
-    this.y = 200;
+    this.x = random(0, 600);
+    this.y = random(-100, 50);
     this.sz = 30;
     
     this.timer = 0;
@@ -372,7 +373,7 @@ Rocket.prototype.draw = function() {
     rectMode(CENTER);
     pushMatrix();
     translate(this.x, this.y);
-    rotate( 0 + atan2(this.y - player.y, this.x - player.x));
+    rotate(90 + atan2(this.y - player.y, this.x - player.x));
     noStroke();
     fill(224, 32, 32, this.trans);
     rect(3, -2, 10, 20);
@@ -410,8 +411,12 @@ var Coin = function(){
     this.x = random(100, 500);
     this.y = random(100, 400);
     this.sz = 20;
+    
+    this.speed = 5;
 };
 Coin.prototype.draw = function() {
+    this.d = Math.sqrt((player.x - this.x) * (player.x - this.x) + (player.y - this.y) * (player.y - this.y));
+    
     noStroke();
     fill(222, 222, 113);
     strokeWeight(2);
@@ -424,8 +429,94 @@ Coin.prototype.draw = function() {
     fill(0, 0, 0, 100);
     textFont(fonts.coin, 10);
     text('C', this.x, this.y);
+    
+    if(magnet && dist(this.x, this.y, player.x, player.y) < 150){
+        this.x += (player.x - this.x) / this.d * this.speed;
+        this.y += (player.y - this.y) / this.d * this.speed;
+    }
 };
 var Coins = [];
+
+var Power = function(x, y, type){
+    this.x = x;
+    this.y = y;
+    this.type = type;
+    
+    this.activated = false;
+    this.arc = 360;
+};
+Power.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    noFill();
+    if(dist(mouseX, mouseY, this.x, this.y) < 50){
+        fill(0, 0, 0, 10);
+        if(clicked){
+            this.activated = true;
+        }
+    }
+    stroke(156, 156, 156);
+    strokeWeight(1);
+    ellipse(0, 0, 100, 100);
+    
+    switch(this.type){
+        case 'Forcefield':
+            noStroke();
+            fill(222, 248, 255);
+            ellipse(-5, 6, 70, 70);
+            noFill();
+            stroke(117);
+            ellipse(0, 0, 70, 70);
+            arc(0, 0, 55, 55, -80, 0);
+            arc(0, 0, 55, 55, -96, -89);
+        break;
+        case 'Magnet':
+            strokeCap(SQUARE);
+            noFill();
+            strokeWeight(15);
+            stroke(240, 153, 153);
+            arc(3, 2, 30, 30, -180, 0);
+            line(-12, 2, -11, 16);
+            line(18, 2, 17, 16);
+            strokeWeight(1);
+            stroke(117);
+            arc(0, 0, 50, 50, -180, 0);
+            arc(0, 0, 10, 10, -180, 0);
+            line(-5, 0, -5, 30);
+            line(-25, 0, -20, 30);
+            line(25, 0, 20, 30);
+            line(5, 0, 5, 30);
+            line(-5, 30, -20, 30);
+            line(5, 30, 20, 30);
+            line(-5, 20, -20, 20);
+            line(5, 20, 20, 20);
+            strokeWeight(1);
+        break;
+    }
+    if(this.activated){
+        noStroke();
+        fill(0, 0, 0, 30);
+        arc(0, 0, 100, 100, 0, this.arc);
+    }
+    popMatrix();
+    
+    if(this.activated){
+        switch(this.type){
+            case 'Forcefield':
+                forcefield = (this.arc < 1 ? false : true);
+            break;
+            case 'Magnet':
+                magnet = (this.arc < 1 ? false : true);
+            break;
+        }
+        this.arc --;
+        if(this.arc < 0){
+            this.arc = 360;
+            this.activated = false;
+        }
+    }
+};
+var Powers = [new Power(300, 525, 'Forcefield'), new Power(190, 525, 'Magnet'),];
 
 draw = function() {
     background(255);
@@ -441,6 +532,7 @@ draw = function() {
         // Reset stuff
         Coins = [];
         Rocks = [];
+        Rockets = [];
         player = new Player();
         
         image(images.homeBG, 0, 0);
@@ -474,9 +566,10 @@ draw = function() {
             Rocks[i].draw();
             if(circleCollide(Rocks[i], player)){
                 if(forcefield){
+                    Rocks[i].fade = true;
                     Rocks[i].switchDir = true;
                 } else {
-                    //scene = 'Menu';
+                    scene = 'Menu';
                 }
             }
             if(((Rocks[i].x < 0 || Rocks[i].x > 600 || Rocks[i].y < 0 || Rocks[i].y > 600) && Rocks[i].out < 0) || Rocks[i].trans < 0.1){
@@ -489,9 +582,9 @@ draw = function() {
             Rockets[i].draw();
             if(circleCollide(Rockets[i], player)){
                 if(forcefield){
-                    Rockets[i].switchDir = true;
+                    Rockets[i].fade = true;
                 } else {
-                    //scene = 'Menu';
+                    scene = 'Menu';
                 }
             }
             if(Rockets[i].x < 0 || Rockets[i].x > 600 || Rockets[i].y < 0 || Rockets[i].y > 600 || Rockets[i].trans < 5){
@@ -535,6 +628,10 @@ draw = function() {
         textFont(fonts.small, 20);
         text(coins, 540, 570);
         popStyle();
+        
+        for(var i in Powers){
+            Powers[i].draw();
+        }
         
         fill(0);
         buttons.back.draw();
