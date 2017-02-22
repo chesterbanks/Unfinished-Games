@@ -1,4 +1,14 @@
-var scene = 'Home';
+/**
+ * Obi Run Kenobi
+ * February 21 2017
+ * Chester Banks
+ * 
+ * A quick Star Wars themed game made for the "3D without P3D" contest.
+ * 
+ * 
+*/
+
+var scene = 'Game';
 
 textAlign(CENTER, CENTER);
 textFont(createFont('Arial Black'));
@@ -9,6 +19,85 @@ var keyPressed = function(){ keys[keyCode] = true; };
 var keyReleased = function(){ keys[keyCode] = false; };
 var clicked = false;
 mouseClicked = function(){ clicked = true; };
+
+var images = {
+    'bg': function(){
+        strokeWeight(1);
+        background(54, 11, 11);
+        
+        noStroke();
+        fill(15);
+        triangle(-30, 320, 130, 320, 50, 166);
+        triangle(100, 320, 300, 320, 200, 140);
+        fill(20);
+        triangle(0, 320, 200, 320, 100, 100);
+        quad(150, 325, 483, 320, 354, 126, 325, 100);
+        fill(28, 28, 28);
+        quad(150, 320, 450, 320, 320, 100, 285, 100);
+        
+        fill(209, 62, 25);
+        beginShape();
+        vertex(285, 100);
+        vertex(237, 178);
+        vertex(264, 166);
+        vertex(269, 177);
+        vertex(246, 212);
+        vertex(277, 182);
+        vertex(275, 158);
+        vertex(287, 137);
+        vertex(291, 151);
+        vertex(291, 172);
+        vertex(288, 181);
+        vertex(298, 178);
+        vertex(298, 200);
+        vertex(286, 205);
+        vertex(303, 200);
+        vertex(306, 179);
+        vertex(298, 175);
+        vertex(297, 145);
+        vertex(305, 143);
+        vertex(304, 168);
+        vertex(310, 147);
+        vertex(315, 140);
+        vertex(316, 133);
+        vertex(330, 192);
+        vertex(320, 210);
+        vertex(315, 202);
+        vertex(313, 210);
+        vertex(321, 227);
+        vertex(323, 215);
+        vertex(334, 197);
+        vertex(321, 141);
+        vertex(328, 138);
+        vertex(334, 132);
+        vertex(372, 198);
+        vertex(375, 197);
+        vertex(380, 201);
+        vertex(325, 100);
+        endShape();
+        noFill();
+        stroke(158, 82, 82);
+        beginShape();
+        vertex(251, 211);
+        vertex(233, 248);
+        vertex(249, 262);
+        vertex(209, 280);
+        vertex(224, 296);
+        vertex(215, 308);
+        vertex(228, 322);
+        vertex(329, 329);
+        vertex(335, 290);
+        vertex(315, 279);
+        vertex(322, 256);
+        vertex(316, 240);
+        vertex(323, 227);
+        endShape();
+        
+        filter(BLUR, 2);
+        
+        return get(0, 0, width, 320);
+    }
+};
 
 // The rectangle collision function
 var rectCollide = function(one, two){
@@ -50,7 +139,7 @@ Block.prototype.draw = function() {
     
     this.x -= 5;
 };
-var Blocks = [new Block(0, 370, width, 30)];
+var Blocks = [new Block(0, 370, width, 30)], blockSpacing = 120;
 
 var Player = function(){
     this.x = 77;
@@ -176,6 +265,13 @@ Fire.prototype.draw = function() {
 var Fires = [];
 
 draw = function() {
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
     if(scene === 'Home'){
         background(133, 22, 22);
         
@@ -221,9 +317,9 @@ draw = function() {
             }
         }
         
+        image(images.bg, 0, 0);
+        
         noStroke();
-        fill(31, 31, 31);
-        rect(0, 0, 400, 320);
         fill(255, 0, 0, 10);
         rectMode(CENTER);
         for(var i = 0; i < 70; i += 5){
@@ -231,7 +327,7 @@ draw = function() {
         }
         rectMode(CORNER);
         
-        if(frameCount % 120 === 10){
+        if(frameCount % blockSpacing === 10){
             Blocks.push(new Block(600, 370, width, 30));
         }
         
@@ -242,6 +338,8 @@ draw = function() {
                 i--;
             }
         }
+        
+        if(frameCount % 30 === 0 && blockSpacing < 130){ blockSpacing ++; }
         
         player.draw();
     }
