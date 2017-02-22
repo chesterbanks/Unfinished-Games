@@ -8,7 +8,7 @@
  * 
 */
 
-var scene = 'Game';
+var scene = 'Menu';
 
 textAlign(CENTER, CENTER);
 textFont(createFont('Arial Black'));
@@ -17,8 +17,9 @@ textFont(createFont('Arial Black'));
 var keys = [];
 var keyPressed = function(){ keys[keyCode] = true; };
 var keyReleased = function(){ keys[keyCode] = false; };
-var clicked = false;
+var clicked = false, overButton = false;
 mouseClicked = function(){ clicked = true; };
+var gameTime = 0;
 
 var images = {
     'bg': function(){
@@ -99,6 +100,51 @@ var images = {
     }
 };
 
+var button = function(x, y, sz, txt, next){
+    this.x = x; 
+    this.y = y;
+    this.sz = sz; 
+    this.txt = txt;
+    this.next = next;
+};
+button.prototype.draw = function() {
+    textSize(this.sz / 1.5);
+    strokeWeight(5);
+    stroke(251, 255, 0, 150);
+    fill(255, 255, 255, 100);
+    if(dist(mouseX, mouseY, this.x, this.y) < this.sz/2){
+        overButton = true;
+        fill(255, 255, 255, 150);
+        ellipse(this.x, this.y, this.sz + sin(frameCount*10)*3, this.sz + cos(frameCount*10)*3);
+        if(clicked){
+            scene = this.next;
+        }
+    } else {
+        ellipse(this.x, this.y, this.sz, this.sz);
+    }
+    fill(255);
+    if(this.txt === '.'){
+        noStroke();
+        fill(255);
+        triangle(this.x + 20, this.y, this.x - 15, this.y - 20, this.x - 15, this.y + 20);
+    } else if (this.txt === '-'){
+        strokeCap(SQUARE);
+        stroke(255);
+        strokeWeight(5);
+        line(this.x - 15, this.y - 10, this.x + 15, this.y - 10);
+        line(this.x - 15, this.y, this.x + 15, this.y);
+        line(this.x - 15, this.y + 10, this.x + 15, this.y + 10);
+    } else {
+        text(this.txt.toUpperCase(), this.x, this.y);
+    }
+};
+var buttons = {
+    play: new button(200, 330, 90, '.', 'Game'),
+    how: new button(100, 330, 70, '?', 'How'),
+    about: new button(300, 330, 70, '-', 'About'),
+    back: new button(40, 360, 50, '<', 'Menu'),
+};
+
 // The rectangle collision function
 var rectCollide = function(one, two){
     if( one.x+one.w > two.x &&
@@ -139,7 +185,7 @@ Block.prototype.draw = function() {
     
     this.x -= 5;
 };
-var Blocks = [new Block(0, 370, width, 30)], blockSpacing = 120;
+var Blocks = [new Block(0, 370, width, 30), new Block(450, 370, width, 30)], blockSpacing = 120;
 
 var Player = function(){
     this.x = 77;
@@ -182,6 +228,7 @@ Player.prototype.draw = function() {
     pushMatrix();
     translate(this.x + this.w + 5, this.y + 15);
     rotate(sin(frameCount*5)*15);
+    strokeCap(ROUND);
     for(var i = 17; i > 5; i -= 5){
         stroke(0, 196, 255, 50);
         strokeWeight(i);
@@ -195,6 +242,7 @@ Player.prototype.draw = function() {
     line(0, 0, 0, 10);
     popMatrix();
     
+    noStroke();
     fill(25);
     rect(this.x + (this.xvel/2) + 5, this.y + 15, 5, 10, 5);
     rect(this.x + (this.xvel/2) + 20, this.y + 15, 5, 10, 5);
@@ -264,6 +312,39 @@ Fire.prototype.draw = function() {
 };
 var Fires = [];
 
+var Fireball = function(){
+    this.x = random(width);
+    this.y = random(-200);
+    this.w = 30;
+    this.h = 30;
+    
+    this.points = [];
+    for(var i = 0; i < 360; i += 30){
+        this.points.push({x: random(-2, 2) + sin(i) * 15, y: random(-2, 2) + cos(i) * 15});
+    }
+    
+    this.spin = random(10);
+    
+    
+};
+Fireball.prototype.draw = function() {
+    strokeWeight(5);
+    stroke(191, 121, 0);
+    fill(255, 170, 0);
+    pushMatrix();
+    translate(this.x + 15, this.y + 15);
+    rotate(frameCount * this.spin);
+    beginShape();
+    for(var i in this.points){
+        vertex(this.points[i].x, this.points[i].y);
+    }
+    endShape(CLOSE);
+    popMatrix();
+    
+    this.y += 3;
+};
+var Fireballs = [new Fireball()];
+
 draw = function() {
     for(var i in images){
         if (typeof images[i] !== "object") {
@@ -272,42 +353,100 @@ draw = function() {
         }
     }
     
-    if(scene === 'Home'){
-        background(133, 22, 22);
+    background(133, 22, 22);
         
-        Fires.push(new Fire(), new Fire(), new Fire(), new Fire(), new Fire());
-        
-        for(var i in Fires){
-            Fires[i].draw();
-            if(Fires[i].trans < 0){
-                Fires.splice(i, 1);
-                i--;
-            }
+    Fires.push(new Fire(), new Fire(), new Fire(), new Fire(), new Fire());
+    
+    for(var i in Fires){
+        Fires[i].draw();
+        if(Fires[i].trans < 0){
+            Fires.splice(i, 1);
+            i--;
         }
+    }
+    
+    image(images.bg, 0, 0);
+    
+    noStroke();
+    fill(255, 0, 0, 10);
+    rectMode(CENTER);
+    for(var i = 0; i < 70; i += 5){
+        rect(200, 320, width, i);
+    }
+    rectMode(CORNER);
+    
+    if(scene === 'Menu'){
+        Fireballs = [];
+        gameTime = 0;
         
-        noStroke();
-        fill(31, 31, 31);
-        rect(0, 0, 400, 320);
-        fill(255, 0, 0, 10);
-        rectMode(CENTER);
-        for(var i = 0; i < 70; i += 5){
-            rect(200, 320, width, i);
-        }
-        rectMode(CORNER);
-        
-        fill(179, 30, 30);
         textSize(64);
         textLeading(50);
+        fill(255, 255, 255, 20);
+        for(var i = 0; i < 360; i += 30){
+            text('OBI RUN\nKENOBI', 200 + sin(i)*19, 200 + cos(i)*11);
+        }
+        fill(255, 255, 255, 70);
+        for(var i = 0; i < 360; i += 30){
+            text('OBI RUN\nKENOBI', 200 + sin(i)*3, 200 + cos(i)*3);
+        }
+        fill(181, 174, 36);
         text('OBI RUN\nKENOBI', 200, 200);
-        fill(222, 36, 36);
+        fill(222, 213, 37);
         textSize(60);
         textLeading(50);
         text('OBI RUN\nKENOBI', 200, 200);
+        textSize(13);
+        text('CHESTER BANKS || FEBRUARY 2017', 200, 265);
+        
+        buttons.play.draw();
+        buttons.how.draw();
+        buttons.about.draw();
+    }
+    if(scene === 'How'){
+        fill(222, 213, 37);
+        textSize(40);
+        text('HOW TO PLAY', 200, 50);
+        
+        textSize(16);
+        text('Use the arrow keys to move.\n\nDon\'t fall into the lava.\n\nDon\'t get hit by the falling lava.', 200, 200);
+        
+        buttons.back.draw();
+    }
+    if(scene === 'About'){
+        fill(222, 213, 37);
+        textSize(40);
+        text('ABOUT', 200, 50);
+        
+        textFont(createFont("HelveticaNeue-Light"));
+        textSize(18);
+        textLeading(30);
+        text('You are the jedi Obi-Wan Kenobi, on the volcanic planet of Mustafar. Your apprentice Anakin Skywalker has just turned evil, and you must defeat him before he does any more damage. He has fled on the floating rock formations on the lava. You must run on each platform until you make it to him.', 25, 25, 350, 350);
+        textFont(createFont("Arial Black"));
+        
+        buttons.back.draw();
     }
     if(scene === 'Game'){
         background(133, 22, 22);
         
         Fires.push(new Fire(), new Fire(), new Fire(), new Fire(), new Fire());
+        if(gameTime % 60 === 0){
+            Fireballs.push(new Fireball());
+        }
+        
+        for(var i in Fireballs){
+            Fireballs[i].draw();
+            if(rectCollide(player, Fireballs[i])){
+                scene = 'Menu';
+            }
+            if(Fireballs[i].y > 500){
+                Fireballs.splice(i, 1);
+                i--;
+            }
+        }
+        
+        if(player.y > 450){
+            scene = 'Menu';
+        }
         
         for(var i in Fires){
             Fires[i].draw();
@@ -327,7 +466,7 @@ draw = function() {
         }
         rectMode(CORNER);
         
-        if(frameCount % blockSpacing === 10){
+        if(gameTime % blockSpacing === 10){
             Blocks.push(new Block(600, 370, width, 30));
         }
         
@@ -339,8 +478,19 @@ draw = function() {
             }
         }
         
-        if(frameCount % 30 === 0 && blockSpacing < 130){ blockSpacing ++; }
+        for(var i in Fireballs){
+            Fireballs[i].draw();
+        }
+        
+        if(gameTime % 30 === 0 && blockSpacing < 130){ blockSpacing ++; }
         
         player.draw();
+        
+        gameTime ++;
     }
+    
+    cursor(overButton ? 'pointer' : 'default');
+    
+    clicked = false;
+    overButton = false;
 };
