@@ -1,0 +1,246 @@
+var scene = 'Menu';
+
+textAlign(CENTER, CENTER);
+
+/*
+    fill(58, 152, 207);
+    fill(207, 60, 87);
+    fill(192, 207, 60);
+    fill(60, 207, 104);
+    
+    events:
+        running
+        kayaking
+        weightlifting
+*/
+
+var logo = function(x, y, sz){
+    var logoColors = [
+        color(58, 152, 207),
+        color(207, 60, 87),
+        color(192, 207, 60),
+        color(60, 207, 104),
+    ];
+    
+    pushMatrix();
+    translate(x, y);
+    scale(sz);
+    noFill();
+    strokeCap(SQUARE);
+    stroke(0, 0, 0, 30);
+    strokeWeight(60);
+    arc(0, 0, 170, 170, 20, 340);
+    strokeWeight(11);
+    // Outer layer
+    stroke(logoColors[0]);
+    arc(0, 0, 200, 200, -85, -30);
+    arc(0, 0, 180, 180, -75, -30);
+    arc(0, 0, 200, 200, -300, -240);
+    arc(0, 0, 180, 180, -285, -250);
+    stroke(logoColors[1]);
+    arc(0, 0, 200, 200, -125, -85);
+    arc(0, 0, 180, 180, -115, -75);
+    arc(0, 0, 200, 200, -200, -160);
+    arc(0, 0, 180, 180, -200, -150);
+    stroke(logoColors[2]);
+    arc(0, 0, 200, 200, -160, -125);
+    arc(0, 0, 180, 180, -150, -116);
+    arc(0, 0, 200, 200, -330, -300);
+    arc(0, 0, 180, 180, -330, -286);
+    stroke(logoColors[3]);
+    arc(0, 0, 200, 200, -240, -200);
+    arc(0, 0, 180, 180, -250, -200);
+    
+    // Inner layer
+    stroke(logoColors[0]);
+    arc(0, 0, 160, 160, -200, -160);
+    arc(0, 0, 140, 140, -200, -150);
+    stroke(logoColors[1]);
+    arc(0, 0, 160, 160, -300, -240);
+    arc(0, 0, 140, 140, -285, -250);
+    stroke(logoColors[2]);
+    arc(0, 0, 160, 160, -240, -200);
+    arc(0, 0, 140, 140, -250, -200);
+    arc(0, 0, 160, 160, -125, -85);
+    arc(0, 0, 140, 140, -115, -75);
+    stroke(logoColors[3]);
+    arc(0, 0, 160, 160, -85, -30);
+    arc(0, 0, 140, 140, -75, -30);
+    arc(0, 0, 160, 160, -330, -300);
+    arc(0, 0, 140, 140, -330, -286);
+    arc(0, 0, 160, 160, -160, -125);
+    arc(0, 0, 140, 140, -150, -116);
+    
+    stroke(0, 0, 0, 50);
+    strokeWeight(20);
+    arc(0, 0, 150, 150, 30, 330);
+    popMatrix();
+}, logoSz = 1;
+var trans = {y: [500, 500, 500, 500], active: false, out: false, nextScene: 'Game'};
+
+var overButton = false;
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
+
+var Button = function(x, y, txt, nxt){
+    this.x = x;
+    this.y = y;
+    this.txt = txt;
+    this.nxt = nxt;
+    
+    this.plusW = 20;
+};
+Button.prototype.draw = function() {
+    noFill();
+    stroke(60);
+    strokeWeight(2);
+    ellipse(this.x, this.y, 140 - this.plusW, 140 - this.plusW);
+    
+    fill(60);
+    textSize(30);
+    text(this.txt, this.x, this.y);
+    
+    if(dist(mouseX, mouseY, this.x, this.y) < 70){
+        overButton = true;
+        this.plusW /= 1.5;
+        if(clicked){
+            trans.active = true;
+            trans.nextScene = this.nxt;
+        }
+    } else {
+        this.plusW *= 1.5;
+    }
+    
+    this.plusW = constrain(this.plusW, 1, 20);
+};
+var Buttons = {
+    start: new Button(200, 400, 'START', 'Choose'),
+    goRun: new Button(200, 400, 'OKAY!', 'Running'),
+};
+
+draw = function() {
+    if(scene === 'Logo'){
+        background(245);
+        
+        fill(60);
+        textFont(createFont('Century Gothic Bold'), 400);
+        //text('C', 200, 250);
+        
+        logo(200, 250, 1 - logoSz);
+    
+        logoSz /= 1.05;
+        if(logoSz < 0.001){
+            trans.active = true;
+            trans.nextScene = 'Menu';
+        }
+    }
+    if(scene === 'Menu'){
+        background(245);
+        
+        fill(60);
+        textFont(createFont('Century Gothic Bold'), 100);
+        text('CLICK', 200, 200);
+        textFont(createFont('Century Gothic'), 61);
+        text('OLYMPICS', 200, 265);
+        textFont(createFont('Century Gothic Italic'), 12);
+        text('A L L   Y O U   N E E D   I S   Y O U R   M O U S E', 200, 305);
+        
+        noStroke();
+        fill(58, 152, 207);
+        triangle(0, 0, 50, 0, 0, 50);
+        fill(207, 60, 87);
+        triangle(0, 500, 0, 450, 50, 500);
+        fill(192, 207, 60);
+        triangle(400, 500, 400, 450, 350, 500);
+        fill(60, 207, 104);
+        triangle(400, 0, 350, 0, 400, 50);
+        
+        /*noFill();
+        strokeWeight(2);
+        stroke(60);
+        ellipse(200, 385, 120, 120);
+        fill(60);
+        textSize(30);
+        text('PLAY', 200, 385);*/
+        
+        Buttons.start.draw();
+    }
+    if(scene === 'Choose'){
+        background(245);
+        
+        noStroke();
+        fill(58, 152, 207);
+        rect(10, 190, 380, 50);
+        
+        textFont(createFont('Century Gothic Bold'), 50);
+        fill(245);
+        text('RUNNING', 200, 215);
+        fill(58, 152, 207);
+        textSize(25);
+        text('R O U N D   O N E', 200, 180);
+        textSize(20);
+        text('∙ Click to jump over hurdles.', 200, 270);
+        
+        Buttons.goRun.draw();
+    }
+    
+    // Transition
+    if(trans.active){
+        noStroke();
+        if(trans.out){
+            fill(58, 152, 207);
+            rect(0, 500 - trans.y[0], width, height);
+            fill(207, 60, 87);
+            rect(0, 500 -trans.y[1], width, height);
+            fill(192, 207, 60);
+            rect(0, 500 - trans.y[2], width, height);
+            fill(60, 207, 104);
+            rect(0, 500 - trans.y[3], width, height);
+            trans.y[3] /= 1.2;
+            if(trans.y[3] < 100){
+                trans.y[2] /= 1.2;
+            }
+            if(trans.y[2] < 100){
+                trans.y[1] /= 1.2;
+            }
+            if(trans.y[1] < 100){
+                trans.y[0] /= 1.2;
+            }
+            if(trans.y[0] < 0.1){
+                trans.out = false;
+                trans.active = false;
+                trans.y = [500, 500, 500, 500];
+            }
+        } else {
+            fill(58, 152, 207);
+            rect(0, trans.y[0], width, height);
+            fill(207, 60, 87);
+            rect(0, trans.y[1], width, height);
+            fill(192, 207, 60);
+            rect(0, trans.y[2], width, height);
+            fill(60, 207, 104);
+            rect(0, trans.y[3], width, height);
+            
+            trans.y[0] /= 1.1;
+            if(trans.y[0] < 100){
+                trans.y[1] /= 1.1;
+            }
+            if(trans.y[1] < 100){
+                trans.y[2] /= 1.1;
+            }
+            if(trans.y[2] < 100){
+                trans.y[3] /= 1.1;
+            }
+            if(trans.y[3] < 10){
+                scene = trans.nextScene;
+                trans.y = [500, 500, 500, 500];
+                trans.out = true;
+            }
+        } 
+    }
+    
+    cursor(overButton ? 'pointer' : 'default');
+    
+    clicked = false;
+    overButton = false;
+};
