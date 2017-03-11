@@ -14,6 +14,16 @@ textAlign(CENTER, CENTER);
         weightlifting
 */
 
+// The rectangle collision function
+var rectCollide = function(one, two){
+    if( one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h){
+        return true;
+    }
+};
+
 var logo = function(x, y, sz){
     var logoColors = [
         color(58, 152, 207),
@@ -82,6 +92,8 @@ var overButton = false;
 var clicked = false;
 mouseClicked = function(){ clicked = true; };
 
+var scores = [0, 0, 0, 0];
+
 var Button = function(x, y, txt, nxt){
     this.x = x;
     this.y = y;
@@ -114,17 +126,76 @@ Button.prototype.draw = function() {
     this.plusW = constrain(this.plusW, 1, 20);
 };
 var Buttons = {
-    start: new Button(200, 400, 'START', 'Choose'),
+    start: new Button(200, 400, 'START', 'RunningIntro'),
     goRun: new Button(200, 400, 'OKAY!', 'Running'),
+    goLift: new Button(200, 400, 'GOT IT!', 'Lifting'),
 };
+
+var Player = function(){
+    this.x = 50;
+    this.y = 370;
+    this.w = 50;
+    this.h = 50;
+    this.jump = false;
+    this.yvel = -13;
+};
+Player.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    stroke(245, 245, 245, 200);
+    fill(58, 152, 207);
+    rect(0, 0, 50, 50, 10);
+    noStroke();
+    fill(245);
+    ellipse(20, 30, 20, 20);
+    ellipse(40, 30, 15, 15);
+    fill(60);
+    ellipse(22, 30, 15, 15);
+    ellipse(42, 30, 10, 10);
+    popMatrix();
+    
+    if(clicked){
+        this.jump = true;
+    }
+    if(this.jump){
+        this.y += this.yvel;
+        this.yvel += 0.5;
+        if(this.y > 370){
+            this.y = 370;
+            this.yvel = -13;
+            this.jump = false;
+        }
+    }
+};
+var player = new Player();
+
+var Hurdle = function(){
+    this.x = 550;
+    this.y = 332;
+    this.w = 50;
+    this.h = 100;
+};
+Hurdle.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    fill(60);
+    rect(0, 0, 5, 60);
+    rect(50, 0, 5, 103);
+    rect(0, 0, 50, 21);
+    popMatrix();
+    
+    this.x -= 5;
+    
+    if(rectCollide(this, player)){
+        trans.active = true;
+        trans.nextScene = 'LiftingIntro';
+    }
+};
+var Hurdles = [];
 
 draw = function() {
     if(scene === 'Logo'){
         background(245);
-        
-        fill(60);
-        textFont(createFont('Century Gothic Bold'), 400);
-        //text('C', 200, 250);
         
         logo(200, 250, 1 - logoSz);
     
@@ -155,17 +226,9 @@ draw = function() {
         fill(60, 207, 104);
         triangle(400, 0, 350, 0, 400, 50);
         
-        /*noFill();
-        strokeWeight(2);
-        stroke(60);
-        ellipse(200, 385, 120, 120);
-        fill(60);
-        textSize(30);
-        text('PLAY', 200, 385);*/
-        
         Buttons.start.draw();
     }
-    if(scene === 'Choose'){
+    if(scene === 'RunningIntro'){
         background(245);
         
         noStroke();
@@ -182,6 +245,43 @@ draw = function() {
         text('∙ Click to jump over hurdles.', 200, 270);
         
         Buttons.goRun.draw();
+    }
+    if(scene === 'Running'){
+        if(frameCount % 100 === 0){
+            Hurdles.push(new Hurdle());
+        }
+        
+        background(245);
+        
+        noStroke();
+        fill(207, 60, 87);
+        rect(0, 365, 400, 100);
+        fill(245);
+        rect(0, 430, 400, 5);
+        rect(0, 388, 400, 4);
+        
+        for(var i = Hurdles.length - 1; i >= 0; i --) {
+            Hurdles[i].draw();
+        }
+        player.draw();
+    }
+    if(scene === 'LiftingIntro'){
+        background(245);
+        
+        noStroke();
+        fill(207, 60, 87);
+        rect(10, 190, 380, 50);
+        
+        textFont(createFont('Century Gothic Bold'), 50);
+        fill(245);
+        text('LIFTING', 200, 215);
+        fill(207, 60, 87);
+        textSize(25);
+        text('R O U N D   T W O', 200, 180);
+        textSize(20);
+        text('∙ Click to lift the weight as high\nas you can.', 200, 279);
+        
+        Buttons.goLift.draw();
     }
     
     // Transition
