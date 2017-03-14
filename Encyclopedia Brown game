@@ -1,0 +1,466 @@
+textAlign(CENTER, CENTER);
+
+// Credit to Eric Balingit
+var loadGoogleFont = (function () {
+    return this.Function ( "gfName", "gfName = gfName.replace ( /\\s+/g, '+' );var subsets = Array.prototype.slice.call ( arguments, 1, arguments.length - 1 ), url = 'https://fonts.googleapis.com/css?family=' + gfName + ( subsets.length > 0 ? '&amp;subset=' + subsets : '' ), callback = arguments [ arguments.length - 1 ], gfs = document.querySelectorAll('link[href=\"'+url+'\"]');if(!gfs.length){var f=document.createElement('link');f.setAttribute('rel','stylesheet');f.setAttribute('type','text/css');f.onload=callback;f.setAttribute('href',url);document.head.appendChild(f);}else if ( typeof callback === 'function' ) { callback.call ( gfs [ 0 ] ); }");
+})();
+var fontloaded = false;
+
+var fonts = {
+    h1: createFont('AvenirNext-UltraLight'),
+    h3: createFont('Avenir'),
+};
+
+var pixel = function(x, y, num, sz){
+    noStroke();
+    switch(num){
+        case '0':
+            fill(196, 134, 92);
+            break;
+        case '1':
+            fill(240, 170, 120);
+            break;
+        case '2':
+            fill(45);
+            break;
+        case '3':
+            fill(120, 82, 47);
+            break;
+        default: 
+            noFill();
+            break;
+    }
+    rect(x, y, sz, sz);
+};
+var pixelArts = {
+    character: [
+        ' 33333333 ',
+        '3333333333',
+        '3133333313',
+        '3111111113',
+        '0112112110',
+        '0112112110',
+        '0121111210',
+        '0112222110',
+        '0011111100',
+        ' 00000000 ',
+    ]
+};
+var drawPixelArt = function(which, x, y, sz){
+    var longestString = '';
+    for(var i = 0; i < which.length; i ++){
+        if (which[i].length > longestString.length) {
+            longestString = which[i];
+        }
+        for(var j = 0; j < which[i].length; j ++){
+            pixel(x + (i * sz), y + (j * sz), which[j][i], sz);
+        }
+    }
+};
+
+var images = {
+    "bg1": function(){
+        background(92, 194, 237);
+        
+        noStroke();
+        for(var i = 0; i < height; i += 10){
+            fill(lerpColor(
+                color(51, 120, 204), 
+                color(119, 166, 224), i/height));
+            rect(0, i, width, 10);
+        }
+        
+        return get(0, 0, width, height);
+    },
+    "dirtBlock": function(){
+        noStroke();
+        fill(148, 92, 18);
+        rect(0, 0, 20, 20);
+        for(var i = 0; i < 20; i += 3){
+            for(var j = 0; j < 20; j += 3){
+                fill(0, 0, 0, random(50, 100));
+                rect(i, j, 3, 3);
+            }
+        }
+        fill(0, 0, 0, 30);
+        rect(0, 0, 5, 20);
+        fill(255, 255, 255, 30);
+        rect(15, 0, 5, 20);
+        
+        return get(0, 0, 20, 20);
+    },
+    "snowBlock": function(){
+        noStroke();
+        fill(148, 92, 18);
+        rect(0, 0, 20, 20);
+        fill(62, 201, 65);
+        rect(0, 0, 20, 5);
+        for(var i = 0; i < 20; i += 3){
+            for(var j = 0; j < 20; j += 3){
+                fill(0, 0, 0, random(50, 100));
+                rect(i, j, 3, 3);
+            }
+        }
+        fill(0, 0, 0, 30);
+        rect(0, 0, 5, 20);
+        fill(255, 255, 255, 30);
+        rect(15, 0, 5, 20);
+        
+        return get(0, 0, 20, 20);
+    },
+};
+
+// This helps with key movement
+var keys = [];
+var keyPressed = function(){ keys[keyCode] = true; };
+var keyReleased = function(){ keys[keyCode] = false; };
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
+
+// The rectangle collision function
+var rectCollide = function(one, two){
+    return one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h;
+};
+
+// Vital variables
+var scene = 'Menu';
+var level = 0;
+var goBack = false, removeFreeze;
+var final = -200, snap = false;
+
+var trans = { active: false, plusX: 400, rot: 90, w: 590, out: false, type: 'Game'};
+
+// [Almost] everything about the blocks (blox)
+var block = function(x, y, w, h, type){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.type = type || 'NORMAL';
+};
+block.prototype.draw = function() {
+    if(this.type !== 'FROZEN'){
+        noStroke();
+        fill(61, 184, 63);
+        quad(this.x, this.y, this.x + this.w, this.y, this.x + this.w - (this.x + this.w === 600 ? 0 : 5), this.y - 4, this.x + (this.x === 0 ? 0 : 5), this.y - 4);
+        
+        for(var i = 0; i < this.w; i += 20){
+            for(var j = 0; j < this.h; j += 20){
+                image(j === 0 ? images.snowBlock : images.dirtBlock, this.x + i, this.y + j, 20, 20);
+            }
+        }
+    } else {
+        image(images.frozenEnemy, this.x, this.y);
+    }
+};
+
+var blox;
+
+var Player = function(x, y, w, h){
+    this.x = x; this.originalX = x;
+    this.y = y; this.originalY = y;
+    this.w = 30;
+    this.h = 30;
+    
+    this.xvel = 0;
+    this.yvel = 0;
+    this.speed = 5;
+    
+    this.slow = false;
+    this.slowTimer = 0;
+    
+    this.jumping = false;
+    
+    this.dir = 'left';
+    this.particle = function(x, y, dir){
+        this.x = x;
+        this.y = y;
+        this.dir = dir;
+        this.w = this.h = random(10);
+        this.trans = 255;
+        this.rot = random(10);
+        this.colo = floor(random(2));
+    };
+    this.particles = [];
+    this.particle.prototype.draw = function() {
+        noStroke();
+        if(this.colo === 0){
+            fill(255, 255, 255, this.trans);
+        } else {
+            fill(212, 45, 45, this.trans);
+        }
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(frameCount*this.rot);
+        ellipse(0, 0, this.w, this.h);
+        popMatrix();
+        
+        this.sz -= 0.01;
+        this.trans -= 10;
+        if(this.dir === 'left'){
+            this.x -= this.w / 2;
+        } else {
+            this.x += this.w / 2;
+        }
+        for(var i in blox[level].toaster){
+            if(rectCollide(blox[level].toaster[i], this) && !blox[level].toaster[i].deleted && this.trans > 100){
+                blox.push(new block(blox[level].toaster[i].x, blox[level].toaster[i].y, 30, 30, 'FROZEN'));
+                blox[level].toaster[i].deleted = true;
+            }
+        }
+    };
+};
+var player = new Player(50, 315),
+
+blox = [
+    new block(0, 350, 1000, 50),
+    new block(0, 290, 100, 20),
+    new block(200, 290, 100, 20),
+    new block(400, 290, 100, 20),
+    new block(100, 230, 100, 20),
+    new block(300, 230, 100, 20),
+    new block(500, 230, 100, 20),
+    new block(400, 160, 100, 20),
+    new block(0, 90, 400, 20)
+];
+        
+// [Almost] everything about the player
+Player.prototype.applyCollisions = function(xvel, yvel) {
+    for (var i = 0; i < blox.length; i++) {
+        if (!rectCollide(this, blox[i])) { continue; }
+        if (xvel < 0) {
+            this.x = blox[i].x + blox[i].w;
+            this.xvel = 0;
+        }
+        if (xvel > 0) {
+            this.x = blox[i].x - this.w;
+            this.xvel = 0;
+        }
+        if (yvel < 0) {
+            this.y = blox[i].y + blox[i].h;
+            this.yvel = 0;
+        }
+        if (yvel > 0) {
+            this.y = blox[i].y - this.h;
+            this.yvel = 0;
+            this.jumping = false;
+        }
+    }
+    if (this.y >= 320 && this.yvel > 0) {
+        this.jumping = false;
+        this.yvel = 0;
+        this.y = 320;
+    }
+};
+Player.prototype.draw = function() {
+    // The actual player
+    noStroke();
+    fill(224, 178, 119);
+    (rect)(this.x, this.y, this.w, this.h, 3);
+    fill(145, 88, 27);
+    (rect)(this.x, this.y, this.w, this.h / 3, 3);
+    (rect)(this.x, this.y + 5, 2, 10);
+    (rect)(this.x + 28, this.y + 5, 2, 10);
+    arc(this.x + 8, this.y, 30, 26, 0, 90);
+    fill(46, 46, 46);
+    rect(this.xvel + this.x + 9, this.y + 16, 5, 7);
+    rect(this.xvel + this.x + 18, this.y + 16, 5, 7);
+    
+    // Player movement
+    if(keys[LEFT] || keys[65]){
+        this.dir = 'left';
+        this.xvel -= 2;
+    }
+    if(keys[RIGHT] || keys[68]){
+        this.dir = 'right';
+        this.xvel += 2;
+    }
+    if(!keys[LEFT] && !keys[RIGHT] && !keys[65] && !keys[68]){
+        this.xvel = 0;
+    }
+    
+    if ((keys[UP] || keys[87]) && !this.jumping) {
+        this.yvel -= 10;
+        this.jumping = true;
+    }
+    if(this.xvel > this.speed){
+        this.xvel = this.speed;
+    }
+    if(this.xvel < -this.speed){
+        this.xvel = -this.speed;
+    }
+    this.jumping = true;
+    this.x += this.xvel;
+    this.applyCollisions(this.xvel, 0);
+    this.y += this.yvel;
+    this.applyCollisions(0, this.yvel);
+    this.yvel += 0.6;
+    
+    if(this.slow){
+        this.speed = 1;
+        this.slowTimer ++;
+    } else {
+        this.speed = 5;
+    }
+    if(this.slowTimer > 160){
+        this.slow = false;
+        this.slowTimer = 0;
+    }
+};
+
+var Camera = {x: 0, y: 0};
+
+draw = function() {
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    if ( !fontloaded ) {
+        loadGoogleFont('Bungee|Griffy|Passion+One|Permanent+Marker', 'latin-ext', 'vietnamese');
+    }
+    
+    if(scene === 'Menu'){
+        image(images.bg1, 0, 0);
+        
+        pushMatrix();
+        translate(width / 2, height / 2);
+        if(keyIsPressed && key.toString().toLowerCase() === 'c'){
+            snap = true;
+        }
+        if(snap){
+            scale(1.5, 1);
+        }
+        fill(255, 255, 255);
+        textFont(createFont('Permanent Marker'), 100);
+        text('E', -215, 0);
+        text('B', -105, 69);
+        textSize(60);
+        text('NCYCLOPEDIA', 20, 0);
+        text('ROWN', 20, 65);
+        popMatrix();
+        
+        noStroke();
+        for(var i = -400; i < 0; i += 60){
+            fill(255, 255, 255, 7);
+            rect(0, 0, 0.5, 0.5, i);
+            rect(width, 0, 0.5, 0.5, i);
+            fill(0, 0, 0, 15);
+            rect(0, height, 0.5, 0.5, i);
+            rect(width, height, 0.5, 0.5, i);
+        }
+        
+        if(clicked){
+            trans.active = true;
+        }
+    }
+    if(scene === 'Game'){
+        image(images.bg1, 0, 0);
+        
+        if(keys[82]){
+            blox[level].player.x = blox[level].player.originalX;
+            blox[level].player.y = blox[level].player.originalY;
+        }
+        
+        pushMatrix();
+        translate(Camera.x, Camera.y);
+        
+        fill(163, 105, 68);
+        rect(800, 200, 160, 150);
+        triangle(800, 200, 960, 200, 880, 140);
+        fill(0, 0, 0, 20);
+        rect(800, 200, 20, 150);
+        rect(800, 200, 10, 150);
+        fill(255, 255, 255, 20);
+        rect(950, 200, 10, 150);
+        rect(940, 200, 20, 150);
+        stroke(0, 0, 0, 50);
+        noFill();
+        strokeWeight(2);
+        rect(840, 205, 80, 30);
+        strokeWeight(5);
+        rect(855, 275, 50, 80);
+        strokeWeight(20);
+        stroke(61, 38, 24);
+        line(790, 210, 880, 140);
+        line(970, 210, 880, 140);
+        fill(0, 0, 0, 100);
+        textFont(createFont('Permanent Marker'), 20);
+        text('Tigers', 880, 220);
+        
+        Camera.x = constrain(-(player.x) + (width / 2), -(3000 * 20), 0);
+        //Camera.y = constrain(-(player.y) + (height / 2), -1047, 0);
+        for(var i in blox){
+            blox[i].draw();
+        }
+        
+        player.draw();
+        popMatrix();
+        
+        noStroke();
+        fill(255, 255, 255, final);
+        rect(0, 0, 600, 400);
+        
+        if(level > 14){
+            final += 3;
+            if(final > 255){
+                scene = 'Finish';
+            }
+        }
+    }
+    if(scene === 'Finish'){
+        background(255);
+        fill(74, 124, 168);
+        textSize(25);
+        text('t o   b e   c o n t i n u e d', 300, 200);
+        textSize(16);
+        text('t h a n k s   f o r   p l a y i n g', 300, 225);
+    }
+    
+    pushStyle();
+    pushMatrix();
+    translate(300, 200);
+    rectMode(CENTER);
+    noStroke();
+    fill(255, 255, 255);
+    if(!trans.out){
+        rotate(90 - trans.rot);
+        rect(0, 0, 400 - trans.plusX, 600 - trans.w);
+    } else {
+        rotate(trans.rot);
+        rect(0, 0, trans.plusX, 10 + trans.w);
+    }
+    popMatrix();
+    popStyle();
+    
+    if(trans.active){
+        trans.plusX /= 1.1;
+        if(trans.plusX < 100){
+            trans.rot /= 1.3;
+        }
+        if(trans.rot < 1){
+            trans.w /= 1.3;
+        }
+        if(trans.w < 0.1){
+            if(trans.type === 'level'){
+                level ++;
+            } else {
+                scene = trans.type;
+            }
+            trans = { active: true, plusX: 400, rot: 90, w: 590, out: true, type: 'level'};
+        }
+        if(trans.out && trans.w < 10){
+            trans = { active: false, plusX: 400, rot: 90, w: 590, out: false, type: 'level'};
+        }
+    }
+    
+    clicked = false;
+    goBack = false;
+    removeFreeze = false;
+};
