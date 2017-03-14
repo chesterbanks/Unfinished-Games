@@ -1,4 +1,4 @@
-var scene = 'Menu';
+var scene = 'Logo';
 
 textAlign(CENTER, CENTER);
 
@@ -24,7 +24,19 @@ var rectCollide = function(one, two){
     }
 };
 
-var logo = function(x, y, sz){
+// Transition
+var trans = {y: [500, 500, 500, 500], active: false, out: false, nextScene: 'Game'};
+
+var Logo = function(){
+    this.sz = 1;
+    this.r = 360;
+    
+    this.y = 300;
+    this.y2 = 300;
+};
+Logo.prototype.draw = function() {
+    background(245);
+    
     var logoColors = [
         color(58, 152, 207),
         color(207, 60, 87),
@@ -33,8 +45,9 @@ var logo = function(x, y, sz){
     ];
     
     pushMatrix();
-    translate(x, y);
-    scale(sz);
+    translate(width / 2, 170);
+    scale(1 - this.sz);
+    rotate(this.r);
     noFill();
     strokeCap(SQUARE);
     stroke(0, 0, 0, 30);
@@ -85,8 +98,27 @@ var logo = function(x, y, sz){
     strokeWeight(20);
     arc(0, 0, 150, 150, 30, 330);
     popMatrix();
-}, logoSz = 1;
-var trans = {y: [500, 500, 500, 500], active: false, out: false, nextScene: 'Game'};
+    
+    fill(60);
+    textFont(createFont('Century Gothic Bold'), 70);
+    text('CHESTER', 200, 350 + this.y);
+    textFont(createFont('Century Gothic'), 70);
+    text('BANKS', 200, 415 + this.y2);
+    
+    this.r /= 1.1;
+    this.sz /= 1.05;
+    if(this.sz < 0.1){
+        this.y /= 1.1;
+    }
+    if(this.y < 10){
+        this.y2 /= 1.2;
+    }
+    if(this.y2 < 0.01){
+        trans.active = true;
+        trans.nextScene = 'Menu';
+    }
+};
+var logo = new Logo();
 
 var overButton = false;
 var clicked = false;
@@ -142,7 +174,7 @@ var Player = function(){
 Player.prototype.draw = function() {
     pushMatrix();
     translate(this.x, this.y);
-    stroke(245, 245, 245, 200);
+    //stroke(245, 245, 245, 200);
     fill(58, 152, 207);
     rect(0, 0, 50, 50, 10);
     noStroke();
@@ -195,15 +227,7 @@ var Hurdles = [];
 
 draw = function() {
     if(scene === 'Logo'){
-        background(245);
-        
-        logo(200, 250, 1 - logoSz);
-    
-        logoSz /= 1.05;
-        if(logoSz < 0.001){
-            trans.active = true;
-            trans.nextScene = 'Menu';
-        }
+        logo.draw();
     }
     if(scene === 'Menu'){
         background(245);
@@ -254,7 +278,7 @@ draw = function() {
         background(245);
         
         noStroke();
-        fill(207, 60, 87);
+        fill(145, 42, 63);
         rect(0, 365, 400, 100);
         fill(245);
         rect(0, 430, 400, 5);
