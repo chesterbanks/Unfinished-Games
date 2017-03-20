@@ -245,7 +245,7 @@ var shop = [
 ];
 
 // Power ups
-var forcefield = false, magnet = false;
+var forcefield = false, magnet = false, speed = false;
 
 var Player = function(){
     this.x = 300;
@@ -259,6 +259,14 @@ var Player = function(){
     this.maxSpeed = 5;
 };
 Player.prototype.draw = function() {
+    if(speed){
+        this.acceleration = 0.6;
+        this.maxSpeed = 10;
+    } else {
+        this.acceleration = 0.3;
+        this.maxSpeed = 5;
+    }
+    
     noStroke();
     fill(240, 217, 163);
     ellipse(this.x + 3, this.y + 3, this.sz / 1.1, this.sz / 1.1);
@@ -491,6 +499,34 @@ Power.prototype.draw = function() {
             line(5, 20, 20, 20);
             strokeWeight(1);
         break;
+        case 'Speed':
+            pushMatrix();
+            translate(-5, 0);
+            pushMatrix();
+            translate(4, -3);
+            noStroke();
+            fill(224, 237, 107);
+            beginShape();
+            vertex(8, 0);
+            vertex(15, 0);
+            vertex(2, 30);
+            vertex(2, 0);
+            vertex(-6, 0);
+            vertex(8, -30);
+            endShape(CLOSE);
+            popMatrix();
+            noFill();
+            stroke(117);
+            beginShape();
+            vertex(8, 0);
+            vertex(15, 0);
+            vertex(2, 30);
+            vertex(2, 0);
+            vertex(-6, 0);
+            vertex(8, -30);
+            endShape(CLOSE);
+            popMatrix();
+        break;
     }
     if(this.activated){
         noStroke();
@@ -507,6 +543,9 @@ Power.prototype.draw = function() {
             case 'Magnet':
                 magnet = (this.arc < 1 ? false : true);
             break;
+            case 'Speed':
+                speed = (this.arc < 1 ? false : true);
+            break;
         }
         this.arc --;
         if(this.arc < 0){
@@ -515,7 +554,7 @@ Power.prototype.draw = function() {
         }
     }
 };
-var Powers = [new Power(300, 525, 'Forcefield'), new Power(190, 525, 'Magnet'),];
+var Powers = [new Power(300, 525, 'Forcefield'), new Power(190, 525, 'Magnet'), new Power(410, 525, 'Speed')];
 
 draw = function() {
     background(255);
@@ -878,6 +917,17 @@ draw = function() {
         }
         
         
+        
+        fill(0);
+        buttons.back.draw();
+    }
+    if(scene === 'How'){
+        fill(0);
+        textFont(fonts.titles, 50);
+        text('HOW', 300, 100);
+        
+        textFont(fonts.small, 20);
+        text('Dodge ROCKS and MISSILES\n\nCollect COINS\n\nBUY powers in the shop\n\nUSE your POWERS in the game\n\nGet POINTS for staying alive\n\nGet BONUS POINTS for running a\nmissile into a rock', 300, 300);
         
         fill(0);
         buttons.back.draw();
