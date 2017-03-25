@@ -8,6 +8,20 @@
  * Have a complaint? Compliment? Constructive criticism? Destructive criticism? Question? Suggestion? Advice? Rating? Review? Leave them all in the Tips & Thanks (except for questions, those can go in the Questions)!
 */
 
+/*
+    TO ADD:
+     1. Bomb power
+     2. Cloak power
+     3. Logo (more minimal)
+     4. Score calculation screen, with bonus coins
+     5. Transitions
+     6. Shop background?
+     7. Power displays (choose which 5 powers you will use before the game, and then display those)
+     8. Lucky subscriber text
+     9. Easter eggs?
+     10. Release
+*/
+
 textAlign(CENTER, CENTER);
 var fonts = {
     titles: createFont('HelveticaNeue-UltraLight'),
@@ -15,14 +29,15 @@ var fonts = {
     coin: createFont('Verdana'),
 };
 
-var scene = 'Menu';
+var scene = 'Game';
 var coins = 100;
 var timer = 0;
 
 var keys = [];
 var keyPressed = function(){ keys[keyCode] = true; };
 var keyReleased = function(){ keys[keyCode] = false; };
-var clicked = false;
+
+var clicked = false, overButton = false;
 mouseClicked = function(){ clicked = true; };
 
 var circleCollide = function(object1, object2){
@@ -131,12 +146,14 @@ button.prototype.draw = function() {
     textFont(fonts.titles, this.txtSz);
     text(this.txt, this.x, this.y);
     
+    strokeWeight(1);
     stroke(0);
     if(this.lineX < this.w / 2){
         line(this.x - (this.w / 2) + this.lineX, this.y + (this.h / 2), this.x + (this.w / 2) - this.lineX, this.y + (this.h / 2));
     }
     
     if(mouseX > this.x - (this.w / 2) && mouseX < this.x + (this.w / 2) && mouseY > this.y - (this.h / 2) && mouseY < this.y + (this.h / 2)){
+        overButton = true;
         this.move = true;
         if(clicked){
             scene = this.nxt;
@@ -234,14 +251,14 @@ Alert.prototype.draw = function() {
 var Alerts = [];
 
 var shop = [
-    {name: 'Shield', price: 5, bought: false, y: 100, info: 'A protective shield spins around you for five seconds.'},
+    //{name: 'Shield', price: 5, bought: false, y: 100, info: 'A protective shield spins around you for five seconds.'},
     {name: 'Speed', price: 10, bought: false, y: 100, info: 'Move twice as fast for five seconds.'},
     {name: 'Health', price: 10, bought: false, y: 100, info: 'Refill your health'},
     {name: 'Forcefield', price: 30, bought: false, y: 100, info: 'Protective bubble surrounds you for five seconds.'},
     {name: 'Bomb', price: 10, bought: false, y: 250, info: 'Destroys all objects (excluding you) within a five foot raidus.'},
     {name: 'Cloak', price: 15, bought: false, y: 250, info: 'Hides you from everything that follows you.'},
     {name: 'Magnet', price: 10, bought: false, y: 250, info: 'Attracts nearby coins.'},
-    {name: 'Block', price: 10, bought: false, y: 250, info: 'A stationary block that everything bounces off of.'},
+    //{name: 'Block', price: 10, bought: false, y: 250, info: 'A stationary block that everything bounces off of.'},
 ];
 
 // Power ups
@@ -257,6 +274,8 @@ var Player = function(){
     
     this.acceleration = 0.3;
     this.maxSpeed = 5;
+    
+    this.health = this.sz;
 };
 Player.prototype.draw = function() {
     if(speed){
@@ -268,6 +287,10 @@ Player.prototype.draw = function() {
     }
     
     noStroke();
+    fill(0, 0, 0, 30);
+    rect(this.x - (this.sz / 2), this.y - this.sz, this.sz, this.sz/5);
+    fill(0, 255, 0);
+    rect(this.x - (this.sz / 2), this.y - this.sz, this.health, this.sz/5);
     fill(240, 217, 163);
     ellipse(this.x + 3, this.y + 3, this.sz / 1.1, this.sz / 1.1);
     noFill();
@@ -527,6 +550,46 @@ Power.prototype.draw = function() {
             endShape(CLOSE);
             popMatrix();
         break;
+        case 'Health':
+            pushMatrix();
+            translate(0, 0);
+            pushMatrix();
+            translate(-3, -2);
+            noStroke();
+            fill(237, 116, 116);
+            beginShape();
+            vertex(10, -10);
+            vertex(30, -10);
+            vertex(30, 10);
+            vertex(10, 10);
+            vertex(10, 30);
+            vertex(-10, 30);
+            vertex(-10, 10);
+            vertex(-30, 10);
+            vertex(-30, -10);
+            vertex(-10, -10);
+            vertex(-10, -30);
+            vertex(10, -30);
+            endShape(CLOSE);
+            popMatrix();
+            noFill();
+            stroke(117);
+            beginShape();
+            vertex(10, -10);
+            vertex(30, -10);
+            vertex(30, 10);
+            vertex(10, 10);
+            vertex(10, 30);
+            vertex(-10, 30);
+            vertex(-10, 10);
+            vertex(-30, 10);
+            vertex(-30, -10);
+            vertex(-10, -10);
+            vertex(-10, -30);
+            vertex(10, -30);
+            endShape(CLOSE);
+            popMatrix();
+        break;
     }
     if(this.activated){
         noStroke();
@@ -546,6 +609,12 @@ Power.prototype.draw = function() {
             case 'Speed':
                 speed = (this.arc < 1 ? false : true);
             break;
+            case 'Health':
+               if(this.arc > 1){
+                   player.health = player.sz;
+                   this.arc -= 5;
+               }
+            break;
         }
         this.arc --;
         if(this.arc < 0){
@@ -554,7 +623,7 @@ Power.prototype.draw = function() {
         }
     }
 };
-var Powers = [new Power(300, 525, 'Forcefield'), new Power(190, 525, 'Magnet'), new Power(410, 525, 'Speed')];
+var Powers = [new Power(300, 525, 'Forcefield'), new Power(190, 525, 'Magnet'), new Power(410, 525, 'Health')];
 
 draw = function() {
     background(255);
@@ -611,7 +680,7 @@ draw = function() {
                     Rocks[i].fade = true;
                     Rocks[i].switchDir = true;
                 } else {
-                    scene = 'Menu';
+                    player.health --;
                 }
             }
             if(((Rocks[i].x < 0 || Rocks[i].x > 600 || Rocks[i].y < 0 || Rocks[i].y > 600) && Rocks[i].out < 0) || Rocks[i].trans < 0.1){
@@ -626,7 +695,7 @@ draw = function() {
                 if(forcefield){
                     Rockets[i].fade = true;
                 } else {
-                    scene = 'Menu';
+                    this.health --;
                 }
             }
             if(Rockets[i].x < 0 || Rockets[i].x > 600 || Rockets[i].y < 0 || Rockets[i].y > 600 || Rockets[i].trans < 5){
@@ -674,6 +743,10 @@ draw = function() {
         for(var i in Powers){
             Powers[i].draw();
         }
+        
+        if(player.health < 0){
+            scene = 'Menu';
+        }
     }
     if(scene === 'Shop'){
         stroke(0);
@@ -703,7 +776,7 @@ draw = function() {
         // Magnet
         strokeCap(SQUARE);
         pushMatrix();
-        translate(360, 245);
+        translate(420, 245);
         noFill();
         strokeWeight(15);
         stroke(240, 153, 153);
@@ -728,7 +801,7 @@ draw = function() {
         
         // Speed
         pushMatrix();
-        translate(233, 100);
+        translate(175, 100);
         pushMatrix();
         translate(4, -3);
         noStroke();
@@ -756,7 +829,7 @@ draw = function() {
         
         // Health
         pushMatrix();
-        translate(360, 100);
+        translate(300, 100);
         pushMatrix();
         translate(-3, -2);
         noStroke();
@@ -796,7 +869,7 @@ draw = function() {
         
         // Forcefield
         pushMatrix();
-        translate(480, 100);
+        translate(420, 100);
         noStroke();
         fill(222, 248, 255);
         ellipse(-5, 6, 70, 70);
@@ -809,7 +882,7 @@ draw = function() {
         
         // Bomb
         pushMatrix();
-        translate(120, 250);
+        translate(180, 250);
         noStroke();
         fill(189, 189, 189);
         ellipse(5, 8, 50, 50);
@@ -825,7 +898,7 @@ draw = function() {
         
         // Cloak
         pushMatrix();
-        translate(240, 250);
+        translate(300, 250);
         noFill();
         stroke(173, 173, 173);
         bezier(0, -30, -35, -20, -10, 10, -30, 20);
@@ -837,7 +910,7 @@ draw = function() {
         popMatrix();
         
         // Block
-        pushMatrix();
+        /*pushMatrix();
         translate(480, 250);
         noStroke();
         fill(222, 199, 199);
@@ -861,10 +934,10 @@ draw = function() {
         rect(18, -2, 7, 10, 2);
         rect(-25, 12, 26, 8, 2);
         rect(5, 12, 20, 8, 2);
-        popMatrix();
+        popMatrix();*/
         
         // Shield
-        pushMatrix();
+        /*pushMatrix();
         translate(120, 100);
         noStroke();
         fill(0, 179, 255, 100);
@@ -880,10 +953,10 @@ draw = function() {
         arc(0, -20, 50, 100, 0, 180);
         line(0, -30, 0, 30);
         line(-23, 0, 23, 0);
-        popMatrix();
+        popMatrix();*/
         
         for(var i = 0; i < shop.length; ++i){
-            shop[i].x = 120 + ((i * 120) % 480);
+            shop[i].x = 180 + ((i * 120) % 360);
             
             pushMatrix();
             translate(shop[i].x, shop[i].y);
@@ -922,6 +995,14 @@ draw = function() {
         buttons.back.draw();
     }
     if(scene === 'How'){
+        strokeWeight(1);
+        noFill();
+        stroke(0);
+        rect(100, 100, 400, 400);
+        strokeWeight(3);
+        stroke(255);
+        rect(200, 100, 200, 10);
+        
         fill(0);
         textFont(fonts.titles, 50);
         text('HOW', 300, 100);
@@ -940,5 +1021,8 @@ draw = function() {
         }
     }
     
+    cursor(overButton ? 'pointer' : 'default');
+    
+    overButton = false;
     clicked = false;
 };
