@@ -11,15 +11,29 @@
 /*
     TO ADD:
      1. Bomb power
+        FINISH ON SAT
      2. Cloak power
-     3. Logo (more minimal)
+        FINISH ON SAT
+     3. Logo (more minimal) 
+        FINISH ON SUN
      4. Score calculation screen, with bonus coins
+        FINISH ON MON
      5. Transitions
+        FINISH ON MON
      6. Shop background?
+        FINISH ON MON
      7. Power displays (choose which 5 powers you will use before the game, and then display those)
-     8. Lucky subscriber text
-     9. Easter eggs?
+        FINISH ON TUE
+     8. Lucky subscriber text & easter eggs
+        FINISH ON TUE
+     9. Get feedback from fellow programmers
+        a) SlingBlade
+        b) Planet
+        c) AlexT
+        d) Isaac Emerald
+        FINISH ON WED
      10. Release
+        MON
 */
 
 textAlign(CENTER, CENTER);
@@ -29,7 +43,7 @@ var fonts = {
     coin: createFont('Verdana'),
 };
 
-var scene = 'Game';
+var scene = 'Menu';
 var coins = 100;
 var timer = 0;
 
