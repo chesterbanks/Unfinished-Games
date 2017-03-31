@@ -1,8 +1,21 @@
+// color(40, 132, 212)
+
+// Settings
 textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
-var scene = 'Logo';
+// Vital variables
+var scene = 'Menu';
+var clicked = false;
+var overButton = false;
+var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // or objects :P
 
+// Processing functions
+mouseClicked = function(){
+    clicked = true;
+};
+
+// Helpful Graphics Functions
 var mu = function(x, y){
     pushMatrix();
     translate(x, y);
@@ -140,6 +153,73 @@ var Mike = function(x, y, sz, hat){
     popStyle();
 };
 
+// Buttons
+var button = function(x, y, sz, txt, next){
+    this.x = x; 
+    this.y = y;
+    this.sz = sz; 
+    this.txt = txt;
+    this.next = next;
+    this.y2 = 10;
+};
+button.prototype.draw = function() {
+    noStroke();
+    fill(255, 255, 255, 10);
+    for(var i = 0; i < 360; i += 30){
+        ellipse(this.x + sin(i)*5, 10 - this.y2 + this.y + cos(i)*5, this.sz * 1.15, this.sz * 1.15);
+    }
+    
+    textSize(this.sz / 1.5);
+    if(dist(mouseX, mouseY, this.x, this.y) < this.sz/2){
+        this.y2 /= 1.1;
+        
+        fill(50, 129, 194);
+        ellipse(this.x, this.y, this.sz * 1.15, this.sz * 1.15);
+        noFill();
+        strokeWeight(5);
+        stroke(255, 255, 255);
+        ellipse(this.x, this.y, this.sz, this.sz);
+        overButton = true;
+        if(clicked){
+            trans.active = true;
+            trans.nextScene = this.next;
+        }
+    } else {
+        if(this.y2 < 10){
+            this.y2 += 1;
+        }
+        noStroke();
+        fill(40, 132, 212);
+        ellipse(this.x, this.y, this.sz * 1.15, this.sz * 1.15);
+        noFill();
+        strokeWeight(5);
+        stroke(255, 255, 255);
+        ellipse(this.x, this.y, this.sz, this.sz);
+    }
+    fill(255);
+    if(this.txt === '.'){
+        noStroke();
+        fill(255);
+        triangle(this.x + 30, this.y, this.x - 22, this.y - 30, this.x - 22, this.y + 30);
+    } else if (this.txt === '-'){
+        strokeCap(SQUARE);
+        stroke(255);
+        strokeWeight(5);
+        line(this.x - 15, this.y - 10, this.x + 15, this.y - 10);
+        line(this.x - 15, this.y, this.x + 15, this.y);
+        line(this.x - 15, this.y + 10, this.x + 15, this.y + 10);
+    } else {
+        text(this.txt.toUpperCase(), this.x, this.y);
+    }
+};
+var buttons = {
+    play: new button(300, 450, 130, '.', 'Game'),
+    how: new button(140, 450, 90, '?', 'How'),
+    about: new button(460, 450, 90, '-', 'About'),
+    back: new button(80, 520, 90, '<', 'Menu'),
+};
+
+// Logo
 var Logo = function(){
     this.s  = 500;
     this.s2 = 1;
@@ -290,6 +370,7 @@ Logo.prototype.draw = function(){
 };
 var logo = new Logo();
 
+// Menu
 var Menu = function(){
     this.y1 = 300;
     this.y2 = 400;
@@ -316,6 +397,13 @@ Menu.prototype.draw = function() {
     textSize(27);
     text('T H E   S C A R E   G A M E S', 300, 320 - this.y2);
     
+    pushMatrix();
+    translate(0, this.y2);
+    buttons.play.draw();
+    buttons.how.draw();
+    buttons.about.draw();
+    popMatrix();
+    
     this.y1 /= 1.1;
     if(this.y1 < 50){
         this.y2 /= 1.1;
@@ -324,10 +412,85 @@ Menu.prototype.draw = function() {
 var menu = new Menu();
 
 draw = function() {
+    // Draw those scenes
     if(scene === 'Logo'){
         logo.draw();
     }
     if(scene === 'Menu'){
         menu.draw();
     }
+    if(scene === 'How'){
+        background(25);
+        
+        textSize(100);
+        fill(40, 132, 212);
+        for(var i = 0; i < 360; i += 30){
+            text('HOW', 300 + sin(i)*8, 100 + cos(i)*8);
+        }
+        fill(255);
+        for(var i = 0; i < 360; i += 30){
+            text('HOW', 300 + sin(i)*3, 100 + cos(i)*3);
+        }
+        fill(40, 132, 212);
+        text('HOW', 300, 100);
+        
+        textSize(25);
+        fill(255);
+        text('This is a completely useless instructions page, because the instructions are explained in the game!', 50, 50, 500, 500);
+        
+        buttons.back.draw();
+    }
+    if(scene === 'About'){
+        background(25);
+        
+        textSize(100);
+        fill(40, 132, 212);
+        for(var i = 0; i < 360; i += 30){
+            text('ABOUT', 300 + sin(i)*8, 100 + cos(i)*8);
+        }
+        fill(255);
+        for(var i = 0; i < 360; i += 30){
+            text('ABOUT', 300 + sin(i)*3, 100 + cos(i)*3);
+        }
+        fill(40, 132, 212);
+        text('ABOUT', 300, 100);
+        
+        textSize(20);
+        fill(255);
+        text('You\'ve wanted to be a scarer your whole life, and go to Monsters University to become one. But you get in a rivalry with the hotshot Jimmy Sullivan, and it ruins the end of year exam. You fail the scaring class!\n\nNow the only way for you to fulfill your dream of being a scarer is to win the Scare Games, a competition against other college teams. If you win, you get let back in the scaring class. But if you lose, you get expelled from Monsters University!', 50, 60, 500, 500);
+        
+        buttons.back.draw();
+    }
+    
+    // Cursor
+    cursor(overButton ? 'pointer' : 'default');
+    
+    // Transition
+    if(trans.active){
+        noFill();
+        stroke(255);
+        if(trans.out){
+            strokeWeight(trans.sz);
+        } else {
+            strokeWeight(600 - trans.sz);
+        }
+        pushMatrix();
+        translate(300, 300);
+        rect(0, 0, width, height);
+        popMatrix();
+        trans.sz /= 1.5;
+        if(trans.sz < 10 && !trans.out){
+            trans.sz = 600;
+            trans.out = true;
+            scene = trans.nextScene;
+        }
+        if(trans.out && trans.sz < 0.1){
+            trans.active = false;
+            trans.sz = 600;
+            trans.out = false;
+        }
+    }
+    
+    clicked = false;
+    overButton = false;
 };
