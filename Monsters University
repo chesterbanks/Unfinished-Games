@@ -1,4 +1,144 @@
-var scene = 'Logo';
+textAlign(CENTER, CENTER);
+textFont(createFont('Avenir'));
+
+var scene = 'Menu';
+
+var mu = function(x, y){
+    pushMatrix();
+    translate(x, y);
+    beginShape();
+    vertex(-38, -24);
+    vertex(-25, -24);
+    vertex(-25, -50);
+    vertex(-90, -50);
+    vertex(-112, -16);
+    vertex(-134, -50);
+    vertex(-199, -50);
+    vertex(-199, -25);
+    vertex(-186, -25);
+    vertex(-201, 48);
+    vertex(-213, 48);
+    vertex(-213, 73);
+    vertex(-156, 73);
+    vertex(-149, 32);
+    vertex(-124, 72);
+    vertex(-100, 72);
+    vertex(-75, 33);
+    vertex(-68, 73);
+    vertex(-10, 73);
+    vertex(-10, 48);
+    vertex(-23, 48);
+    endShape(CLOSE);
+    beginShape();
+    vertex(178, -25);
+    vertex(178, 51);
+    vertex(157, 73);
+    vertex(40, 73);
+    vertex(18, 52);
+    vertex(18, -24);
+    vertex(3, -24);
+    vertex(3, -49);
+    vertex(76, -49);
+    vertex(76, -24);
+    vertex(62, -24);
+    vertex(62, 42);
+    vertex(69, 49);
+    vertex(128, 49);
+    vertex(134, 42);
+    vertex(134, -25);
+    vertex(120, -25);
+    vertex(120, -49);
+    vertex(192, -49);
+    vertex(192, -25);
+    endShape(CLOSE);
+    noStroke();
+    fill(255);
+    bezier(-160, 10, -130, -15, -95, -15, -65, 10);
+    bezier(-160, 10, -130, 35, -95, 35, -65, 10);
+    fill(0);
+    ellipse(-113, 10, 30, 30);
+    popMatrix();
+};
+var Mike = function(x, y, sz, hat){
+    pushStyle();
+    pushMatrix();
+    translate(x, y);
+    scale(sz / 50);
+    // shadow
+    noStroke();
+    fill(0, 0, 0, 15);
+    ellipse(0, 198, 150, 30);
+    noFill();
+    strokeWeight(15);
+    stroke(118, 232, 114);
+    // arms
+    bezier(-90, 0, -116, -1, -100, 70, -91, 125);
+    bezier(90, 0, 116, -1, 134, 37, 155 + sin(frameCount*10)*15, -85);
+    // legs
+    line(40, 90, 55, 125);
+    line(-40, 90, -55, 125);
+    line(40, 175, 55, 125);
+    line(-40, 175, -55, 125);
+    // toes
+    line(-40, 175, -65, 180);
+    line(-40, 175, -55, 191);
+    line(-40, 175, -36, 190);
+    line(40, 175, 65, 180);
+    line(40, 175, 55, 191);
+    line(40, 175, 36, 190);
+    // horns?
+    noFill();
+    strokeWeight(10);
+    stroke(235, 223, 158);
+    arc(0, -95, 120, 100, 0, 180);
+    arc(0, -95, 120, 50, 0, 180);
+    arc(0, -95, 120, 30, 0, 180);
+    noStroke();
+    fill(118, 232, 114);
+    beginShape();
+    curveVertex(-80,-40); curveVertex(0,-100); curveVertex(80,-40); curveVertex(85,50); curveVertex(0,100); curveVertex(-85,50); curveVertex(-80,-40); curveVertex(0,-100); curveVertex(80,-40); 
+    endShape();
+    endShape();
+    fill(235);
+    beginShape();
+    curveVertex(-40,-40); curveVertex(0,-70); curveVertex(40,-40); curveVertex(40,0); curveVertex(0,20); curveVertex(-40,0); curveVertex(-40,-40); curveVertex(0,-70); curveVertex(40,-40);
+    endShape();
+    fill(45);
+    ellipse(0, -15, 50, 50);
+    noFill();
+    strokeWeight(22);
+    stroke(235, 235, 235, 50);
+    arc(0, -15, 50, 50, -90, 0);
+    strokeWeight(5);
+    stroke(0, 0, 0, 50);
+    arc(0, 0, 130, 100, 30, 150);
+    arc(-62, 3, 20, 40, 50, 110);
+    arc(62, 3, 20, 40, 80, 140);
+    strokeWeight(2);
+    stroke(0, 0, 0, 30);
+    arc(0, 15, 90, 95, 60, 120);
+    
+    // hat
+    if(hat){
+        noStroke();
+        fill(61, 95, 158);
+        arc(0, -85, 90, 90, -180, 0);
+        textFont(createFont('Courier Bold'), 25);
+        textAlign(CENTER, CENTER);
+        fill(255);
+        for(var i = 0; i < 360; i += 50){
+            text('MU', sin(i)*3, -112 + cos(i)*3);
+        }
+        textSize(25);
+        fill(0, 174, 255);
+        text('MU', 0, -112);
+        fill(22, 65, 145);
+        arc(11, -85, 90, 37, -180, 0);
+        arc(3, -85, 100, 11, -180, 0);
+    }
+    popMatrix();
+    popStyle();
+};
 
 var Logo = function(){
     this.s  = 500;
@@ -7,9 +147,6 @@ var Logo = function(){
     this.trans = 255;
 };
 Logo.prototype.draw = function(){
-    textAlign(CENTER, CENTER);
-    textFont(createFont('Avenir'), 44);
-    
     background(26, 26, 26);
     
     pushMatrix();
@@ -157,59 +294,27 @@ draw = function() {
         logo.draw();
     }
     if(scene === 'Menu'){
-        background(173, 173, 173);
-        rectMode(CENTER);
-        //rect(300, 300, 550, 200);
+        background(0, 0, 0);
+        noStroke();
+        fill(255, 255, 255, 100);
+        mu(15 + width / 2, 15 + (height / 3));
+        noFill();
+        strokeWeight(15);
+        stroke(40, 132, 212);
+        mu(15 + width / 2, height / 3);
         strokeWeight(5);
         stroke(255);
-        fill(13, 103, 182);
-        pushMatrix();
-        translate(width / 2, height / 2);
-        beginShape();
-        vertex(-38, -24);
-        vertex(-25, -24);
-        vertex(-25, -50);
-        vertex(-90, -50);
-        vertex(-112, -16);
-        vertex(-134, -50);
-        vertex(-199, -50);
-        vertex(-199, -25);
-        vertex(-186, -25);
-        vertex(-201, 48);
-        vertex(-213, 48);
-        vertex(-213, 73);
-        vertex(-156, 73);
-        vertex(-149, 32);
-        vertex(-124, 72);
-        vertex(-100, 72);
-        vertex(-75, 33);
-        vertex(-68, 73);
-        vertex(-10, 73);
-        vertex(-10, 48);
-        vertex(-23, 48);
-        endShape(CLOSE);
-        beginShape();
-        vertex(178, -25);
-        vertex(178, 51);
-        vertex(157, 73);
-        vertex(40, 73);
-        vertex(18, 52);
-        vertex(18, -24);
-        vertex(3, -24);
-        vertex(3, -49);
-        vertex(76, -49);
-        vertex(76, -24);
-        vertex(62, -24);
-        vertex(62, 42);
-        vertex(69, 49);
-        vertex(128, 49);
-        vertex(134, 42);
-        vertex(134, -25);
-        vertex(120, -25);
-        vertex(120, -49);
-        vertex(192, -49);
-        vertex(192, -25);
-        endShape(CLOSE);
-        popMatrix();
+        fill(40, 132, 212);
+        mu(15 + width / 2, height / 3);
+        
+        rectMode(CENTER);
+        noStroke();
+        fill(255, 255, 255, 100);
+        rect(300, 325, 410, 50);
+        fill(255, 255, 255);
+        rect(300, 320, 400, 50);
+        fill(40, 132, 212);
+        textSize(27);
+        text('T H E   S C A R E   G A M E S', 300, 320);
     }
 };
