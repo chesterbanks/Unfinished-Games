@@ -5,7 +5,7 @@ textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
 // Vital variables
-var scene = 'Menu';
+var scene = 'Game1';
 var clicked = false;
 var overButton = false;
 var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // or objects :P
@@ -72,7 +72,7 @@ var mu = function(x, y){
     ellipse(-113, 10, 30, 30);
     popMatrix();
 };
-var Mike = function(x, y, sz, hat){
+var Mike = function(x, y, sz, hat, front){
     pushStyle();
     pushMatrix();
     translate(x, y);
@@ -86,7 +86,11 @@ var Mike = function(x, y, sz, hat){
     stroke(118, 232, 114);
     // arms
     bezier(-90, 0, -116, -1, -100, 70, -91, 125);
-    bezier(90, 0, 116, -1, 134, 37, 155 + sin(frameCount*10)*15, -85);
+    if(front){
+        bezier(90, 0, 116, -1, 134, 37, 155 + sin(frameCount*10)*15, -85);
+    } else {
+        bezier(90, 0, 116, -1, 100, 70, 91, 125);
+    }
     // legs
     line(40, 90, 55, 125);
     line(-40, 90, -55, 125);
@@ -112,25 +116,26 @@ var Mike = function(x, y, sz, hat){
     curveVertex(-80,-40); curveVertex(0,-100); curveVertex(80,-40); curveVertex(85,50); curveVertex(0,100); curveVertex(-85,50); curveVertex(-80,-40); curveVertex(0,-100); curveVertex(80,-40); 
     endShape();
     endShape();
-    fill(235);
-    beginShape();
-    curveVertex(-40,-40); curveVertex(0,-70); curveVertex(40,-40); curveVertex(40,0); curveVertex(0,20); curveVertex(-40,0); curveVertex(-40,-40); curveVertex(0,-70); curveVertex(40,-40);
-    endShape();
-    fill(45);
-    ellipse(0, -15, 50, 50);
-    noFill();
-    strokeWeight(22);
-    stroke(235, 235, 235, 50);
-    arc(0, -15, 50, 50, -90, 0);
-    strokeWeight(5);
-    stroke(0, 0, 0, 50);
-    arc(0, 0, 130, 100, 30, 150);
-    arc(-62, 3, 20, 40, 50, 110);
-    arc(62, 3, 20, 40, 80, 140);
-    strokeWeight(2);
-    stroke(0, 0, 0, 30);
-    arc(0, 15, 90, 95, 60, 120);
-    
+    if(front){
+        fill(235);
+        beginShape();
+        curveVertex(-40,-40); curveVertex(0,-70); curveVertex(40,-40); curveVertex(40,0); curveVertex(0,20); curveVertex(-40,0); curveVertex(-40,-40); curveVertex(0,-70); curveVertex(40,-40);
+        endShape();
+        fill(45);
+        ellipse(0, -15, 50, 50);
+        noFill();
+        strokeWeight(22);
+        stroke(235, 235, 235, 50);
+        arc(0, -15, 50, 50, -90, 0);
+        strokeWeight(5);
+        stroke(0, 0, 0, 50);
+        arc(0, 0, 130, 100, 30, 150);
+        arc(-62, 3, 20, 40, 50, 110);
+        arc(62, 3, 20, 40, 80, 140);
+        strokeWeight(2);
+        stroke(0, 0, 0, 30);
+        arc(0, 15, 90, 95, 60, 120);
+    }
     // hat
     if(hat){
         noStroke();
@@ -200,7 +205,11 @@ button.prototype.draw = function() {
     if(this.txt === '.'){
         noStroke();
         fill(255);
-        triangle(this.x + 30, this.y, this.x - 22, this.y - 30, this.x - 22, this.y + 30);
+        if(this.sz < 100){
+            triangle(this.x + 20, this.y, this.x - 15, this.y - 20, this.x - 15, this.y + 20);
+        } else {
+            triangle(this.x + 30, this.y, this.x - 22, this.y - 30, this.x - 22, this.y + 30);
+        }
     } else if (this.txt === '-'){
         strokeCap(SQUARE);
         stroke(255);
@@ -213,11 +222,59 @@ button.prototype.draw = function() {
     }
 };
 var buttons = {
-    play: new button(300, 450, 130, '.', 'Game'),
+    play: new button(300, 450, 130, '.', 'How1'),
     how: new button(140, 450, 90, '?', 'How'),
     about: new button(460, 450, 90, '-', 'About'),
     back: new button(80, 520, 90, '<', 'Menu'),
+    start: new button(510, 515, 95, '.', 'Game1'),
 };
+
+// Game objects
+var Urchin = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.w = 30;
+    this.h = 30;
+    
+    this.i = random(255);
+    
+    this.points = [];
+    for(var i = 0; i < 360; i += 30){
+        this.points.push({x: random(-5, 5) + sin(i) * 10, y: random(-5, 5) + cos(i) * 10});
+    }
+};
+Urchin.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x + 15, this.y + 15);
+    fill(255, 0, 0, sin(this.i + frameCount * 5)*30);
+    noStroke();
+    for(var i = 50; i > 0; i -= 5){
+        ellipse(0, 0, i, i);
+    }
+    beginShape();
+    strokeWeight(3);
+    stroke(204, 51, 51, sin(this.i + frameCount * 5)*255);
+    fill(255, 0, 0, sin(this.i + frameCount * 5)*255);
+    for(var i in this.points){
+        vertex(this.points[i].x, this.points[i].y);
+    }
+    endShape(CLOSE);
+    popMatrix();
+};
+var Urchins = [];
+for(var i = 0; i < 10; i ++){
+    Urchins.push(new Urchin(random(width), random(500)));
+}
+
+var Player = function(){
+    this.x = 300;
+    this.y = 550;
+    this.sz = 30;
+};
+Player.prototype.draw = function() {
+    Mike(this.x, this.y, 7, false, false);
+};
+var player = new Player();
 
 // Logo
 var Logo = function(){
@@ -411,6 +468,19 @@ Menu.prototype.draw = function() {
 };
 var menu = new Menu();
 
+// Game #1 (Toxicity Challenge)
+var Game1 = function(){
+    
+};
+Game1.prototype.draw = function() {
+    background(0);
+    for(var i = 0; i < Urchins.length; ++i){
+        Urchins[i].draw();
+    }
+    player.draw();
+};
+var game1 = new Game1();
+
 draw = function() {
     // Draw those scenes
     if(scene === 'Logo'){
@@ -461,11 +531,49 @@ draw = function() {
         
         buttons.back.draw();
     }
+    if(scene === 'How1'){
+        background(25);
+        
+        fill(40, 132, 212);
+        textSize(30);
+        text('R O U N D   O N E', 300, 55);
+        textSize(45);
+        for(var i = 0; i < 360; i += 30){
+            text('TOXICITY CHALLENGE', 300 + sin(i)*8, 100 + cos(i)*8);
+        }
+        fill(255);
+        for(var i = 0; i < 360; i += 30){
+            text('TOXICITY CHALLENGE', 300 + sin(i)*3, 100 + cos(i)*3);
+        }
+        fill(40, 132, 212);
+        text('TOXICITY CHALLENGE', 300, 100);
+        
+        textSize(15);
+        fill(255);
+        pushStyle();
+        textFont(createFont('Avenir Italic'));
+        text('"A child\'s room is where you scare, but avoid the toxicity lurking there."', 300, 150);
+        popStyle();
+        textSize(25);
+        text('In the first event of The Scare Games, you have to dash through a sewer tunnel in the dark in less than 60 seconds.\n\nRed and toxic, the stinging glow urchins will significantly slow you down. Avoid them at all costs!', 50, 50, 500, 500);
+        
+        textSize(15);
+        text('YOU PLAY AS:', 360, 474);
+        textSize(50);
+        text('MIKE', 360, 500);
+        Mike(240, 480, 20);
+        
+        buttons.start.draw();
+    }
+    if(scene === 'Game1'){
+        game1.draw();
+    }
     
     // Cursor
     cursor(overButton ? 'pointer' : 'default');
     
     // Transition
+    rectMode(CENTER);
     if(trans.active){
         noFill();
         stroke(255);
