@@ -8,12 +8,15 @@ textFont(createFont('Avenir'));
 var scene = 'Game1';
 var clicked = false;
 var overButton = false;
-var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // or objects :P
+var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
+var keys = []; // ...or arrays :P
 
 // Processing functions
 mouseClicked = function(){
     clicked = true;
 };
+var keyPressed = function(){ keys[keyCode] = true; };
+var keyReleased = function(){ keys[keyCode] = false; };
 
 // Helpful Graphics Functions
 var mu = function(x, y){
@@ -158,6 +161,11 @@ var Mike = function(x, y, sz, hat, front){
     popStyle();
 };
 
+// Circle collision function
+var circleCollide = function(object1, object2){
+    return (dist(object1.x, object1.y, object2.x, object2.y) <= (object1.sz / 2) + (object2.sz / 2));
+};
+
 // Buttons
 var button = function(x, y, sz, txt, next){
     this.x = x; 
@@ -229,12 +237,14 @@ var buttons = {
     start: new button(510, 515, 95, '.', 'Game1'),
 };
 
+// Pre-defined variables
+var player;
+
 // Game objects
 var Urchin = function(x, y){
     this.x = x;
     this.y = y;
-    this.w = 30;
-    this.h = 30;
+    this.sz = 30;
     
     this.i = random(255);
     
@@ -260,21 +270,43 @@ Urchin.prototype.draw = function() {
     }
     endShape(CLOSE);
     popMatrix();
+    
+    if(keys[UP]){
+        this.y += player.speed;
+    }
+    if(keys[DOWN]){
+        this.y -= player.speed;
+    }
 };
 var Urchins = [];
-for(var i = 0; i < 10; i ++){
-    Urchins.push(new Urchin(random(width), random(500)));
+for(var i = 0; i < 70; i ++){
+    Urchins.push(new Urchin(random(width), random(-1500, 500)));
 }
 
 var Player = function(){
     this.x = 300;
     this.y = 550;
     this.sz = 30;
+    this.speed = 5;
 };
 Player.prototype.draw = function() {
     Mike(this.x, this.y, 7, false, false);
+    
+    if(keys[RIGHT] && this.x < width - (this.sz / 2)){
+        this.x += this.speed;
+    }
+    if(keys[LEFT] && this.x > (this.sz / 2)){
+        this.x -= this.speed;
+    }
+    
+    for(var i = 0; i < Urchins.length; ++i){
+        if(circleCollide(Urchins[i], this)){
+            this.speed /= 1.5;
+            Urchins.splice(i, 1);
+        }
+    }
 };
-var player = new Player();
+player = new Player();
 
 // Logo
 var Logo = function(){
@@ -470,7 +502,8 @@ var menu = new Menu();
 
 // Game #1 (Toxicity Challenge)
 var Game1 = function(){
-    
+    this.time = 30;
+    this.finishY = -1500;
 };
 Game1.prototype.draw = function() {
     background(0);
@@ -478,6 +511,33 @@ Game1.prototype.draw = function() {
         Urchins[i].draw();
     }
     player.draw();
+    
+    textSize(50);
+    fill(255, 0, 0);
+    text(this.time, 550, 40);
+    
+    noStroke();
+    fill(255);
+    for(var i = -40; i < width; i += 20){
+        for(var j = 0; j < 30; j += 10){
+            rect(i + ((j/20)%2)*20, j + this.finishY, 10, 10);
+        }
+    }
+    
+    if(frameCount % 30 === 0){
+        this.time --;
+    }
+    if(keys[UP]){
+        this.finishY += player.speed;
+    }
+    if(keys[DOWN]){
+        this.finishY -= player.speed;
+    }
+    
+    if(this.finishY > 500){
+        trans.nextScene = 'How2';
+        trans.active = true;
+    }
 };
 var game1 = new Game1();
 
@@ -554,14 +614,14 @@ draw = function() {
         textFont(createFont('Avenir Italic'));
         text('"A child\'s room is where you scare, but avoid the toxicity lurking there."', 300, 150);
         popStyle();
-        textSize(25);
-        text('In the first event of The Scare Games, you have to dash through a sewer tunnel in the dark in less than 60 seconds.\n\nRed and toxic, the stinging glow urchins will significantly slow you down. Avoid them at all costs!', 50, 50, 500, 500);
+        textSize(23);
+        text('In the first event of The Scare Games, you have to use the arrow keys to dash through a sewer tunnel in the dark in less than 30 seconds.\n\nRed and toxic, the stinging glow urchins will significantly slow you down. Avoid them at all costs!', 50, 50, 500, 500);
         
         textSize(15);
         text('YOU PLAY AS:', 360, 474);
         textSize(50);
         text('MIKE', 360, 500);
-        Mike(240, 480, 20);
+        Mike(240, 480, 20, true, true);
         
         buttons.start.draw();
     }
