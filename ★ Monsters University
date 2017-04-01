@@ -161,9 +161,17 @@ var Mike = function(x, y, sz, hat, front){
     popStyle();
 };
 
-// Circle collision function
+// Collision functions
 var circleCollide = function(object1, object2){
     return (dist(object1.x, object1.y, object2.x, object2.y) <= (object1.sz / 2) + (object2.sz / 2));
+};
+var rectCollide = function(one, two){
+    if( one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h){
+        return true;
+    }
 };
 
 // Buttons
@@ -235,7 +243,7 @@ var buttons = {
     about: new button(460, 450, 90, '-', 'About'),
     back: new button(80, 520, 90, '<', 'Menu'),
     start: new button(510, 515, 95, '.', 'Game1'),
-    start2: new button(510, 515, 95, '.', 'Game1'),
+    start2: new button(510, 515, 95, '.', 'Game2'),
 };
 
 // Pre-defined variables
@@ -284,6 +292,45 @@ for(var i = 0; i < 80; i ++){
     Urchins.push(new Urchin(random(width), random(-1500, 500)));
 }
 
+var Block = function(x, y){
+    this.x = x; this.y = y;
+    this.w = 40; this.h = 40;
+};
+Block.prototype.draw = function() {
+    rectMode(CORNER);
+    noStroke();
+    fill(0);
+    rect(this.x, this.y, this.w, this.h);
+};
+var blockMap = [
+    '...............',
+    '.             .',
+    '. ..  ......',
+    '.  . .   . .  .',
+    '.   .  .. . ...',
+    '.      .     ..',
+    '.   .......  ..',
+    '.      .     ..',
+    '. .    .. .  ...',
+    '. .           .',
+    '. .           .',
+    '.    ........ .',
+    '. ....        .',
+    '.             .',
+    '.....      ....',
+];
+var blocks = [];
+var loadMap = function(which){
+    for(var i in which){
+        for(var j in which[i]){
+            if(which[i][j] === '.'){
+                blocks.push(new Block(j * 40, i * 40));
+            }
+        }
+    }
+};
+loadMap(blockMap);
+
 var Player = function(){
     this.x = 300;
     this.y = 550;
@@ -308,6 +355,74 @@ Player.prototype.draw = function() {
     }
 };
 player = new Player();
+
+var Player2 = function(){
+    this.x = 300; this.xvel = 0;
+    this.y = 550; this.yvel = 0;
+    this.w = 30;
+    this.h = 40;
+};
+Player2.prototype.draw = function() {
+    Mike(this.x + 15, this.y + 15, 7, false, false);
+    
+    this.xvel = constrain(this.xvel, -3, 3);
+    this.yvel = constrain(this.yvel, -3, 3);
+    
+    if(keys[LEFT]){
+        this.xvel -= 0.5;
+    }
+    if(keys[RIGHT]){
+        this.xvel += 0.5;
+    }
+    if(keys[UP]){
+        this.yvel -= 0.5;
+    }
+    if(keys[DOWN]){
+        this.yvel += 0.5;
+    }
+    
+    if(!keys[LEFT] && !keys[RIGHT]){ 
+        this.xvel /= 1.05; 
+    }
+    if(!keys[UP] && !keys[DOWN]){ 
+        this.yvel /= 1.05; 
+    }
+    if(this.xvel > -0.1 && this.xvel < 0.1){ 
+        this.xvel = 0; 
+    }
+    if(this.yvel > -0.1 && this.yvel < 0.1){ 
+        this.yvel = 0; 
+    }
+    
+    this.x += this.xvel;
+    for(var i = 0; i < blocks.length; i ++){
+        if(rectCollide(this, blocks[i])){
+            if(this.xvel < 0){
+                this.xvel = 0;
+                this.x = blocks[i].x + blocks[i].w;
+            }
+            if(this.xvel > 0){
+                this.xvel = 0;
+                this.x = blocks[i].x - this.w;
+            }
+        }
+    }
+    
+    this.y += this.yvel;
+    for(var i in blocks){
+        if(rectCollide(this, blocks[i])){
+            if(this.yvel < 0){
+                this.yvel = 0;
+                this.y = blocks[i].y + blocks[i].h;
+            }
+            if(this.yvel > 0){
+                this.yvel = 0;
+                this.y = blocks[i].y - this.h;
+            }
+        }
+    }
+};
+var player2 = new Player2();
 
 // Logo
 var Logo = function(){
@@ -525,7 +640,7 @@ Game1.prototype.draw = function() {
         }
     }
     
-    if(frameCount % 30 === 0){
+    if(frameCount % 40 === 0){
         this.time --;
     }
     if(keys[UP]){
@@ -541,6 +656,27 @@ Game1.prototype.draw = function() {
     }
 };
 var game1 = new Game1();
+
+// Game #2 (Hide and Sneak)
+var Game2 = function(){
+    
+};
+Game2.prototype.draw = function() {
+    background(0, 0, 0);
+    
+    noStroke();
+    fill(255, 255, 0, 15);
+    for(var i = 185; i > 0; i -= 20){
+        ellipse(289, 237, i, i);
+    }
+    
+    for(var i = 0; i < blocks.length; ++i){
+        blocks[i].draw();
+    }
+    
+    player2.draw();
+};
+var game2 = new Game2();
 
 draw = function() {
     // Draw those scenes
@@ -661,6 +797,9 @@ draw = function() {
         text('ART', 360, 500);
         
         buttons.start2.draw();
+    }
+    if(scene === 'Game2'){
+        game2.draw();
     }
     
     // Cursor
