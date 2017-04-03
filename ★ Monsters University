@@ -1,11 +1,16 @@
-// color(40, 132, 212)
+/**
+ * Monsters University
+ * Chester Banks
+ * April 12 2017
+ * 
+*/
 
 // Settings
 textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
 // Vital variables
-var scene = 'How3';
+var scene = 'Logo';
 var clicked = false;
 var overButton = false;
 var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
@@ -244,6 +249,7 @@ var buttons = {
     back: new button(80, 520, 90, '<', 'Menu'),
     start: new button(510, 515, 95, '.', 'Game1'),
     start2: new button(510, 515, 95, '.', 'Game2'),
+    start3: new button(510, 515, 95, '.', 'Game3'),
 };
 
 // Pre-defined variables
@@ -749,7 +755,7 @@ Game2.prototype.draw = function() {
     this.light.y = this.y2 + sin(frameCount)*10;
     
     this.y2 ++;
-    if(this.y2 > height){ this.y2 = 0; }
+    if(this.y2 > 550){ this.y2 = -50; }
     
     if(player2.x > 600){
         trans.active = true;
@@ -910,10 +916,9 @@ draw = function() {
         textSize(15);
         text('YOU PLAY AS:', 360, 474);
         textSize(50);
-        text('MIKE', 360, 500);
-        Mike(240, 480, 20, true, true);
+        text('SULLEY', 360, 500);
         
-        buttons.start.draw();
+        buttons.start3.draw();
     }
     
     if(scene === 'Lose'){
