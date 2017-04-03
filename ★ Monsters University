@@ -5,7 +5,7 @@ textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
 // Vital variables
-var scene = 'Game2';
+var scene = 'How2';
 var clicked = false;
 var overButton = false;
 var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
@@ -356,7 +356,7 @@ Block.prototype.draw = function() {
 var blockMap = [
     '...............',
     '.             .',
-    '. ..  ......',
+    '. ..  ....     ',
     '.  . .   . .  .',
     '.   .  .. . ...',
     '.      .     ..',
@@ -368,7 +368,7 @@ var blockMap = [
     '.    ........ .',
     '. ....        .',
     '.             .',
-    '.....      ....',
+    '...............',
 ];
 var blocks = [];
 var loadMap = function(which){
@@ -409,12 +409,12 @@ player = new Player();
 
 var Player2 = function(){
     this.x = 300; this.xvel = 0;
-    this.y = 550; this.yvel = 0;
+    this.y = 500; this.yvel = 0;
     this.w = 30;
     this.h = 30;
 };
 Player2.prototype.draw = function() {
-    Mike(this.x + 15, this.y + 15, 7, false, false);
+    Mike(this.x + 15, this.y, 7, false, false);
     
     this.xvel = constrain(this.xvel, -3, 3);
     this.yvel = constrain(this.yvel, -3, 3);
@@ -714,16 +714,22 @@ var Game2 = function(){
     this.y2 = 0;
 };
 Game2.prototype.draw = function() {
-    background(255, 255, 255);
-    
-    noStroke();
-    fill(255, 255, 0, 15);
-    for(var i = 185; i > 0; i -= 20){
-        ellipse(this.light.x, this.light.y, i, i);
-    }
+    background(22, 41, 54);
     
     for(var i = 0; i < blocks.length; ++i){
         blocks[i].draw();
+    }
+    
+    noStroke();
+    fill(255, 255, 0, 15);
+    noFill();
+    stroke(0);
+    strokeWeight(731);
+    ellipse(this.light.x, this.light.y, 940, 940);
+    strokeWeight(10.3);
+    for(var i = 200; i > 0; i -= 20){
+        stroke(0, 0, 0, i*1.5);
+        ellipse(this.light.x, this.light.y,  i, i);
     }
     
     player2.draw();
