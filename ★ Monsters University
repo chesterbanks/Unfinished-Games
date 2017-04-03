@@ -5,7 +5,7 @@ textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
 // Vital variables
-var scene = 'Logo';
+var scene = 'How3';
 var clicked = false;
 var overButton = false;
 var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
@@ -750,6 +750,11 @@ Game2.prototype.draw = function() {
     
     this.y2 ++;
     if(this.y2 > height){ this.y2 = 0; }
+    
+    if(player2.x > 600){
+        trans.active = true;
+        trans.nextScene = 'How3';
+    }
 };
 var game2 = new Game2();
 
@@ -876,6 +881,41 @@ draw = function() {
     if(scene === 'Game2'){
         game2.draw();
     }
+    if(scene === 'How3'){
+        background(25);
+        
+        fill(40, 132, 212);
+        textSize(30);
+        text('F I N A L   R O U N D', 300, 55);
+        textSize(45);
+        for(var i = 0; i < 360; i += 30){
+            text('SIMULATED SCARE', 300 + sin(i)*8, 100 + cos(i)*8);
+        }
+        fill(255);
+        for(var i = 0; i < 360; i += 30){
+            text('SIMULATED SCARE', 300 + sin(i)*3, 100 + cos(i)*3);
+        }
+        fill(40, 132, 212);
+        text('SIMULATED SCARE', 300, 100);
+        
+        textSize(15);
+        fill(255);
+        pushStyle();
+        textFont(createFont('Avenir Italic'));
+        text('"Every one of your skills will be put to the test. The Scare Simulator will\nprove who\'s the best."', 300, 150);
+        popStyle();
+        textSize(19);
+        text('You\'ve made it to the final event of the Scare Games. In this event, you will look at the info of the child you are supposed to scare, and then enter his or her bedroom.\n\nOnce in the room, you need to make it to the bed (using the arrow keys) without stepping on any toys, and then choose the right roar based on the info you read earlier.', 50, 50, 500, 500);
+        
+        textSize(15);
+        text('YOU PLAY AS:', 360, 474);
+        textSize(50);
+        text('MIKE', 360, 500);
+        Mike(240, 480, 20, true, true);
+        
+        buttons.start.draw();
+    }
+    
     if(scene === 'Lose'){
         background(25);
         
