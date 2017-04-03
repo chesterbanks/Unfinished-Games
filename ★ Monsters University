@@ -5,7 +5,7 @@ textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
 // Vital variables
-var scene = 'How2';
+var scene = 'Logo';
 var clicked = false;
 var overButton = false;
 var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
@@ -412,6 +412,7 @@ var Player2 = function(){
     this.y = 500; this.yvel = 0;
     this.w = 30;
     this.h = 30;
+    this.sz = 30;
 };
 Player2.prototype.draw = function() {
     Mike(this.x + 15, this.y, 7, false, false);
@@ -701,6 +702,11 @@ Game1.prototype.draw = function() {
         this.finishY -= player.speed;
     }
     
+    if(this.time < 0){
+        trans.nextScene = 'Lose';
+        trans.active = true;
+    }
+    
     if(this.finishY > 500){
         trans.nextScene = 'How2';
         trans.active = true;
@@ -710,7 +716,7 @@ var game1 = new Game1();
 
 // Game #2 (Hide and Sneak)
 var Game2 = function(){
-    this.light = {x: 0, y: 0};
+    this.light = {x: 0, y: 0, sz: 150};
     this.y2 = 0;
 };
 Game2.prototype.draw = function() {
@@ -730,6 +736,11 @@ Game2.prototype.draw = function() {
     for(var i = 200; i > 0; i -= 20){
         stroke(0, 0, 0, i*1.5);
         ellipse(this.light.x, this.light.y,  i, i);
+    }
+    
+    if(circleCollide(this.light, player2)){
+        trans.active = true;
+        trans.nextScene = 'Lose';
     }
     
     player2.draw();
@@ -853,7 +864,7 @@ draw = function() {
         text('"Someone is coming, this could ruin your night; stay hidden, take cover,\nand stay out of sight."', 300, 150);
         popStyle();
         textSize(23);
-        text('The second event of The Scare Games is Hide and Sneak. In this event, you must avoid the referee\'s flashlight and escape to the door of the ΣΚΘ house.\n\nDon\'t get found - remember, your scaring career is on the line!', 50, 50, 500, 500);
+        text('The second event of The Scare Games is Hide and Sneak. In this event, you must avoid the referee\'s flashlight, find the door on the wall, and escape out of the ΣΚΘ house.\n\nDon\'t get found - remember, your scaring career is on the line!', 50, 50, 500, 500);
         
         textSize(15);
         text('YOU PLAY AS:', 360, 474);
@@ -864,6 +875,28 @@ draw = function() {
     }
     if(scene === 'Game2'){
         game2.draw();
+    }
+    if(scene === 'Lose'){
+        background(25);
+        
+        fill(40, 132, 212);
+        textSize(30);
+        text('T R A G E D Y', 300, 55);
+        textSize(45);
+        for(var i = 0; i < 360; i += 30){
+            text('YOU LOST :(', 300 + sin(i)*8, 100 + cos(i)*8);
+        }
+        fill(255);
+        for(var i = 0; i < 360; i += 30){
+            text('YOU LOST :(', 300 + sin(i)*3, 100 + cos(i)*3);
+        }
+        fill(40, 132, 212);
+        text('YOU LOST :(', 300, 100);
+        
+        textSize(15);
+        fill(255);
+        textSize(23);
+        text('Oh no! You\'ve been eliminated from the Scare Games! Now you will be expelled from Monsters University. You\'ll never get to work at a scare company now!\n\n...Right?', 50, 50, 500, 500);
     }
     
     // Cursor
