@@ -10,7 +10,7 @@ textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
 // Vital variables
-var scene = 'How1';
+var scene = 'Card';
 var clicked = false;
 var overButton = false;
 var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
@@ -258,7 +258,7 @@ var buttons = {
     back: new button(80, 520, 90, '<', 'Menu'),
     start: new button(510, 515, 95, '.', 'Game1'),
     start2: new button(510, 515, 95, '.', 'Game2'),
-    start3: new button(510, 515, 95, '.', 'Game3'),
+    start3: new button(510, 515, 95, '.', 'Card'),
     restart1: new button(510, 515, 95, '#', 'Game1'),
     restart2: new button(510, 515, 95, '#', 'Game2'),
     restart3: new button(510, 515, 95, '#', 'Game3'),
@@ -776,6 +776,17 @@ Game2.prototype.draw = function() {
 };
 var game2 = new Game2();
 
+var locations = ['Kansas', 'California', 'Tokyo', 'New York City', 'London', 'Iowa', 'Maine', 'Florida', 'Alabama', 'Connecticut', 'Moscow'], enjoys = ['Drawing', 'Hiking', 'Biking', 'Coding', 'Reading', 'Painting', 'Soccer', 'Baseball', 'Basketball', 'Football', 'Writing', 'Music'], fears = ['Thunder', 'Snakes', 'Spiders', 'Zombies'], first = ['Griffin', 'Nolan', 'Andrew', 'Isaac', 'Isaiah', 'Jaxon', 'Jack', 'Legolas', 'Asher', 'Blaze', 'Jake', 'Noah', 'Jacob', 'Gavin', 'Caden', 'Chester', 'Seth'], last = ['Jones', 'Adams', 'Owensby', 'Banks', 'Moffitt', 'Gustoff', 'Blomquist', 'King', 'Trump', 'Allen', 'Whittaker', 'Blackgaard', 'Meltsner', 'Kendall', 'Rathbone'], hairs = [color(115, 54, 25), color(31, 31, 31), color(231, 240, 163), color(201, 109, 60)];
+var kid = {
+    loc: locations[floor(random(locations.length))],
+    fname: first[floor(random(first.length))],
+    lname: last[floor(random(last.length))],
+    fear: fears[floor(random(fears.length))],
+    enjoy: enjoys[floor(random(enjoys.length))],
+    age: floor(random(4, 10)),
+    hair: hairs[floor(random(hairs.length))],
+};
+
 draw = function() {
     // Draw those scenes
     if(scene === 'Logo'){
@@ -931,6 +942,47 @@ draw = function() {
         text('SULLEY', 360, 500);
         
         buttons.start3.draw();
+    }
+    if(scene === 'Card'){
+        background(26);
+        pushStyle();
+        pushMatrix();
+        rectMode(CENTER);
+        translate(width / 2, height / 2);
+        rotate(10);
+        
+        stroke(218, 219, 184);
+        strokeWeight(10);
+        fill(253, 255, 209);
+        rect(0, 0, 300, 400, 20);
+        strokeWeight(2);
+        fill(71, 71, 71);
+        rect(0, -90, 250, 170);
+        
+        noStroke();
+        fill(81, 216, 237);
+        arc(0, -6, 150, 40, -180, 0);
+        fill(237, 188, 128);
+        ellipse(0, -80, 100, 120);
+        fill(25);
+        ellipse(-20, -65, 20, 20);
+        ellipse(20, -65, 20, 20);
+        fill(kid.hair);
+        ellipse(-20, -83, 20, 5);
+        ellipse(20, -83, 20, 5);
+        arc(0, -103, 93, 80, -180, 0);
+        arc(12, -104, 93, 22, 0, 180);
+        noFill();
+        stroke(26);
+        strokeWeight(2);
+        arc(0, -45, 30, 20, 49, 180);
+        
+        textAlign(LEFT, TOP);
+        textSize(22);
+        fill(0, 0, 0, 150);
+        text('Name: ' + kid.fname + ' ' + kid.lname + '\nAge: ' + kid.age + '\nLocation: ' + kid.loc + '\nEnjoys: ' + kid.enjoy + '\nBiggest fear: ' + kid.fear, -120, 0, 250, 350);
+        popMatrix();
+        popStyle();
     }
     
     if(scene === 'Lose1'){
