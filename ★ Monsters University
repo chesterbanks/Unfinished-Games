@@ -10,7 +10,7 @@ textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
 // Vital variables
-var scene = 'Card';
+var scene = 'Logo';
 var clicked = false;
 var overButton = false;
 var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
@@ -259,6 +259,7 @@ var buttons = {
     start: new button(510, 515, 95, '.', 'Game1'),
     start2: new button(510, 515, 95, '.', 'Game2'),
     start3: new button(510, 515, 95, '.', 'Card'),
+    start4: new button(510, 515, 95, '.', 'Game3'),
     restart1: new button(510, 515, 95, '#', 'Game1'),
     restart2: new button(510, 515, 95, '#', 'Game2'),
     restart3: new button(510, 515, 95, '#', 'Game3'),
@@ -271,6 +272,7 @@ var player;
 var Urchin = function(x, y){
     this.x = x;
     this.y = y;
+    this.originalY = y;
     this.sz = 30;
     
     this.i = random(255);
@@ -377,7 +379,7 @@ var blockMap = [
     '. ..  ....     ',
     '.  . .   . .  .',
     '.   .  .. . ...',
-    '.      .     ..',
+    '..     .     ..',
     '.   .......  ..',
     '.      .     ..',
     '. .    .. .  ...',
@@ -983,6 +985,8 @@ draw = function() {
         text('Name: ' + kid.fname + ' ' + kid.lname + '\nAge: ' + kid.age + '\nLocation: ' + kid.loc + '\nEnjoys: ' + kid.enjoy + '\nBiggest fear: ' + kid.fear, -120, 0, 250, 350);
         popMatrix();
         popStyle();
+        
+        buttons.start4.draw();
     }
     
     if(scene === 'Lose1'){
@@ -990,6 +994,11 @@ draw = function() {
         player.speed = 5;
         game1.time = 20;
         game1.finishY = -1500;
+        for(var i = 0; i < Urchins.length; i ++){
+            if(Urchins[i].y !== Urchins[i].originalY){
+                Urchins[i].y = Urchins[i].originalY;
+            }
+        }
         
         background(25);
         
