@@ -10,7 +10,7 @@ textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
 // Vital variables
-var scene = 'Logo';
+var scene = 'Game3';
 var clicked = false;
 var overButton = false;
 var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
@@ -402,6 +402,71 @@ var loadMap = function(which){
 };
 loadMap(blockMap);
 
+var Toy = function(){
+    this.xs = [random(0, 200), random(400, 600)];
+    this.y = random(200, 600);
+    if(this.y < 450){
+        this.x = random(600);
+    } else {
+        this.x = this.xs[floor(random(this.xs.length))];
+    }
+    this.sz = 30;
+    this.r = random(-30, 30);
+    
+    this.type = floor(random(3));
+};
+Toy.prototype.draw = function() {
+    pushStyle();
+    rectMode(CENTER);
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(this.r);
+    noStroke();
+    switch(this.type){
+        case 0:
+            fill(207, 219, 37);
+            ellipse(0, 0, this.sz, this.sz);
+            fill(37, 133, 217);
+            rect(0, 0, this.sz, this.sz / 4);
+            ellipse(0, 5, this.sz, this.sz/ 5);
+            fill(207, 219, 37);
+            ellipse(0, -3, this.sz, this.sz/ 5);
+        break;
+        case 1:
+            fill(181, 34, 34);
+            rect(0, 5, this.sz, this.sz);
+            fill(214, 51, 51);
+            rect(0, 0, this.sz, this.sz);
+            fill(181, 34, 34);
+            rect(-6, -5, this.sz / 3, this.sz / 3, 5);
+            rect(6, -5, this.sz / 3, this.sz / 3, 5);
+            rect(6, 7, this.sz / 3, this.sz / 3, 5);
+            rect(-6, 7, this.sz / 3, this.sz / 3, 5);
+            fill(214, 51, 51);
+            rect(-6, -8, this.sz / 4, this.sz / 3, 5);
+            rect(6, -8, this.sz / 4, this.sz / 3, 5);
+            rect(6, 4, this.sz / 4, this.sz / 3, 5);
+            rect(-6, 4, this.sz / 4, this.sz / 3, 5);
+        break;
+        case 2:
+            fill(133, 133, 133);
+            for(var i = 0; i < 360; i += 90){
+                pushMatrix();
+                rotate(i);
+                triangle(-5, 0, 5, 0, 0, -15);
+                ellipse(0, -15, 5, 5);
+                popMatrix();
+            }
+        break;
+    }
+    popMatrix();
+    popStyle();
+};
+var Toys = [];
+for(var i = 0; i < 20; i ++){
+    Toys.push(new Toy());
+}
+
 var Player = function(){
     this.x = 300;
     this.y = 550;
@@ -427,15 +492,16 @@ Player.prototype.draw = function() {
 };
 player = new Player();
 
-var Player2 = function(){
+var Player2 = function(type){
     this.x = 300; this.xvel = 0;
     this.y = 500; this.yvel = 0;
     this.w = 30;
     this.h = 30;
-    this.sz = 30;
+    this.type = type;
+    this.sz = this.type === 2 ? 30 : 60;
 };
 Player2.prototype.draw = function() {
-    Mike(this.x + 15, this.y, 7, false, false);
+    Mike(this.x + 15, this.y, this.sz/4.29, false, false);
     
     this.xvel = constrain(this.xvel, -3, 3);
     this.yvel = constrain(this.yvel, -3, 3);
@@ -467,34 +533,40 @@ Player2.prototype.draw = function() {
     }
     
     this.x += this.xvel;
-    for(var i = 0; i < blocks.length; i ++){
-        if(rectCollide(this, blocks[i])){
-            if(this.xvel < 0){
-                this.xvel = 0;
-                this.x = blocks[i].x + blocks[i].w;
-            }
-            if(this.xvel > 0){
-                this.xvel = 0;
-                this.x = blocks[i].x - this.w;
+    if(this.type === 2){
+        for(var i = 0; i < blocks.length; i ++){
+            if(rectCollide(this, blocks[i])){
+                if(this.xvel < 0){
+                    this.xvel = 0;
+                    this.x = blocks[i].x + blocks[i].w;
+                }
+                if(this.xvel > 0){
+                    this.xvel = 0;
+                    this.x = blocks[i].x - this.w;
+                }
             }
         }
     }
     
     this.y += this.yvel;
-    for(var i in blocks){
-        if(rectCollide(this, blocks[i])){
-            if(this.yvel < 0){
-                this.yvel = 0;
-                this.y = blocks[i].y + blocks[i].h;
-            }
-            if(this.yvel > 0){
-                this.yvel = 0;
-                this.y = blocks[i].y - this.h;
+    
+    if(this.type === 2){
+        for(var i in blocks){
+            if(rectCollide(this, blocks[i])){
+                if(this.yvel < 0){
+                    this.yvel = 0;
+                    this.y = blocks[i].y + blocks[i].h;
+                }
+                if(this.yvel > 0){
+                    this.yvel = 0;
+                    this.y = blocks[i].y - this.h;
+                }
             }
         }
     }
 };
-var player2 = new Player2();
+var player2 = new Player2(2);
+var player3 = new Player2(3);
 
 // Logo
 var Logo = function(){
@@ -789,8 +861,24 @@ var kid = {
     hair: hairs[floor(random(hairs.length))],
 };
 
+// Game #3 (Simulated Scare)
+var Game3 = function(){
+    this.light = {x: 0, y: 0, sz: 150};
+    this.y2 = 0;
+};
+Game3.prototype.draw = function() {
+    background(22, 41, 54);
+    
+    player3.draw();
+    
+    for(var i = 0; i < Toys.length; i ++){
+        Toys[i].draw();
+    }
+};
+var game3 = new Game3();
+
 draw = function() {
-    // Draw those scenes
+    // Draw them scenes
     if(scene === 'Logo'){
         logo.draw();
     }
@@ -839,6 +927,7 @@ draw = function() {
         
         buttons.back.draw();
     }
+    
     if(scene === 'How1'){
         background(25);
         
@@ -987,6 +1076,9 @@ draw = function() {
         popStyle();
         
         buttons.start4.draw();
+    }
+    if(scene === 'Game3'){
+        game3.draw();
     }
     
     if(scene === 'Lose1'){
