@@ -1,4 +1,4 @@
-/**
+ /**
  * Monsters University
  * Chester Banks
  * April 12 2017
@@ -1237,6 +1237,15 @@ draw = function() {
             textSize(15);
             text(roars[i].name, 0, 0);
             popStyle();
+            popMatrix();
+            
+            pushMatrix();
+            translate(70, 225);
+            rotate(-90);
+            textSize(18);
+            fill(255);
+            text('A P P R O A C H E S', 0, 0);
+            text('R O A R S', -240, 0);
             popMatrix();
         }
         
