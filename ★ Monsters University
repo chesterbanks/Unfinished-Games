@@ -3,6 +3,10 @@
  * Chester Banks
  * April 12 2017
  * 
+ * This is a three-stage game based on the great Disney Pixar movie Monsters University. It's the first game of a series called The Disney Game Medley.
+ * 
+ * Subscribe to me here! khanacademy.org/cs/sub/4790207744704512
+ * Thanks to my subscribers! This program's lucky subscriber is USERNAME! Check out his profile here: khanacademy.org/profile/username
 */
 
 // Settings
@@ -10,7 +14,7 @@ textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
 // Vital variables
-var scene = 'Game3';
+var scene = 'Choose';
 var clicked = false;
 var overButton = false;
 var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
@@ -165,6 +169,18 @@ var Mike = function(x, y, sz, hat, front){
     popMatrix();
     popStyle();
 };
+var text2 = function(txt, x, y){
+    fill(40, 132, 212);
+    for(var i = 0; i < 360; i += 30){
+        text(txt, x + sin(i)*8, y + cos(i)*8);
+    }
+    fill(255);
+    for(var i = 0; i < 360; i += 30){
+        text(txt, x + sin(i)*3, y + cos(i)*3);
+    }
+    fill(40, 132, 212);
+    text(txt, x, y);
+};
 
 // Collision functions
 var circleCollide = function(object1, object2){
@@ -259,6 +275,7 @@ var buttons = {
     start: new button(510, 515, 95, '.', 'Game1'),
     start2: new button(510, 515, 95, '.', 'Game2'),
     start3: new button(510, 515, 95, '.', 'Card'),
+    choose: new button(510, 515, 95, '.', 'Choose'),
     start4: new button(510, 515, 95, '.', 'Game3'),
     restart1: new button(510, 515, 95, '#', 'Game1'),
     restart2: new button(510, 515, 95, '#', 'Game2'),
@@ -860,6 +877,20 @@ var kid = {
     age: floor(random(4, 10)),
     hair: hairs[floor(random(hairs.length))],
 };
+var approaches = [
+    { name: 'The Slither', selected: false },
+    { name: 'The Creep', selected: false },
+    { name: 'The Zombie Walk', selected: false },
+    { name: 'The Rush', selected: false },
+];
+var roars = [
+    { name: 'The Creepy Purr', selected: false },
+    { name: 'The Hiss', selected: false },
+    { name: 'The Undead Roar', selected: false },
+    { name: 'The All-out Roar', selected: false },
+];
+var approach = null;
+var roar = null;
 
 // Game #3 (Simulated Scare)
 var Game3 = function(){
@@ -1139,7 +1170,77 @@ draw = function() {
         popMatrix();
         popStyle();
         
-        buttons.start4.draw();
+        buttons.choose.draw();
+    }
+    if(scene === 'Choose'){
+        background(26);
+        
+        textSize(40);
+        text2('Select your approach & roar.', 300, 80);
+        
+        for(var i = 0; i < approaches.length; i ++){
+            approaches[i].x = 300;
+            approaches[i].y = 150 + i * 50;
+            
+            pushMatrix();
+            pushStyle();
+            rectMode(CENTER);
+            translate(approaches[i].x, approaches[i].y);
+            fill(40, 132, 212);
+            if(mouseX > approaches[i].x - 200 && mouseX < approaches[i].x + 200 && mouseY > approaches[i].y - 20 && mouseY < approaches[i].y + 20){
+                fill(32, 97, 150);
+                overButton = true;
+                if(clicked){
+                    approach = i;
+                }
+            }
+            if(approach === i){
+                fill(255, 255, 255);
+            }
+            noStroke();
+            rect(0, 0, 400, 40, 10);
+            fill(255);
+            if(approach === i){
+                fill(40, 132, 212);
+            }
+            textSize(15);
+            text(approaches[i].name, 0, 0);
+            popStyle();
+            popMatrix();
+        }
+        
+        for(var i = 0; i < approaches.length; i ++){
+            roars[i].x = 300;
+            roars[i].y = 390 + i * 50;
+            
+            pushMatrix();
+            pushStyle();
+            rectMode(CENTER);
+            translate(roars[i].x, roars[i].y);
+            fill(40, 132, 212);
+            if(mouseX > roars[i].x - 200 && mouseX < roars[i].x + 200 && mouseY > roars[i].y - 20 && mouseY < roars[i].y + 20){
+                fill(32, 97, 150);
+                overButton = true;
+                if(clicked){
+                   roar = i;
+                }
+            }
+            if(roar === i){
+                fill(255, 255, 255);
+            }
+            noStroke();
+            rect(0, 0, 400, 40, 10);
+            fill(255);
+            if(roar === i){
+                fill(40, 132, 212);
+            }
+            textSize(15);
+            text(roars[i].name, 0, 0);
+            popStyle();
+            popMatrix();
+        }
+        
+        buttons.start4.draw(); 
     }
     if(scene === 'Game3'){
         game3.draw();
