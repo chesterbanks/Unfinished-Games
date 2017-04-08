@@ -1,4 +1,4 @@
- /**
+/**
  * Monsters University
  * Chester Banks
  * April 12 2017
@@ -168,6 +168,125 @@ var Mike = function(x, y, sz, hat, front){
     }
     popMatrix();
     popStyle();
+};
+var Sulley = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz / 50);
+    
+    // Shadow
+    noStroke();
+    fill(0, 0, 0, 30);
+    ellipse(0, 415, 370, 50);
+    
+    // Legs & Arms
+    noFill();
+    strokeWeight(78);
+    stroke(79, 160, 166);
+    arc(0, 194, 380, 350, -180, 0);
+    arc(0, 372, 143, 370, -180, 0);
+    stroke(0, 0, 0, 30);
+    arc(0, 372, 143, 370, -146, -33);
+    
+    // Feet
+    strokeWeight(50);
+    stroke(79, 160, 166);
+    arc(-36, 330, 380, 132, 99, 115);
+    arc(36, 330, 380, 132, 64, 83);
+    
+    // Hands
+    strokeWeight(20);
+    stroke(79, 160, 166);
+    arc(193, 232, 69, 87, -183, 9);
+    arc(193, 248, 24, 68, -226, 17);
+    arc(-193, 232, 69, 87, -196, 9);
+    arc(-193, 248, 24, 84, -198, 36);
+    
+    // Body
+    noStroke();
+    fill(79, 160, 166);
+    rect(-100, 20, 200, 280, 100);
+    
+    // Spots
+    noStroke();
+    fill(162, 106, 217, 100);
+    arc(-124, 16, 50, 50, -25, 138); // starting spots of left arm...
+    arc(-187, 74, 70, 70, -50, 123);
+    arc(-138, 133, 60, 60, 110, 311);
+    ellipse(-200, 173, 40, 40);
+    arc(124, 16, 50, 50, 30, 208); // starting spots on right arm...
+    arc(204, 104, 50, 50, 71, 244);
+    arc(118, 112, 80, 80, 229, 411);
+    ellipse(200, 173, 40, 40);
+    arc(-98, 175, 30, 70, -90, 90); // starting spots on body...
+    arc(100, 142, 40, 70, -270, -90);
+    arc(-107, 335, 50, 50, -80, 98); // starting spots on legs...
+    arc(105, 310, 50, 60, 85, 257);
+    arc(70, 376, 50, 30, -200, -23);
+    arc(-70, 376, 60, 20, -164, 23);
+    
+    // Horns
+    noFill();
+    stroke(156, 136, 109);
+    strokeWeight(5);
+    arc(0, -116, 120, 40, 0, 180);
+    arc(0, -118, 120, 17, 0, 180);
+    arc(0, -117, 120, 30, 22, 166);
+    arc(0, -119, 120, 30, 34, 166);
+    
+    // Head shadow
+    pushMatrix();
+    translate(0, 10);
+    noStroke();
+    fill(0, 0, 0, 50);
+    beginShape();
+    curveVertex(-40,-110); curveVertex(40,-110); curveVertex(70,10); curveVertex(0,60); curveVertex(-70,10); curveVertex(-40,-110); curveVertex(40,-110); curveVertex(70,10);
+    endShape();
+    popMatrix();
+    
+    // Head
+    noStroke();
+    fill(79, 160, 166);
+    beginShape();
+    curveVertex(-40,-110); curveVertex(40,-110); curveVertex(70,10); curveVertex(0,60); curveVertex(-70,10); curveVertex(-40,-110); curveVertex(40,-110); curveVertex(70,10);
+    endShape();
+    
+    // Eyes
+    noStroke();
+    fill(245);
+    ellipse(-22, -55, 30, 30);
+    ellipse(29, -55, 30, 30);
+    fill(45);
+    ellipse(-20, -53, 20, 20);
+    ellipse(27, -53, 20, 20);
+    
+    // Nose
+    fill(41, 101, 105);
+    pushMatrix();
+    translate(0, 21);
+    beginShape();
+    curveVertex(0,-60); curveVertex(20,-40); curveVertex(0,-33); curveVertex(-20,-40); curveVertex(0,-60); curveVertex(20,-40); curveVertex(0,-33); 
+    endShape();
+    fill(0, 0, 0, 100);
+    arc(8, -35, 10, 10, -181, -10);
+    arc(-8, -35, 10, 10, -164, 3);
+    popMatrix();
+    
+    // Eyebrows
+    strokeCap(SQUARE);
+    strokeWeight(20);
+    stroke(62, 121, 125);
+    line(10, -81, 50, -79);
+    line(0, -70, -50, -80);
+    
+    // Mouth
+    fill(255);
+    strokeWeight(5);
+    stroke(58, 128, 128);
+    arc(0, 0, 80, 30, 47, 180);
+    noFill();
+    arc(7, -1, 93, 8, 47, 180);
+    popMatrix();
 };
 var text2 = function(txt, x, y){
     fill(40, 132, 212);
@@ -484,6 +603,7 @@ for(var i = 0; i < 20; i ++){
     Toys.push(new Toy());
 }
 
+// Player for game 1
 var Player = function(){
     this.x = 300;
     this.y = 550;
@@ -509,6 +629,7 @@ Player.prototype.draw = function() {
 };
 player = new Player();
 
+// Player for games 2 & 3
 var Player2 = function(type){
     this.x = 300; this.xvel = 0;
     this.y = 500; this.yvel = 0;
@@ -578,6 +699,15 @@ Player2.prototype.draw = function() {
                     this.yvel = 0;
                     this.y = blocks[i].y - this.h;
                 }
+            }
+        }
+    }
+    
+    if(this.type === 3){
+        for(var i = 0; i < Toys.length; ++i){
+            if(circleCollide(this, Toys[i])){
+                trans.active = true;
+                trans.nextScene = 'Lose3';
             }
         }
     }
@@ -1121,6 +1251,8 @@ draw = function() {
         popStyle();
         textSize(19);
         text('You\'ve made it to the final event of the Scare Games. In this event, you will look at the info of the child you are supposed to scare, and then enter his or her bedroom.\n\nOnce in the room, you need to make it to the bed (using the arrow keys) without stepping on any toys, and then choose the right roar based on the info you read earlier.', 50, 50, 500, 500);
+        
+        Sulley(210, 451, 15);
         
         textSize(15);
         text('YOU PLAY AS:', 360, 474);
