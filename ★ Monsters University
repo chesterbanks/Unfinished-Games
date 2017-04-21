@@ -17,7 +17,7 @@ textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
 // Vital variables
-var scene = 'Logo';
+var scene = 'Menu';
 var clicked = false;
 var overButton = false;
 var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
@@ -300,6 +300,287 @@ var Sulley = function(x, y, sz, front){
     }
     popMatrix();
 };
+var Art = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz / 50);
+    
+    // Shadow
+    noStroke();
+    fill(0, 0, 0, 30);
+    ellipse(-150, 120, 100, 30);
+    ellipse(150, 120, 100, 30);
+    
+    // Arms
+    strokeCap(ROUND);
+    noFill();
+    stroke(157, 109, 186);
+    strokeWeight(24);
+    arc(0, 32, 150, 122, -209, 35);
+    strokeWeight(35);
+    point(-65, 70);
+    point(65, 70);
+    
+    // Body
+    strokeCap(SQUARE);
+    noFill();
+    stroke(157, 109, 186);
+    strokeWeight(80);
+    arc(0, 100, 300, 300, -180, 0);
+    stroke(143, 68, 189, 100);
+    arc(0, 100, 300, 300, -30, -10);
+    arc(0, 100, 300, 300, -49, -39);
+    arc(0, 100, 300, 300, -145, -128);
+    arc(0, 100, 300, 300, -167, -153);
+    
+    // Head
+    noStroke();
+    fill(157, 109, 186);
+    ellipse(0, -45, 200, 119);
+    ellipse(-150, 100, 100, 50);
+    ellipse(150, 100, 100, 50);
+    
+    // Eyes
+    fill(255);
+    ellipse(30, -58, 40, 35);
+    ellipse(-30, -58, 40, 35);
+    fill(25);
+    ellipse(26, -56, 25, 25);
+    ellipse(-26, -57,  25, 25);
+    fill(145, 103, 171);
+    arc(30, -63, 52, 29, -148, 27);
+    arc(-30, -63, 52, 29, -208, -29);
+    
+    // Eyebrows
+    strokeWeight(10);
+    stroke(132, 93, 158);
+    noFill();
+    strokeCap(ROUND);
+    arc(30, -58, 60, 73, -136, -37);
+    arc(-30, -58, 60, 68, -147, -45);
+    
+    // Mouth
+    strokeWeight(10);
+    stroke(132, 93, 158);
+    fill(255);
+    beginShape();
+    curveVertex(0, -214);
+    curveVertex(54, -36);
+    curveVertex(-55, -28);
+    curveVertex(-7, 1);
+    curveVertex(56, -34);
+    endShape(CLOSE);
+    popMatrix();
+};
+var Squishy = function(x, y, sz){
+    pushStyle();
+    pushMatrix();
+    translate(x, y);
+    scale(sz / 50);
+    
+    // Shadow
+    noStroke();
+    fill(0, 0, 0, 15);
+    ellipse(8, 177, 190, 30);
+    
+    // Body
+    fill(237, 221, 218);
+    beginShape();
+    curveVertex(-20,-100); curveVertex(60,-80); curveVertex(88,18); curveVertex(87,88); curveVertex(76,126); curveVertex(73,174); curveVertex(27,177); curveVertex(23,145); curveVertex(0,148); curveVertex(-13,180); curveVertex(-67,168); curveVertex(-55,121); curveVertex(-70,100); curveVertex(-90,0); curveVertex(-20,-100); curveVertex(60,-80); curveVertex(88,18);
+    endShape();
+    
+    noFill();
+    strokeWeight(50);
+    stroke(61, 212, 51);
+    bezier(-129, 43, -143, 80, 0, 65, 147, 28);
+    
+    // Shirt
+    fill(63, 176, 55);
+    noStroke();
+    beginShape();
+    curveVertex(60,-38); 
+    curveVertex(88,28); 
+    curveVertex(82,107); 
+    curveVertex(-65,109); 
+    curveVertex(-88,15); 
+    curveVertex(89,18); 
+    endShape(CLOSE);
+    fill(61, 212, 51);
+    beginShape();
+    curveVertex(60,22); 
+    curveVertex(88,28); 
+    curveVertex(82,95); 
+    curveVertex(-65,97); 
+    curveVertex(-88,28); 
+    curveVertex(89,29); 
+    endShape(CLOSE);
+    
+    // Letters
+    textFont(createFont('Times New Roman Bold'), 50);
+    textAlign(CENTER, CENTER);
+    fill(0, 0, 0, 20);
+    for(var i = 0; i < 360; i += 30){
+        text('OK', sin(i) * 8, 60 + cos(i)*8);
+    }
+    fill(214, 214, 0);
+    for(var i = 0; i < 360; i += 60){
+        text('OK', sin(i) * 3, 60 + cos(i)*3);
+    }
+    fill(255, 255, 0);
+    text('OK', 0, 60);
+    
+    // Eyes
+    noStroke();
+    translate(8, -24);
+    pushMatrix();
+    fill(245);
+    ellipse(9, -8, 30, 30);
+    ellipse(-29, -9, 30, 30);
+    ellipse(29, -38, 30, 30);
+    ellipse(-47, -41, 30, 30);
+    ellipse(-11, -44, 30, 30);
+    fill(25);
+    ellipse(5, -7, 15, 15);
+    ellipse(-26, -8, 15, 15);
+    ellipse(26, -36, 15, 15);
+    ellipse(-43, -36, 15, 15);
+    ellipse(-11, -40, 15, 15);
+    popMatrix();
+    
+    // Mouth
+    noFill();
+    stroke(255, 255, 255, 100);
+    strokeWeight(26);
+    point(46, 2);
+    stroke(0, 0, 0, 50);
+    strokeWeight(6);
+    arc(-4, 2, 100, 50, 0, 142);
+    
+    // Hat
+    noStroke();
+    fill(47, 125, 41);
+    arc(27, -96, 20, 20, -160, 20);
+    fill(63, 176, 55);
+    arc(11, -63, 100, 80, -160, 20);
+    fill(54, 138, 48);
+    arc(-16, -69, 75, 47, -160, 20);
+    
+    // Hair
+    fill(145, 88, 48);
+    arc(-19, -70, 62, 30, -143, 30);
+    
+    popMatrix();
+    popStyle();
+};
+var TerryTentacle = function(x1, y1, x2, y2, x3, y3, x4, y4){
+    noFill();
+    strokeWeight(35);
+    stroke(227, 195, 54);
+    bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+    strokeWeight(24);
+    stroke(237, 208, 61);
+    bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+}, TerryAndTerri = function(x, y, sz){
+    pushStyle();
+    rectMode(CENTER);
+    pushMatrix();
+    translate(x, y);
+    scale(sz / 50);
+    
+    // Shadow
+    noStroke();
+    fill(0, 0, 0, 15);
+    ellipse(0, 220, 220, 30);
+    
+    // Horns
+    noFill();
+    strokeWeight(20);
+    stroke(232, 219, 144);
+    arc(45, -198, 126, 49, -180, 0);
+    noStroke();
+    fill(232, 219, 144);
+    triangle(-81, -205, -46, -209, -74, -235);
+    
+    // Tentacles?
+    noFill();
+    TerryTentacle(-42, 87, -57, 86, 6, 227, -109, 179);
+    TerryTentacle(-12, 87, -51, 86, 6, 280, -78, 175);
+    TerryTentacle(7, 87, 15, 86, 6, 280, -13, 175);
+    TerryTentacle(12, 87, 51, 86, 6, 280, 78, 175);
+    TerryTentacle(42, 87, 57, 86, 6, 227, 109, 179);
+    
+    // Heads
+    noFill();
+    stroke(219, 188, 33);
+    strokeWeight(27);
+    line(45, -185, 30, -100);
+    line(-43, -136, -30, -85);
+    strokeWeight(9);
+    stroke(0, 0, 0, 30);
+    arc(45, -185, 100, 100, 88, 113);
+    arc(-55, -170, 90, 90, 55, 88);
+    noStroke();
+    fill(219, 188, 33);
+    ellipse(45, -185, 100, 100);
+    ellipse(-55, -170, 90, 90);
+    
+    // Eyes
+    noStroke();
+    fill(255, 255, 255);
+    ellipse(45, -194, 50, 50);
+    ellipse(-55, -176, 50, 50);
+    fill(25);
+    ellipse(42, -190, 30, 30);
+    ellipse(-51, -172, 30, 30);
+    
+    // Mouths
+    noFill();
+    stroke(0, 0, 0, 50);
+    strokeWeight(5);
+    arc(45, -170, 50, 30, 11, 132);
+    arc(-50, -154, 50, 30, 60, 158);
+    
+    // Shirt
+    noStroke();
+    fill(61, 212, 51);
+    rect(0, -8, 106, 203, 34);
+    fill(55, 179, 46);
+    rect(-30, -98, 50, 30, 30);
+    rect(30, -106, 50, 30, 30);
+    rect(0, 85, 104, 23, 30);
+    
+    // Sleeves
+    strokeWeight(30);
+    noFill();
+    stroke(61, 212, 51);
+    bezier(-50, -64, -100, -50, -118, -50, -135, -81);
+    bezier(50, -64, 100, -50, 97, -3, 135, -58);
+    bezier(-27, 18, -47, 9, -82, 66, -110, 2);
+    bezier(27, 18, 47, 9, 82, 66, 152, -3);
+    strokeWeight(40);
+    stroke(219, 188, 33);
+    point(-135, -81);
+    point(-118, -10);
+    point(140, -81);
+    point(161, -10);
+    
+    // Letters
+    // Letters
+    textFont(createFont('Times New Roman Bold'), 50);
+    textAlign(CENTER, CENTER);
+    fill(0, 0, 0, 10);
+    for(var i = 0; i < 360; i += 30){
+        text('O\nK', sin(i) * 8, -10 + cos(i)*8);
+    }
+    fill(214, 214, 0);
+    for(var i = 0; i < 360; i += 60){
+        text('O\nK', sin(i) * 3, -13 + cos(i)*3);
+    }
+    fill(255, 255, 0);
+    text('O\nK', 0, -13);
+    popMatrix();
+    popStyle();
+};
 var text2 = function(txt, x, y){
     fill(40, 132, 212);
     for(var i = 0; i < 360; i += 30){
@@ -312,10 +593,81 @@ var text2 = function(txt, x, y){
     fill(40, 132, 212);
     text(txt, x, y);
 };
+var logoCB = function(x, y, sz, c){
+    var logoColors = [
+        color(19, 87, 138),
+        color(87, 156, 217),
+        color(56, 179, 255),
+        color(69, 192, 230),
+    ];
+    if(c === 'Grayyy'){
+        logoColors = [
+            color(138, 138, 138),
+            color(74, 74, 74),
+            color(128, 128, 128),
+            color(97, 97, 97),
+        ];
+    }
+    
+    pushMatrix();
+    translate(x, y);
+    scale(sz);
+    noFill();
+    strokeCap(SQUARE);
+    stroke(0, 0, 0, 30);
+    strokeWeight(30);
+    arc(10, 20, 160, 160, 30, 330);
+    strokeWeight(11);
+    // Outer layer
+    stroke(logoColors[0]);
+    arc(0, 0, 200, 200, -85, -30);
+    arc(0, 0, 180, 180, -75, -30);
+    arc(0, 0, 200, 200, -300, -240);
+    arc(0, 0, 180, 180, -285, -250);
+    stroke(logoColors[1]);
+    arc(0, 0, 200, 200, -125, -85);
+    arc(0, 0, 180, 180, -115, -75);
+    arc(0, 0, 200, 200, -200, -160);
+    arc(0, 0, 180, 180, -200, -150);
+    stroke(logoColors[2]);
+    arc(0, 0, 200, 200, -160, -125);
+    arc(0, 0, 180, 180, -150, -116);
+    arc(0, 0, 200, 200, -330, -300);
+    arc(0, 0, 180, 180, -330, -286);
+    stroke(logoColors[3]);
+    arc(0, 0, 200, 200, -240, -200);
+    arc(0, 0, 180, 180, -250, -200);
+    
+    // Inner layer
+    stroke(logoColors[0]);
+    arc(0, 0, 160, 160, -200, -160);
+    arc(0, 0, 140, 140, -200, -150);
+    stroke(logoColors[1]);
+    arc(0, 0, 160, 160, -300, -240);
+    arc(0, 0, 140, 140, -285, -250);
+    stroke(logoColors[2]);
+    arc(0, 0, 160, 160, -240, -200);
+    arc(0, 0, 140, 140, -250, -200);
+    arc(0, 0, 160, 160, -125, -85);
+    arc(0, 0, 140, 140, -115, -75);
+    stroke(logoColors[3]);
+    arc(0, 0, 160, 160, -85, -30);
+    arc(0, 0, 140, 140, -75, -30);
+    arc(0, 0, 160, 160, -330, -300);
+    arc(0, 0, 140, 140, -330, -286);
+    arc(0, 0, 160, 160, -160, -125);
+    arc(0, 0, 140, 140, -150, -116);
+    
+    stroke(0, 0, 0, 50);
+    strokeWeight(20);
+    arc(0, 0, 150, 150, 30, 330);
+    popMatrix();
+};
 
 // Images (obviously)
 var images = {
     'bg': function(){
+        pushStyle();
         background(26);
         noFill();
         strokeWeight(15);
@@ -337,6 +689,128 @@ var images = {
         textSize(27);
         text('T H E   S C A R E   G A M E S', 300, 320);
         
+        pushMatrix();
+        translate(25, -30);
+        pushMatrix();
+        translate(167, 120);
+        scale(0.3);
+        noFill();
+        
+        stroke(100, 100, 100);
+        // D
+        strokeWeight(12);
+        line(-145, -60, -145, 27);
+        strokeWeight(5);
+        bezier(-179, -8, -220, -20, -95, -51, -94, -17);
+        bezier(-179, -8, -220, -22, -95, -42, -97, -17);
+        bezier(-179, -8, -220, -22, -95, -39, -95, -12);
+        bezier(-186, -15, -110, 85, 9, -19, -101, -76);
+        bezier(-186, -15, -110, 84, -2, -19, -101, -76);
+        bezier(-186, -15, -110, 77, -11, -18, -101, -76);
+        bezier(-203, -97, -187, -104, -138, -101, -101, -76);
+        
+        // I
+        strokeWeight(12);
+        line(-35, -34, -35, 11);
+        strokeWeight(5);
+        bezier(-18, -86, -93, -25, 39, -75, -16, -87);
+        bezier(-18, -86, -93, -25, 34, -63, -16, -87);
+        bezier(-27, -88, -53, -92, -53, -60, -47, -61);
+        bezier(-32, -85, -53, -86, -53, -51, -47, -61);
+        bezier(-18, -86, -39, -80, -45, -58, -46, -54);
+        
+        // S
+        strokeWeight(6);
+        bezier(29, -37, -70, -23, 22, -23, 17, -17);
+        bezier(34, -34, -70, -23, 22, -23, 17, -17);
+        bezier(30, -32, -78, -22, 22, -21, 17, -17);
+        bezier(-4, 4, 5, 11, 51, 0, 17, -18);
+        bezier(-4, 8, 5, 14, 51, 10, 17, -18);
+        bezier(-4, 8, 5, 14, 51, 10, 17, -18);
+        bezier(-4, 4, 0, 13, -42, -16, 10, -6);
+        bezier(-4, 7, 0, 13, -42, -16, 10, -6);
+        bezier(-7, 3, 13, 13, -42, -16, 10, -3);
+        
+        // N
+        strokeWeight(3);
+        bezier(50, -35, 45, -21, 40, 8, 44, 14);
+        bezier(53, -35, 47, -21, 52, 8, 48, 14);
+        bezier(53, -35, 51, -21, 75, 8, 77, 9);
+        bezier(53, -35, 67, -21, 93, 17, 77, 9);
+        bezier(76, -47, 86, -30, 93, -5, 82, 9);
+        bezier(73, -49, 80, -30, 84, -5, 76, -3);
+        strokeWeight(6);
+        bezier(50, -34, 47, -21, 46, 8, 46, 13);
+        bezier(52, -21, 67, -21, 79, 17, 78, 4);
+        bezier(53, -26, 48, -49, 85, 17, 74, 2);
+        bezier(78, -40, 80, -30, 84, -5, 80, -3);
+        bezier(77, -40, 86, -30, 88, -5, 83, 2);
+        
+        // E
+        strokeWeight(3);
+        bezier(97, -38, 108, -35, 137, -52, 141, -35);
+        bezier(99, -33, 108, -31, 137, -26, 141, -35);
+        bezier(99, -33, 95, -34, 97, -34, 97, -38);
+        bezier(132, 3, 123, 19, 97, 22, 97, 9);
+        bezier(130, 1, 123, 2, 97, 6, 97, 10);
+        bezier(105, -29, 94, 2, 94, 6, 97, 9);
+        strokeWeight(7);
+        bezier(97, -35, 124, -35, 137, -44, 135, -35);
+        bezier(103, -35, 108, -37, 135, -31, 136, -35);
+        bezier(127, 4, 123, 2, 97, 15, 103, 11);
+        bezier(127, 4, 123, 14, 97, 15, 103, 11);
+        strokeWeight(10);
+        line(101, -13, 129, -15);
+        bezier(111, -29, 98, 2, 100, 6, 107, 9);
+        
+        // Y
+        strokeWeight(3);
+        bezier(161, -38, 109, 27, 204, 31, 196, -28);
+        bezier(161, -38, 125, 19, 204, 17, 193, -28);
+        bezier(192, -28, 170, -25, 153, 17, 146, 63);
+        bezier(188, -37, 158, -25, 141, 17, 136, 55);
+        strokeWeight(5);
+        bezier(145, 63, 149, 75, 131, 53, 136, 57);
+        strokeWeight(6);
+        bezier(151, -20, 133, 20, 199, 27, 196, -28);
+        bezier(151, -20, 133, 13, 199, 27, 196, -28);
+        strokeWeight(7);
+        bezier(191, -33, 161, -25, 147, 17, 140, 55);
+        bezier(194, -33, 166, -25, 147, 17, 143, 60);
+        
+        // Slash
+        strokeWeight(3);
+        bezier(-121, 84, -75, 48, -19, 17, 191, 37);
+        bezier(-111, 101, -88, 68, -19, 29, 191, 37);
+        strokeWeight(10);
+        bezier(-114, 93, -88, 68, -19, 29, 139, 35);
+        bezier(-114, 85, -88, 68, -50, 29, 139, 35);
+        strokeWeight(22);
+        point(-115, 92);
+        popMatrix();
+        
+        textAlign(CENTER, CENTER);
+        textFont(createFont('Times New Roman'), 39);
+        fill(100, 100, 100);
+        text('PIXAR', 319, 113);
+        
+        noStroke();
+        ellipse(245, 115, 10, 10);
+        ellipse(390, 115, 10, 10);
+        
+        logoCB(430, 115, 0.2, 'Grayyy');
+        popMatrix();
+        popStyle();
+        
+        return get(0, 0, width, height);
+    },
+    'ok': function(){
+        Sulley(208, 504, 10, true);
+        Mike(300, 547, 10, true, true);
+        Squishy(469, 544, 10);
+        TerryAndTerri(387, 543, 9);
+        Art(108, 556, 12);
+    
         return get(0, 0, width, height);
     },
 };
@@ -427,9 +901,9 @@ button.prototype.draw = function() {
     }
 };
 var buttons = {
-    play: new button(300, 450, 130, '.', 'How1'),
-    how: new button(140, 450, 90, '?', 'How'),
-    about: new button(460, 450, 90, '-', 'About'),
+    play: new button(300, 430, 120, '.', 'How1'),
+    how: new button(140, 430, 80, '?', 'How'),
+    about: new button(460, 430, 80, '-', 'About'),
     back: new button(80, 520, 90, '<', 'Menu'),
     start: new button(510, 515, 95, '.', 'Game1'),
     start2: new button(510, 515, 95, '.', 'Game2'),
@@ -920,6 +1394,8 @@ var logo = new Logo();
 var Menu = function(){
     this.y1 = 300;
     this.y2 = 400;
+    this.trans = 255;
+    this.x = 600;
 };
 Menu.prototype.draw = function() {
     background(26);
@@ -945,7 +1421,12 @@ Menu.prototype.draw = function() {
         text('T H E   S C A R E   G A M E S', 300, 320 - this.y2);
     } else {
         image(images.bg, 0, 0);
+        noStroke();
+        fill(26, 26, 26, this.trans);
+        rect(300, 90, 600, 80);
     }
+    
+    image(images.ok, -this.x, 0);
     
     pushMatrix();
     translate(0, this.y2);
@@ -957,6 +1438,12 @@ Menu.prototype.draw = function() {
     this.y1 /= 1.1;
     if(this.y1 < 50){
         this.y2 /= 1.1;
+    }
+    if(this.y2 < 50){
+        this.x /= 1.1;
+    }
+    if(this.x < 0.2){
+        this.trans /= 1.1;
     }
 };
 var menu = new Menu();
