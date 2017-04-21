@@ -7,7 +7,10 @@
  * 
  * Subscribe to me here! khanacademy.org/cs/sub/4790207744704512
  * Thanks to my subscribers! This program's lucky subscriber is USERNAME! Check out his profile here: khanacademy.org/profile/username
+ * 
 */
+
+// It's both PotatOS03 and Legolas's brother's birthdays! Happy birthday, guys! :D
 
 // Settings
 textAlign(CENTER, CENTER);
@@ -169,7 +172,7 @@ var Mike = function(x, y, sz, hat, front){
     popMatrix();
     popStyle();
 };
-var Sulley = function(x, y, sz){
+var Sulley = function(x, y, sz, front){
     pushMatrix();
     translate(x, y);
     scale(sz / 50);
@@ -186,7 +189,7 @@ var Sulley = function(x, y, sz){
     arc(0, 194, 380, 350, -180, 0);
     arc(0, 372, 143, 370, -180, 0);
     stroke(0, 0, 0, 30);
-    arc(0, 372, 143, 370, -146, -33);
+    if(front){arc(0, 372, 143, 370, -146, -33);}
     
     // Feet
     strokeWeight(50);
@@ -224,6 +227,11 @@ var Sulley = function(x, y, sz){
     arc(105, 310, 50, 60, 85, 257);
     arc(70, 376, 50, 30, -200, -23);
     arc(-70, 376, 60, 20, -164, 23);
+    if(!front){
+        ellipse(0, 86, 70, 70);
+        ellipse(-20, 168, 70, 70);
+        ellipse(30, 256, 70, 70);
+    }
     
     // Horns
     noFill();
@@ -234,15 +242,17 @@ var Sulley = function(x, y, sz){
     arc(0, -117, 120, 30, 22, 166);
     arc(0, -119, 120, 30, 34, 166);
     
-    // Head shadow
-    pushMatrix();
-    translate(0, 10);
-    noStroke();
-    fill(0, 0, 0, 50);
-    beginShape();
-    curveVertex(-40,-110); curveVertex(40,-110); curveVertex(70,10); curveVertex(0,60); curveVertex(-70,10); curveVertex(-40,-110); curveVertex(40,-110); curveVertex(70,10);
-    endShape();
-    popMatrix();
+    if(front){
+        // Head shadow
+        pushMatrix();
+        translate(0, 10);
+        noStroke();
+        fill(0, 0, 0, 50);
+        beginShape();
+        curveVertex(-40,-110); curveVertex(40,-110); curveVertex(70,10); curveVertex(0,60); curveVertex(-70,10); curveVertex(-40,-110); curveVertex(40,-110); curveVertex(70,10);
+        endShape();
+        popMatrix();
+    }
     
     // Head
     noStroke();
@@ -251,41 +261,43 @@ var Sulley = function(x, y, sz){
     curveVertex(-40,-110); curveVertex(40,-110); curveVertex(70,10); curveVertex(0,60); curveVertex(-70,10); curveVertex(-40,-110); curveVertex(40,-110); curveVertex(70,10);
     endShape();
     
-    // Eyes
-    noStroke();
-    fill(245);
-    ellipse(-22, -55, 30, 30);
-    ellipse(29, -55, 30, 30);
-    fill(45);
-    ellipse(-20, -53, 20, 20);
-    ellipse(27, -53, 20, 20);
-    
-    // Nose
-    fill(41, 101, 105);
-    pushMatrix();
-    translate(0, 21);
-    beginShape();
-    curveVertex(0,-60); curveVertex(20,-40); curveVertex(0,-33); curveVertex(-20,-40); curveVertex(0,-60); curveVertex(20,-40); curveVertex(0,-33); 
-    endShape();
-    fill(0, 0, 0, 100);
-    arc(8, -35, 10, 10, -181, -10);
-    arc(-8, -35, 10, 10, -164, 3);
-    popMatrix();
-    
-    // Eyebrows
-    strokeCap(SQUARE);
-    strokeWeight(20);
-    stroke(62, 121, 125);
-    line(10, -81, 50, -79);
-    line(0, -70, -50, -80);
-    
-    // Mouth
-    fill(255);
-    strokeWeight(5);
-    stroke(58, 128, 128);
-    arc(0, 0, 80, 30, 47, 180);
-    noFill();
-    arc(7, -1, 93, 8, 47, 180);
+    if(front){
+        // Eyes
+        noStroke();
+        fill(245);
+        ellipse(-22, -55, 30, 30);
+        ellipse(29, -55, 30, 30);
+        fill(45);
+        ellipse(-20, -53, 20, 20);
+        ellipse(27, -53, 20, 20);
+        
+        // Nose
+        fill(41, 101, 105);
+        pushMatrix();
+        translate(0, 21);
+        beginShape();
+        curveVertex(0,-60); curveVertex(20,-40); curveVertex(0,-33); curveVertex(-20,-40); curveVertex(0,-60); curveVertex(20,-40); curveVertex(0,-33); 
+        endShape();
+        fill(0, 0, 0, 100);
+        arc(8, -35, 10, 10, -181, -10);
+        arc(-8, -35, 10, 10, -164, 3);
+        popMatrix();
+        
+        // Eyebrows
+        strokeCap(SQUARE);
+        strokeWeight(20);
+        stroke(62, 121, 125);
+        line(10, -81, 50, -79);
+        line(0, -70, -50, -80);
+        
+        // Mouth
+        fill(255);
+        strokeWeight(5);
+        stroke(58, 128, 128);
+        arc(0, 0, 80, 30, 47, 180);
+        noFill();
+        arc(7, -1, 93, 8, 47, 180);
+    }
     popMatrix();
 };
 var text2 = function(txt, x, y){
@@ -299,6 +311,34 @@ var text2 = function(txt, x, y){
     }
     fill(40, 132, 212);
     text(txt, x, y);
+};
+
+// Images (obviously)
+var images = {
+    'bg': function(){
+        background(26);
+        noFill();
+        strokeWeight(15);
+        stroke(40, 132, 212);
+        mu(15 + width / 2, (height / 3));
+        strokeWeight(5);
+        stroke(255);
+        fill(40, 132, 212);
+        mu(15 + width / 2, (height / 3));
+        
+        rectMode(CENTER);
+        noStroke();
+        fill(40, 132, 212);
+        rect(300, 320, 420, 70);
+        noFill();
+        stroke(255);
+        rect(300, 320, 400, 50);
+        fill(255);
+        textSize(27);
+        text('T H E   S C A R E   G A M E S', 300, 320);
+        
+        return get(0, 0, width, height);
+    },
 };
 
 // Collision functions
@@ -403,6 +443,7 @@ var buttons = {
 
 // Pre-defined variables
 var player;
+var game3;
 
 // Game objects
 var Urchin = function(x, y){
@@ -550,6 +591,7 @@ var Toy = function(){
     this.r = random(-30, 30);
     
     this.type = floor(random(3));
+    this.collidable = true;
 };
 Toy.prototype.draw = function() {
     pushStyle();
@@ -636,10 +678,14 @@ var Player2 = function(type){
     this.w = 30;
     this.h = 30;
     this.type = type;
-    this.sz = this.type === 2 ? 30 : 60;
+    this.sz = this.type === 2 ? 30 : 75;
 };
 Player2.prototype.draw = function() {
-    Mike(this.x + 15, this.y, this.sz/4.29, false, false);
+    if(this.type === 2){
+        Mike(this.x + 15, this.y, this.sz/4.29, false, false);
+    } else {
+        Sulley(this.x + 0, this.y - 50, 12, false);
+    }
     
     this.xvel = constrain(this.xvel, -3, 3);
     this.yvel = constrain(this.yvel, -3, 3);
@@ -705,10 +751,14 @@ Player2.prototype.draw = function() {
     
     if(this.type === 3){
         for(var i = 0; i < Toys.length; ++i){
-            if(circleCollide(this, Toys[i])){
-                trans.active = true;
-                trans.nextScene = 'Lose3';
+            if(circleCollide(this, Toys[i]) && Toys[i].collidable){
+                game3.score -= 2;
+                Toys[i].collidable = false;
             }
+        }
+        if(this.y < 270 && this.y > 50 && ((this.x > 90 && this.x < 230) || (this.x > 370 && this.x < 510))){
+            trans.active = true;
+            trans.nextScene = 'ScareScore';
         }
     }
 };
@@ -873,25 +923,29 @@ var Menu = function(){
 };
 Menu.prototype.draw = function() {
     background(26);
-    noFill();
-    strokeWeight(15);
-    stroke(40, 132, 212);
-    mu(15 + width / 2, (height / 3) - this.y1);
-    strokeWeight(5);
-    stroke(255);
-    fill(40, 132, 212);
-    mu(15 + width / 2, (height / 3) - this.y1);
-    
-    rectMode(CENTER);
-    noStroke();
-    fill(40, 132, 212);
-    rect(300, 320 - this.y2, 420, 70);
-    noFill();
-    stroke(255);
-    rect(300, 320 - this.y2, 400, 50);
-    fill(255);
-    textSize(27);
-    text('T H E   S C A R E   G A M E S', 300, 320 - this.y2);
+    if(this.y2 > 0.1){
+        noFill();
+        strokeWeight(15);
+        stroke(40, 132, 212);
+        mu(15 + width / 2, (height / 3) - this.y1);
+        strokeWeight(5);
+        stroke(255);
+        fill(40, 132, 212);
+        mu(15 + width / 2, (height / 3) - this.y1);
+        
+        rectMode(CENTER);
+        noStroke();
+        fill(40, 132, 212);
+        rect(300, 320 - this.y2, 420, 70);
+        noFill();
+        stroke(255);
+        rect(300, 320 - this.y2, 400, 50);
+        fill(255);
+        textSize(27);
+        text('T H E   S C A R E   G A M E S', 300, 320 - this.y2);
+    } else {
+        image(images.bg, 0, 0);
+    }
     
     pushMatrix();
     translate(0, this.y2);
@@ -1010,7 +1064,7 @@ var kid = {
 var approaches = [
     { name: 'The Slither', selected: false },
     { name: 'The Creep', selected: false },
-    { name: 'The Zombie Walk', selected: false },
+    { name: 'The Stagger', selected: false },
     { name: 'The Rush', selected: false },
 ];
 var roars = [
@@ -1026,6 +1080,7 @@ var roar = null;
 var Game3 = function(){
     this.light = {x: 0, y: 0, sz: 150};
     this.y2 = 0;
+    this.score = 10;
 };
 Game3.prototype.draw = function() {
     background(22, 41, 54);
@@ -1100,9 +1155,18 @@ Game3.prototype.draw = function() {
     
     player3.draw();
 };
-var game3 = new Game3();
+game3 = new Game3();
 
+// The classic draw function!
 draw = function() {
+    // Load those images
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
     // Draw them scenes
     if(scene === 'Logo'){
         logo.draw();
@@ -1385,6 +1449,9 @@ draw = function() {
     }
     if(scene === 'Game3'){
         game3.draw();
+    }
+    if(scene === 'ScareScore'){
+        
     }
     
     if(scene === 'Lose1'){
