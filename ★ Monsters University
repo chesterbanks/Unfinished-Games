@@ -2,12 +2,34 @@
  * Monsters University
  * Chester Banks
  * April 12 2017
- * 
+ 
+ > ABOUT:
  * This is a three-stage game based on the great Disney Pixar movie Monsters University. It's the first game of a series called The Disney Game Medley.
- * 
+ 
+ > FAQ
+    Q: What is the Disney Game Medley?
+    A: That is a fancy name for a series of games I'll be making that are based on Disney (and Pixar) movies. This is the first!
+    Q: How long did this take to complete?
+    A: About 2 weeks.
+ 
+ > WHAT'S NEXT:
+ * The Great Khan Adventure
+ * Sketchy
+ * Frozen
+ * Scoop It 2
+ * Inside Our Game
+  
+ > SEE MY NEXT PROJECTS:
  * Subscribe to me here! khanacademy.org/cs/sub/4790207744704512
  * Thanks to my subscribers! This program's lucky subscriber is USERNAME! Check out his profile here: khanacademy.org/profile/username
- * 
+ 
+ > WHAT I NEED TO DO
+    Finish third round
+        - 
+    Make score screen
+    Make win screen
+    Add settings?
+    Add 'games'?
 */
 
 // It's both PotatOS03 and Legolas's brother's birthdays! Happy birthday, guys! :D
@@ -17,11 +39,12 @@ textAlign(CENTER, CENTER);
 textFont(createFont('Avenir'));
 
 // Vital variables
-var scene = 'Menu';
+var scene = 'Win';
 var clicked = false;
 var overButton = false;
 var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
 var keys = []; // ...or arrays :P
+var scoreCounter = 10;
 
 // Processing functions
 mouseClicked = function(){
@@ -815,6 +838,36 @@ var images = {
     },
 };
 
+// Pre-defined variables
+var player;
+var game3;
+
+// Info for game 3
+var locations = ['Kansas', 'California', 'Tokyo', 'New York City', 'London', 'Iowa', 'Maine', 'Florida', 'Alabama', 'Connecticut', 'Moscow'], enjoys = ['Drawing', 'Hiking', 'Biking', 'Coding', 'Reading', 'Painting', 'Soccer', 'Baseball', 'Basketball', 'Football', 'Writing', 'Music'], fears = ['Thunder', 'Snakes', 'Spiders', 'Zombies'], first = ['Griffin', 'Nolan', 'Andrew', 'Isaac', 'Isaiah', 'Jaxon', 'Jack', 'Legolas', 'Asher', 'Blaze', 'Jake', 'Noah', 'Jacob', 'Gavin', 'Caden', 'Chester', 'Seth'], last = ['Jones', 'Adams', 'Owensby', 'Banks', 'Moffitt', 'Gustoff', 'Blomquist', 'King', 'Trump', 'Allen', 'Whittaker', 'Blackgaard', 'Meltsner', 'Kendall', 'Rathbone'], hairs = [color(115, 54, 25), color(31, 31, 31), color(231, 240, 163), color(201, 109, 60)];
+var kid = {
+    loc: locations[floor(random(locations.length))],
+    fname: first[floor(random(first.length))],
+    lname: last[floor(random(last.length))],
+    fear: fears[floor(random(fears.length))],
+    enjoy: enjoys[floor(random(enjoys.length))],
+    age: floor(random(4, 10)),
+    hair: hairs[floor(random(hairs.length))],
+};
+var approaches = [
+    { name: 'The Slither', selected: false },
+    { name: 'The Creep', selected: false },
+    { name: 'The Stagger', selected: false },
+    { name: 'The Rush', selected: false },
+];
+var roars = [
+    { name: 'The Creepy Purr', selected: false },
+    { name: 'The Hiss', selected: false },
+    { name: 'The Undead Roar', selected: false },
+    { name: 'The All-out Roar', selected: false },
+];
+var approach = null;
+var roar = null;
+
 // Collision functions
 var circleCollide = function(object1, object2){
     return (dist(object1.x, object1.y, object2.x, object2.y) <= (object1.sz / 2) + (object2.sz / 2));
@@ -856,6 +909,13 @@ button.prototype.draw = function() {
         ellipse(this.x, this.y, this.sz, this.sz);
         overButton = true;
         if(clicked){
+            if(scene === 'Choose'){
+                for(var i in roars){
+                    if(roars[i].selected && roar === i){
+                        
+                    }
+                }
+            }
             trans.active = true;
             trans.nextScene = this.next;
         }
@@ -914,10 +974,6 @@ var buttons = {
     restart2: new button(510, 515, 95, '#', 'Game2'),
     restart3: new button(510, 515, 95, '#', 'Game3'),
 };
-
-// Pre-defined variables
-var player;
-var game3;
 
 // Game objects
 var Urchin = function(x, y){
@@ -1030,7 +1086,7 @@ var blockMap = [
     '. ..  ....     ',
     '.  . .   . .  .',
     '.   .  .. . ...',
-    '..     .     ..',
+    '. .    .     ..',
     '.   .......  ..',
     '.      .     ..',
     '. .    .. .  ...',
@@ -1156,7 +1212,10 @@ var Player2 = function(type){
 };
 Player2.prototype.draw = function() {
     if(this.type === 2){
-        Mike(this.x + 15, this.y, this.sz/4.29, false, false);
+        //Mike(this.x + 15, this.y, this.sz/4.29, false, false);
+        //fill(255);
+        //rect(this.x, this.y, this.w, this.h);
+        Art(this.x + 15, this.y + 15, this.sz / 4.28);
     } else {
         Sulley(this.x + 0, this.y - 50, 12, false);
     }
@@ -1538,31 +1597,6 @@ Game2.prototype.draw = function() {
 };
 var game2 = new Game2();
 
-var locations = ['Kansas', 'California', 'Tokyo', 'New York City', 'London', 'Iowa', 'Maine', 'Florida', 'Alabama', 'Connecticut', 'Moscow'], enjoys = ['Drawing', 'Hiking', 'Biking', 'Coding', 'Reading', 'Painting', 'Soccer', 'Baseball', 'Basketball', 'Football', 'Writing', 'Music'], fears = ['Thunder', 'Snakes', 'Spiders', 'Zombies'], first = ['Griffin', 'Nolan', 'Andrew', 'Isaac', 'Isaiah', 'Jaxon', 'Jack', 'Legolas', 'Asher', 'Blaze', 'Jake', 'Noah', 'Jacob', 'Gavin', 'Caden', 'Chester', 'Seth'], last = ['Jones', 'Adams', 'Owensby', 'Banks', 'Moffitt', 'Gustoff', 'Blomquist', 'King', 'Trump', 'Allen', 'Whittaker', 'Blackgaard', 'Meltsner', 'Kendall', 'Rathbone'], hairs = [color(115, 54, 25), color(31, 31, 31), color(231, 240, 163), color(201, 109, 60)];
-var kid = {
-    loc: locations[floor(random(locations.length))],
-    fname: first[floor(random(first.length))],
-    lname: last[floor(random(last.length))],
-    fear: fears[floor(random(fears.length))],
-    enjoy: enjoys[floor(random(enjoys.length))],
-    age: floor(random(4, 10)),
-    hair: hairs[floor(random(hairs.length))],
-};
-var approaches = [
-    { name: 'The Slither', selected: false },
-    { name: 'The Creep', selected: false },
-    { name: 'The Stagger', selected: false },
-    { name: 'The Rush', selected: false },
-];
-var roars = [
-    { name: 'The Creepy Purr', selected: false },
-    { name: 'The Hiss', selected: false },
-    { name: 'The Undead Roar', selected: false },
-    { name: 'The All-out Roar', selected: false },
-];
-var approach = null;
-var roar = null;
-
 // Game #3 (Simulated Scare)
 var Game3 = function(){
     this.light = {x: 0, y: 0, sz: 150};
@@ -1643,6 +1677,70 @@ Game3.prototype.draw = function() {
     player3.draw();
 };
 game3 = new Game3();
+
+// Fireworks for the win screen!
+var firework = function(x, y, sz, rainbow, burstSz, spiral){
+    this.x = x;
+    this.y = y;
+    this.startY = 600;
+    this.burst = false;
+    this.trans = -100;
+    this.burstX = 0;
+    this.deleted = false;
+    
+    this.spiral = spiral;
+    this.burstSz = burstSz;
+    this.rainbow = rainbow;
+    this.sz = sz;
+    this.colo = random(45, 110);
+};
+var fireworks = [];
+firework.prototype.draw = function() {
+    colorMode(HSB);
+    if(!this.deleted){
+        if(!this.burst){
+            noStroke();
+            if(this.rainbow === 0){
+                    fill(frameCount*10 % 255, 255, 255);
+                } else {
+                    fill(this.colo, 255, 255);
+                }
+            ellipse(this.x, this.startY, this.sz, this.sz);
+            this.x += sin(frameCount*10);
+            if(this.startY > this.y){
+                this.startY -= 5;
+            } else {
+                this.burst = true;
+            }
+        } else {
+            colorMode(HSB);
+            pushMatrix();
+            translate(this.x, this.y);
+            if(this.spiral === 1){
+                rotate(frameCount*2);
+            }
+            for(var i = 0; i < 360; i+= 15){
+                if(this.rainbow === 0){
+                    fill(frameCount*10 % 255, 255, 255);
+                } else {
+                    fill(this.colo, 255, 255);
+                }
+                rotate(i);
+                ellipse(this.burstX, 0, this.sz, this.sz);
+                fill(25, 46, 42, this.trans);
+                ellipse(this.burstX, 0, this.sz+1, this.sz+1);
+                rotate(-i);
+            }
+            this.burstX += this.burstSz;
+            this.trans += 7;
+            popMatrix();
+            if(this.trans > 255){
+                this.deleted = true;
+            }
+        }
+    }
+    colorMode(RGB);
+};
 
 // The classic draw function!
 draw = function() {
@@ -1767,6 +1865,9 @@ draw = function() {
         textSize(23);
         text('The second event of The Scare Games is Hide and Sneak. In this event, you must avoid the referee\'s flashlight, find the door on the wall, and escape out of the ΣΚΘ house.\n\nDon\'t get found - remember, your scaring career is on the line!', 50, 50, 500, 500);
         
+        Art(250, 500, 23);
+        
+        fill(255);
         textSize(15);
         text('YOU PLAY AS:', 360, 474);
         textSize(50);
@@ -1803,8 +1904,9 @@ draw = function() {
         textSize(19);
         text('You\'ve made it to the final event of the Scare Games. In this event, you will look at the info of the child you are supposed to scare, and then enter his or her bedroom.\n\nOnce in the room, you need to make it to the bed (using the arrow keys) without stepping on any toys, and then choose the right roar based on the info you read earlier.', 50, 50, 500, 500);
         
-        Sulley(210, 451, 15);
+        Sulley(210, 451, 15, true);
         
+        fill(255);
         textSize(15);
         text('YOU PLAY AS:', 360, 474);
         textSize(50);
@@ -1936,9 +2038,83 @@ draw = function() {
     }
     if(scene === 'Game3'){
         game3.draw();
+        scoreCounter = game3.score;
     }
     if(scene === 'ScareScore'){
+        rectMode(CENTER);
+        background(26);
         
+        noStroke();
+        fill(168, 168, 49);
+        rect(300, 300, 400, 90, 20);
+        fill(199, 199, 54);
+        rect(300, 300, 250, 100, 20);
+        rect(130, 300, 70, 100, 20);
+        rect(470, 300, 70, 100, 20);
+        fill(255, 255, 255, 30);
+        rect(300, 285, 250, 50, 20);
+        rect(130, 285, 70, 50, 20);
+        rect(470, 285, 70, 50, 20);
+        fill(0, 0, 0, 15);
+        rect(300, 335, 250, 20, 20);
+        rect(130, 335, 70, 20, 20);
+        rect(470, 335, 70, 20, 20);
+        
+        fill(150);
+        rect(300, 300, 200, 30, 10);
+        fill(0, 0, 0, 30);
+        rect(300, 300, 190, 20, 10);
+        fill(0, 255, 26);
+        for(var i = 0; i < game3.score - scoreCounter; i ++){
+            rect(219 + (i * 18), 300, 15, 15, 3);
+        }
+        
+        fill(25);
+        textSize(20);
+        text('S C A R E   S C O R E', 300, 268);
+        
+        if(scoreCounter > 1){
+            scoreCounter -= 0.1;
+        }
+        
+        if(scoreCounter < 1.1){
+            trans.active = true;
+            if(game3.score > 5){
+                trans.nextScene = 'Win';
+            } else {
+                trans.nextScene = 'Lose3';
+            }
+        }
+    }
+    if(scene === 'Win'){
+        rectMode(CENTER);
+        noStroke();
+        fill(0, 0, 0, 30);
+        rect(300, 300, 600, 600);
+        
+        colorMode(HSB);
+        for(var i in fireworks){
+            fireworks[i].draw();
+            if (fireworks[i].trans>255){
+                fireworks.splice(i,1);
+            }
+        }
+        if(frameCount % 10 === 5){
+            fireworks.push(new firework(random(0, width), random(0, height), random(15), round(random(0, 10)), random(2, 6), 1));
+        }
+        colorMode(RGB);
+        
+
+        rectMode(CORNER);
+        Mike(400, 440, 30 + sin(frameCount*10), true, true);
+        Sulley(200, 310, 30 + cos(frameCount*10), true, true);
+        
+        fill(255);
+        textSize(40);
+        textLeading(40);
+        text('YOU WON\nTHE SCARE GAMES!', 300, 100);
+        textSize(20);
+        text('Now you can go to a scare company and become\na scarer! And the best part is, you won fair and\nsquare!\n\n...Right?', 300, 250);
     }
     
     if(scene === 'Lose1'){
@@ -2024,7 +2200,7 @@ draw = function() {
         textSize(15);
         fill(255);
         textSize(23);
-        text('Oh no! You\'ve been eliminated from the Scare Games! Now you will be expelled from Monsters University. You\'ll never get to work at a scare company now!\n\n...Right?', 50, 50, 500, 500);
+        text('Oh no! Your score wasn\'t high enough! You\'ve been eliminated from the Scare Games! Now you will be expelled from Monsters University. You\'ll never get to work at a scare company now!\n\n...Right?', 50, 50, 500, 500);
         
         buttons.restart3.draw();
     }
