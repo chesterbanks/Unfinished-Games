@@ -11,27 +11,27 @@
 /*
     TO ADD:
      1. Bomb power
-        FINISH ON SAT
+        FINISH ON THU
      2. Cloak power
-        FINISH ON SAT
+        FINISH ON THU
      3. Logo (more minimal) 
-        FINISH ON SUN
+        FINISH ON THU
      4. Score calculation screen, with bonus coins
-        FINISH ON MON
+        FINISH ON FRI
      5. Transitions
-        FINISH ON MON
+        FINISH ON THU
      6. Shop background?
-        FINISH ON MON
+        FINISH ON THU
      7. Power displays (choose which 5 powers you will use before the game, and then display those)
-        FINISH ON TUE
+        FINISH ON FRI
      8. Lucky subscriber text & easter eggs
-        FINISH ON TUE
+        FINISH ON FRI
      9. Get feedback from fellow programmers
         a) SlingBlade
         b) Planet
         c) AlexT
         d) Isaac Emerald
-        FINISH ON WED
+        FINISH ON FRI
      10. Release
         MON
 */
@@ -481,6 +481,38 @@ Coin.prototype.draw = function() {
 };
 var Coins = [];
 
+var Bomb = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.sz = 30;
+    this.time = 5.99;
+};
+Bomb.prototype.draw = function() {
+    // Bomb
+    strokeWeight(1);
+    pushMatrix();
+    translate(this.x, this.y);
+    noStroke();
+    fill(59, 59, 59);
+    ellipse(this.sz / 20, 7, this.sz, this.sz);
+    rect(-this.sz / 6.9, -this.sz / 2.5, this.sz / 2.5, this.sz / 7.14);
+    noFill();
+    stroke(10, 10, 10);
+    ellipse(0, 5, this.sz, this.sz);
+    rect(-this.sz / 4.6, -this.sz / 2.1, this.sz / 2.5, this.sz / 7.14);
+    arc(-this.sz / 2.1, -this.sz / 2.1, this.sz, this.sz, -26, 0);
+    stroke(255);
+    arc(2, this.sz / 4, this.sz / 1.25, this.sz / 1.25, -180, -120);
+    arc(2, this.sz / 4, this.sz / 1.25, this.sz / 1.25, -115, -103);
+    popMatrix();
+    fill(255);
+    textFont(fonts.small, 20);
+    text(this.time.toFixed(0), this.x + 1, this.y + 5);
+    
+    this.time -= 0.05;
+};
+var Bombs = [new Bomb(300, 300)];
+
 var Power = function(x, y, type){
     this.x = x;
     this.y = y;
@@ -724,6 +756,10 @@ draw = function() {
                 coins ++;
                 Coins.splice(i, 1);
             }
+        }
+        
+        for(var i in Bombs){
+            Bombs[i].draw();
         }
         
         player.draw();
