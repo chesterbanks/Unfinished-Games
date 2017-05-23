@@ -1,0 +1,99 @@
+// Settings
+textAlign(CENTER, CENTER);
+textFont(createFont('Avenir'));
+
+var circleCollide = function(a, b){
+    return (dist(a.x, a.y, b.x, b.y) < (a.w + b.w) / 2);
+};
+
+// Vital variables
+var scene = 'Logo';
+var clicked = false;
+var overButton = false;
+var trans = {sz: 600, active: false, nextScene: 'characters', out: false}; // ...or objects...
+var keys = []; // ...or arrays :P
+
+// Processing functions
+mouseClicked = function(){
+    clicked = true;
+};
+var keyPressed = function(){ keys[keyCode] = true; };
+var keyReleased = function(){ keys[keyCode] = false; };
+
+var Rock = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.sz = 30;
+};
+Rock.prototype.draw = function() {
+    fill(59, 59, 59);
+    ellipse(this.x, this.y, this.sz, this.sz);
+    
+    this.y += 3;
+};
+var Rocks = [
+    new Rock(150, -100),
+    new Rock(250, -300),
+    new Rock(150, -600),
+    new Rock(250, 50),
+];
+
+var Blade = function(x, y, angle){
+    this.far = 50;
+    this.originalX = x;
+    this.originalY = y;
+    this.x = x + sin(angle) * this.far;
+    this.y = y + cos(angle) * this.far;
+    this.sz = 40;
+    this.angle = angle;
+    this.speed = 3;
+};
+Blade.prototype.draw = function() {
+    this.x = this.originalX + sin(this.angle) * this.far;
+    this.y = this.originalY + cos(this.angle) * this.far;
+    
+    noStroke();
+    fill(0);
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(-this.angle - 90);
+    bezier(50, 0, -50, 85, -50, -85, 50, 0);
+    popMatrix();
+    ellipse(this.x, this.y, this.sz, this.sz);
+    strokeWeight(3);
+    stroke(148, 148, 148);
+    ellipse(this.x, this.y, this.sz / 1.3, this.sz / 1.3);
+    fill(255);
+    ellipse(this.x, this.y, this.sz / 3, this.sz / 3);
+    
+    if(keys[RIGHT]){
+        this.angle -= this.speed;
+    }
+    if(keys[LEFT]){
+        this.angle += this.speed;
+    }
+};
+var Blades = [new Blade(200, 300, 0), new Blade(200, 300, 120), new Blade(200, 300, 240)];
+
+draw = function() {
+    background(255);
+    
+    for(var i in Blades){
+        Blades[i].draw();
+    }
+    noStroke();
+    fill(0);
+    ellipse(200, 300, 50, 50);
+    fill(43, 43, 43);
+    ellipse(200, 300, 40, 40);
+    
+    if(frameCount % 30 === 0){
+        //Rocks.push(new Rock());
+    }
+    for(var i = Rocks.length - 1; i >= 0; i --){
+        Rocks[i].draw();
+        if(Rocks[i].y > 450){
+            Rocks.splice(i, 1);
+        }
+    }
+};
