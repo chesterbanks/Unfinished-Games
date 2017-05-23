@@ -1,10 +1,28 @@
+/**
+ * Island Jumper
+ * Chester Banks
+ * May 23 2017
+ * 
+ * This is an old game I decided to finish up and release. The code might look a little worse because of this.
+*/
+
+// FIVE SETTINGS
+/* underwater
+ * beach
+ * city
+ * forest
+ * mountaintop
+ */
+    
 // Jump from island to island
 // Hold down the mouse to charge up your power boots
 // Let go to jump
 // Will you judge the distance correctly?
 
 textAlign(CENTER, CENTER);
-textFont(createFont("HelveticaNeue-UltraLight"));
+textFont(createFont("Shadows Into Light"));
+
+var scene = 'Menu';
 
 var stage = 0;
 var score = 4;
@@ -13,6 +31,98 @@ var completed = false;
 
 var rectCollide = function(a, b) {
     return a.x + a.w > b.x && a.y + a.h > b.y && a.x < b.x + b.w && a.y < b.y + b.h;
+};
+
+var images = {
+    'beachBG': function(){
+        background(109, 187, 232);
+        stroke(151, 204, 232);
+        strokeWeight(50);
+        line(25, 170, 25, 400);
+        strokeWeight(70);
+        line(85, 110, 85, 400);
+        strokeWeight(60);
+        line(150, 170, 150, 400);
+        strokeWeight(80);
+        line(220, 167, 220, 400);
+        strokeWeight(45);
+        line(280, 200, 280, 400);
+        strokeWeight(30);
+        line(317, 222, 317, 400);
+        strokeWeight(67);
+        line(365, 170, 365, 400);
+        
+        pushMatrix();
+        translate(-20, 0);
+        stroke(182, 219, 237);
+        strokeWeight(50);
+        line(25, 215, 25, 400);
+        strokeWeight(70);
+        line(85, 245, 85, 400);
+        strokeWeight(60);
+        line(150, 195, 150, 400);
+        strokeWeight(80);
+        line(220, 212, 220, 400);
+        strokeWeight(45);
+        line(280, 280, 280, 400);
+        strokeWeight(30);
+        line(317, 259, 317, 400);
+        strokeWeight(67);
+        line(365, 292, 365, 400);
+        strokeWeight(67);
+        line(420, 261, 420, 400);
+        popMatrix();
+        
+        strokeWeight(10);
+        stroke(255);
+        line(200, 30, 230, 30);
+        line(50, 130, 90, 130);
+        line(70, 135, 100, 135);
+        line(80, 123, 110, 123);
+        line(280, 150, 320, 150);
+        line(270, 155, 300, 155);
+        line(280, 143, 310, 143);
+        
+        noStroke();
+        fill(235, 216, 134);
+        rect(0, 350, width, 50);
+        bezier(0, 350, 150, 300, 200, 350, 400, 350);
+        
+        for(var i = 0; i < 80; i ++){
+            (fill)(random(255), random(50));
+            rect(random(400), random(350, 400), random(5, 15), random(5), 10);
+        }
+        
+        for(var hi = 0; hi < 5; hi ++){
+            pushMatrix();
+            translate(random(400), random(300, 320));
+            noFill();
+            strokeWeight(7);
+            stroke(0, 0, 0, 20);
+            line(-3, 52, 7, 52);
+            strokeWeight(6);
+            stroke(184, 114, 79);
+            bezier(0, -50, 15, -19, 10, 7, 0, 50);
+            bezier(0, -50, 15, -19, 10, 7, 4, 50);
+            noStroke();
+            for(var i = 0; i < 360; i += 45){
+                pushMatrix();
+                translate(0, -47);
+                scale(1, 0.6);
+                rotate(i);
+                fill(114, 196, 78);
+                arc(24, 0, 50, 22, -180, 0);
+                fill(0, 0, 0, 30);
+                arc(24, 0, 50, 11, -180, 0);
+                popMatrix();
+            }
+            popMatrix();
+        }
+        
+        filter(BLUR, 2);
+        
+        return get(0, 0, width, height);
+    },
 };
 
 var mouse = {
@@ -70,7 +180,7 @@ var player = new Player();
 var Island = function(x, firstPlatform){
     this.x = x;
     this.y = 230;
-    this.w = 30;
+    this.w = 100 - (stage * 15);
     this.h = 170;
     this.xSpeed = -3;
     this.extraX = 300;
@@ -86,7 +196,7 @@ var Island = function(x, firstPlatform){
     }
     this.dirt = [];
     for(var i = 0; i < this.h; i += 15){
-        this.dirt.push({x: random(2.5, 10), y: i + random(-5, 5), w: random(0, 20), h: random(5)});
+        this.dirt.push({x: random(2.5, this.w - 10), y: i + random(-5, 5), w: random(0, 20), h: random(5)});
     }
 };
 var islands = [new Island(50, true), new Island(random(80, width), false)];
@@ -282,9 +392,9 @@ var forestBG = function(){
 };
 var mountainBG = function(){
     background(219, 251, 255);
-    mountain(0, 0, 10);
-    mountain(100, -105, 13);
-    mountain(246, 0, 10);
+    mountain(-102, -280, 18);
+    mountain(74, -241, 17);
+    mountain(246, -194, 16);
     fill(132, 230, 76);
     rect(0, 350, 400, 10);
     fill(118, 207, 29);
@@ -302,39 +412,57 @@ var nightMountainBG = function(){
 };
 
 draw = function() {
-    switch(stage){
-        case 0:
-            waterBG();
-            break;
-        case 1:
-            beachBG();
-            break;
-        case 2:
-            forestBG();
-            break;
-        case 3:
-            mountainBG();
-            break;
-        case 4:
-            nightMountainBG();
-            break;
-    }
-    
-    fill(255, 255, 255, 100);
-    textSize(70);
-    text(score, 200, 200);
-    
-    for(var i in islands){
-        islands[i].draw();
-        if(islands[i].x < -islands[i].w){
-            islands.splice(i, 1);
+    // Load all images in first frame
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
         }
     }
-    player.draw();
     
-    if(score >= 5){
-        stage ++;
-        score = 0;
+    if(scene === 'Menu'){
+        image(images.beachBG, 0, 0);
+        textSize(65);
+        textLeading(60);
+        fill(250);
+        text('ISLAND\nJUMPER', width / 2, height / 2);
+    }
+    if(scene === 'Game'){
+        switch(stage){
+            case 0:
+                waterBG();
+                break;
+            case 1:
+                beachBG();
+                break;
+            case 2:
+                forestBG();
+                break;
+            case 3:
+                mountainBG();
+                break;
+            case 4:
+                nightMountainBG();
+                break;
+        }
+        
+        fill(255, 255, 255, 100);
+        textSize(70);
+        text(score, 200, 200);
+        
+        for(var i in islands){
+            islands[i].draw();
+            if(islands[i].x < -islands[i].w){
+                islands.splice(i, 1);
+            }
+        }
+        player.draw();
+        
+        if(score >= 5){
+            stage ++;
+            score = 0;
+        }
     }
     
     mouse.released = false;
