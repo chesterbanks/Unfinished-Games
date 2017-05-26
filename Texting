@@ -1,11 +1,35 @@
+/**
+ * Texting
+ * Chester Banks
+ * May 29 2017
+ * 
+ * A simple game with a unique twist!
+ * 
+ * Want to see more games like this? Subscribe to me here: khanacademy.org/cs/sub/4790207744704512
+*/
+
 textAlign(CENTER, CENTER);
 textFont(createFont('HelveticaNeue-UltraLight'));
+
+var speed = 1;
 
 var overButton = false;
 var clicked = false;
 mouseClicked = function(){ clicked = true; };
 
-var scene = 'Home';
+var keys = [];
+var keyPressed = function(){ keys[keyCode] = true; };
+var keyReleased = function(){ keys[keyCode] = false; };
+
+// The rectangle collision function
+var rectCollide = function(one, two){
+    return one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h;
+};
+
+var scene = 'Game';
 
 var appButton = function(x, y, sz, name, scene){
     this.x = x;
@@ -69,6 +93,159 @@ var appButtons = {
     creds: new appButton(235, 500, 50, 'creds', 'Creds'),
     chester: new appButton(305, 500, 50, 'chester', 'Chester'),
 };
+
+var block = function(){
+    this.texts = [
+        'Hi',
+        'What\'s up?',
+        'Hello there',
+        'How are you?',
+        'I got new shoes!',
+        'I love KA',
+        'What are u doing today?',
+        'Wait what?',
+        'lol',
+        'xD',
+        'I\'m so awesome!',
+        'Um, okay...',
+        'I\'m going to go skydiving',
+        'Noice!',
+        'Nice!',
+        'ideka',
+        'What are u talking about?',
+        'That is awesome',
+        'Seriously?',
+        'Duuude!',
+        'Really?!?!?!',
+        '*jawdrop*',
+    ];
+    this.text = this.texts[floor(random(this.texts.length))];
+    this.w = this.text.length * 10;
+    this.xs = [70, 330 - this.w];
+    this.x = this.xs[floor(random(this.xs.length))];
+    this.y = 500;
+    this.h = 30;
+    this.trans = 255;
+    this.switchThat = false;
+};
+block.prototype.draw = function() {
+    noStroke();
+    if(this.x > 150){
+        fill(48, 177, 217, 255);
+    } else {
+        fill(46, 219, 90, 255);
+    }
+    rect(this.x, this.y, this.w, this.h, 10);
+    fill(255);
+    textSize(17);
+    text(this.text, this.x + this.w / 2, this.y + this.h / 2);
+    
+    this.y -= speed;
+};
+
+var blox = [];
+
+var Player = function(x, y, w, h){
+    this.x = x; this.originalX = x;
+    this.y = y; this.originalY = y;
+    this.w = w;
+    this.h = h;
+    
+    this.xvel = 0;
+    this.yvel = 0;
+    this.speed = 5;
+    
+    this.slow = false;
+    this.slowTimer = 0;
+    
+    this.jumping = false;
+    
+    this.dir = 'left';
+};
+Player.prototype.applyCollisions = function(xvel, yvel) {
+    for (var i = 0; i < blox.length; i++) {
+        if (!rectCollide(this, blox[i])) { continue; }
+        if (xvel < 0) {
+            this.x = blox[i].x + blox[i].w;
+            this.xvel = 0;
+        }
+        if (xvel > 0) {
+            this.x = blox[i].x - this.w;
+            this.xvel = 0;
+        }
+        if (yvel < 0) {
+            this.y = blox[i].y + blox[i].h;
+            this.yvel = 0;
+        }
+        if (yvel > 0) {
+            this.y = blox[i].y - this.h;
+            this.yvel = 0;
+            this.jumping = false;
+        }
+    }
+    if (this.y >= 500 && this.yvel > 0) {
+        this.jumping = false;
+        this.yvel = 0;
+        this.y = 500;
+    }
+};
+Player.prototype.draw = function() {
+    for(var i in this.particles){
+        this.particles[i].draw();
+        if(this.particles[i].trans < 0){
+            this.particles.splice(i, 1);
+        }
+    }
+    
+    // The actual player
+    noStroke();
+    fill(224, 224, 61);
+    (rect)(this.x, this.y, this.w, this.h, 20);
+    
+    // Player movement
+    if(keys[LEFT] || keys[65]){
+        this.dir = 'left';
+        this.xvel -= 2;
+    }
+    if(keys[RIGHT] || keys[68]){
+        this.dir = 'right';
+        this.xvel += 2;
+    }
+    if(!keys[LEFT] && !keys[RIGHT] && !keys[65] && !keys[68]){
+        this.xvel = 0;
+    }
+    
+    if ((keys[UP] || keys[87]) && !this.jumping) {
+        this.yvel -= 10;
+        this.jumping = true;
+    }
+    if(this.xvel > this.speed){
+        this.xvel = this.speed;
+    }
+    if(this.xvel < -this.speed){
+        this.xvel = -this.speed;
+    }
+    this.jumping = true;
+    this.y += this.yvel;
+    this.applyCollisions(0, this.yvel);
+    this.x += this.xvel;
+    this.applyCollisions(this.xvel, 0);
+    this.yvel += 0.6;
+    
+    if(this.slow){
+        this.speed = 1;
+        this.slowTimer ++;
+    } else {
+        this.speed = 5;
+    }
+    if(this.slowTimer > 160){
+        this.slow = false;
+        this.slowTimer = 0;
+    }
+    
+    this.x = constrain(this.x, 55, 315);
+};
+var player = new Player(200, 200, 30, 30);
 
 draw = function() {
     if(scene === 'Menu'){
@@ -306,6 +483,49 @@ draw = function() {
         if(dist(mouseX, mouseY, 200, 560) < 35 && clicked){
             scene = 'Home';
         }
+    }
+    
+    if(scene === 'Game'){
+        if(frameCount % 70 === 0){
+            blox.push(new block());
+        }
+        
+        background(255, 255, 255);
+        
+        pushStyle();
+        rectMode(CENTER);
+        pushMatrix();
+        translate(width / 2, height / 2);
+        noStroke();
+        fill(31, 31, 31);
+        rect(0, 0, 330, 580, 40);
+        fill(255, 255, 255);
+        rect(0, 0, 290, 460);
+        fill(0, 0, 0);
+        ellipse(0, -265, 10, 10);
+        fill(255, 255, 255, 100);
+        ellipse(0, 260, 35, 35);
+        fill(255, 255, 255, 50);
+        rect(0, -247, 70, 8, 5);
+        noFill();
+        stroke(255, 255, 255, 50);
+        strokeWeight(5);
+        arc(0, 260, 30, 30, -90, 90);
+        stroke(0, 0, 0, 50);
+        arc(0, 260, 30, 30, -268, -101);
+        
+        popMatrix();
+        popStyle();
+        
+        for(var i = blox.length - 1; i >= 0; i --){
+            blox[i].draw();
+            if(blox[i].trans < 0.1){
+                blox.splice(i, 1);
+            }
+        }
+        player.draw();
+        
+        speed += 0.001;
     }
     
     noStroke();
