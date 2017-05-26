@@ -1,0 +1,319 @@
+textAlign(CENTER, CENTER);
+textFont(createFont('HelveticaNeue-UltraLight'));
+
+var overButton = false;
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
+
+var scene = 'Home';
+
+var appButton = function(x, y, sz, name, scene){
+    this.x = x;
+    this.y = y;
+    this.sz = sz;
+    this.name = name;
+    this.scene = scene;
+};
+appButton.prototype.draw = function() {
+    pushStyle();
+    pushMatrix();
+    translate(this.x, this.y);
+    if(mouseX > this.x - (this.sz / 2) && mouseX < this.x + (this.sz / 2) && mouseY > this.y - (this.sz / 2) && mouseY < this.y + (this.sz / 2)){
+        scale(1.1);
+        overButton = true;
+        if(clicked){
+            scene = this.scene;
+        }
+    }
+    noStroke();
+    rectMode(CENTER);
+    if(this.name === 'play'){
+        fill(227, 227, 227);
+    } else if (this.name === 'how'){
+        fill(217, 67, 95);
+    } else if (this.name === 'creds'){
+        fill(69, 193, 199);
+    } else if (this.name === 'chester'){
+        fill(23, 23, 23);
+    }
+    rect(0, 0, this.sz, this.sz, 15);
+    if(this.name === 'play'){
+        fill(52, 166, 207);
+        pushMatrix();
+        translate(-2, 0);
+        scale(0.15);
+        rotate(90);
+        triangle(0, -100, 86, 50, -86, 50); // thx to Aqua
+        popMatrix();
+    } else if (this.name === 'how'){
+        fill(255, 255, 255);
+        textSize(30);
+        text('?', 0, 0);
+    } else if (this.name === 'creds'){
+        fill(69, 193, 199);
+        fill(255, 255, 255);
+        textSize(50);
+        textLeading(10);
+        text('_\n_\n_', 0, -22);
+    } else if (this.name === 'chester'){
+        fill(245, 245, 245);
+        textSize(30);
+        text('C', 0, 0);
+    }
+    popMatrix();
+    popStyle();
+};
+var appButtons = {
+    play: new appButton(165, 500, 50, 'play', 'Game'),
+    how: new appButton(95, 500, 50, 'how', 'How'),
+    creds: new appButton(235, 500, 50, 'creds', 'Creds'),
+    chester: new appButton(305, 500, 50, 'chester', 'Chester'),
+};
+
+draw = function() {
+    if(scene === 'Menu'){
+        background(255, 255, 255);
+        
+        pushStyle();
+        rectMode(CENTER);
+        pushMatrix();
+        translate(width / 2, height / 2);
+        noStroke();
+        fill(31, 31, 31);
+        rect(0, 0, 330, 580, 40);
+        fill(207, 72, 72);
+        rect(0, 0, 290, 460);
+        for(var i = -230; i < 235; i += 10){
+            fill(lerpColor(
+                color(201, 201, 201), color(105, 105, 105), i / 460));
+            rect(0, i, 290, 10);
+        }
+        fill(0, 0, 0);
+        ellipse(0, -265, 10, 10);
+        fill(255, 255, 255, 100);
+        ellipse(0, 260, 35, 35);
+        fill(255, 255, 255, 50);
+        rect(0, -247, 70, 8, 5);
+        noFill();
+        stroke(255, 255, 255, 50);
+        strokeWeight(5);
+        arc(0, 260, 30, 30, -90, 90);
+        stroke(0, 0, 0, 50);
+        arc(0, 260, 30, 30, -268, -101);
+        
+        fill(25);
+        textSize(91);
+        text('texting', 0, -50);
+        textSize(30);
+        text('chester banks', -20, 0);
+        
+        fill(255, 255, 255, 100 + sin(frameCount*5)*100);
+        text('> click to unlock', 0, 170);
+        
+        popMatrix();
+        popStyle();
+        
+        if(clicked){
+            scene = 'Home';
+        }
+    }
+    if(scene === 'Home'){
+        background(255, 255, 255);
+        
+        pushStyle();
+        rectMode(CENTER);
+        pushMatrix();
+        translate(width / 2, height / 2);
+        noStroke();
+        fill(31, 31, 31);
+        rect(0, 0, 330, 580, 40);
+        fill(207, 72, 72);
+        rect(0, 0, 290, 460);
+        for(var i = -230; i < 235; i += 10){
+            fill(lerpColor(
+                color(55, 128, 179), color(1, 13, 26), i / 460));
+            rect(0, i, 290, 10);
+        }
+        fill(0, 0, 0);
+        ellipse(0, -265, 10, 10);
+        fill(255, 255, 255, 100);
+        ellipse(0, 260, 35, 35);
+        fill(255, 255, 255, 50);
+        rect(0, -247, 70, 8, 5);
+        noFill();
+        stroke(255, 255, 255, 50);
+        strokeWeight(5);
+        arc(0, 260, 30, 30, -90, 90);
+        stroke(0, 0, 0, 50);
+        arc(0, 260, 30, 30, -268, -101);
+        
+        noStroke();
+        fill(255, 255, 255, 30);
+        rect(0, 199, 290, 70);
+        
+        fill(255, 255, 255);
+        textSize(55);
+        text('welcome.', 0, -10);
+        
+        popMatrix();
+        popStyle();
+        
+        appButtons.play.draw();
+        appButtons.how.draw();
+        appButtons.creds.draw();
+        appButtons.chester.draw();
+    }
+    if(scene === 'How'){
+        background(255, 255, 255);
+        
+        pushStyle();
+        rectMode(CENTER);
+        pushMatrix();
+        translate(width / 2, height / 2);
+        noStroke();
+        fill(31, 31, 31);
+        rect(0, 0, 330, 580, 40);
+        fill(217, 67, 95);
+        rect(0, 0, 290, 460);
+        fill(0, 0, 0);
+        ellipse(0, -265, 10, 10);
+        fill(255, 255, 255, 100);
+        ellipse(0, 260, 35, 35);
+        fill(255, 255, 255, 50);
+        rect(0, -247, 70, 8, 5);
+        noFill();
+        stroke(255, 255, 255, 50);
+        strokeWeight(5);
+        arc(0, 260, 30, 30, -90, 90);
+        stroke(0, 0, 0, 50);
+        arc(0, 260, 30, 30, -268, -101);
+        
+        fill(255, 255, 255);
+        textSize(50);
+        text('instructions.', 0, -180);
+        
+        textSize(27);
+        text('You are an emoji.\n\nTry to stay on the screen for as long as possible by jumping on the texts.\n\nCollect other emojis to slow down\nthe texts.', -120, -220, 245, 500);
+        
+        textSize(15);
+        text('click to go back', 60, 213);
+        strokeWeight(1);
+        noFill();
+        stroke(255);
+        arc(8, 224, 20, 20, -190, -96);
+        line(-2, 226, 5, 222);
+        line(-2, 226, -8, 222);
+        
+        popMatrix();
+        popStyle();
+        
+        if(dist(mouseX, mouseY, 200, 560) < 35 && clicked){
+            scene = 'Home';
+        }
+    }
+    if(scene === 'Creds'){
+        background(255, 255, 255);
+        
+        pushStyle();
+        rectMode(CENTER);
+        pushMatrix();
+        translate(width / 2, height / 2);
+        noStroke();
+        fill(31, 31, 31);
+        rect(0, 0, 330, 580, 40);
+        fill(69, 193, 199);
+        rect(0, 0, 290, 460);
+        fill(0, 0, 0);
+        ellipse(0, -265, 10, 10);
+        fill(255, 255, 255, 100);
+        ellipse(0, 260, 35, 35);
+        fill(255, 255, 255, 50);
+        rect(0, -247, 70, 8, 5);
+        noFill();
+        stroke(255, 255, 255, 50);
+        strokeWeight(5);
+        arc(0, 260, 30, 30, -90, 90);
+        stroke(0, 0, 0, 50);
+        arc(0, 260, 30, 30, -268, -101);
+        
+        fill(255, 255, 255);
+        textSize(50);
+        text('credits.', 0, -180);
+        
+        textSize(27);
+        text('All of this game was coded by Chester Banks!', -120, -240, 245, 500);
+        
+        textSize(15);
+        text('click to go back', 60, 213);
+        strokeWeight(1);
+        noFill();
+        stroke(255);
+        arc(8, 224, 20, 20, -190, -96);
+        line(-2, 226, 5, 222);
+        line(-2, 226, -8, 222);
+        
+        popMatrix();
+        popStyle();
+        
+        if(dist(mouseX, mouseY, 200, 560) < 35 && clicked){
+            scene = 'Home';
+        }
+    }
+    if(scene === 'Chester'){
+        background(255, 255, 255);
+        
+        pushStyle();
+        rectMode(CENTER);
+        pushMatrix();
+        translate(width / 2, height / 2);
+        noStroke();
+        fill(31, 31, 31);
+        rect(0, 0, 330, 580, 40);
+        fill(217, 67, 95);
+        rect(0, 0, 290, 460);
+        fill(0, 0, 0);
+        ellipse(0, -265, 10, 10);
+        fill(255, 255, 255, 100);
+        ellipse(0, 260, 35, 35);
+        fill(255, 255, 255, 50);
+        rect(0, -247, 70, 8, 5);
+        noFill();
+        stroke(255, 255, 255, 50);
+        strokeWeight(5);
+        arc(0, 260, 30, 30, -90, 90);
+        stroke(0, 0, 0, 50);
+        arc(0, 260, 30, 30, -268, -101);
+        
+        fill(255, 255, 255);
+        textSize(50);
+        text('instructions.', 0, -180);
+        
+        textSize(27);
+        text('You are an emoji.\n\nTry to stay on the screen for as long as possible by jumping on the texts.\n\nCollect other emojis to slow down\nthe texts.', -120, -220, 245, 500);
+        
+        textSize(15);
+        text('click to go back', 60, 213);
+        strokeWeight(1);
+        noFill();
+        stroke(255);
+        arc(8, 224, 20, 20, -190, -96);
+        line(-2, 226, 5, 222);
+        line(-2, 226, -8, 222);
+        
+        popMatrix();
+        popStyle();
+        
+        if(dist(mouseX, mouseY, 200, 560) < 35 && clicked){
+            scene = 'Home';
+        }
+    }
+    
+    noStroke();
+    fill(255, 255, 255, 20);
+    triangle(0, 0, width, height, width, 0);
+    
+    cursor(overButton? 'pointer': 'default');
+    
+    clicked = false;
+    overButton = false;
+};
