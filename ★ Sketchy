@@ -8,18 +8,27 @@
  * Have a complaint? Compliment? Constructive criticism? Destructive criticism? Question? Suggestion? Advice? Rating? Review? Leave them all in the Tips & Thanks (except for questions, those can go in the Questions)!
 */
 
+
+/**
+ * WORK LOG
+  = Menu, basic gameplay, rockets, rocks, shop, how pages done (before 4/12/17)
+  = Bombs (4/12/17)
+*/
+
 /*
+    
+
     TO ADD:
      1. Bomb power
-        FINISH ON THU
+        FINISH ON MON
      2. Cloak power
-        FINISH ON THU
+        FINISH ON MON
      3. Logo (more minimal) 
-        FINISH ON THU
+        FINISH ON MON
      4. Score calculation screen, with bonus coins
-        FINISH ON FRI
+        FINISH ON WED
      5. Transitions
-        FINISH ON THU
+        FINISH ON WED
      6. Shop background?
         FINISH ON THU
      7. Power displays (choose which 5 powers you will use before the game, and then display those)
@@ -43,7 +52,7 @@ var fonts = {
     coin: createFont('Verdana'),
 };
 
-var scene = 'Menu';
+var scene = 'Game';
 var coins = 100;
 var timer = 0;
 
@@ -486,30 +495,82 @@ var Bomb = function(x, y){
     this.y = y;
     this.sz = 30;
     this.time = 5.99;
+    this.explode = false;
+    
+    this.Particle = function(x, y){
+        this.x = x; this.x2 = 0;
+        this.y = y;
+        this.rot = random(360);
+        this.sz = random(30);
+        this.trans = random(255);
+    };
+    this.Particles = [];
+    this.Particle.prototype.draw = function() {
+        noStroke();
+        fill(0, 0, 0, this.trans);
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(this.rot);
+        ellipse(this.x2, 0, this.sz, this.sz);
+        popMatrix();
+        
+        this.x2 += this.sz / 10;
+        this.trans -= 5;
+    };
+    
+    for(var i = 0; i < 100; i ++){
+        this.Particles.push(new this.Particle(this.x, this.y));
+    }
 };
 Bomb.prototype.draw = function() {
-    // Bomb
-    strokeWeight(1);
-    pushMatrix();
-    translate(this.x, this.y);
-    noStroke();
-    fill(59, 59, 59);
-    ellipse(this.sz / 20, 7, this.sz, this.sz);
-    rect(-this.sz / 6.9, -this.sz / 2.5, this.sz / 2.5, this.sz / 7.14);
-    noFill();
-    stroke(10, 10, 10);
-    ellipse(0, 5, this.sz, this.sz);
-    rect(-this.sz / 4.6, -this.sz / 2.1, this.sz / 2.5, this.sz / 7.14);
-    arc(-this.sz / 2.1, -this.sz / 2.1, this.sz, this.sz, -26, 0);
-    stroke(255);
-    arc(2, this.sz / 4, this.sz / 1.25, this.sz / 1.25, -180, -120);
-    arc(2, this.sz / 4, this.sz / 1.25, this.sz / 1.25, -115, -103);
-    popMatrix();
-    fill(255);
-    textFont(fonts.small, 20);
-    text(this.time.toFixed(0), this.x + 1, this.y + 5);
+    if(this.explode){
+        fill(0, 0, 0, 30);
+        //ellipse(this.x, this.y, this.sz, this.sz);
+        
+        for(var i = this.Particles.length - 1; i >= 0; i --){
+            this.Particles[i].draw();
+            if(this.Particles[i].trans < 0){
+                this.Particles.splice(i, 1);
+            }
+        }
+    } else {
+        // Bomb
+        strokeWeight(1);
+        pushMatrix();
+        translate(this.x, this.y);
+        noStroke();
+        fill(59, 59, 59);
+        ellipse(this.sz / 20, 7, this.sz, this.sz);
+        rect(-this.sz / 6.9, -this.sz / 2.5, this.sz / 2.5, this.sz / 7.14);
+        noFill();
+        stroke(10, 10, 10);
+        ellipse(0, 5, this.sz, this.sz);
+        rect(-this.sz / 4.6, -this.sz / 2.1, this.sz / 2.5, this.sz / 7.14);
+        arc(-this.sz / 2.1, -this.sz / 2.1, this.sz, this.sz, -26, 0);
+        stroke(255);
+        arc(2, this.sz / 4, this.sz / 1.25, this.sz / 1.25, -180, -120);
+        arc(2, this.sz / 4, this.sz / 1.25, this.sz / 1.25, -115, -103);
+        popMatrix();
+        fill(255);
+        textFont(fonts.small, 20);
+        text(this.time.toFixed(0), this.x + 1, this.y + 5);
+    }
     
     this.time -= 0.05;
+    
+    if(this.time < 0){
+        this.explode = true;
+    }
+    
+    for(var i in Rocks){
+        if(circleCollide(this, Rocks[i]) && this.explode){
+            Rocks[i].fade = true;
+        }
+    }
+    
+    if(this.explode){
+        this.sz += 3;
+    }
 };
 var Bombs = [new Bomb(300, 300)];
 
@@ -636,6 +697,30 @@ Power.prototype.draw = function() {
             endShape(CLOSE);
             popMatrix();
         break;
+        case 'Bomb':
+            noStroke();
+            fill(168, 168, 168);
+            ellipse(5, 8, 50, 50);
+            rect(-7, -24, 20, 7);
+            noFill();
+            stroke(117, 117, 117);
+            ellipse(0, 5, 50, 50);
+            rect(-10, -27, 20, 7);
+            arc(-25, -27, 50, 50, -26, 0);
+            arc(0, 5, 40, 40, -180, -120);
+            arc(0, 5, 40, 40, -115, -103);
+        break;
+        case 'Cloak':
+            strokeWeight(1);
+            noFill();
+            stroke(173, 173, 173);
+            bezier(0, -30, -35, -20, -10, 10, -30, 20);
+            bezier(0, -30, 35, -20, 10, 10, 30, 20);
+            arc(-25, 20, 10, 10, 0, 180);
+            arc(-12, 20, 15, 15, 0, 180);
+            arc(6, 20, 20, 20, 0, 180);
+            arc(22, 20, 12, 12, 0, 180);
+        break;
     }
     if(this.activated){
         noStroke();
@@ -669,7 +754,7 @@ Power.prototype.draw = function() {
         }
     }
 };
-var Powers = [new Power(300, 525, 'Forcefield'), new Power(190, 525, 'Magnet'), new Power(410, 525, 'Health')];
+var Powers = [new Power(50, 505, 'Magnet'), new Power(150, 520, 'Forcefield'), new Power(250, 535, 'Health'), new Power(350, 535, 'Speed'), new Power(450, 520, 'Cloak'), new Power(550, 505, 'Bomb')];
 
 draw = function() {
     background(255);
@@ -760,6 +845,9 @@ draw = function() {
         
         for(var i in Bombs){
             Bombs[i].draw();
+            if(Bombs[i].sz > 150){
+                Bombs.splice(i, 1);
+            }
         }
         
         player.draw();
