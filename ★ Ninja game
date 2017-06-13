@@ -1,0 +1,283 @@
+/*
+    Press A to to stab left
+    Press D to stab right
+    Press space to throw shurikens
+*/
+
+/* Key movement */
+var keys = [];
+var keyPressed = function(){ keys[keyCode] = true; };
+var keyReleased = function(){ keys[keyCode] = false; };
+
+/* Helpful little graphics functions */
+var Cloud = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz);
+    fill(255);
+    beginShape();
+    vertex(-50, 10);
+    bezierVertex(-55, -3, -46, -8, -36, -1);
+    bezierVertex(-42, -8, -28, -17, -24, -3);
+    bezierVertex(-35, -18, 8, -28, -5, 1);
+    bezierVertex(-1, -11, 19, -3, 11, 10);
+    endShape(CLOSE);
+    fill(211, 225, 235);
+    beginShape();
+    vertex(-50, 10);
+    bezierVertex(-55, 4, -46, -1, -35, 2);
+    bezierVertex(-35, -2, -28, -10, -24, 2);
+    bezierVertex(-35, -8, 8, -19, -9, 3);
+    bezierVertex(5, -3, 9, -3, 11, 10);
+    endShape(CLOSE);
+    popMatrix();
+};
+var Mountain = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz/10);
+    noStroke();
+    fill(121, 149, 171);
+    triangle(-50, 350, 75, 230, 200, 350);
+    fill(0, 0, 0, 30);
+    triangle(145, 350, 75, 230, 200, 350);
+    fill(255);
+    beginShape();
+    vertex(43, 260);
+    vertex(43, 268);
+    vertex(55, 257);
+    vertex(62, 262);
+    vertex(66, 255);
+    vertex(77, 263);
+    vertex(82, 255);
+    vertex(85, 261);
+    vertex(91, 255);
+    vertex(103, 260);
+    vertex(107, 260);
+    vertex(75, 230);
+    endShape();
+    popMatrix();
+};
+var tree1 = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz/10);
+    noStroke();
+    fill(225, 230, 78);
+    beginShape();
+    vertex(0, -50);
+    vertex(-15, 0);
+    vertex(-11, 5);
+    vertex(-18, 25);
+    vertex(-13, 28);
+    vertex(-19, 40);
+    vertex(19, 40);
+    vertex(13, 28); 
+    vertex(18, 25);
+    vertex(11, 5);
+    vertex(15, 0);
+    endShape();
+    fill(204, 175, 122);
+    rect(-2, 0, 4, 50, 10);
+    strokeWeight(1);
+    stroke(204, 175, 122);
+    line(-2, 7, -8, 0);
+    line(2, 7, 8, 0);
+    line(-2, 24, -10, 14);
+    line(2, 24, 10, 14);
+    line(-2, 34, -10, 25);
+    line(2, 34, 10, 25);
+    noStroke();
+    popMatrix();
+};
+
+var ground = [], circles = [], clouds = [], trees = [];
+for(var i = 0; i <= 18; i ++){
+    clouds.push({x: random(600), y: random(240), sz: random(2)});
+}
+for(var i = 0; i <= 600; i += 12){
+    trees.push({x: i, sz: random(6)});
+}
+for(var i = 0; i <= 600; i += 50){
+    circles.push({x: i + random(-20, 20), y: random(15), sz: random(10, 40)});
+}
+for(var i = 0; i <= 600; i += 10){
+    ground.push({x: i, y: random(15)});
+}
+
+/* Objects */
+var Player = function(){
+    this.x = 300;
+    this.y = 325;
+    this.sz = 40;
+    
+    this.xvel = 0;
+    this.yvel = 0;
+    this.speed = 5;
+    
+    this.jumping = false;
+    this.dir = 'left';
+};
+Player.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    if(this.dir === 'left'){
+        scale(-1, 1);
+    }
+    noStroke();
+    fill(38);
+    rect(-13, -20, 23, 34, 7);
+    arc(5, 3, 19, 22, -90, 90);
+    rect(-6, 9, 6, 8);
+    rect(2, 9, 6, 8);
+    fill(209, 58, 58);
+    rect(-13, -17, 23, 3);
+    rect(-13, 5, 27, 3);
+    fill(245);
+    rect(-1, -13, 11, 6);
+    fill(38);
+    rect(2, -11, 6, 2);
+    popMatrix();
+    
+    // Player movement
+    if(keys[LEFT] || keys[65]){
+        this.xvel -= 2;
+        this.dir = 'left';
+    }
+    if(keys[RIGHT] || keys[68]){
+        this.xvel += 2; 
+        this.dir = 'right';
+    }
+    if(!keys[LEFT] && !keys[RIGHT] && !keys[65] && !keys[68]){
+        this.xvel /= 1.1;
+    }
+    
+    if ((keys[UP] || keys[87]) && !this.jumping) {
+        this.yvel -= 10;
+        this.jumping = true;
+    }
+    if(this.xvel > this.speed){
+        this.xvel = this.speed;
+    }
+    if(this.xvel < -this.speed){
+        this.xvel = -this.speed;
+    }
+    this.jumping = true;
+    this.y += this.yvel;
+    this.yvel += 0.6;
+    this.x += this.xvel;
+    
+    if (this.y >= 325 && this.yvel > 0) {
+        this.jumping = false;
+        this.yvel = 0;
+        this.y = 325;
+    }
+    
+    this.x = constrain(this.x, (this.sz / 2), width - (this.sz / 2));
+};
+var player = new Player();
+
+var Enemy = function(){
+    this.type = floor(random(2));
+    
+    if(this.type === 0){
+        this.x = -30;
+    } else {
+        this.x = 630;
+    }
+    this.y = 325;
+    this.sz = 40;
+    
+    this.dir = 'left';
+};
+Enemy.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    if(this.dir === 'left'){
+        scale(-1, 1);
+    }
+    noStroke();
+    fill(222, 36, 36);
+    rect(-13, -20, 23, 34, 7);
+    arc(5, 3, 19, 22, -90, 90);
+    rect(-6, 9, 6, 8);
+    rect(2, 9, 6, 8);
+    fill(230, 230, 230);
+    rect(-13, -17, 23, 3);
+    rect(-13, 5, 27, 3);
+    fill(245);
+    rect(-1, -13, 11, 6);
+    fill(38);
+    rect(2, -11, 6, 2);
+    popMatrix();
+    
+    if(this.type === 0){
+        this.x += 2;
+        this.dir = 'right';
+    } else {
+        this.dir = 'left';
+        this.x -= 2;
+    }
+};
+var Enemies = [];
+
+draw = function() {
+    background(136, 184, 186);
+    
+    noStroke();
+    fill(38, 38, 38, 5);
+    for(var i = 320; i > 0; i -= 10){
+        rect(0, 0, width, i);
+    }
+    
+    noStroke();
+    Mountain(-34, 159, 5);
+    Mountain(29, 0, 10);
+    Mountain(179, -85, 12);
+    Mountain(351, -49, 11);
+    Mountain(508, 55, 8);
+    
+    for(var i in trees){
+        tree1(trees[i].x, 336 - (trees[i].sz * 5), trees[i].sz);
+    }
+    
+    for(var i in clouds){
+        Cloud(clouds[i].x, clouds[i].y, clouds[i].sz);
+    }
+    
+    fill(100, 242, 92);
+    rect(0, 335, width, 60);
+    fill(150, 107, 65);
+    rect(0, 348, width, 60);
+    fill(128, 91, 56);
+    for(var i in circles){
+        ellipse(circles[i].x, 371 + circles[i].y, circles[i].sz, circles[i].sz);
+    }
+    fill(0, 0, 0, 30);
+    beginShape();
+    vertex(0, 348);
+    for(var i in ground){
+        vertex(ground[i].x, 361 + ground[i].y);
+    }
+    vertex(600, 348);
+    endShape(CLOSE);
+    fill(68, 217, 63);
+    beginShape();
+    vertex(0, 348);
+    for(var i in ground){
+        vertex(ground[i].x, 356 + ground[i].y);
+    }
+    vertex(600, 348);
+    endShape(CLOSE);
+    
+    if(frameCount % 100 === 0){
+        Enemies.push(new Enemy());
+    }
+    for(var i = Enemies.length - 1; i >= 0; i --){
+        Enemies[i].draw();
+        if(Enemies[i].x < -100 || Enemies[i].x > 700){
+            Enemies.splice(i, 1);
+        }
+    }
+    player.draw();
+};
