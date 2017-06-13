@@ -4,6 +4,18 @@
     Press space to throw shurikens
 */
 
+// Settings
+textAlign(CENTER, CENTER);
+textFont(createFont('Avenir'));
+
+/* Variables */
+var scene = 'Game';
+
+/* Collision functions */
+var circleCollide = function(object1, object2){
+    return (dist(object1.x, object1.y, object2.x, object2.y) <= (object1.sz / 2) + (object2.sz / 2));
+};
+
 /* Key movement */
 var keys = [];
 var keyPressed = function(){ keys[keyCode] = true; };
@@ -105,6 +117,65 @@ for(var i = 0; i <= 600; i += 10){
     ground.push({x: i, y: random(15)});
 }
 
+/* Images */
+var images = {
+    "gameBG": function(){
+        background(136, 184, 186);
+        
+        noStroke();
+        fill(38, 38, 38, 5);
+        for(var i = 320; i > 0; i -= 10){
+            rect(0, 0, width, i);
+        }
+        
+        noStroke();
+        Mountain(-34, 159, 5);
+        Mountain(29, 0, 10);
+        Mountain(179, -85, 12);
+        Mountain(351, -49, 11);
+        Mountain(508, 55, 8);
+        
+        for(var i in trees){
+            tree1(trees[i].x, 336 - (trees[i].sz * 5), trees[i].sz);
+        }
+        
+        for(var i in clouds){
+            Cloud(clouds[i].x, clouds[i].y, clouds[i].sz);
+        }
+        
+        fill(0, 0, 0, 30);
+        rect(0, 0, width, height);
+        
+        noStroke();
+        fill(100, 242, 92);
+        rect(0, 335, width, 60);
+        fill(150, 107, 65);
+        rect(0, 348, width, 60);
+        fill(128, 91, 56);
+        for(var i in circles){
+            ellipse(circles[i].x, 371 + circles[i].y, circles[i].sz, circles[i].sz);
+        }
+        fill(0, 0, 0, 30);
+        beginShape();
+        vertex(0, 348);
+        for(var i in ground){
+            vertex(ground[i].x, 361 + ground[i].y);
+        }
+        vertex(600, 348);
+        endShape(CLOSE);
+        fill(68, 217, 63);
+        beginShape();
+        vertex(0, 348);
+        for(var i in ground){
+            vertex(ground[i].x, 356 + ground[i].y);
+        }
+        vertex(600, 348);
+        endShape(CLOSE);
+        
+        return get(0, 0, width, height);
+    },
+};
+
 /* Objects */
 var Player = function(){
     this.x = 300;
@@ -117,8 +188,40 @@ var Player = function(){
     
     this.jumping = false;
     this.dir = 'left';
+    
+    this.stabbing = 'none';
+    this.stabTimer = 0;
 };
 Player.prototype.draw = function() {
+    fill(0, 0, 0, 40);
+    ellipse(this.x,  341, 25 - (325 - this.y) / 10, this.sz / 5);
+    
+    // Weapon
+    pushMatrix();
+    translate(this.x, this.y);
+    if(this.stabbing === 'left'){
+        scale(-1, 1);
+        fill(38);
+        rect(16, -7, 14, 12, 10);
+        fill(219, 219, 219);
+        rect(19, -5, 25, 8);
+        triangle(44, -5, 44, 3, 60, -1);
+        fill(255, 255, 255);
+        rect(20, -5, 25, 4);
+        triangle(44, -5, 44, -1, 60, -1);
+    } else if (this.stabbing === 'right'){
+        fill(38);
+        rect(16, -7, 14, 12, 10);
+        fill(219, 219, 219);
+        rect(19, -5, 25, 8);
+        triangle(44, -5, 44, 3, 60, -1);
+        fill(255, 255, 255);
+        rect(20, -5, 25, 4);
+        triangle(44, -5, 44, -1, 60, -1);
+    } else {}
+    popMatrix();
+    
+    // Ninja
     pushMatrix();
     translate(this.x, this.y);
     if(this.dir === 'left'){
@@ -139,20 +242,34 @@ Player.prototype.draw = function() {
     rect(2, -11, 6, 2);
     popMatrix();
     
+    // Weapon controls
+    if(keys[65] && this.stabTimer <= -5){
+        this.stabbing = 'left';
+        this.stabTimer = 3;
+    }
+    if (keys[68] && this.stabTimer <= -5){
+        this.stabbing = 'right';
+        this.stabTimer = 3;
+    } 
+    if(this.stabTimer < 0){
+        this.stabbing = 'none';
+    }
+    this.stabTimer -= 0.1;
+    
     // Player movement
-    if(keys[LEFT] || keys[65]){
+    if(keys[LEFT]){
         this.xvel -= 2;
         this.dir = 'left';
     }
-    if(keys[RIGHT] || keys[68]){
+    if(keys[RIGHT]){
         this.xvel += 2; 
         this.dir = 'right';
     }
-    if(!keys[LEFT] && !keys[RIGHT] && !keys[65] && !keys[68]){
+    if(!keys[LEFT] && !keys[RIGHT]){
         this.xvel /= 1.1;
     }
     
-    if ((keys[UP] || keys[87]) && !this.jumping) {
+    if ((keys[UP]) && !this.jumping) {
         this.yvel -= 10;
         this.jumping = true;
     }
@@ -191,6 +308,9 @@ var Enemy = function(){
     this.dir = 'left';
 };
 Enemy.prototype.draw = function() {
+    fill(0, 0, 0, 40);
+    ellipse(this.x,  341, this.sz / 1.5, this.sz / 5);
+    
     pushMatrix();
     translate(this.x, this.y);
     if(this.dir === 'left'){
@@ -222,62 +342,39 @@ Enemy.prototype.draw = function() {
 var Enemies = [];
 
 draw = function() {
-    background(136, 184, 186);
-    
-    noStroke();
-    fill(38, 38, 38, 5);
-    for(var i = 320; i > 0; i -= 10){
-        rect(0, 0, width, i);
-    }
-    
-    noStroke();
-    Mountain(-34, 159, 5);
-    Mountain(29, 0, 10);
-    Mountain(179, -85, 12);
-    Mountain(351, -49, 11);
-    Mountain(508, 55, 8);
-    
-    for(var i in trees){
-        tree1(trees[i].x, 336 - (trees[i].sz * 5), trees[i].sz);
-    }
-    
-    for(var i in clouds){
-        Cloud(clouds[i].x, clouds[i].y, clouds[i].sz);
-    }
-    
-    fill(100, 242, 92);
-    rect(0, 335, width, 60);
-    fill(150, 107, 65);
-    rect(0, 348, width, 60);
-    fill(128, 91, 56);
-    for(var i in circles){
-        ellipse(circles[i].x, 371 + circles[i].y, circles[i].sz, circles[i].sz);
-    }
-    fill(0, 0, 0, 30);
-    beginShape();
-    vertex(0, 348);
-    for(var i in ground){
-        vertex(ground[i].x, 361 + ground[i].y);
-    }
-    vertex(600, 348);
-    endShape(CLOSE);
-    fill(68, 217, 63);
-    beginShape();
-    vertex(0, 348);
-    for(var i in ground){
-        vertex(ground[i].x, 356 + ground[i].y);
-    }
-    vertex(600, 348);
-    endShape(CLOSE);
-    
-    if(frameCount % 100 === 0){
-        Enemies.push(new Enemy());
-    }
-    for(var i = Enemies.length - 1; i >= 0; i --){
-        Enemies[i].draw();
-        if(Enemies[i].x < -100 || Enemies[i].x > 700){
-            Enemies.splice(i, 1);
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
         }
     }
-    player.draw();
+    
+    if(scene === 'Game'){
+        image(images.gameBG, 0, 0);
+        
+        if(frameCount % 100 === 0){
+            Enemies.push(new Enemy());
+        }
+        for(var i = Enemies.length - 1; i >= 0; i --){
+            Enemies[i].draw();
+            if(Enemies[i].x < -100 || Enemies[i].x > 700){
+                Enemies.splice(i, 1);
+            }
+            if(circleCollide(Enemies[i], player) && player.stabbing === 'none'){
+                scene = 'Lose';
+            }
+        }
+        player.draw();
+    }
+    if(scene === 'Lose'){
+        image(images.gameBG, 0, 0);
+        
+        fill(0, 0, 0, 100);
+        rect(0, 0, width, height);
+        
+        fill(255);
+        textSize(80);
+        text('F A I L U R E', 300, 200);
+    }
 };
