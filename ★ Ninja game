@@ -100,6 +100,19 @@ var tree1 = function(x, y, sz){
     noStroke();
     popMatrix();
 };
+var inkStroke = function(x, y, w, h, r){
+    pushMatrix();
+    translate(x, y);
+    rotate(r);
+    scale(w, h);
+    beginShape();
+    vertex(0, -25);
+    bezierVertex(-5, 0, -10, 14, -5, 27);
+    bezierVertex(-4, 22, -10, 35, 7, 23);
+    bezierVertex(2, 15, 0, 1, 0, -25);
+    endShape();
+    popMatrix();
+};
 
 /* Arrays for ground vertices, ground circles, clouds & trees */
 var ground = [], circles = [], clouds = [], trees = [];
@@ -463,6 +476,54 @@ draw = function() {
         }
     }
     
+    if(scene === 'Menu'){
+        pushMatrix();
+        translate(305, 220);
+        scale(1.3);
+        noStroke();
+        fill(35);
+
+        // L
+        inkStroke(-85, -69, -1, -1, 3);
+        inkStroke(-75, -49, 1, 0.7, -90);
+
+        // A
+        inkStroke(-35, -70, 1, 1, 21);
+        inkStroke(-20, -70, 1, -1, -16);
+        inkStroke(-25, -64, -0.8, -0.9, -278);
+
+        // S
+        inkStroke(11, -74, -1.1, 0.9, -42);
+        inkStroke(12, -89, 0.9, -0.7, -272);
+        inkStroke(16, -55, -0.9, 0.7, -285);
+
+        // T
+        inkStroke(61, -89, 0.8, 0.7, 100);
+        inkStroke(55, -72, 1, 1, -0);
+
+        // N
+        inkStroke(-100, 0, 1, 1, 4);
+        inkStroke(-87, 0, 1, 1, -37);
+        inkStroke(-73, 0, -1, -1, 3);
+
+        // I
+        inkStroke(-54, 0, -1, -1, 11);
+
+        // N (again)
+        inkStroke(-30, 0, 1, 1, 4);
+        inkStroke(-17, 0, 1, 1, -37);
+        inkStroke(-3, 0, -1, -1, 3);
+
+        // J
+        inkStroke(32, 0, -1.3, -1, 8);
+        inkStroke(22, 16, -1.3, 0.5, -228);
+
+        // A
+        inkStroke(60, 0, 1, 1, 21);
+        inkStroke(75, 0, 1, -1, -16);
+        inkStroke(70, 4, -0.8, -0.9, -278);
+        popMatrix();
+    }
     if(scene === 'Game'){
         image(images.gameBG, 0, 0);
         
