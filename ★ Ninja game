@@ -17,6 +17,7 @@ var clicked = false;
 var overButton = false;
 var enemyFrequency = 100;
 var howManyShurikens = 1;
+var player;
 
 /* Collision functions */
 var circleCollide = function(object1, object2){
@@ -378,9 +379,15 @@ Enemy.prototype.draw = function() {
     if(this.type === 0){
         this.x += 2;
         this.dir = 'right';
+        if(this.x > player.x){
+            this.type = 1;
+        }
     } else {
         this.dir = 'left';
         this.x -= 2;
+        if(this.x < player.x){
+            this.type = 0;
+        }
     }
 };
 var Enemies = [];
@@ -604,7 +611,7 @@ Player.prototype.draw = function() {
         }
     }
 };
-var player = new Player();
+player = new Player();
 
 /* Processing events */
 var keyPressed = function(){ 
