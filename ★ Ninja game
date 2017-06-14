@@ -1,7 +1,9 @@
-/*
-    Press A to to stab left
-    Press D to stab right
-    Press space to throw shurikens
+/** 
+ * Legend of the Last Ninja
+ * Chester Banks
+ * June 14 2017
+ * 
+ * My third ninja game! Instructions are in the game, enjoy!
 */
 
 // Settings
@@ -9,8 +11,10 @@ textAlign(CENTER, CENTER);
 textFont(createFont('Avenir Bold'));
 
 /* Variables */
-var scene = 'Game';
+var scene = 'Menu';
 var keys = [];
+var clicked = false;
+var overButton = false;
 var enemyFrequency = 100;
 var howManyShurikens = 1;
 
@@ -113,6 +117,53 @@ var inkStroke = function(x, y, w, h, r){
     endShape();
     popMatrix();
 };
+var lastNinjaText = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz);
+    noStroke();
+
+    // L
+    inkStroke(-85, -69, -1, -1, 3);
+    inkStroke(-75, -49, 1, 0.7, -90);
+
+    // A
+    inkStroke(-35, -70, 1, 1, 21);
+    inkStroke(-20, -70, 1, -1, -16);
+    inkStroke(-25, -64, -0.8, -0.9, -278);
+
+    // S
+    inkStroke(11, -74, -1.1, 0.9, -42);
+    inkStroke(12, -89, 0.9, -0.7, -272);
+    inkStroke(16, -55, -0.9, 0.7, -285);
+
+    // T
+    inkStroke(61, -89, 0.8, 0.7, 100);
+    inkStroke(55, -72, 1, 1, -0);
+
+    // N
+    inkStroke(-100, 0, 1, 1, 4);
+    inkStroke(-87, 0, 1, 1, -37);
+    inkStroke(-73, 0, -1, -1, 3);
+
+    // I
+    inkStroke(-54, 0, -1, -1, 11);
+
+    // N (again)
+    inkStroke(-30, 0, 1, 1, 4);
+    inkStroke(-17, 0, 1, 1, -37);
+    inkStroke(-3, 0, -1, -1, 3);
+
+    // J
+    inkStroke(32, 0, -1.3, -1, 8);
+    inkStroke(22, 16, -1.3, 0.5, -228);
+
+    // A
+    inkStroke(60, 0, 1, 1, 21);
+    inkStroke(75, 0, 1, -1, -16);
+    inkStroke(70, 4, -0.8, -0.9, -278);
+    popMatrix();
+};
 
 /* Arrays for ground vertices, ground circles, clouds & trees */
 var ground = [], circles = [], clouds = [], trees = [];
@@ -185,6 +236,105 @@ var images = {
         
         return get(0, 0, width, height);
     },
+    "woodBG": function(){
+        background(181, 122, 58);
+        noFill();
+        stroke(117, 64, 26);
+        for(var i = 0; i < 600; i += 40){
+            strokeWeight(2);
+            rect(0, i, 600, 40);
+            line(300 + sin(i*10)*250, i, 300+ sin(i*10)*250, i + 37);
+            strokeWeight(4);
+            point(310 + sin(i*10)*250, i + 10);
+            point(310 + sin(i*10)*250, i + 30);
+        }
+        noFill();
+        strokeWeight(1);
+        stroke(0, 0, 0, 20);
+        for(var i = 0; i < 600; i += 8){
+            line(0, i, 600, i);
+        }
+        
+        noStroke();
+        fill(0, 0, 0, 3);
+        for(var i = 0; i < 600; i += 40){
+            for(var j = 100; j > 0; j -= 5){
+                rect(300 + sin(i*10)*250, i, j, 40);
+                rect(0, i, j, 40);
+            }
+        }
+        
+        filter(BLUR, 1.5);
+        
+        return get(0, 0, width, height);
+    },
+};
+
+/* Buttons */
+var Button = function(x, y, txt, nxt){
+    this.x = x;
+    this.y = y;
+    this.txt = txt;
+    this.nxt = nxt;
+};
+Button.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    strokeWeight(5);
+    fill(181, 122, 58);
+    stroke(105, 75, 42);
+    rect(0, 4, 80, 80, 10);
+    if(mouseX > this.x && mouseX < this.x + 80 && mouseY > this.y && mouseY < this.y + 80){
+        overButton = true;
+        translate(0, 4);
+        if(clicked){
+            scene = this.nxt;
+        }
+    }
+    stroke(145, 101, 53);
+    rect(0, 0, 80, 80, 10);
+    for(var i = 10; i < 80; i += 15){
+        strokeWeight(1);
+        line(0, i, 80, i);
+        strokeWeight(3);
+        point(6, i + 4);
+        point(6, i + 10);
+        point(75, i + 4);
+        point(75, i + 10);
+    }
+    if(this.txt === 'Play'){
+        triangle(25, 18, 25, 62, 60, 40);
+    }
+    if(this.txt === 'Story'){
+        rect(20, 20, 40, 10);
+        rect(20, 35, 40, 10);
+        rect(20, 50, 40, 10);
+    }
+    if(this.txt === 'How'){
+        textSize(60);
+        fill(145, 101, 53);
+        for(var i = 0; i < 360; i += 30){
+            text('?', 40 + sin(i) * 3, 40 + cos(i) * 3);
+        }
+        fill(181, 122, 58);
+        text('?', 40, 40);
+    }
+    if(this.txt === 'Back'){
+        textSize(60);
+        fill(145, 101, 53);
+        for(var i = 0; i < 360; i += 30){
+            text('<', 40 + sin(i) * 3, 40 + cos(i) * 3);
+        }
+        fill(181, 122, 58);
+        text('<', 40, 40);
+    }
+    popMatrix();
+};
+var Buttons = {
+    play: new Button(260, 290, 'Play', 'Game'),
+    how: new Button(365, 290, 'How', 'How'),
+    story: new Button(155, 290, 'Story', 'Story'),
+    back: new Button(20, 25, 'Back', 'Menu'),
 };
 
 /* Objects */
@@ -456,7 +606,7 @@ Player.prototype.draw = function() {
 };
 var player = new Player();
 
-/* Key movement */
+/* Processing events */
 var keyPressed = function(){ 
     keys[keyCode] = true; 
 };
@@ -465,6 +615,9 @@ var keyReleased = function(){
     if(keyCode === 32 && scene === 'Game'){
         player.throwable = true;
     }
+};
+var mouseClicked = function(){
+    clicked = true;
 };
 
 draw = function() {
@@ -477,52 +630,56 @@ draw = function() {
     }
     
     if(scene === 'Menu'){
-        pushMatrix();
-        translate(305, 220);
-        scale(1.3);
-        noStroke();
-        fill(35);
-
-        // L
-        inkStroke(-85, -69, -1, -1, 3);
-        inkStroke(-75, -49, 1, 0.7, -90);
-
-        // A
-        inkStroke(-35, -70, 1, 1, 21);
-        inkStroke(-20, -70, 1, -1, -16);
-        inkStroke(-25, -64, -0.8, -0.9, -278);
-
-        // S
-        inkStroke(11, -74, -1.1, 0.9, -42);
-        inkStroke(12, -89, 0.9, -0.7, -272);
-        inkStroke(16, -55, -0.9, 0.7, -285);
-
-        // T
-        inkStroke(61, -89, 0.8, 0.7, 100);
-        inkStroke(55, -72, 1, 1, -0);
-
-        // N
-        inkStroke(-100, 0, 1, 1, 4);
-        inkStroke(-87, 0, 1, 1, -37);
-        inkStroke(-73, 0, -1, -1, 3);
-
-        // I
-        inkStroke(-54, 0, -1, -1, 11);
-
-        // N (again)
-        inkStroke(-30, 0, 1, 1, 4);
-        inkStroke(-17, 0, 1, 1, -37);
-        inkStroke(-3, 0, -1, -1, 3);
-
-        // J
-        inkStroke(32, 0, -1.3, -1, 8);
-        inkStroke(22, 16, -1.3, 0.5, -228);
-
-        // A
-        inkStroke(60, 0, 1, 1, 21);
-        inkStroke(75, 0, 1, -1, -16);
-        inkStroke(70, 4, -0.8, -0.9, -278);
-        popMatrix();
+        image(images.gameBG, 0, 0);
+        fill(0, 0, 0, 100);
+        rect(0, 0, width, height);
+        
+        textSize(20);
+        fill(255);
+        text('L E G E N D   O F   T H E', 300, 50);
+        
+        fill(0, 0, 0, 50);
+        lastNinjaText(315, 232, 1.5);
+        fill(196, 196, 196);
+        lastNinjaText(315, 223, 1.5);
+        fill(255, 255, 255);
+        lastNinjaText(315, 220, 1.5);
+        
+        Buttons.play.draw();
+        Buttons.how.draw();
+        Buttons.story.draw();
+    }
+    if(scene === 'How'){
+        image(images.woodBG, 0, 0);
+        
+        fill(0, 0, 0, 70);
+        rect(50, 50, 500, 300, 20);
+        fill(255, 255, 255);
+        
+        textFont(createFont('Avenir'));
+        textSize(34);
+        text('I N S T R U C T I O N S', 300, 85);
+        textSize(18);
+        text('✦ Use the ARROW KEYS to move the ninja.\n\n✦ Don\'t run into any RED NINJAS.\n\n✦ Press A to STAB LEFT.\n\n✦ Press D to STAB RIGHT.\n\n✦ Press SPACE to throw shurikens (if you have any).', 75, 65, 450, 300);
+        textFont(createFont('Avenir Bold'));
+        
+        Buttons.back.draw();
+    }
+    if(scene === 'Story'){
+        image(images.woodBG, 0, 0);
+        
+        fill(0, 0, 0, 70);
+        rect(50, 50, 500, 331, 20);
+        fill(255, 255, 255);
+        
+        textFont(createFont('Avenir'));
+        textSize(34);
+        text('S T O R Y', 300, 85);
+        textSize(15);
+        text('For nearly 100 years, the order of the Ninja guarded the land of Chim Chang, mainting peace and justice throughout the land. You were a student at the School of the Ninja from age 6 to 18. When you turned 18, you were sent on your final test - guarding a faraway region by yourself. You excelled at that, but when you came back the School, something was very wrong. A new order of ninja had arisen, the Red Ninja. These ninja were cruel, power-hungry, and evil. All of the former Ninja who did not follow them had been wiped out.\n\nIt\'s up to you, the last Ninja, to keep the order of the original Ninja alive. Don\'t be destroyed by the Red Ninja!', 75, 70, 450, 330);
+        textFont(createFont('Avenir Bold'));
+        
+        Buttons.back.draw();
     }
     if(scene === 'Game'){
         image(images.gameBG, 0, 0);
@@ -600,10 +757,15 @@ draw = function() {
         text('You really need some work... maybe next time.', 300, 255);
     }
     
+    cursor(overButton ? 'pointer' : 'default');
+    
     noFill();
     stroke(0, 0, 0, 10);
     for(var i = 40; i > 0; i -= 3){
         strokeWeight(i);
         rect(0, 0, width, height);
     }
+    
+    clicked = false;
+    overButton = false;
 };
