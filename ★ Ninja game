@@ -6,20 +6,16 @@
 
 // Settings
 textAlign(CENTER, CENTER);
-textFont(createFont('Avenir'));
+textFont(createFont('Avenir Bold'));
 
 /* Variables */
 var scene = 'Game';
+var keys = [];
 
 /* Collision functions */
 var circleCollide = function(object1, object2){
     return (dist(object1.x, object1.y, object2.x, object2.y) <= (object1.sz / 2) + (object2.sz / 2));
 };
-
-/* Key movement */
-var keys = [];
-var keyPressed = function(){ keys[keyCode] = true; };
-var keyReleased = function(){ keys[keyCode] = false; };
 
 /* Helpful little graphics functions */
 var Cloud = function(x, y, sz){
@@ -143,8 +139,7 @@ var images = {
             Cloud(clouds[i].x, clouds[i].y, clouds[i].sz);
         }
         
-        fill(0, 0, 0, 30);
-        rect(0, 0, width, height);
+        filter(BLUR, 1.5);
         
         noStroke();
         fill(100, 242, 92);
@@ -177,10 +172,77 @@ var images = {
 };
 
 /* Objects */
+var fallingS = function(x, y, speed){
+    this.x = x;
+    this.y = y;
+    this.sz = 20;
+    this.speed = speed;
+};
+fallingS.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(frameCount * 20);
+    noStroke();
+    for(var i = 0; i < 360; i += 90){
+        pushMatrix();
+        rotate(i + 15);
+        fill(191, 191, 191);
+        triangle(-5, 0, 5, 0, 0, -10);
+        fill(255, 255, 255);
+        triangle(-5, 0, -3, 0, 0, -10);
+        popMatrix();
+    }
+    noFill();
+    stroke(255);
+    strokeWeight(1);
+    ellipse(0, 0, 6, 6);
+    stroke(0, 0, 0, 50);
+    strokeWeight(1);
+    ellipse(0, 0, 3, 3);
+    popMatrix();
+    
+    this.x += this.speed;
+};
+var fallingSs = [];
+
+var Shuriken = function(x, y, speed){
+    this.x = x;
+    this.y = y;
+    this.sz = 20;
+    this.speed = speed;
+};
+Shuriken.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(frameCount * 20);
+    noStroke();
+    for(var i = 0; i < 360; i += 90){
+        pushMatrix();
+        rotate(i + 15);
+        fill(191, 191, 191);
+        triangle(-5, 0, 5, 0, 0, -10);
+        fill(255, 255, 255);
+        triangle(-5, 0, -3, 0, 0, -10);
+        popMatrix();
+    }
+    noFill();
+    stroke(255);
+    strokeWeight(1);
+    ellipse(0, 0, 6, 6);
+    stroke(0, 0, 0, 50);
+    strokeWeight(1);
+    ellipse(0, 0, 3, 3);
+    popMatrix();
+    
+    this.x += this.speed;
+};
+var Shurikens = [];
+var howManyShurikens = 3;
+
 var Player = function(){
     this.x = 300;
     this.y = 325;
-    this.sz = 40;
+    this.sz = 30;
     
     this.xvel = 0;
     this.yvel = 0;
@@ -191,6 +253,8 @@ var Player = function(){
     
     this.stabbing = 'none';
     this.stabTimer = 0;
+    
+    this.throwable = true;
 };
 Player.prototype.draw = function() {
     fill(0, 0, 0, 40);
@@ -243,11 +307,11 @@ Player.prototype.draw = function() {
     popMatrix();
     
     // Weapon controls
-    if(keys[65] && this.stabTimer <= -5){
+    if(keys[65] && this.stabTimer <= -2){
         this.stabbing = 'left';
         this.stabTimer = 3;
     }
-    if (keys[68] && this.stabTimer <= -5){
+    if (keys[68] && this.stabTimer <= -2){
         this.stabbing = 'right';
         this.stabTimer = 3;
     } 
@@ -291,6 +355,16 @@ Player.prototype.draw = function() {
     }
     
     this.x = constrain(this.x, (this.sz / 2), width - (this.sz / 2));
+    
+    if(keys[32] && howManyShurikens > 0 && this.throwable){
+        if(this.dir === 'left'){
+            Shurikens.push(new Shuriken(this.x - 30, this.y, -3));
+        } else {
+            Shurikens.push(new Shuriken(this.x + 30, this.y, 3));
+        }
+        howManyShurikens --;
+        this.throwable = false;
+    }
 };
 var player = new Player();
 
@@ -303,7 +377,7 @@ var Enemy = function(){
         this.x = 630;
     }
     this.y = 325;
-    this.sz = 40;
+    this.sz = 30;
     
     this.dir = 'left';
 };
@@ -341,6 +415,17 @@ Enemy.prototype.draw = function() {
 };
 var Enemies = [];
 
+/* Key movement */
+var keyPressed = function(){ 
+    keys[keyCode] = true; 
+};
+var keyReleased = function(){ 
+    keys[keyCode] = false; 
+    if(keyCode === 32 && scene === 'Game'){
+        player.throwable = true;
+    }
+};
+
 draw = function() {
     for(var i in images){
         if (typeof images[i] !== "object") {
@@ -361,11 +446,30 @@ draw = function() {
             if(Enemies[i].x < -100 || Enemies[i].x > 700){
                 Enemies.splice(i, 1);
             }
-            if(circleCollide(Enemies[i], player) && player.stabbing === 'none'){
-                scene = 'Lose';
+            if(circleCollide(Enemies[i], player)){
+                //scene = 'Lose';
+            }
+            if(dist(Enemies[i].x, Enemies[i].y, player.x, player.y) < 80){
+                if((player.stabbing === 'left' && Enemies[i].x < player.x) || (player.stabbing === 'right' && Enemies[i].x > player.x)){
+                    Enemies.splice(i, 1);
+                }
             }
         }
+        for(var i = Shurikens.length - 1; i >= 0; i --){
+            Shurikens[i].draw();
+        }
         player.draw();
+        
+        fill(28, 28, 28, 100);
+        rect(40, 40, 60, 30, 5);
+        //rect(110, 40, 60, 30, 5);
+        //rect(180, 40, 60, 30, 5);
+        
+        fill(255);
+        textSize(20);
+        text(howManyShurikens, 85, 55);
+        //text('3', 155, 55);
+        //text('5', 225, 55);
     }
     if(scene === 'Lose'){
         image(images.gameBG, 0, 0);
@@ -373,8 +477,19 @@ draw = function() {
         fill(0, 0, 0, 100);
         rect(0, 0, width, height);
         
-        fill(255);
+        fill(196, 196, 196);
         textSize(80);
+        text('F A I L U R E', 300, 205);
+        fill(255);
         text('F A I L U R E', 300, 200);
+        textSize(20);
+        text('You really need some work... maybe next time.', 300, 255);
+    }
+    
+    noFill();
+    stroke(0, 0, 0, 10);
+    for(var i = 40; i > 0; i -= 3){
+        strokeWeight(i);
+        rect(0, 0, width, height);
     }
 };
