@@ -11,6 +11,7 @@ textFont(createFont('Avenir Bold'));
 /* Variables */
 var scene = 'Game';
 var keys = [];
+var enemyFrequency = 100;
 
 /* Collision functions */
 var circleCollide = function(object1, object2){
@@ -172,17 +173,71 @@ var images = {
 };
 
 /* Objects */
-var fallingS = function(x, y, speed){
+var Enemy = function(){
+    this.type = floor(random(2));
+    
+    if(this.type === 0){
+        this.x = -30;
+    } else {
+        this.x = 630;
+    }
+    this.y = 325;
+    this.sz = 30;
+    
+    this.dir = 'left';
+};
+Enemy.prototype.draw = function() {
+    fill(0, 0, 0, 40);
+    ellipse(this.x,  341, this.sz / 1.5, this.sz / 5);
+    
+    pushMatrix();
+    translate(this.x, this.y);
+    if(this.dir === 'left'){
+        scale(-1, 1);
+    }
+    noStroke();
+    fill(222, 36, 36);
+    rect(-13, -20, 23, 34, 7);
+    arc(5, 3, 19, 22, -90, 90);
+    rect(-6, 9, 6, 8);
+    rect(2, 9, 6, 8);
+    fill(230, 230, 230);
+    rect(-13, -17, 23, 3);
+    rect(-13, 5, 27, 3);
+    fill(245);
+    rect(-1, -13, 11, 6);
+    fill(38);
+    rect(2, -11, 6, 2);
+    popMatrix();
+    
+    if(this.type === 0){
+        this.x += 2;
+        this.dir = 'right';
+    } else {
+        this.dir = 'left';
+        this.x -= 2;
+    }
+};
+var Enemies = [];
+
+var fallingS = function(x, y){
     this.x = x;
     this.y = y;
+    this.yvel = 0.1;
     this.sz = 20;
-    this.speed = speed;
+    this.offset = random(300);
 };
 fallingS.prototype.draw = function() {
     pushMatrix();
     translate(this.x, this.y);
-    rotate(frameCount * 20);
+    if(this.y === 320){
+        translate(0, sin(this.offset + frameCount * 10) * 3);
+    }
     noStroke();
+    fill(255, 255, 255, 30);
+    for(var i = 50; i > 0; i -= 10){
+        ellipse(0, 0, i, i);
+    }
     for(var i = 0; i < 360; i += 90){
         pushMatrix();
         rotate(i + 15);
@@ -201,7 +256,12 @@ fallingS.prototype.draw = function() {
     ellipse(0, 0, 3, 3);
     popMatrix();
     
-    this.x += this.speed;
+    this.y += this.yvel;
+    this.yvel += 0.3;
+    if(this.y > 320){
+        this.y = 320;
+        this.yvel = 0;
+    }
 };
 var fallingSs = [];
 
@@ -214,7 +274,7 @@ var Shuriken = function(x, y, speed){
 Shuriken.prototype.draw = function() {
     pushMatrix();
     translate(this.x, this.y);
-    rotate(frameCount * 20);
+    rotate(-frameCount * 20);
     noStroke();
     for(var i = 0; i < 360; i += 90){
         pushMatrix();
@@ -235,6 +295,12 @@ Shuriken.prototype.draw = function() {
     popMatrix();
     
     this.x += this.speed;
+    
+    for(var i = Enemies.length - 1; i >= 0; i --){
+        if(circleCollide(this, Enemies[i])){
+            Enemies.splice(i, 1);
+        }
+    }
 };
 var Shurikens = [];
 var howManyShurikens = 3;
@@ -257,9 +323,11 @@ var Player = function(){
     this.throwable = true;
 };
 Player.prototype.draw = function() {
+    // Shadow
     fill(0, 0, 0, 40);
     ellipse(this.x,  341, 25 - (325 - this.y) / 10, this.sz / 5);
     
+    noStroke();
     // Weapon
     pushMatrix();
     translate(this.x, this.y);
@@ -358,62 +426,21 @@ Player.prototype.draw = function() {
     
     if(keys[32] && howManyShurikens > 0 && this.throwable){
         if(this.dir === 'left'){
-            Shurikens.push(new Shuriken(this.x - 30, this.y, -3));
+            Shurikens.push(new Shuriken(this.x - 30, this.y, -5));
         } else {
-            Shurikens.push(new Shuriken(this.x + 30, this.y, 3));
+            Shurikens.push(new Shuriken(this.x + 30, this.y, 5));
         }
         howManyShurikens --;
         this.throwable = false;
     }
+    for(var i = fallingSs.length - 1; i >= 0; i --){
+        if(circleCollide(fallingSs[i], this)){
+            fallingSs.splice(i, 1);
+            howManyShurikens ++;
+        }
+    }
 };
 var player = new Player();
-
-var Enemy = function(){
-    this.type = floor(random(2));
-    
-    if(this.type === 0){
-        this.x = -30;
-    } else {
-        this.x = 630;
-    }
-    this.y = 325;
-    this.sz = 30;
-    
-    this.dir = 'left';
-};
-Enemy.prototype.draw = function() {
-    fill(0, 0, 0, 40);
-    ellipse(this.x,  341, this.sz / 1.5, this.sz / 5);
-    
-    pushMatrix();
-    translate(this.x, this.y);
-    if(this.dir === 'left'){
-        scale(-1, 1);
-    }
-    noStroke();
-    fill(222, 36, 36);
-    rect(-13, -20, 23, 34, 7);
-    arc(5, 3, 19, 22, -90, 90);
-    rect(-6, 9, 6, 8);
-    rect(2, 9, 6, 8);
-    fill(230, 230, 230);
-    rect(-13, -17, 23, 3);
-    rect(-13, 5, 27, 3);
-    fill(245);
-    rect(-1, -13, 11, 6);
-    fill(38);
-    rect(2, -11, 6, 2);
-    popMatrix();
-    
-    if(this.type === 0){
-        this.x += 2;
-        this.dir = 'right';
-    } else {
-        this.dir = 'left';
-        this.x -= 2;
-    }
-};
-var Enemies = [];
 
 /* Key movement */
 var keyPressed = function(){ 
@@ -438,8 +465,14 @@ draw = function() {
     if(scene === 'Game'){
         image(images.gameBG, 0, 0);
         
-        if(frameCount % 100 === 0){
+        if(frameCount % 300 === 0){
+            fallingSs.push(new fallingS(random(100, 500), -50));
+        }
+        if(frameCount % enemyFrequency === 0){
             Enemies.push(new Enemy());
+        }
+        if(frameCount % 100 === 0 && enemyFrequency > 1){
+            enemyFrequency --;
         }
         for(var i = Enemies.length - 1; i >= 0; i --){
             Enemies[i].draw();
@@ -447,7 +480,7 @@ draw = function() {
                 Enemies.splice(i, 1);
             }
             if(circleCollide(Enemies[i], player)){
-                //scene = 'Lose';
+                scene = 'Lose';
             }
             if(dist(Enemies[i].x, Enemies[i].y, player.x, player.y) < 80){
                 if((player.stabbing === 'left' && Enemies[i].x < player.x) || (player.stabbing === 'right' && Enemies[i].x > player.x)){
@@ -457,6 +490,9 @@ draw = function() {
         }
         for(var i = Shurikens.length - 1; i >= 0; i --){
             Shurikens[i].draw();
+        }
+        for(var i = fallingSs.length - 1; i >= 0; i --){
+            fallingSs[i].draw();
         }
         player.draw();
         
@@ -468,7 +504,7 @@ draw = function() {
         fill(255);
         textSize(20);
         text(howManyShurikens, 85, 55);
-        //text('3', 155, 55);
+        text(enemyFrequency, 155, 55);
         //text('5', 225, 55);
     }
     if(scene === 'Lose'){
