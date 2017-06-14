@@ -12,6 +12,7 @@ textFont(createFont('Avenir Bold'));
 var scene = 'Game';
 var keys = [];
 var enemyFrequency = 100;
+var howManyShurikens = 1;
 
 /* Collision functions */
 var circleCollide = function(object1, object2){
@@ -100,6 +101,7 @@ var tree1 = function(x, y, sz){
     popMatrix();
 };
 
+/* Arrays for ground vertices, ground circles, clouds & trees */
 var ground = [], circles = [], clouds = [], trees = [];
 for(var i = 0; i <= 18; i ++){
     clouds.push({x: random(600), y: random(240), sz: random(2)});
@@ -303,7 +305,6 @@ Shuriken.prototype.draw = function() {
     }
 };
 var Shurikens = [];
-var howManyShurikens = 3;
 
 var Player = function(){
     this.x = 300;
@@ -465,7 +466,7 @@ draw = function() {
     if(scene === 'Game'){
         image(images.gameBG, 0, 0);
         
-        if(frameCount % 300 === 0){
+        if(frameCount % 600 === 0){
             fallingSs.push(new fallingS(random(100, 500), -50));
         }
         if(frameCount % enemyFrequency === 0){
@@ -497,15 +498,31 @@ draw = function() {
         player.draw();
         
         fill(28, 28, 28, 100);
-        rect(40, 40, 60, 30, 5);
-        //rect(110, 40, 60, 30, 5);
-        //rect(180, 40, 60, 30, 5);
+        rect(40, 40, 50, 30, 5);
         
         fill(255);
         textSize(20);
-        text(howManyShurikens, 85, 55);
-        text(enemyFrequency, 155, 55);
-        //text('5', 225, 55);
+        text(howManyShurikens, 75, 55);
+        pushMatrix();
+        translate(55, 55);
+        noStroke();
+        for(var i = 0; i < 360; i += 90){
+            pushMatrix();
+            rotate(i + 15);
+            fill(191, 191, 191);
+            triangle(-5, 0, 5, 0, 0, -10);
+            fill(255, 255, 255);
+            triangle(-5, 0, -3, 0, 0, -10);
+            popMatrix();
+        }
+        noFill();
+        stroke(255);
+        strokeWeight(1);
+        ellipse(0, 0, 6, 6);
+        stroke(0, 0, 0, 50);
+        strokeWeight(1);
+        ellipse(0, 0, 3, 3);
+        popMatrix();
     }
     if(scene === 'Lose'){
         image(images.gameBG, 0, 0);
