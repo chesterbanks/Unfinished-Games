@@ -394,28 +394,33 @@
 {
     var menu = function(){
         this.buttons = [
-            new button(300, 450, 160, 'Begin', 'Intro'),
-            new button(130, 450, 120, 'How', 'How'),
-            new button(470, 450, 120, 'Credits', 'Credits'),
+            new button(300, 300, 130, 'Begin', 'Intro'),
+            new button(150, 300, 110, 'How', 'How'),
+            new button(450, 300, 110, 'Credits', 'Credits'),
         ];
     };
     menu.prototype.draw = function() {
         image(images.flatCity, 0, 0);
-        strokeWeight(5);
-        for(var i = -300; i < 0; i += 5){
-            for(var j = 0; j < 360; j += 90){
-                stroke(255, 255, 255, -150 - i);
-                pushMatrix();
-                translate(300, 300);rotate(j);
-                line(-300, i, 300, i);
-                popMatrix();
-            }
+        
+        noFill();
+        stroke(255, 255, 255, 10);
+        for(var i = 0; i < 60; i += 5){
+            strokeWeight(i);
+            rect(0, 0, width, height);
         }
-        fill(255);
+        
+        noStroke();
+        fill(0);
+        rect(105, 137, 392, 76);
+        fill(255, 255, 255);
+        rect(134, 113, 172, 28);
+        
         textSize(25);
-        text("THE TREASURE OF", 220, 255);
+        fill(55, 179, 154);
+        text("THE TREASURE OF", 220, 126);
+        fill(255);
         textSize(70);
-        text("DIAMOND HILL", 300, 300);
+        text("DIAMOND HILL", 300, 175);
         
         for(var i in this.buttons){
             this.buttons[i].draw();
@@ -512,13 +517,29 @@
             rect(0, 0, w, h);
             fill(0, 0, 0, 30);
             quad(0, 0, w, 0, w - (w/5), h/2, (w/5), h/2);
-            fill(0, 0, 0, 50);
+            fill(0, 0, 0, 100);
             quad(0, h, w, h, w - (w/5), h/2, (w/5), h/2);
             if(txt){
                 textSize(15);
                 text(txt.toUpperCase(), w/2, -10);
             }
             popMatrix();
+        };
+        
+        this.star = function(x, y, nxt){
+            if(dist(mouseX, mouseY, x, y) < 10){
+                fill(242, 242, 242, 150);
+                textSize(30);
+                text('\u2605', x, y);
+                mouse.overButton = true;
+                if(mouse.clicked){
+                    system.switchingScenes = true;
+                    system.nextScene = nxt;
+                }
+            }
+            fill(255, 255, 0);
+            textSize(20);
+            text('\u2605', x, y);
         };
     };
     theMap.prototype.draw = function() {
@@ -534,12 +555,7 @@
         rect(55, 135, 490, 347);
         fill(255, 255, 255);
         rect(50, 125, 500, 350, 10);
-        for(var i = 50; i < 550; i += 10){
-            for(var j = 125; j < 470; j += 10){
-                fill(150, 150, 100, noise(i - j, 0.06)*200);
-                rect(i, j, 10, 10);
-            }
-        }
+        
         noStroke();
         fill(255);
         textSize(55);
@@ -550,9 +566,8 @@
         noFill();
         stroke(158, 158, 158);
         strokeWeight(30);
-        arc(320, 250, 200, 50, 0, 180);
-        arc(195, 208, 60, 60, -120, 30);
-        arc(217, 235, 20, 20, -245, -116);
+        arc(320, 250, 200, 50, 0, 144);
+        bezier(177, 176, 271, 192, 183, 228, 230, 259);
         line(420, 245, 408, 300);
         noStroke();
         
@@ -564,6 +579,21 @@
         this.rooftop(335, 170, 30, 15);
         this.rooftop(365, 300, 80, 50, 10);
         this.rooftop(393, 295, 30, 10, 10, 'Bank');
+        
+        // Beach
+        noStroke();
+        fill(232, 224, 106);
+        beginShape();
+        vertex(550, 475);
+        vertex(360, 475);
+        bezierVertex(361, 400, 505, 451, 550, 376);
+        endShape();
+        fill(82, 169, 255);
+        beginShape();
+        vertex(550, 475);
+        vertex(415, 475);
+        bezierVertex(373, 400, 533, 492, 550, 402);
+        endShape();
         
         // Hedgewood Park
         fill(37, 184, 54);
@@ -589,26 +619,31 @@
             fill(46, 219, 69);
             ellipse((200) + (sin(i)*50) + (noise(i/60, 0.3)*50), 300 + (cos(i)*50) + (noise(i/70, 0.5)*50), 10, 30);
         }
-        fill(0, 0, 0, 50);
-        textSize(12);
+        fill(0, 0, 0, 100);
+        textSize(15);
         pushMatrix();
         translate(265, 395);
         rotate(-25);
         text('HEDGEWOOD\nPARK', 0, 0);
         popMatrix();
+        pushMatrix();
+        translate(433, 410);
+        rotate(-11);
+        text('SEAGULL BEACH', 0, 0);
+        popMatrix();
         
-        if(dist(mouseX, mouseY, 215, 340) < 10){
-            fill(242, 242, 242, 150);
-            textSize(30);
-            text('\u2605', 215, 340);
-            if(mouse.clicked){
-                system.switchingScenes = true;
-                system.nextScene = 'Hedgewood';
+        for(var i = 50; i < 550; i += 10){
+            for(var j = 125; j < 470; j += 10){
+                fill(150, 150, 100, noise(i - j, 0.06)*205);
+                rect(i, j, 10, 10);
             }
         }
-        fill(255, 255, 0);
-        textSize(20);
-        text('\u2605', 215, 340);
+        
+        this.star(215, 340, 'Hedgewood');
+        this.star(175, 176, 'Library');
+        this.star(402, 319, 'Bank');
+        this.star(416, 236, 'Oak West Mall');
+        this.star(492, 426, 'Beach');
         
         fill(235);
         textSize(15);
