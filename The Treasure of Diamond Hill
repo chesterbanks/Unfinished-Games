@@ -70,15 +70,18 @@
         this.next = next;
     };
     button.prototype.draw = function() {
-        noStroke();
-        fill(0, 0, 0, 50);
-        ellipse(this.x, this.y + 12, this.sz, this.sz);
         textSize(this.sz/6);
         strokeWeight(10);
         stroke(255, 255, 255);
         fill(255, 255, 255, 220);
         if(dist(mouseX, mouseY, this.x, this.y) < this.sz/2){
             mouse.overButton = true;
+            
+            noStroke();
+            fill(0, 0, 0, 50);
+            ellipse(this.x, this.y + 12, this.sz + sin(frameCount*10)*10, this.sz + cos(frameCount*10)*10);
+            strokeWeight(10);
+            stroke(255, 255, 255);
             fill(255, 255, 255, 220);
             ellipse(this.x, this.y, this.sz + sin(frameCount*10)*10, this.sz + cos(frameCount*10)*10);
             fill(50);
@@ -88,6 +91,12 @@
                 system.switchingScenes = true;
             }
         } else {
+            noStroke();
+            fill(0, 0, 0, 50);
+            ellipse(this.x, this.y + 12, this.sz, this.sz);
+            strokeWeight(10);
+            stroke(255, 255, 255);
+            fill(255, 255, 255, 220);
             ellipse(this.x, this.y, this.sz, this.sz);
             fill(50);
             text(this.txt.toUpperCase(), this.x, this.y);
@@ -480,6 +489,49 @@
     };
     var Credits = new credits();
     
+    var how = function(){
+        this.buttons = [
+            new button(80, 520, 120, 'Back', 'Menu'),
+        ];
+        
+        this.creds = [
+            {
+                name: 'Eric Balingit',
+                img: getImage("avatars/piceratops-ultimate"),
+                cred: 'For the code to load google fonts'
+            },
+            {
+                name: '17mloges',
+                img: getImage("avatars/mr-pants"),
+                cred: 'For the great storyline'
+            },
+        ];
+    };
+    how.prototype.draw = function() {
+        background(55, 179, 154);
+        strokeWeight(5);
+        for(var i = -300; i < 0; i += 5){
+            for(var j = 0; j < 360; j += 90){
+                stroke(255, 255, 255, -150 - i);
+                pushMatrix();
+                translate(300, 300);
+                rotate(j);
+                line(-300, i, 300, i);
+                popMatrix();
+            }
+        }
+        fill(255);
+        textSize(80);
+        text("INSTRUCTIONS", 300, 100);
+        textSize(30);
+        text('You are on a quest to find hidden treasure! You will be given clues along the way that lead to the treasure. Each clue leads to another clue. Go different places from the map, and move with the arrow keys once you\'re at a place.\n\nHave fun!', 50, 70, 500, 500);
+        
+        for(var i in this.buttons){
+            this.buttons[i].draw();
+        }
+    };
+    var How = new how();
+    
     var intro = function(){
         this.texts = [
             'The town of Diamond Hill has attracted hundreds of visitors over just the last few years because of a recent lead on an old legend.',
@@ -673,6 +725,9 @@ draw = function() {
             break;
         case 'Credits':
             Credits.draw();
+            break;
+        case 'How':
+            How.draw();
             break;
         case 'Intro':
             Intro.draw();
