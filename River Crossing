@@ -4,6 +4,9 @@
  * July 13 2017
 */
 
+textAlign(CENTER, CENTER);
+textFont(createFont('Avenir'));
+
 var scene = 'Menu';
 var keys = [];
 
@@ -182,7 +185,7 @@ draw = function() {
         
         pushMatrix();
         translate(285, 171);
-        stroke(255);
+        stroke(255, 255, 255);
         strokeWeight(20);
         line(0, 100, -50, -100);
         line(0, 100, 50, -100);
@@ -197,6 +200,38 @@ draw = function() {
         line(155, 100, 165, -100);
         bezier(157, 0, -95 + 345, 27, -67 + 345, -171, -200 + 345, -100);
         bezier(-178 + 345, 9, -167 + 433, 36, -159 + 369, 162, -84 + 345, 133);
+        popMatrix();
+        
+        fill(255);
+        textSize(61);
+        text('C R O S S I N G', 300, 325);
+        textSize(23);
+        text('Chester Banks | Khan Olympics 2017', 300, 370);
+        
+        noStroke();
+        pushMatrix();
+        translate(300, 503);
+        scale(3, 2.5);
+        rotate(-3);
+        fill(125, 89, 54);
+        rect(0, 0, 83, 39, 5);
+        ellipse(3, 21, 25, 37);
+        fill(148, 105, 62);
+        rect(0, 0, 80, 30, 5);
+        fill(0, 0, 0, 30);
+        rect(28, 4, 51, 5);
+        rect(5, 12, 73, 3);
+        rect(6, 19, 67, 4);
+        rect(19, 26, 59, 1);
+        strokeWeight(3);
+        stroke(148, 105, 62);
+        fill(207, 168, 128);
+        ellipse(3, 16, 25, 30);
+        noFill();
+        stroke(0, 0, 0, 30);
+        ellipse(3, 16, 16, 20);
+        ellipse(3, 16, 8, 12);
+        point(3, 16);
         popMatrix();
     }
     if(scene === 'Game'){
