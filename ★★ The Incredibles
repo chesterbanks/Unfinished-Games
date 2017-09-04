@@ -1,0 +1,223 @@
+var scene = 'Game';
+
+var iLogo = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz / 50);
+    noStroke();
+    fill(235, 71, 31);
+    ellipse(0, 0, 300, 200);
+    fill(45);
+    arc(0, -20, 260, 150, -90, 90);
+    arc(0, 20, 260, 150, -270, -90);
+    fill(251, 216, 26);
+    ellipse(0, -80, 70, 70);
+    rect(0, 40, 60, 115);
+    arc(0, 97, 60, 7, 0, 180);
+    triangle(-30, -17, 30, -17, 30, -34);
+    fill(255);
+    ellipse(0, -80, 35, 35);
+    popMatrix();
+};
+var Dash = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz / 50);
+    rectMode(CENTER);
+    
+    noStroke();
+    
+    // Shadow
+    fill(0, 0, 0, 30);
+    ellipse(0, 58, 40, 10);
+    
+    // Torso
+    fill(217, 32, 32);
+    rect(0, 29, 21, 30, 10);
+    
+    // Belt & "underwear"??
+    fill(251, 216, 26);
+    rect(0, 38, 19, 3, 0);
+    fill(45);
+    (rect)(0, 43, 19, 6, 0, 0, 14, 14);
+    
+    // Arms & legs
+    strokeWeight(7);
+    noFill();
+    stroke(217, 32, 32);
+    arc(-7, 148, 100, 240, 248, 266);
+    arc(8, -89, 100, 240, 74, 88);
+    arc(3, 160, 23, 240, 290, 297);
+    arc(-2, 162, 23, 240, 244, 253);
+    stroke(45);
+    arc(9, -89, 100, 240, 73, 74);
+    arc(-7, 148, 100, 240, 248, 249);
+    arc(3, 160, 23, 240, 297, 297);
+    arc(-2, 162, 23, 240, 244, 244);
+    
+    noStroke();
+    
+    // iLogo
+    iLogo(0, 30, 2);
+    
+    // Head
+    fill(240, 177, 132);
+    rect(0, 0, 50, 50, 10);
+    
+    // Hair
+    fill(245, 241, 133);
+    arc(0, -25, 50, 20, -180, 0);
+    rect(0, -23, 50, 6);
+    rect(-24, -16, 3, 19);
+    rect(25, -16, 4, 19);
+    arc(0, -21, 50, 10, 0, 180);
+    
+    // Eyebrows
+    noFill();
+    stroke(245, 241, 133);
+    strokeWeight(3);
+    arc(-18, -29, 50, 50, 71, 87);
+    arc(18, -29, 50, 50, 100, 116);
+    noStroke();
+    
+    // Face
+    pushMatrix();
+    translate(-25, -18);
+    fill(0);
+    bezier(25, 25, -3, 45, -4, -3, 30, 25);
+    bezier(25, 25, 53, 45, 54, -3, 20, 25);
+    fill(240, 177, 132);
+    bezier(20, 24, 2, 37, 8, 7, 20, 24);
+    bezier(30, 24, 50, 37, 42, 7, 30, 24);
+    fill(0);
+    ellipse(14, 23, 6, 6);
+    ellipse(37, 23, 6, 6);
+    fill(15, 15, 15);
+    arc(25, 31, 15, 15, 0, 180);
+    popMatrix();
+    popMatrix();
+};
+
+var images = {
+    'bg': function(){
+        for(var i = -15; i < width; i += 25){
+            for(var j = 0; j < height; j += 15){
+                pushMatrix();
+                translate(i + ((j%2)*12), j);
+                scale(0.5);
+                noStroke();
+                fill(115, 19, 19);
+                rect(0, 0, 50, 30);
+                fill(0, 0, 0, 50);
+                beginShape();
+                vertex(0, 30);
+                vertex(50, 30);
+                vertex(50, 0);
+                bezierVertex(40, 24, 62, 26,0, 30);
+                endShape();
+                fill(255, 255, 255, 50);
+                beginShape();
+                vertex(0, 30);
+                vertex(0, 0);
+                vertex(50, 0);
+                bezierVertex(2, 12, 8, -12,0, 30);
+                endShape();
+                fill(0, 0, 0, random(70));
+                rect(0, 0, 50, 30);
+                popMatrix();
+            }
+        }
+        
+        filter(BLUR, 1);
+        return get(0, 0, width, height);
+    },
+    'foreground': function(){
+        fill(161, 161, 161);
+        rect(0, 550, 600, 50);
+        fill(0, 0, 0, 30);
+        rect(0, 550, 600, 20);
+        for(var i = -15; i < width; i += 25){
+            pushMatrix();
+            translate(i, 550);
+            scale(0.5);
+            noStroke();
+            fill(168, 168, 168);
+            rect(0, 0, 50, 30);
+            fill(0, 0, 0, 50);
+            beginShape();
+            vertex(0, 30);
+            vertex(50, 30);
+            vertex(50, 0);
+            bezierVertex(40, 24, 62, 26,0, 30);
+            endShape();
+            fill(255, 255, 255, 50);
+            beginShape();
+            vertex(0, 30);
+            vertex(0, 0);
+            vertex(50, 0);
+            bezierVertex(2, 12, 8, -12,0, 30);
+            endShape();
+            fill(0, 0, 0, random(70));
+            rect(0, 0, 50, 30);
+            popMatrix();
+        }
+        
+        return get(0, 0, 600, 600);
+    },
+};
+
+draw = function() {
+    // Load those images
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    if(scene === 'Menu'){
+        background(160, 0, 4);
+        pushMatrix();
+        translate(width / 2, height / 2.5);
+        noStroke();
+        fill(218, 227, 43, 10);
+        for(var i = 300; i < 503; i += 15){
+            ellipse(0, 0, i, i / 1.5);
+        }
+        iLogo(0, 0, 50);
+        popMatrix();
+        
+        stroke(251, 216, 26);
+        noFill();
+        strokeWeight(15);
+        rect(300, 300, width, height);
+        
+        textAlign(CENTER, CENTER);
+        textFont(createFont('Avenir Bold Italic'), 65);
+        fill(251, 216, 26);
+        text('INCREDIBLES', width / 2, height / 1.3);
+        textSize(25);
+        text('THE', width / 3.8, height / 1.45);
+        textFont(createFont('Avenir Italic'), 16);
+        text('C H E S T E R . B A N K S    S E P T E M B E R . 2 3 . 2 0 1 7', width / 2, height / 1.18);
+        
+        noStroke();
+        for(var i = -400; i < 0; i += 60){
+            fill(0, 0, 0, 10);
+            rect(0, 0, 0.5, 0.5, i);
+            rect(width, 0, 0.5, 0.5, i);
+            rect(0, height, 0.5, 0.5, i);
+            rect(width, height, 0.5, 0.5, i);
+        }
+    }
+    if(scene === 'Game'){
+        background(255);
+        image(images.bg, 600 - frameCount * 2 % 1200, 0);
+        image(images.bg, 600 - (frameCount * 2 + 600) % 1200, 0);
+        
+        image(images.foreground, 600 - frameCount * 3 % 1200, 0);
+        image(images.foreground, 600 - (frameCount * 3 + 600) % 1200, 0);
+        
+        Dash(100, 523, 30);
+    }
+};
