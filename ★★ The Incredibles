@@ -1,5 +1,21 @@
-var scene = 'Game';
+textAlign(CENTER, CENTER);
 
+var scene = 'Logo';
+
+// Processing events
+var keys = [];
+var keyPressed = function(){ 
+    keys[keyCode] = true; 
+};
+var keyReleased = function(){ 
+    keys[keyCode] = false; 
+};
+var clicked = false;
+mouseClicked = function(){
+    clicked = true;
+};
+
+// Helpful little graphics functions
 var iLogo = function(x, y, sz){
     pushMatrix();
     translate(x, y);
@@ -97,7 +113,300 @@ var Dash = function(x, y, sz){
     popMatrix();
     popMatrix();
 };
+var Violet = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz / 50);
+    rectMode(CENTER);
+    
+    noStroke();
+    
+    // Shadow
+    fill(0, 0, 0, 30);
+    ellipse(0, 58, 40, 10);
+    
+    // Forcefield
+    /*noFill();
+    strokeWeight(5);
+    for(var i = 181; i > 89; i -= 10){
+        stroke(99, 255, 255, i - 100);
+        arc(0, 0, i, i, -227, 47);
+    }*/
+    noStroke();
+    
+    // Back hair
+    fill(35);
+    arc(0, -13, 60, 50, -180, 0);
+    quad(-30, -13, 30, -14, 25, 35, -25, 35);
+    arc(0, 35, 50, 10, 0, 180);
+    
+    // Torso
+    fill(217, 32, 32);
+    rect(0, 29, 14, 40, 10);
+    
+    // Belt & "underwear"??
+    fill(251, 216, 26);
+    rect(0, 42, 14, 3, 0);
+    fill(45);
+    (rect)(0, 46, 14, 6, 0, 0, 14, 14);
+    
+    // Arms
+    strokeWeight(6);
+    noFill();
+    stroke(217, 32, 32);
+    arc(0, -88, 164, 240, 77, 103);
+    stroke(45);
+    arc(0, -88, 164, 240, 104, 104);
+    arc(0, -88, 164, 240, 77, 77);
+    
+    // Legs
+    strokeWeight(4);
+    stroke(217, 32, 32);
+    arc(0, 163, 23, 240, 290, 297);
+    arc(0, 164, 24, 240, 244, 253);
+    stroke(45);
+    arc(0, 164, 23, 240, 293, 297);
+    arc(0, 165, 23, 240, 244, 249);
+    
+    noStroke();
+    
+    // iLogo
+    iLogo(0, 30, 2);
+    
+    // Head
+    fill(240, 177, 132);
+    rect(0, 0, 50, 50, 10);
+    
+    // Front hair
+    fill(191, 36, 36);
+    ellipse(0, -27, 50, 10);
+    fill(35);
+    ellipse(0, -21, 57, 16);
+    arc(14, -17, 81, 22, 96, 183);
+    arc(16, -25, 19, 43, -3, 88);
+    
+    // Eyebrows
+    noFill();
+    stroke(45);
+    strokeWeight(3);
+    arc(-18, -29, 50, 50, 71, 87);
+    arc(18, -29, 50, 50, 100, 116);
+    noStroke();
+    
+    // Face
+    pushMatrix();
+    translate(-25, -18);
+    fill(0);
+    bezier(25, 25, -3, 45, -4, -3, 30, 25);
+    bezier(25, 25, 53, 45, 54, -3, 20, 25);
+    fill(240, 177, 132);
+    bezier(20, 24, 2, 37, 8, 7, 20, 24);
+    bezier(30, 24, 50, 37, 42, 7, 30, 24);
+    fill(0);
+    ellipse(15, 23, 6, 6);
+    ellipse(35, 23, 6, 6);
+    stroke(15, 15, 15);
+    strokeWeight(2);
+    noFill();
+    arc(23, 31, 20, 10, 10, 121);
+    popMatrix();
+    popMatrix();
+};
+var Helen = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz / 50);
+    rectMode(CENTER);
+    
+    noStroke();
+    
+    // Shadow
+    fill(0, 0, 0, 30);
+    ellipse(0, 58, 40, 10);
+    
+    // Back hair
+    fill(156, 43, 20);
+    pushMatrix();
+    translate(-200, -200);
+    beginShape();
+    vertex(169, 227);
+    bezierVertex(158, 215, 142, 122, 221, 166);
+    bezierVertex(260, 155, 249, 221, 222, 225);
+    endShape(CLOSE);
+    popMatrix();
+    ellipse(-6, 24, 69, 15);
+    strokeWeight(3);
+    stroke(0, 0, 0, 30);
+    arc(-2, -24, 50, 50, -19, 0);
+    noStroke();
+    
+    // Torso
+    fill(217, 32, 32);
+    rect(0, 29, 14, 20, 10);
+    rect(0, 29, 9, 33, 10);
+    rect(0, 40, 12, 5, 10);
+    
+    // Belt & "underwear"??
+    fill(251, 216, 26);
+    rect(0, 42, 12, 3, 0);
+    fill(45);
+    (rect)(0, 46, 12, 6, 0, 0, 14, 14);
+    
+    // Arms
+    strokeWeight(6);
+    noFill();
+    stroke(217, 32, 32);
+    arc(0, -88, 164, 240, 43, 129);
+    stroke(45);
+    arc(0, -88, 164, 240, 126, 129);
+    arc(0, -88, 164, 240, 43, 47);
+    
+    // Legs
+    strokeWeight(4);
+    stroke(217, 32, 32);
+    arc(0, 163, 23, 240, 290, 297);
+    arc(0, 164, 24, 240, 244, 253);
+    stroke(45);
+    arc(0, 164, 23, 240, 294, 297);
+    arc(0, 165, 23, 240, 244, 249);
+    
+    noStroke();
+    
+    // iLogo
+    iLogo(0, 30, 2);
+    
+    // Head
+    fill(240, 177, 132);
+    rect(0, 0, 50, 50, 10);
+    
+    // Front hair
+    fill(156, 43, 20);
+    bezier(24, -25, 30, -30, -30, 4, -26, -25);
+    
+    // Eyebrows
+    noFill();
+    stroke(45);
+    strokeWeight(3);
+    arc(-18, -29, 50, 50, 71, 87);
+    arc(18, -29, 50, 50, 100, 116);
+    noStroke();
+    
+    // Face
+    pushMatrix();
+    translate(-25, -18);
+    fill(0);
+    bezier(25, 25, -3, 45, -4, -3, 30, 25);
+    bezier(25, 25, 53, 45, 54, -3, 20, 25);
+    fill(240, 177, 132);
+    bezier(20, 24, 2, 37, 8, 7, 20, 24);
+    bezier(30, 24, 50, 37, 42, 7, 30, 24);
+    fill(0);
+    ellipse(15, 23, 6, 6);
+    ellipse(35, 23, 6, 6);
+    //ellipse(14, 22, 7, 3);
+    //ellipse(36, 22, 7, 3);
+    stroke(158, 63, 46);
+    strokeWeight(2);
+    noFill();
+    arc(23, 31, 20, 10, 10, 121);
+    popMatrix();
+    popMatrix();
+};
+var Bob = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz / 50);
+    rectMode(CENTER);
+    
+    noStroke();
+    
+    // Body
+    pushMatrix();
+    translate(0, 6);
+    // Shadow
+    fill(0, 0, 0, 30);
+    ellipse(0, 58, 40, 10);
+    
+    // Torso
+    fill(217, 32, 32);
+    rect(0, 29, 21, 30, 10);
+    
+    // Belt & "underwear"??
+    fill(251, 216, 26);
+    rect(0, 38, 19, 3, 0);
+    fill(45);
+    (rect)(0, 43, 19, 6, 0, 0, 14, 14);
+    
+    // Arms & legs
+    strokeWeight(9);
+    noFill();
+    stroke(217, 32, 32);
+    arc(-7, 144, 100, 240, 248, 266);
+    arc(8, -95, 100, 240, 74, 88);
+    arc(3, 160, 23, 240, 290, 297);
+    arc(-2, 162, 23, 240, 244, 253);
+    stroke(45);
+    arc(9, -96, 100, 240, 73, 74);
+    arc(-7, 143, 100, 240, 248, 249);
+    arc(3, 160, 23, 240, 297, 297);
+    arc(-2, 162, 23, 240, 244, 244);
+    
+    // iLogo
+    noStroke();
+    iLogo(0, 26, 2);
+    
+    popMatrix();
+    
+    // Head
+    fill(240, 177, 132);
+    rect(0, 0, 50, 50, 10);
+    
+    // Hair
+    fill(245, 241, 133);
+    arc(0, -25, 27, 15, -180, 0);
+    rect(0, -23, 50, 6, 230);
+    rect(-24, -16, 3, 19);
+    rect(25, -16, 4, 19);
+    arc(0, -21, 13, 10, 0, 180);
+    fill(240, 177, 132);
+    arc(-14, -19, 16, 5, -180, 0);
+    arc(15, -19, 16, 5, -180, 0);
+    
+    // Lines on forehead
+    noFill();
+    stroke(0, 0, 0, 60);
+    strokeWeight(1);
+    line(-2, -4, -2, -10);
+    line(2, -5, 2, -10);
+    arc(0, 0, 27, 40, 59, 120);
+    
+    // Eyebrows
+    noFill();
+    stroke(245, 241, 133);
+    strokeWeight(5);
+    arc(-18, -35, 144, 50, 82, 87);
+    arc(18, -33, 50, 50, 100, 116);
+    noStroke();
+    
+    // Face
+    pushMatrix();
+    translate(-25, -23);
+    fill(0);
+    bezier(25, 25, -3, 45, -4, -3, 30, 25);
+    bezier(25, 25, 53, 45, 54, -3, 20, 25);
+    fill(240, 177, 132);
+    bezier(20, 24, 2, 37, 8, 7, 20, 24);
+    bezier(30, 24, 50, 37, 42, 7, 30, 24);
+    fill(0);
+    ellipse(14, 23, 6, 6);
+    ellipse(37, 23, 6, 6);
+    fill(15, 15, 15);
+    arc(25, 31, 15, 15, 0, 180);
+    popMatrix();
+    popMatrix();
+};
 
+// Images
 var images = {
     'bg': function(){
         for(var i = -15; i < width; i += 25){
@@ -166,7 +475,210 @@ var images = {
     },
 };
 
+// Player OOP
+var Player = function(){
+    this.x = 100; 
+    this.y = 523; this.yvel = 0;
+    this.character = 'Dash';
+    
+    this.jumping = false;
+};
+Player.prototype.draw = function() {
+    if(this.character === 'Dash'){
+        Dash(this.x, this.y, 30);
+    } else if (this.character === 'Violet'){
+        Violet(this.x, this.y, 30);
+    } else if (this.character === 'Helen'){
+        Helen(this.x, this.y, 30);
+    } else {
+        Bob(this.x, this.y, 30);
+    }
+    
+    if(keys[49]){
+        this.character = 'Dash';
+    }
+    if(keys[50]){
+        this.character = 'Violet';
+    }
+    if(keys[51]){
+        this.character = 'Helen';
+    }
+    if(keys[52]){
+        this.character = 'Bob';
+    }
+    if ((keys[UP]) && !this.jumping) {
+        this.yvel -= 10;
+        this.jumping = true;
+    }
+    
+    this.jumping = true;
+    this.y += this.yvel;
+    this.yvel += 0.6;
+    
+    if (this.y >= 523 && this.yvel > 0) {
+        this.jumping = false;
+        this.yvel = 0;
+        this.y = 523;
+    }
+};
+var player = new Player();
+
+// Logo
+var Logo = function(){
+    this.s  = 500;
+    this.s2 = 1;
+    this.s3 = 300;
+    this.trans = 255;
+};
+Logo.prototype.draw = function(){
+    pushStyle();
+    textFont(createFont('Avenir'));
+    background(160, 0, 4);
+    
+    pushMatrix();
+    translate(300, 280);
+    scale(1 - this.s2, 1 - this.s2/1.5);
+    rotate(this.s2 * 360);
+    noFill();
+    
+    stroke(251, 216, 26);
+    
+    // D
+    strokeWeight(12);
+    line(-145, -60, -145, 27);
+    strokeWeight(5);
+    bezier(-179, -8, -220, -20, -95, -51, -94, -17);
+    bezier(-179, -8, -220, -22, -95, -42, -97, -17);
+    bezier(-179, -8, -220, -22, -95, -39, -95, -12);
+    bezier(-186, -15, -110, 85, 9, -19, -101, -76);
+    bezier(-186, -15, -110, 84, -2, -19, -101, -76);
+    bezier(-186, -15, -110, 77, -11, -18, -101, -76);
+    bezier(-203, -97, -187, -104, -138, -101, -101, -76);
+    
+    // I
+    strokeWeight(12);
+    line(-35, -34, -35, 11);
+    strokeWeight(5);
+    bezier(-18, -86, -93, -25, 39, -75, -16, -87);
+    bezier(-18, -86, -93, -25, 34, -63, -16, -87);
+    bezier(-27, -88, -53, -92, -53, -60, -47, -61);
+    bezier(-32, -85, -53, -86, -53, -51, -47, -61);
+    bezier(-18, -86, -39, -80, -45, -58, -46, -54);
+    
+    // S
+    strokeWeight(6);
+    bezier(29, -37, -70, -23, 22, -23, 17, -17);
+    bezier(34, -34, -70, -23, 22, -23, 17, -17);
+    bezier(30, -32, -78, -22, 22, -21, 17, -17);
+    bezier(-4, 4, 5, 11, 51, 0, 17, -18);
+    bezier(-4, 8, 5, 14, 51, 10, 17, -18);
+    bezier(-4, 8, 5, 14, 51, 10, 17, -18);
+    bezier(-4, 4, 0, 13, -42, -16, 10, -6);
+    bezier(-4, 7, 0, 13, -42, -16, 10, -6);
+    bezier(-7, 3, 13, 13, -42, -16, 10, -3);
+    
+    // N
+    strokeWeight(3);
+    bezier(50, -35, 45, -21, 40, 8, 44, 14);
+    bezier(53, -35, 47, -21, 52, 8, 48, 14);
+    bezier(53, -35, 51, -21, 75, 8, 77, 9);
+    bezier(53, -35, 67, -21, 93, 17, 77, 9);
+    bezier(76, -47, 86, -30, 93, -5, 82, 9);
+    bezier(73, -49, 80, -30, 84, -5, 76, -3);
+    strokeWeight(6);
+    bezier(50, -34, 47, -21, 46, 8, 46, 13);
+    bezier(52, -21, 67, -21, 79, 17, 78, 4);
+    bezier(53, -26, 48, -49, 85, 17, 74, 2);
+    bezier(78, -40, 80, -30, 84, -5, 80, -3);
+    bezier(77, -40, 86, -30, 88, -5, 83, 2);
+    
+    // E
+    strokeWeight(3);
+    bezier(97, -38, 108, -35, 137, -52, 141, -35);
+    bezier(99, -33, 108, -31, 137, -26, 141, -35);
+    bezier(99, -33, 95, -34, 97, -34, 97, -38);
+    bezier(132, 3, 123, 19, 97, 22, 97, 9);
+    bezier(130, 1, 123, 2, 97, 6, 97, 10);
+    bezier(105, -29, 94, 2, 94, 6, 97, 9);
+    strokeWeight(7);
+    bezier(97, -35, 124, -35, 137, -44, 135, -35);
+    bezier(103, -35, 108, -37, 135, -31, 136, -35);
+    bezier(127, 4, 123, 2, 97, 15, 103, 11);
+    bezier(127, 4, 123, 14, 97, 15, 103, 11);
+    strokeWeight(10);
+    line(101, -13, 129, -15);
+    bezier(111, -29, 98, 2, 100, 6, 107, 9);
+    
+    // Y
+    strokeWeight(3);
+    bezier(161, -38, 109, 27, 204, 31, 196, -28);
+    bezier(161, -38, 125, 19, 204, 17, 193, -28);
+    bezier(192, -28, 170, -25, 153, 17, 146, 63);
+    bezier(188, -37, 158, -25, 141, 17, 136, 55);
+    strokeWeight(5);
+    bezier(145, 63, 149, 75, 131, 53, 136, 57);
+    strokeWeight(6);
+    bezier(151, -20, 133, 20, 199, 27, 196, -28);
+    bezier(151, -20, 133, 13, 199, 27, 196, -28);
+    strokeWeight(7);
+    bezier(191, -33, 161, -25, 147, 17, 140, 55);
+    bezier(194, -33, 166, -25, 147, 17, 143, 60);
+    
+    // Slash
+    strokeWeight(3);
+    bezier(-121, 84, -75, 48, -19, 17, 191, 37);
+    bezier(-111, 101, -88, 68, -19, 29, 191, 37);
+    strokeWeight(10);
+    bezier(-114, 93, -88, 68, -19, 29, 139, 35);
+    bezier(-114, 85, -88, 68, -50, 29, 139, 35);
+    strokeWeight(22);
+    point(-115, 92);
+    
+    // Game medley
+    textSize(44);
+    fill(251, 216, 26);
+    text('game medley', 57, 75);
+    
+    popMatrix();
+    textSize(15);
+    text('M A D E   A S   P A R T   O F   C H E S T E R   B A N K S \'', 300 - this.s, 113);
+    
+    pushMatrix();
+    translate(300, 400);
+    translate(0, this.s3);
+    stroke(251, 216, 26);
+    strokeWeight(10);
+    noFill();
+    arc(-230, 90, 200, 200, -245, 30);
+    arc(100, 145, 200, 200, -200, 30);
+    arc(-130, 388, 500, 500, -91, -57);
+    arc(-130, 388, 500, 500, -131, -125);
+    popMatrix();
+    
+    noStroke();
+    fill(160, 0, 4, 255 - this.trans);
+    rect(0, 0, width, height);
+    
+    this.s /= 1.1;
+    if(this.s < 10){
+        this.s2 /= 1.1;
+    }
+    if(this.s2 < 0.1){
+        this.s3 /= 1.1;
+    }
+    if(this.s3 < 0.1){
+        this.trans /= 1.3;
+    }
+    if(this.trans < 0.1){
+        scene = 'Menu';
+    }
+    popStyle();
+};
+var logo = new Logo();
+
 draw = function() {
+    textFont(createFont('Avenir Bold'));
+    
     // Load those images
     for(var i in images){
         if (typeof images[i] !== "object") {
@@ -175,7 +687,23 @@ draw = function() {
         }
     }
     
+    if(scene === 'Logo'){
+        logo.draw();
+        stroke(251, 216, 26);
+        noFill();
+        strokeWeight(15);
+        rect(0, 0, width, height);
+        noStroke();
+        for(var i = -400; i < 0; i += 60){
+            fill(0, 0, 0, 10);
+            rect(0, 0, 0.5, 0.5, i);
+            rect(width, 0, 0.5, 0.5, i);
+            rect(0, height, 0.5, 0.5, i);
+            rect(width, height, 0.5, 0.5, i);
+        }
+    }
     if(scene === 'Menu'){
+        rectMode(CENTER);
         background(160, 0, 4);
         pushMatrix();
         translate(width / 2, height / 2.5);
@@ -209,6 +737,12 @@ draw = function() {
             rect(0, height, 0.5, 0.5, i);
             rect(width, height, 0.5, 0.5, i);
         }
+        
+        rectMode(CORNER);
+        
+        if(clicked){
+            scene = 'Game';
+        }
     }
     if(scene === 'Game'){
         background(255);
@@ -218,6 +752,23 @@ draw = function() {
         image(images.foreground, 600 - frameCount * 3 % 1200, 0);
         image(images.foreground, 600 - (frameCount * 3 + 600) % 1200, 0);
         
-        Dash(100, 523, 30);
+        player.draw();
+        
+        stroke(255, 255, 255, 50);
+        strokeWeight(10);
+        for(var i = 0; i < 4; i ++){
+            fill(0, 0, 0, 100);
+            rect(70 + i * 100, 80, 80, 80, 10);
+            fill(255, 255, 255);
+            textSize(30);
+            text((i+1), 89 + i * 100, 98);
+        }
+        Dash(70, 75, 30);
+        Violet(170, 75, 30);
+        Helen(270, 75, 30);
+        Bob(370, 75, 30);
+        
     }
+    
+    clicked = false;
 };
