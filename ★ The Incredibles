@@ -405,6 +405,80 @@ var Bob = function(x, y, sz){
     popMatrix();
     popMatrix();
 };
+var Frozone = function(x, y, sz){
+    pushMatrix();
+    translate(x, y);
+    scale(sz / 50);
+    rectMode(CENTER);
+    
+    noStroke();
+    
+    // Shadow
+    fill(0, 0, 0, 30);
+    ellipse(0, 58, 40, 10);
+    
+    // Arms & legs
+    strokeWeight(7);
+    noFill();
+    stroke(32, 177, 217);
+    arc(0, 148, 100, 240, 248, 266);
+    arc(8, -89, 100, 240, 74, 88);
+    arc(3, 160, 23, 240, 280, 297);
+    arc(-2, 162, 23, 240, 245, 261);
+    stroke(255, 255, 255);
+    arc(9, -89, 100, 240, 73, 78);
+    arc(0, 148, 100, 240, 248, 253);
+    arc(3, 160, 23, 240, 294, 297);
+    arc(-2, 162, 23, 240, 244, 248);
+    
+    // Torso
+    noStroke();
+    fill(32, 177, 217);
+    rect(0, 29, 15, 34, 10);
+    fill(250, 250, 250);
+    rect(0, 26, 15, 11, 10);
+    
+    // Head
+    pushMatrix();
+    scale(0.8, 1);
+    fill(105, 80, 54);
+    rect(0, 0, 50, 50, 10);
+    stroke(77, 59, 42);
+    noFill();
+    strokeWeight(5);
+    rect(-1, -1, 45, 45, 7);
+    line(-4, 20, 4, 20);
+    stroke(105, 80, 54);
+    rect(-1, -1, 45, 19, 7);
+    noStroke();
+    fill(255, 255, 255);
+    (rect)(0, -13, 50, 26, 10, 10, 0, 0);
+    
+    noStroke();
+    
+    // Face
+    pushMatrix();
+    translate(-25, -18);
+    fill(199, 199, 199);
+    rect(25, 13, 50, 12);
+    fill(255);
+    rect(25, 13, 50, 9);
+    fill(25);
+    rect(25, 14, 50, 2);
+    arc(25, 13, 50, 3, -180, 0);
+    fill(15, 15, 15);
+    arc(25, 25, 30, 15, 0, 180);
+    fill(255, 255, 255);
+    arc(25, 25, 30, 5, 0, 180);
+    
+    // facial hair
+    fill(69, 52, 35);
+    arc(24, 24, 25, 3, 180, 270);
+    arc(26, 24, 25, 3, -90, 0);
+    popMatrix();
+    popMatrix();
+    popMatrix();
+};
 
 // Images
 var images = {
@@ -435,6 +509,12 @@ var images = {
                 rect(0, 0, 50, 30);
                 popMatrix();
             }
+        }
+        
+        stroke(0, 0, 0, 10);
+        for(var i = 100; i > 0; i -= 5){
+            strokeWeight(i);
+            line(0, 550, 600, 550); 
         }
         
         filter(BLUR, 1);
@@ -475,6 +555,22 @@ var images = {
     },
 };
 
+var Spike = function(x, y){
+    this.x = x;
+    this.y = y;
+};
+Spike.prototype.draw = function() {
+
+    noStroke();
+    fill(150, 150, 150);
+    triangle(this.x, this.y + 30, this.x + 30, this.y + 30, this.x + 15, this.y);
+    fill(0, 0, 0, 30);
+    triangle(this.x + 23, this.y + 30, this.x + 30, this.y + 30, this.x + 15, 530);
+    fill(255, 255, 255, 50);
+    triangle(this.x + 8, this.y + 30, this.x, this.y + 30, this.x + 15, this.y);
+};
+var Spikes = [];
+
 // Player OOP
 var Player = function(){
     this.x = 100; 
@@ -490,8 +586,10 @@ Player.prototype.draw = function() {
         Violet(this.x, this.y, 30);
     } else if (this.character === 'Helen'){
         Helen(this.x, this.y, 30);
-    } else {
+    } else if (this.character === 'Bob') {
         Bob(this.x, this.y, 30);
+    } else if (this.character === 'Frozone') {
+        Frozone(this.x, this.y, 30);
     }
     
     if(keys[49]){
@@ -505,6 +603,9 @@ Player.prototype.draw = function() {
     }
     if(keys[52]){
         this.character = 'Bob';
+    }
+    if(keys[53]){
+        this.character = 'Frozone';
     }
     if ((keys[UP]) && !this.jumping) {
         this.yvel -= 10;
@@ -705,6 +806,7 @@ draw = function() {
     if(scene === 'Menu'){
         rectMode(CENTER);
         background(160, 0, 4);
+        image(images.bg, 0, 0);
         pushMatrix();
         translate(width / 2, height / 2.5);
         noStroke();
@@ -756,7 +858,7 @@ draw = function() {
         
         stroke(255, 255, 255, 50);
         strokeWeight(10);
-        for(var i = 0; i < 4; i ++){
+        for(var i = 0; i < 5; i ++){
             fill(0, 0, 0, 100);
             rect(70 + i * 100, 80, 80, 80, 10);
             fill(255, 255, 255);
@@ -767,6 +869,7 @@ draw = function() {
         Violet(170, 75, 30);
         Helen(270, 75, 30);
         Bob(370, 75, 30);
+        Frozone(470, 72, 35);
         
     }
     
