@@ -1,6 +1,7 @@
 textAlign(CENTER, CENTER);
 
-var scene = 'Logo';
+var scene = 'Game';
+var speed = 3;
 
 // Processing events
 var keys = [];
@@ -13,6 +14,14 @@ var keyReleased = function(){
 var clicked = false;
 mouseClicked = function(){
     clicked = true;
+};
+
+// The rectangle collision function
+var rectCollide = function(one, two){
+    return one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h;
 };
 
 // Helpful little graphics functions
@@ -555,71 +564,231 @@ var images = {
     },
 };
 
+var Block = function(x, y, w, h){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.shade = random(70);
+};
+Block.prototype.draw = function() {
+    rectMode(CORNER);
+    fill(117, 117, 117);
+    rect(this.x, this.y, this.w, this.h);
+    fill(0, 0, 0, 30);
+    rect(this.x, this.y, this.w, this.h / 1.8);
+    pushMatrix();
+    translate(this.x, this.y);
+    scale(this.w / 50, this.h / 65);
+    noStroke();
+    fill(209, 209, 209);
+    rect(0, 0, 50, 30);
+    fill(0, 0, 0, 50);
+    beginShape();
+    vertex(0, 30);
+    vertex(50, 30);
+    vertex(50, 0);
+    bezierVertex(40, 24, 62, 26,0, 30);
+    endShape();
+    fill(255, 255, 255, 50);
+    beginShape();
+    vertex(0, 30);
+    vertex(0, 0);
+    vertex(50, 0);
+    bezierVertex(2, 12, 8, -12,0, 30);
+    endShape();
+    fill(0, 0, 0, this.shade);
+    rect(0, 0, 50, 30);
+    popMatrix();
+    
+    this.x -= speed;
+};
+var Blocks = [];
+
+var Levels = [
+    {
+        blocks: [[35, 525, 350, 30]],
+        spikes: [1, 2, 8, [9, 350], 17, 18, 19],
+    },
+];
+
 var Spike = function(x, y){
     this.x = x;
     this.y = y;
+    this.w = 30;
+    this.h = 30;
 };
 Spike.prototype.draw = function() {
-
     noStroke();
     fill(150, 150, 150);
     triangle(this.x, this.y + 30, this.x + 30, this.y + 30, this.x + 15, this.y);
     fill(0, 0, 0, 30);
-    triangle(this.x + 23, this.y + 30, this.x + 30, this.y + 30, this.x + 15, 530);
+    triangle(this.x + 23, this.y + 30, this.x + 30, this.y + 30, this.x + 15, this.y);
     fill(255, 255, 255, 50);
     triangle(this.x + 8, this.y + 30, this.x, this.y + 30, this.x + 15, this.y);
+    
+    this.x -= speed;
 };
 var Spikes = [];
 
+// Make map
+var makeMap = function(which){
+    // Load the spikes.
+    Spikes = [];
+    for(var i = 0; i < Levels[which].spikes.length; i ++){
+        if(Levels[which].spikes[i][1] === undefined){
+            Spikes.push(new Spike(600 + Levels[which].spikes[i] * 30, 526));
+        } else {
+            Spikes.push(new Spike(600 + Levels[which].spikes[i][0] * 30, Levels[which].spikes[i][1]));
+        }
+    }
+    
+    // Load the blocks.
+    Blocks = [];
+    for(var i = 0; i < Levels[which].blocks.length; i ++){
+        Blocks.push(new Block(Levels[which].blocks[i][0] * 10, Levels[which].blocks[i][1], Levels[which].blocks[i][2], Levels[which].blocks[i][3]));
+    }
+};
+makeMap(0);
+
 // Player OOP
 var Player = function(){
-    this.x = 100; 
-    this.y = 523; this.yvel = 0;
+    this.x = 100; this.xvel = 0;
+    this.y = 505; this.yvel = 0;
+    
+    this.w = 30;
+    this.h = 50;
+    this.switching = false;
+    
     this.character = 'Dash';
     
     this.jumping = false;
+    
+    this.particle = function(x, y, sz){
+        this.x = x;
+        this.y = y;
+        this.sz = sz;
+        this.trans = 255;
+        this.weight = random(30);
+    };
+    this.particles = [];
+    this.particle.prototype.draw = function() {
+        noFill();
+        strokeWeight(this.weight);
+        stroke(255, 255, 255, this.trans);
+        ellipse(this.x, this.y, this.sz, this.sz);
+        
+        this.sz += 10;
+        this.trans /= 1.2;
+    };
+};
+Player.prototype.applyCollisions = function(xvel, yvel) {
+    for (var i = 0; i < Blocks.length; i++) {
+        if (!rectCollide(this, Blocks[i])) { continue; }
+        if (xvel < 0) {
+            this.x = Blocks[i].x + Blocks[i].w;
+            this.xvel = 0;
+        }
+        if (xvel > 0) {
+            this.x = Blocks[i].x - this.w;
+            this.xvel = 0;
+        }
+        if (yvel < 0) {
+            this.y = Blocks[i].y + Blocks[i].h;
+            this.yvel = 0;
+        }
+        if (yvel > 0) {
+            this.y = Blocks[i].y - this.h;
+            this.yvel = 0;
+            this.jumping = false;
+        }
+    }
 };
 Player.prototype.draw = function() {
-    if(this.character === 'Dash'){
-        Dash(this.x, this.y, 30);
-    } else if (this.character === 'Violet'){
-        Violet(this.x, this.y, 30);
-    } else if (this.character === 'Helen'){
-        Helen(this.x, this.y, 30);
-    } else if (this.character === 'Bob') {
-        Bob(this.x, this.y, 30);
-    } else if (this.character === 'Frozone') {
-        Frozone(this.x, this.y, 30);
+    rectMode(CORNER);
+    fill(0);
+    //rect(this.x, this.y, this.w, this.h);
+    
+    for(var i = this.particles.length - 1; i >= 0; i --){
+        this.particles[i].draw();
+        if(this.particles[i].trans < 1){
+            this.particles.splice(i, 1);
+        }
     }
     
-    if(keys[49]){
+    pushMatrix();
+    translate(this.x + (this.w / 2), this.y + 20);
+    if(this.character === 'Dash'){
+        Dash(0, 0, 30);
+        speed = 6;
+    } else if (this.character === 'Violet'){
+        Violet(0, 0, 30);
+    } else if (this.character === 'Helen'){
+        Helen(0, 0, 30);
+    } else if (this.character === 'Bob') {
+        Bob(0, 0, 30);
+    } else if (this.character === 'Frozone') {
+        Frozone(0, 0, 30);
+    }
+    popMatrix();
+    
+    if((keys[49] || keys[50] || keys[51] || keys[52] || keys[53])){
+        if(this.switching){
+            for(var i = -50; i < 0; i += 5){
+                this.particles.push(new this.particle(this.x + (this.w / 2), this.y + (this.h / 2), i));
+            }
+            this.switching = false;
+        }
+    }
+    if(keys[49] && this.character !== 'Dash'){
+        this.switching = true;
         this.character = 'Dash';
     }
-    if(keys[50]){
+    if(keys[50] && this.character !== 'Violet'){
+        this.switching = true;
         this.character = 'Violet';
+        speed = 3;
     }
-    if(keys[51]){
+    if(keys[51] && this.character !== 'Helen'){
+        this.switching = true;
         this.character = 'Helen';
+        speed = 3;
     }
-    if(keys[52]){
+    if(keys[52] && this.character !== 'Bob'){
+        this.switching = true;
         this.character = 'Bob';
+        speed = 3;
     }
-    if(keys[53]){
+    if(keys[53] && this.character !== 'Frozone'){
+        this.switching = true;
         this.character = 'Frozone';
+        speed = 3;
     }
     if ((keys[UP]) && !this.jumping) {
         this.yvel -= 10;
         this.jumping = true;
     }
+    /*if(keys[RIGHT]){
+        this.xvel += 1;
+    } else if (keys[LEFT]){
+        this.xvel -= 1;
+    } else {
+        this.xvel = 0;
+    }*/
     
     this.jumping = true;
+    this.x += this.xvel;
+    this.xvel = constrain(this.xvel, -5, 5);
+    this.applyCollisions(this.xvel + speed, 0);
+    
     this.y += this.yvel;
     this.yvel += 0.6;
+    this.applyCollisions(0, this.yvel);
     
-    if (this.y >= 523 && this.yvel > 0) {
+    if (this.y >= 505 && this.yvel > 0) {
         this.jumping = false;
         this.yvel = 0;
-        this.y = 523;
+        this.y = 505;
     }
 };
 var player = new Player();
@@ -851,8 +1020,15 @@ draw = function() {
         image(images.bg, 600 - frameCount * 2 % 1200, 0);
         image(images.bg, 600 - (frameCount * 2 + 600) % 1200, 0);
         
-        image(images.foreground, 600 - frameCount * 3 % 1200, 0);
-        image(images.foreground, 600 - (frameCount * 3 + 600) % 1200, 0);
+        image(images.foreground, 600 - frameCount * speed % 1200, 0);
+        image(images.foreground, 600 - (frameCount * speed + 600) % 1200, 0);
+        
+        for(var i = Blocks.length - 1; i >= 0; i --){
+            Blocks[i].draw();
+        }
+        for(var i = Spikes.length - 1; i >= 0; i --){
+            Spikes[i].draw();
+        }
         
         player.draw();
         
