@@ -8,6 +8,15 @@
  * Made as part of the Disney Game Medley! 
 */
 
+/*
+    LOCATIONS.
+     - 
+     - 
+     - 
+     - 
+     - 
+*/
+
 // Settings
 textAlign(CENTER, CENTER);
 
@@ -928,13 +937,13 @@ Button.prototype.draw = function() {
     fill(251, 216, 26);
     textSize(30);
     text(this.txt, 0, 0);
-    rect(-(this.txt.length * 12), 20, (this.txt.length * 20) + 14, 7);
     if(mouseX > this.x-(this.txt.length * 12) && mouseX < this.x-(this.txt.length * 12) + (this.txt.length * 20) + 14 && mouseY > this.y - 15 && mouseY < this.y + 15){
         overButton = true;
         if(clicked){
             if(this.txt === 'HOW'){
-                menu.moveToHow = true;
+                menu.move = 'how';
             }
+            clicked = false;
         }
     }
     popMatrix();
@@ -1095,7 +1104,7 @@ var logo = new Logo();
 
 // Menu
 var Menu = function(){
-    this.logoSz = 50;
+    this.logoSz = 0.1;
     this.txtSz = 1;
     
     this.buttons = [
@@ -1104,8 +1113,10 @@ var Menu = function(){
         new Button(410, 530, 'ABOUT', ''),
     ];
     
-    this.moveToHow = false;
+    this.move = '';
     
+    this.logoStuff = {x: width / 2, y: height / 2.5};
+    this.title = {txt: '', x: 1000, y: 100};
     this.titleY = 0;
 };
 Menu.prototype.draw = function() {
@@ -1114,8 +1125,8 @@ Menu.prototype.draw = function() {
     image(images.bg, 0, 0);
     
     pushMatrix();
-    translate(width / 2, height / 2.5);
-    scale(1 - (this.logoSz / 50));
+    translate(this.logoStuff.x, this.logoStuff.y);
+    scale(this.logoSz / 50);
     noStroke();
     fill(0, 0, 0, 20);
     for(var i = 300; i < 403; i += 15){
@@ -1124,7 +1135,7 @@ Menu.prototype.draw = function() {
     fill(255);
     ellipse(0, 0, 310, 210);
     ellipse(0, -80, 80, 80);
-    iLogo(0, 0, 50 - this.logoSz);
+    iLogo(0, 0, 50);
     popMatrix();
     
     stroke(251, 216, 26);
@@ -1162,20 +1173,52 @@ Menu.prototype.draw = function() {
     rectMode(CORNER);
     
     for(var i = 0; i < this.buttons.length; i ++){
-        //this.buttons[i].draw();
+        this.buttons[i].draw();
     }
     
+    textFont(createFont('Avenir Bold'));
+    fill(251, 216, 26);
+    textSize(50);
+    text(this.title.txt, this.title.x, this.title.y);
+    textFont(createFont('Avenir'), 15);
+    text('The object of the game is to make it to the portal, by avoiding obstacles while you navigate the level.\n\nYou should avoid spikes, the edges of blocks, and robots. These things will kill you.\n\nEach character has different powers that can help you get past certain obstacles. Bob can lift boulders out of the way, Helen can stretch below low overhangs, Violet can have a forcefield for a short amount of time, Dash runs faster than the rest, and Frozone can freeze robots!\n\nStars give you extra points on each level.\n\nCan you make it through all of the maps to stop Syndrome?', this.title.x - 270, 41, 530, 550);
+    
     // animations
-    this.logoSz /= 1.1;
-    if(this.logoSz < 1){
+    this.logoSz = this.logoSz + (50 - this.logoSz) / 10;
+    if(this.logoSz > 40 || this.move === 'how'){
         this.txtSz /= 1.1;
     }
     
-    if(this.moveToHow){
-        this.titleY = this.titleY + (130 - this.titleY) / 30;
+    if(this.move === 'how'){
+        this.title.txt = 'HOW';
+        this.titleY = this.titleY + (130 - this.titleY) / 5;
+        this.logoSz = this.logoSz + (10 - this.logoSz) / 10;
+        this.logoStuff.x = this.logoStuff.x + (120 - this.logoStuff.x) / 10;
+        this.logoStuff.y = this.logoStuff.y + (95 - this.logoStuff.y) / 10;
+        this.title.x = this.title.x + (305 - this.title.x) / 10;
+        for(var i = 0; i < this.buttons.length; i ++){
+            this.buttons[i].y = this.buttons[i].y + (700 - this.buttons[i].y) / 10;
+        }
+        if(clicked){
+            this.move = 'back';
+            clicked = false;
+        }
+    }
+    if(this.move === 'back'){
+        this.titleY = this.titleY + (0 - this.titleY) / 5;
+        this.logoSz = this.logoSz + (50 - this.logoSz) / 10;
+        this.logoStuff.x = this.logoStuff.x + (300 - this.logoStuff.x) / 10;
+        this.logoStuff.y = this.logoStuff.y + (200 - this.logoStuff.y) / 10;
+        
+        this.title.x = this.title.x + (1005 - this.title.x) / 10;
+        for(var i = 0; i < this.buttons.length; i ++){
+            this.buttons[i].y = this.buttons[i].y + (530 - this.buttons[i].y) / 10;
+        }
     }
     
     if(clicked){
+        //this.move = 'how';
+        clicked = false;
         //scene = 'Game';
     }
 };
