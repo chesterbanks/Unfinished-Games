@@ -10,11 +10,10 @@
 
 /*
     LOCATIONS.
-     - 
-     - 
-     - 
-     - 
-     - 
+     - nomanison island
+     - ocean
+     - city outskirts
+     - city
 */
 
 // Settings
@@ -942,6 +941,11 @@ Button.prototype.draw = function() {
         if(clicked){
             if(this.txt === 'HOW'){
                 menu.move = 'how';
+            } else if (this.txt === 'ABOUT'){
+                menu.move = 'about';
+            } else {
+                trans.active = true;
+                trans.nextScene = this.nxt;
             }
             clicked = false;
         }
@@ -1109,7 +1113,7 @@ var Menu = function(){
     
     this.buttons = [
         new Button(190, 530, 'HOW', ''),
-        new Button(290, 530, 'PLAY', ''),
+        new Button(290, 530, 'PLAY', 'Game'),
         new Button(410, 530, 'ABOUT', ''),
     ];
     
@@ -1179,9 +1183,9 @@ Menu.prototype.draw = function() {
     textFont(createFont('Avenir Bold'));
     fill(251, 216, 26);
     textSize(50);
-    text(this.title.txt, this.title.x, this.title.y);
+    text(this.title.txt, this.title.x + (this.move === 'how' ? 0 : 30), this.title.y);
     textFont(createFont('Avenir'), 15);
-    text('The object of the game is to make it to the portal, by avoiding obstacles while you navigate the level.\n\nYou should avoid spikes, the edges of blocks, and robots. These things will kill you.\n\nEach character has different powers that can help you get past certain obstacles. Bob can lift boulders out of the way, Helen can stretch below low overhangs, Violet can have a forcefield for a short amount of time, Dash runs faster than the rest, and Frozone can freeze robots!\n\nStars give you extra points on each level.\n\nCan you make it through all of the maps to stop Syndrome?', this.title.x - 270, 41, 530, 550);
+    text(menu.move === 'how' ? 'The object of the game is to make it to the portal, by avoiding obstacles while you navigate the level.\n\nYou should avoid spikes, the edges of blocks, and robots. These things will kill you.\n\nEach character has different powers that can help you get past certain obstacles. Bob can lift boulders out of the way, Helen can stretch below low overhangs, Violet can have a forcefield for a short amount of time, Dash runs faster than the rest, and Frozone can freeze robots!\n\nStars give you extra points on each level.\n\nCan you make it through all of the maps to stop Syndrome?' : 'This game was made by Chester Banks on October 3 2017 as part of the Disney Game Medley. Chester has made one other Disney game, Monsters University.\n\nThis game takes place in the world of the Incredibles, where Syndrome\'s destructive robot is on its way to the bustling city of Metroville. The only ones who are able to stop it are the Incredibles (Bob, Helen, Violet, and Dash) and their friend Frozone. There\'s just one problem - the family is still on Syndrome\'s personal volcanic island, Nomanisan Island.\n\nWill the Incredibles be able to overcome the obstacles on their way back to Metroville and work together to destroy the robot? Or will the family fail their mission and Metroville will be destroyed?\n\nIt\'s up to you to decide the fate of the Incredibles and Metroville!', this.title.x - 270, 41, 530, 550);
     
     // animations
     this.logoSz = this.logoSz + (50 - this.logoSz) / 10;
@@ -1189,8 +1193,8 @@ Menu.prototype.draw = function() {
         this.txtSz /= 1.1;
     }
     
-    if(this.move === 'how'){
-        this.title.txt = 'HOW';
+    if(this.move === 'how' || this.move === 'about'){
+        this.title.txt = (this.move === 'how' ? 'HOW' : 'ABOUT');
         this.titleY = this.titleY + (130 - this.titleY) / 5;
         this.logoSz = this.logoSz + (10 - this.logoSz) / 10;
         this.logoStuff.x = this.logoStuff.x + (120 - this.logoStuff.x) / 10;
