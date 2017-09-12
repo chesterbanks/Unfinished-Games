@@ -8,10 +8,20 @@
  * Made as part of the Disney Game Medley! 
 */
 
+// Settings
 textAlign(CENTER, CENTER);
 
-var scene = 'Logo';
+// Vital variables
+var scene = 'Menu';
 var speed = 3;
+
+// Transtion object
+var trans = {
+    active: false,
+    out: false,
+    nextScene: '',
+    w: 600,
+};
 
 // Processing events
 var keys = [];
@@ -21,6 +31,7 @@ var keyPressed = function(){
 var keyReleased = function(){ 
     keys[keyCode] = false; 
 };
+var overButton = false;
 var clicked = false;
 mouseClicked = function(){
     clicked = true;
@@ -49,7 +60,7 @@ var iLogo = function(x, y, sz){
     ellipse(0, -80, 70, 70);
     rect(0, 40, 60, 115);
     arc(0, 97, 60, 7, 0, 180);
-    triangle(-30, -17, 30, -17, 30, -34);
+    triangle(-30, -17, 30, -10, 30, -34);
     fill(255);
     ellipse(0, -80, 35, 35);
     popMatrix();
@@ -572,6 +583,28 @@ var images = {
         
         return get(0, 0, 600, 600);
     },
+    'incredibleTxt': function(){
+        image(images.bg, 0, 0);
+        var itBack = get(0, 0, width, height);
+        
+        background(0);
+        textAlign(CENTER, CENTER);
+        textFont(createFont('Avenir Bold Italic'), 65);
+        fill(255);
+        text('INCREDIBLES', 303, 433);
+        fill(0, 0, 0);
+        text('INCREDIBLES', 302, 432);
+        fill(255);
+        text('INCREDIBLES', width / 2, 430);
+        var itFront = get(0, 0, width, height);
+        
+        itBack.mask(itFront);
+        
+        background(0, 0, 0, 0);
+        image(itBack, 0, 0);
+        
+        return get(0, 0, width, height);
+    },
 };
 
 // Blocks
@@ -641,14 +674,60 @@ Spike.prototype.draw = function() {
 var Spikes = [];
 
 // Ending door (Endor)
-var Endor = function(x){
+var Endor = function(x, y){
     this.x = x;
-    this.y = 0;
-    this.w = 600;
-    this.h = 600;
+    this.y = y;
+    this.w = 30;
+    this.h = 30;
+    
+    this.particle = function(x, y){
+        this.x = x;
+        this.y = y;
+        this.x2 = 60;
+        this.rot = random(360);
+        this.sz = random(10);
+        this.trans = 255;
+    };
+    this.particles = [];
+    this.particle.prototype.draw = function() {
+        noStroke();
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(this.rot);
+        fill(0, 230, 255, this.trans);
+        ellipse(this.x2, 0, this.sz, this.sz);
+        popMatrix();
+        
+        this.x2 -= this.sz/5;
+        this.trans -= this.sz;
+    };
 };
 Endor.prototype.draw = function() {
+    this.particles.push(new this.particle(0, 0), new this.particle(0, 0));
     
+    pushMatrix();
+    translate(this.x + (this.w / 2), this.y + (this.h / 2));
+    rotate(frameCount * 2);
+    for(var i in this.particles){
+        this.particles[i].draw();
+        if(this.particles[i].trans < 0){
+            this.particles.splice(i, 1);
+        }
+    }
+    popMatrix();
+    
+    pushMatrix();
+    translate(this.x + (this.w / 2), this.y + (this.h / 2));
+    noFill();
+    strokeWeight(1);
+    stroke(0, 230, 255);
+    ellipse(0, 0, this.w, this.h);
+    noStroke();
+    fill(0, 230, 255, 50);
+    for(var i = 30; i > 0; i -= 5){
+        ellipse(0, 0, i, i);
+    }
+    popMatrix();
 };
 var endor;
 
@@ -832,6 +911,35 @@ Player.prototype.draw = function() {
 };
 var player = new Player();
 
+// Buttons
+var menu;
+var Button = function(x, y, txt, nxt){
+    this.x = x;
+    this.y = y;
+    this.txt = txt;
+    this.nxt = nxt;
+};
+Button.prototype.draw = function() {
+    textFont(createFont('Avenir Bold'));
+    
+    pushMatrix();
+    translate(this.x, this.y);
+    rectMode(CORNER);
+    fill(251, 216, 26);
+    textSize(30);
+    text(this.txt, 0, 0);
+    rect(-(this.txt.length * 12), 20, (this.txt.length * 20) + 14, 7);
+    if(mouseX > this.x-(this.txt.length * 12) && mouseX < this.x-(this.txt.length * 12) + (this.txt.length * 20) + 14 && mouseY > this.y - 15 && mouseY < this.y + 15){
+        overButton = true;
+        if(clicked){
+            if(this.txt === 'HOW'){
+                menu.moveToHow = true;
+            }
+        }
+    }
+    popMatrix();
+};
+
 // Logo
 var Logo = function(){
     this.s  = 500;
@@ -985,6 +1093,94 @@ Logo.prototype.draw = function(){
 };
 var logo = new Logo();
 
+// Menu
+var Menu = function(){
+    this.logoSz = 50;
+    this.txtSz = 1;
+    
+    this.buttons = [
+        new Button(190, 530, 'HOW', ''),
+        new Button(290, 530, 'PLAY', ''),
+        new Button(410, 530, 'ABOUT', ''),
+    ];
+    
+    this.moveToHow = false;
+    
+    this.titleY = 0;
+};
+Menu.prototype.draw = function() {
+    rectMode(CENTER);
+    background(160, 0, 4);
+    image(images.bg, 0, 0);
+    
+    pushMatrix();
+    translate(width / 2, height / 2.5);
+    scale(1 - (this.logoSz / 50));
+    noStroke();
+    fill(0, 0, 0, 20);
+    for(var i = 300; i < 403; i += 15){
+        ellipse(0, 18, i, i / 1.5);
+    }
+    fill(255);
+    ellipse(0, 0, 310, 210);
+    ellipse(0, -80, 80, 80);
+    iLogo(0, 0, 50 - this.logoSz);
+    popMatrix();
+    
+    stroke(251, 216, 26);
+    noFill();
+    strokeWeight(15);
+    rect(300, 300, width, height);
+    
+    pushMatrix();
+    translate(300, this.titleY);
+    scale(1 - this.txtSz, 1);
+    translate(-300, 0);
+    fill(251, 216, 26);
+    rect(300, 430, 600, 50);
+    
+    textAlign(CENTER, CENTER);
+    textFont(createFont('Avenir Bold Italic'), 65);
+    
+    image(images.incredibleTxt, 0, 0);
+    fill(251, 216, 26);
+    textSize(25);
+    text('THE', width / 3.8, 388);
+    textFont(createFont('Avenir Italic'), 16);
+    text('C H E S T E R . B A N K S    S E P T E M B E R . 2 3 . 2 0 1 7', width / 2, height / 1.26);
+    popMatrix();
+    
+    noStroke();
+    for(var i = -400; i < 0; i += 60){
+        fill(0, 0, 0, 10);
+        rect(0, 0, 0.5, 0.5, i);
+        rect(width, 0, 0.5, 0.5, i);
+        rect(0, height, 0.5, 0.5, i);
+        rect(width, height, 0.5, 0.5, i);
+    }
+    
+    rectMode(CORNER);
+    
+    for(var i = 0; i < this.buttons.length; i ++){
+        //this.buttons[i].draw();
+    }
+    
+    // animations
+    this.logoSz /= 1.1;
+    if(this.logoSz < 1){
+        this.txtSz /= 1.1;
+    }
+    
+    if(this.moveToHow){
+        this.titleY = this.titleY + (130 - this.titleY) / 30;
+    }
+    
+    if(clicked){
+        //scene = 'Game';
+    }
+};
+menu = new Menu();
+
 draw = function() {
     textFont(createFont('Avenir Bold'));
     
@@ -996,70 +1192,12 @@ draw = function() {
         }
     }
     
+    // Draw the scenes
     if(scene === 'Logo'){
         logo.draw();
-        stroke(251, 216, 26);
-        noFill();
-        strokeWeight(15);
-        rect(0, 0, width, height);
-        noStroke();
-        for(var i = -400; i < 0; i += 60){
-            fill(0, 0, 0, 10);
-            rect(0, 0, 0.5, 0.5, i);
-            rect(width, 0, 0.5, 0.5, i);
-            rect(0, height, 0.5, 0.5, i);
-            rect(width, height, 0.5, 0.5, i);
-        }
     }
     if(scene === 'Menu'){
-        rectMode(CENTER);
-        background(160, 0, 4);
-        image(images.bg, 0, 0);
-        pushMatrix();
-        translate(width / 2, height / 2.5);
-        noStroke();
-        fill(0, 0, 0, 20);
-        for(var i = 300; i < 403; i += 15){
-            ellipse(0, 18, i, i / 1.5);
-        }
-        fill(255);
-        ellipse(0, 0, 310, 210);
-        ellipse(0, -80, 80, 80);
-        iLogo(0, 0, 50);
-        popMatrix();
-        
-        stroke(251, 216, 26);
-        noFill();
-        strokeWeight(15);
-        rect(300, 300, width, height);
-        
-        fill(251, 216, 26);
-        rect(300, 430, 600, 50);
-        
-        textAlign(CENTER, CENTER);
-        textFont(createFont('Avenir Bold Italic'), 65);
-        fill(28, 28, 28);
-        text('INCREDIBLES', width / 2, 430);
-        fill(251, 216, 26);
-        textSize(25);
-        text('THE', width / 3.8, 388);
-        textFont(createFont('Avenir Italic'), 16);
-        text('C H E S T E R . B A N K S    S E P T E M B E R . 2 3 . 2 0 1 7', width / 2, height / 1.26);
-        
-        noStroke();
-        for(var i = -400; i < 0; i += 60){
-            fill(0, 0, 0, 10);
-            rect(0, 0, 0.5, 0.5, i);
-            rect(width, 0, 0.5, 0.5, i);
-            rect(0, height, 0.5, 0.5, i);
-            rect(width, height, 0.5, 0.5, i);
-        }
-        
-        rectMode(CORNER);
-        
-        if(clicked){
-            scene = 'Game';
-        }
+        menu.draw();
     }
     if(scene === 'Game'){
         background(255);
@@ -1095,5 +1233,35 @@ draw = function() {
         
     }
     
+    // Transitions
+    if(trans.active){
+        if(!trans.out){
+            fill(251, 216, 26);
+            triangle(0, 0, 600 - trans.w, 0, 0, 600 - trans.w);
+            triangle(600, 600, 600 + trans.w, 0, 0, 600 + trans.w);  
+            if(trans.w < 10){
+                trans.out = true;
+                scene = trans.nextScene;
+                trans.w = 600;
+            }
+        } else {
+            fill(251, 216, 26);
+            triangle(0, 0, trans.w, 0, 0, trans.w);
+            triangle(600, 600, 1200 - trans.w, 0, 0,  1200 - trans.w);  
+            if(trans.w < 10){
+                trans.out = false;
+                trans.w = 600;
+                trans.active = false;
+            }
+        }
+        
+        trans.w /= 1.2;
+    }
+    
+    // Cursor
+    cursor(overButton ? 'pointer' : 'default');
+    
+    // Reset mouse events
     clicked = false;
+    overButton = false;
 };
