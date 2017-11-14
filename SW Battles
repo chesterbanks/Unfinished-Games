@@ -1,0 +1,311 @@
+//Huge shoutout to Chester Banks for the bullets and gun
+/**
+ * Things that need done:
+ * Make menu, shop, powerups, and achievements.
+ * Shooting needs done, also different weapons.
+ * Guns:
+ * Water Gun
+ * Regular
+ * Freeze Gun
+ * Machine Gun
+ * Bomb Gun
+ * Oh Noes Gun
+ * Donut Gun (The best)
+ * 
+**/
+var scene = 'menu';
+
+textFont(createFont("Avenir Bold Italic"));
+textAlign(CENTER, CENTER);
+
+// Image cache for less lag
+var images = {
+    'menuBackground': function() {
+        
+        var stars = [];
+        for(var i = 0; i < width; i += 25){
+            for(var j = 0; j < height; j += 25){
+                stars.push({x: i + random(0, 20), y: j + random(0, 20), sz: random(5), bright: random(50, 255), atmo: random(50), hue: random(100, 200)});
+            }
+        }
+        var r = random(2);
+        
+        background(0, 0, 0);
+        
+        noStroke();
+        for(var i = 0; i < width; i += 10){
+            for(var j = 0; j < height; j += 10){
+                var n = map(noise(i/85, j/255, round(r)), 0, 1, 0, 370);
+                fill(i, j/2, j*2, n/4);
+                rect(i, j, 10, 10);
+            }
+        }
+        textSize(55);
+        fill(255, 255, 255);
+        pushMatrix();
+        translate(0, -60);
+        text("B A T T L E S", width/2 + 6, height/2 + 6);
+        textSize(40);
+        text("STAR WARS", width/2 + 12, 158);
+        filter(BLUR, 4);
+        popMatrix();
+        colorMode(HSB);
+        for (var i = 0; i < stars.length; i++) {
+            noFill();
+            stroke(stars[i].hue, 70, 255, stars[i].bright/10);
+            ellipse(stars[i].x, stars[i].y, stars[i].atmo, stars[i].atmo);
+            stroke(stars[i].hue, 70, 255, stars[i].bright/20);
+            ellipse(stars[i].x, stars[i].y, stars[i].atmo-4, stars[i].atmo-4);
+            stroke(stars[i].hue, 70, 255, stars[i].bright/40);
+            ellipse(stars[i].x, stars[i].y, stars[i].atmo-8, stars[i].atmo-8);
+            noStroke();
+            fill(stars[i].hue, 70, 255, stars[i].bright);
+            ellipse(stars[i].x, stars[i].y, stars[i].sz, stars[i].sz);
+        }
+        colorMode(RGB);
+        
+        noStroke();
+        fill(204, 207, 108);
+        ellipse(500, 700, 700, 700);
+        
+        noFill();
+        stroke(125, 120, 29, 20);
+        for(var i = 0; i < 50; i += 5){
+            strokeWeight(i);
+            ellipse(500, 710, 650, 700);
+        }
+        
+        pushMatrix();
+        translate(0, -60);
+        fill(255, 255, 255);
+        textSize(55);
+        text("B A T T L E S", width/2, height/2);
+        textSize(40);
+        text("STAR WARS", width/2 + 6, 150);
+        popMatrix();
+        
+        fill(255, 255, 255);
+        textSize(17);
+        text("ALEX MARTIN", 80, 380);
+        fill(25);
+        text("CHESTER BANKS", 510, 380);
+        
+        return get(0, 0, width, height);
+    }
+};
+
+// Mouse input variables
+var clicked = false;
+var overButton = false;
+
+// Key input
+var input = [];
+keyPressed = function() {
+    input[keyCode]= true;
+};
+keyReleased = function() {
+    input[keyCode]= false;
+};
+
+var collision = function(one, two) {
+    return one.x > two.x - one.width &&
+        one.x < two.x + two.width &&
+        one.y > two.y - one.height &&
+        one.y < two.y + two.height;
+};
+
+// Bullet Object
+var Bullet = function(originX, originY, angle) {
+    this.originX = originX; // The original x position of the bullet (where it's going away from).
+    this.originY = originY; // The original y position of the bullet (where it's going away from).
+    this.angle = angle; // Which way the bullet is going
+    this.sz = 10; // size of bullet
+    
+    this.howFarAway = 40; // how far away the bullet is from the origin
+    this.speed = 3; // the speed of the bullet
+};
+Bullet.prototype.display = function() {
+    // Constantly update the x & y positions of bullet
+    this.x = this.originX + sin(this.angle) * this.howFarAway;
+    this.y = this.originY + cos(this.angle) * this.howFarAway;
+    
+    fill(0);
+    ellipse(this.x, this.y, this.sz, this.sz);
+    
+    this.howFarAway += this.speed;
+};
+var bullets = [];
+
+// Player Object
+var Player = function(x, y) {
+    this.x = x; // Player current X
+    this.y = y; // Player current Y
+    this.width = 50; // Player Width
+    this.height = 50; // Player Height
+    this.moveSpeed = 20; // Why did I set this to 20?
+    this.direction = 0;
+    
+};
+Player.prototype.collide = function() {
+};
+Player.prototype.update = function() {
+    if (input[87]) {
+        this.y -=3;    
+    }
+    if (input[83]) {
+        this.y +=3;    
+    }
+    if (input[65]) {
+        this.x -=3;    
+    }
+    if (input[68]) {
+        this.x +=3;    
+    }
+};
+Player.prototype.display = function() {
+    this.update();
+    noStroke();
+    rectMode(CENTER);
+    imageMode(CENTER);
+    pushMatrix();
+    translate(this.x, this.y); 
+    rotate(atan2(mouseY - this.y, mouseX - this.x) + 90);
+    fill(0);
+    rect(0, -20, 5, 25);
+    popMatrix();
+    pushMatrix();
+    translate(this.x, this.y);
+    fill(255, 0, 0);
+    image(getImage("creatures/Winston"), 0, 0, this.height, this.width);
+    popMatrix();
+    
+};
+var player = new Player(300, 200);
+
+// Enemy Object
+var Enemy = function(x, y) {
+    this.x = x;
+    this.y = y;
+    this.width = 50;
+    this.height = 50;
+};
+Enemy.prototype.update = function() {
+    
+    
+};
+Enemy.prototype.display = function() {
+    
+    
+};
+var enemys = [];
+
+var Button = function(x, y, txt, nxt){
+    this.x = x;
+    this.y = y;
+    this.txt = txt;
+    this.nxt = nxt;
+    this.plusSz = 0.2;
+};
+Button.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x + 22, this.y);
+    scale(1.2 - this.plusSz);
+    pushStyle();
+    rectMode(CENTER);
+    noFill();
+    stroke(255, 255, 255, 20);
+    for(var i = 0; i < 16; i += 3){
+        strokeWeight(i);
+        ellipse(-92, 0, 50, 50);
+    line(-71, -17, 60, -17);
+    line(-73, 17, 60, 17);
+    line(60, -16, 60, 17);
+    }
+    stroke(255);
+    strokeWeight(3);
+    ellipse(-92, 0, 50, 50);
+    line(-71, -17, 60, -17);
+    line(-73, 17, 60, 17);
+    line(60, -16, 60, 17);
+    fill(255);
+    textAlign(LEFT, CENTER);
+    textSize(20);
+    text(this.txt, -50, 0);
+    
+    if(this.txt === 'P L A Y'){
+        triangle(-98, -9, -83, 0, -98, 9);
+    }
+    if(this.txt === 'H O W'){
+        textSize(33);
+        text('?', -104, 0);
+    }
+    if(this.txt === 'S T O R Y'){
+        rect(-93, -7, 20, 0);
+        rect(-93, 7, 20, 0);
+        rect(-93, 0, 20, 0);
+    }
+    popStyle();
+    popMatrix();
+    
+    // Animation
+    if(mouseX > this.x - 100 && mouseX < this.x + 90 && mouseY > this.y - 20 && mouseY < this.y + 20){
+        overButton = true;
+        this.plusSz /= 1.1;
+    } else {
+        this.plusSz *= 1.1;
+    }
+    
+    this.plusSz = constrain(this.plusSz, 0.01, 0.2);
+};
+var buttons = {
+    play: new Button(300, 210, 'P L A Y', 'Game'),
+    how: new Button(300, 273, 'H O W', 'Game'),
+    story: new Button(300, 335, 'S T O R Y', 'Game'),
+};
+
+mouseClicked = function() {
+    clicked = true;
+    bullets.push(new Bullet(player.x, player.y, 90- atan2(mouseY - player.y, mouseX - player.x)));
+};
+
+draw = function() {
+    // Load images
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    // Switching scenes
+    switch(scene) {
+        case 'game':
+            background(255, 255, 255);
+            player.display();
+            for(var i = bullets.length - 1; i >= 0; i --) {
+                bullets[i].display();
+                if(bullets[i].howFarAway > 600) {
+                    bullets.splice(i, 1);
+                }
+            }
+            for(var i = 0; i < enemys.length; i++) {
+                enemys[i].draw();
+            }
+        break;
+        case 'menu':
+            image(images.menuBackground, 0, 0);
+            
+            buttons.play.draw();
+            buttons.how.draw();
+            buttons.story.draw();
+        break;
+    }
+    
+    // Draw the cursor
+    cursor(overButton ? 'pointer' : 'default');
+    
+    // Reset mouse properties
+    overButton = false;
+    clicked = false;
+};
