@@ -1,0 +1,1431 @@
+/**
+ * Things that need done:
+ * Make menu, shop, powerups, and achievements.
+ * Shooting needs done, also different weapons.
+ * Guns:
+ * Water Gun
+ * Regular
+ * Freeze Gun
+ * Machine Gun
+ * Bomb Gun
+ * Oh Noes Gun
+ * Donut Gun (The best)
+ * 
+**/
+textFont(createFont("Avenir Bold Italic"));
+textAlign(CENTER, CENTER);
+
+// General Variables
+var scene = 'menu';
+var enemies = [];
+var bullets = [];
+var enemyBullets = [];
+var trans = {
+    active: false,
+    nextScene: '',
+    r: 100,
+    w: 700,
+    out: false,
+};
+var choose = function(choices) {
+  var index = Math.floor(Math.random() * choices.length);
+  return choices[index];
+};
+
+rectMode(CORNER);
+
+// Image cache for less lag
+var images = {
+    'menuBackground': function() {
+        
+        var stars = [];
+        for(var i = 0; i < width; i += 25){
+            for(var j = 0; j < height; j += 25){
+                stars.push({x: i + random(0, 20), y: j + random(0, 20), sz: random(5), bright: random(50, 255), atmo: random(50), hue: random(100, 200)});
+            }
+        }
+        var r = random(2);
+        
+        background(0, 0, 0);
+        
+        noStroke();
+        for(var i = 0; i < width; i += 10){
+            for(var j = 0; j < height; j += 10){
+                var n = map(noise(i/85, j/255, round(r)), 0, 1, 0, 370);
+                fill(i, j/2, j*2, n/4);
+                rect(i, j, 10, 10);
+            }
+        }
+        textSize(55);
+        fill(255, 255, 255);
+        
+        colorMode(HSB);
+        for (var i = 0; i < stars.length; i++) {
+            noFill();
+            stroke(stars[i].hue, 70, 255, stars[i].bright/10);
+            ellipse(stars[i].x, stars[i].y, stars[i].atmo, stars[i].atmo);
+            stroke(stars[i].hue, 70, 255, stars[i].bright/20);
+            ellipse(stars[i].x, stars[i].y, stars[i].atmo-4, stars[i].atmo-4);
+            stroke(stars[i].hue, 70, 255, stars[i].bright/40);
+            ellipse(stars[i].x, stars[i].y, stars[i].atmo-8, stars[i].atmo-8);
+            noStroke();
+            fill(stars[i].hue, 70, 255, stars[i].bright);
+            ellipse(stars[i].x, stars[i].y, stars[i].sz, stars[i].sz);
+        }
+        colorMode(RGB);
+        
+        noStroke();
+        fill(204, 207, 108);
+        ellipse(500, 700, 700, 700);
+        
+        noFill();
+        stroke(125, 120, 29, 20);
+        for(var i = 0; i < 50; i += 5){
+            strokeWeight(i);
+            ellipse(500, 710, 650, 700);
+        }
+        
+        
+        
+        return get(0, 0, width, height);
+    },
+    'title': function(){
+        pushMatrix();
+        fill(255);
+        translate(0, -60);
+        textSize(57);
+        text("B A T T L E S", width/2 + 6, height/2 + 6);
+        textSize(40);
+        text("STAR WARS", width/2 + 12, 158);
+        filter(BLUR, 4);
+        textSize(55);
+        text("B A T T L E S", width/2, height/2);
+        textSize(40);
+        text("STAR WARS", width/2 + 6, 150);
+        popMatrix();
+        
+        return get(0, 0, width, height);
+    },
+    'rebel': function(){
+        pushMatrix();
+        translate(200, 245);
+        scale(2.0);
+        rectMode(CENTER);
+        noStroke();
+        fill(0, 0, 0, 30);
+        ellipse(0, 69, 83, 13);
+        
+        strokeWeight(4);
+        stroke(207, 207, 207);
+        fill(245, 245, 245);
+        beginShape();
+        vertex(-50, -85);
+        bezierVertex(-43, -126, 43, -126, 50, -85);
+        bezierVertex(66, -6, 77, -12, 50, -17);
+        vertex(-50, -17);
+        bezierVertex(-77, -12,-66, -6,-50, -85);
+        endShape();
+        noStroke();
+        fill(0, 0, 0, 40);
+        beginShape();
+        vertex(-34, -85);
+        bezierVertex(-16, -100, 32, -86, 43, -85);
+        bezierVertex(49, -28, 66, -31, 50, -25);
+        vertex(-52, -24);
+        bezierVertex(-62, -34,-49, -37,-48, -75);
+        endShape();
+        
+        noFill();
+        stroke(207, 207, 207);
+        strokeWeight(17);
+        arc(0, 20, 119, 55, -162, -18);
+        stroke(232, 232, 232);
+        strokeWeight(10);
+        arc(0, 20, 119, 55, -162, -18);
+        fill(224, 224, 224);
+        stroke(196, 196, 196);
+        strokeWeight(4);
+        rect(-57, 22, 20, 20, 50);
+        rect(60, 23, 20, 20, 50);
+        rect(-15, 35, 23, 63, 50);
+        rect(15, 35, 23, 63, 50);
+        rect(0, 0, 72, 90, 50);
+        fill(84, 84, 84);
+        stroke(28, 28, 28);
+        rect(0, 32, 57, 5, 5);
+        fill(161, 161, 161);
+        stroke(117, 117, 117);
+        rect(0, 32, 16, 9, 5);
+        
+        fill(12, 66, 110);
+        stroke(6, 44, 74);
+        beginShape();
+        vertex(6, -30);
+        bezierVertex(5, 25, 12, 8, 8, 27);
+        vertex(31, 28);
+        bezierVertex(38, 25, 36, -19, 34, -17);
+        endShape();
+        beginShape();
+        vertex(-6, -30);
+        bezierVertex(-5, 25, -12, 8, -8, 27);
+        vertex(-31, 28);
+        bezierVertex(-38, 25, -36, -19, -34, -17);
+        endShape();
+        
+        noStroke();
+        fill(255, 255, 255, 150);
+        rect(-58, 21, 12, 12, 50);
+        rect(60, 22, 12, 12, 50);
+        noStroke();
+        fill(255, 255, 255, 40);
+        rect(-8, -2, 54, 74, 50);
+        stroke(168, 168, 168);
+        noFill();
+        stroke(0, 0, 0, 30);
+        arc(0, 23, 75, 50, -310, -234);
+        stroke(0, 0, 0, 50);
+        arc(0, -27, 75, 50, -332, -204);
+        
+        stroke(214, 167, 107);
+        fill(227, 193, 154);
+        beginShape();
+        vertex(-45, -60);
+        bezierVertex(-50, -110, 50, -112, 45, -60);
+        bezierVertex(50, 10, -50, 10, -45, -60);
+        endShape(CLOSE);
+        
+        noFill();
+        strokeWeight(12);
+        stroke(0, 0, 0, 30);
+        bezier(-43, -68, -20, -78, 20, -78, 42, -69);
+        stroke(245);
+        bezier(-43, -74, -20, -82, 20, -85, 42, -75);
+        strokeWeight(9);
+        stroke(189, 189, 189);
+        bezier(-42, -68, -28, 11, 28, 11, 42, -66);
+        strokeWeight(5);
+        stroke(207, 207, 207);
+        bezier(-43, -70, -20, -77, 20, -80, 42, -70);
+        bezier(-43, -70, -28, 11, 28, 11, 42, -70);
+        strokeWeight(4);
+        stroke(214, 214, 214);
+        fill(247, 247, 247);
+        rect(0, -12, 22, 9);
+        noStroke();
+        fill(245);
+        arc(0, -77, 92, 47, -180, 0);
+        strokeCap(SQUARE);
+        strokeWeight(15);
+        stroke(45);
+        bezier(-40, -85, -10, -91, 10, -92, 38, -85);
+        strokeCap(ROUND);
+        
+        strokeWeight(2);
+        stroke(5, 5, 5);
+        fill(43, 43, 43);
+        ellipse(-13, -48, 12, 12);
+        ellipse(13, -48, 12, 12);
+        stroke(255, 255, 255, 200);
+        arc(-13, -48, 8, 8, -180, -90);
+        arc(13, -48, 8, 8, -180, -90);
+        stroke(87, 24, 9);
+        fill(140, 43, 21);
+        rect(-14, -57, 20, 5, 5);
+        rect(12, -57, 20, 5, 5);
+        noFill();
+        stroke(0);
+        arc(0, -52, 50, 50, 56, 92);
+        line(-7, -27, -2, -27);
+        
+        noStroke();
+        fill(255, 255, 255, 40);
+        rect(-6, -57, 84, 86, 50);
+        popMatrix();
+        
+        return get(0, 0, 400, 400);
+    },
+    'leia': function(){
+        pushMatrix();
+        translate(200, 235);
+        scale(2.2);
+        rectMode(CENTER);
+        noStroke();
+        fill(0, 0, 0, 30);
+        ellipse(0, 69, 83, 13);
+        
+        noFill();
+        stroke(222, 222, 222);
+        strokeWeight(17);
+        arc(0, 20, 86, 55, -162, -18);
+        
+        stroke(255, 255, 255);
+        strokeWeight(10);
+        arc(0, 20, 87, 55, -162, -6);
+        strokeWeight(4);
+        fill(207, 207, 207);
+        stroke(181, 181, 181);
+        rect(-15, 53, 24, 24, 50);
+        rect(15, 53, 23, 24, 50);
+        fill(255, 255, 255);
+        stroke(217, 217, 217);
+        rect(-45, 22, 20, 20, 50);
+        rect(45, 23, 20, 20, 50);
+        
+        strokeWeight(4);
+        stroke(209, 209, 209);
+        beginShape();
+        vertex(-32, -18);
+        bezierVertex(-25, 2, -33, 6, -26, 18);
+        bezierVertex(-8, 32, -43, 49, -30, 52);
+        bezierVertex(6, 41, 10, 67, 30, 52);
+        bezierVertex(37, 50, 21, 47, 19, 25);
+        bezierVertex(27, 9, 30, 16, 24, -18);
+        endShape();
+        line(-19, 27, 19, 26);
+        line(-19, 27, 0, 30);
+        line(17, 27, 0, 30);
+        line(17, 27, 0, 24);
+        line(-19, 27, 0, 24);
+        
+        noStroke();
+        fill(255, 255, 255, 40);
+        rect(-8, -2, 54, 74, 50);
+        noFill();
+        stroke(0, 0, 0, 50);
+        arc(0, -30, 75, 50, -332, -204);
+        
+        strokeWeight(4);
+        stroke(214, 167, 107);
+        fill(227, 193, 154);
+        beginShape();
+        vertex(-45, -60);
+        bezierVertex(-50, -110, 50, -112, 45, -60);
+        bezierVertex(50, 10, -50, 10, -45, -60);
+        endShape(CLOSE);
+        
+        noStroke();
+        fill(255, 255, 255, 60);
+        rect(-6, -57, 84, 86, 50);
+        
+        strokeWeight(3);
+        stroke(97, 28, 14);
+        fill(150, 65, 52);
+        rect(-51, -54, 21, 44, 50);
+        rect(51, -54, 21, 44, 50);
+        stroke(120, 43, 28);
+        strokeWeight(4);
+        for(var i = 0; i < 570; i += 12){
+            point(-52 + sin(i) * (i / 48), -50 + cos(i) * (i / 24));
+        }
+        for(var i = 0; i < 570; i += 12){
+            point(52 - sin(i) * (i / 48), -50 + cos(i) * (i / 24));
+        }
+        
+        strokeWeight(2);
+        stroke(5, 5, 5);
+        fill(43, 43, 43);
+        ellipse(-13, -48, 12, 15);
+        ellipse(13, -48, 12, 15);
+        noFill();
+        arc(-19, -32, 26, 50, -98, -72);
+        arc(-19, -29, 26, 50, -98, -72);
+        arc(23, -31, 26, 50, -119, -95);
+        arc(23, -28, 26, 50, -119, -95);
+        stroke(255, 255, 255, 200);
+        arc(-13, -48, 8, 11, -180, -90);
+        arc(13, -48, 8, 11, -180, -90);
+        noFill();
+        
+        stroke(176, 57, 57);
+        arc(0, -52, 50, 50, 57, 117);
+        arc(0, -49, 36, 48, 57, 117);
+        arc(-3, -8, 21, 42, -112, -80);
+        arc(4, -8, 21, 42, -112, -80);
+        
+        strokeWeight(3);
+        stroke(97, 28, 14);
+        fill(150, 65, 52);
+        beginShape();
+        vertex(0, -100);
+        bezierVertex(-28, -114, -62, -89, -46, -61);
+        bezierVertex(-31, -47, 10, -80, 0, -100);
+        endShape();
+        beginShape();
+        vertex(0, -100);
+        bezierVertex(28, -114, 62, -89, 46, -61);
+        bezierVertex(31, -47, -10, -80, 0, -100);
+        endShape();
+        noStroke();
+        fill(0, 0, 0, 50);
+        beginShape();
+        vertex(0, -100);
+        bezierVertex(-22, -88, -46, -89, -35, -61);
+        bezierVertex(-25, -47, 10, -80, 0, -100);
+        endShape();
+        beginShape();
+        vertex(5, -84);
+        bezierVertex(28, -105, 58, -89, 46, -63);
+        bezierVertex(31, -41, -10, -79, 9, -76);
+        endShape();
+        
+        popMatrix();
+        return get(0, 0, 400, 400);
+    },
+    'han': function(){
+        pushMatrix();
+        translate(200, 235);
+        scale(2.15);
+        rectMode(CENTER);
+        noStroke();
+        fill(0, 0, 0, 30);
+        ellipse(0, 69, 83, 13);
+        
+        noFill();
+        stroke(230, 208, 172);
+        strokeWeight(17);
+        arc(0, 20, 119, 55, -162, -18);
+        stroke(237, 226, 208);
+        strokeWeight(10);
+        arc(0, 20, 119, 55, -162, -18);
+        strokeWeight(4);
+        fill(23, 119, 163);
+        stroke(15, 86, 117);
+        rect(-15, 35, 23, 63, 50);
+        rect(15, 35, 23, 63, 50);
+        arc(0, 22, 50, 38, 0, 180);
+        fill(237, 218, 185);
+        stroke(204, 178, 134);
+        rect(-57, 22, 20, 20, 50);
+        rect(60, 23, 20, 20, 50);
+        rect(0, 0, 72, 90, 50);
+        
+        fill(23, 119, 163);
+        stroke(15, 86, 117);
+        arc(0, 36, 55, 19, 0, 180);
+        
+        fill(84, 84, 84);
+        stroke(28, 28, 28);
+        rect(0, 32, 57, 5, 5);
+        fill(161, 161, 161);
+        stroke(117, 117, 117);
+        rect(0, 32, 16, 9, 5);
+        
+        fill(12, 66, 110);
+        stroke(6, 44, 74);
+        beginShape();
+        vertex(6, -30);
+        bezierVertex(5, 25, 12, 8, 8, 27);
+        vertex(31, 28);
+        bezierVertex(38, 25, 36, -19, 34, -17);
+        endShape();
+        beginShape();
+        vertex(-6, -30);
+        bezierVertex(-5, 25, -12, 8, -8, 27);
+        vertex(-31, 28);
+        bezierVertex(-38, 25, -36, -19, -34, -17);
+        endShape();
+        
+        noStroke();
+        fill(255, 255, 255, 150);
+        rect(-58, 21, 12, 12, 50);
+        rect(60, 22, 12, 12, 50);
+        noStroke();
+        fill(255, 255, 255, 40);
+        rect(-8, -2, 54, 74, 50);
+        stroke(168, 168, 168);
+        noFill();
+        stroke(0, 0, 0, 30);
+        arc(0, 23, 75, 50, -310, -234);
+        stroke(0, 0, 0, 50);
+        arc(0, -27, 75, 50, -332, -204);
+        
+        stroke(214, 167, 107);
+        fill(227, 193, 154);
+        beginShape();
+        vertex(-45, -60);
+        bezierVertex(-50, -110, 50, -112, 45, -60);
+        bezierVertex(50, 10, -50, 10, -45, -60);
+        endShape(CLOSE);
+        
+        noStroke();
+        fill(255, 255, 255, 60);
+        rect(-6, -57, 84, 86, 50);
+        
+        strokeWeight(2);
+        stroke(5, 5, 5);
+        fill(43, 43, 43);
+        ellipse(-13, -48, 12, 12);
+        ellipse(13, -48, 12, 12);
+        stroke(255, 255, 255, 200);
+        arc(-13, -48, 8, 8, -180, -90);
+        arc(13, -48, 8, 8, -180, -90);
+        stroke(46, 13, 6);
+        fill(102, 33, 17);
+        quad(-5, -50, -5, -55, -23, -60, -23, -55);
+        quad(5, -51, 5, -56, 23, -57, 23, -53);
+        noFill();
+        stroke(0);
+        arc(0, -52, 50, 50, 56, 92);
+        line(-7, -27, -2, -27);
+        
+        stroke(48, 13, 6);
+        fill(97, 38, 28);
+        beginShape();
+        vertex(0, -100);
+        bezierVertex(-54, -114, -30, -102, -56, -61);
+        bezierVertex(-58, -53, -54, -56, -48, -55);
+        bezierVertex(-49, -63, -46, -48, -54, -48);
+        bezierVertex(-49, -42, -35, -48, -32, -77);
+        bezierVertex(-28, -80, -26, -84, -30, -69);
+        bezierVertex(-7, -80, -26, -84, -15, -69);
+        bezierVertex(-4, -80, 3, -84, -8, -66);
+        bezierVertex(14, -80, -6, -86, 11, -67);
+        bezierVertex(16, -80, 9, -84, 21, -67);
+        bezierVertex(24, -80, 19, -76, 33, -67);
+        bezierVertex(35, -80, 37, -56, 52, -52);
+        bezierVertex(39, -80, 47, -123, 0, -100);
+        endShape();
+        
+        
+        strokeWeight(2);
+        stroke(5, 5, 5);
+        fill(43, 43, 43);
+        ellipse(-13, -48, 12, 12);
+        ellipse(13, -48, 12, 12);
+        stroke(255, 255, 255, 200);
+        arc(-13, -48, 8, 8, -180, -90);
+        arc(13, -48, 8, 8, -180, -90);
+        stroke(46, 13, 6);
+        fill(102, 33, 17);
+        quad(-5, -50, -5, -55, -23, -60, -23, -55);
+        quad(5, -51, 5, -56, 23, -57, 23, -53);
+        noFill();
+        stroke(0);
+        arc(0, -52, 50, 50, 56, 92);
+        line(-7, -27, -2, -27);
+        
+        noStroke();
+        fill(255, 255, 255, 30);
+        beginShape();
+        vertex(0, -100);
+        bezierVertex(-54, -114, -30, -102, -56, -61);
+        bezierVertex(-58, -53, -54, -56, -48, -55);
+        bezierVertex(-49, -63, -46, -48, -54, -48);
+        bezierVertex(-49, -42, -47, -48, -37, -79);
+        bezierVertex(-7, -80, -26, -84, -15, -77);
+        bezierVertex(39, -80, 46, -122, 0, -100);
+        endShape();
+        
+        popMatrix();
+        
+        return get(0, 0, 400, 400);
+    },
+    'stormtrooper': function(){
+        pushMatrix();
+        translate(200, 235);
+        scale(2.2);
+        rectMode(CENTER);
+        noStroke();
+        fill(0, 0, 0, 30);
+        ellipse(0, 67, 83, 15);
+        stroke(207, 207, 207);
+        strokeWeight(17);
+        arc(0, 20, 119, 55, -162, -18);
+        stroke(255, 255, 255);
+        strokeWeight(10);
+        arc(0, 20, 119, 55, -162, -18);
+        fill(225);
+        stroke(179, 179, 179);
+        strokeWeight(4);
+        rect(-15, 35, 23, 63, 50);
+        rect(15, 35, 23, 63, 50);
+        noStroke();
+        fill(255, 255, 255);
+        rect(-16, 35, 13, 54, 50);
+        rect(15, 35, 15, 54, 50);
+        fill(225);
+        stroke(179, 179, 179);
+        rect(-57, 22, 20, 20, 50);
+        rect(60, 23, 20, 20, 50);
+        rect(0, 0, 83, 90, 50);
+        noStroke();
+        fill(255, 255, 255);
+        rect(-2, 0, 72, 67, 50);
+        rect(-59, 21, 11, 11, 50);
+        rect(59, 22, 11, 11, 50);
+        stroke(168, 168, 168);
+        fill(255);
+        line(5, 10, 40, 10);
+        line(-5, 10, -40, 10);
+        line(-5, 10, 0, 5);
+        line(5, 10, 0, 5);
+        noFill();
+        arc(0, 48, 65, 50, -145, -25);
+        stroke(0, 0, 0, 30);
+        arc(0, 25, 75, 50, -306, -240);
+        stroke(185);
+        fill(255);
+        beginShape();
+        vertex(-50, -50);
+        bezierVertex(-50, -95, -15, -103, 0, -100);
+        bezierVertex(0, -3, 0, -11, 0, -5);
+        bezierVertex(-11, -7, -13, 9, -27, -2);
+        bezierVertex(-32, -11, -65, -25, -48, -42);
+        endShape(CLOSE);
+        pushMatrix();
+        scale(-1, 1);
+        beginShape();
+        beginShape();
+        vertex(-50, -50);
+        bezierVertex(-50, -95, -15, -103, 0, -100);
+        bezierVertex(0, -3, 0, -11, 0, -5);
+        bezierVertex(-11, -7, -13, 9, -27, -2);
+        bezierVertex(-32, -11, -65, -25, -48, -42);
+        endShape(CLOSE);
+        noStroke();
+        fill(0, 0,0, 40);
+        beginShape();
+        vertex(-50, -50);
+        bezierVertex(-50, -95, -15, -103, 0, -100);
+        bezierVertex(0, -3, 0, -11, 0, -5);
+        bezierVertex(-11, -7, -13, 9, -27, -2);
+        bezierVertex(-32, -11, -65, -25, -48, -42);
+        endShape(CLOSE);
+        popMatrix();
+        noStroke();
+        fill(255);
+        arc(0, -53, 79, 88, -90, 90);
+        rect(0, -53, 5, 91);
+        fill(201, 201, 201);
+        stroke(185);
+        ellipse(16, -11, 8, 8);
+        ellipse(-16, -11, 8, 8);
+        noFill();
+            stroke(0, 0, 0, 50);
+            strokeWeight(3);
+        for(var i = 4; i < 23; i += 6){
+            arc(-20 - i, -13 - (i / 1.2), 6, 6, -208, -74);
+            arc(20 + i, -13 - (i / 1.2), 6, 6, -131, 41);
+        }
+        stroke(0);
+        strokeWeight(6);
+        bezier(-43, -64, -25, -60, 25, -61, 44, -64);
+        strokeWeight(5);
+        fill(0);
+        bezier(5, -53, 8, -53, 25, -55, 38, -55);
+        bezier(5, -54, -1, -30, 45, -38, 38, -55);
+        bezier(-5, -53, -8, -53, -25, -55, -38, -55);
+        bezier(-5, -54, 1, -30, -45, -38, -38, -55);
+        noStroke();
+        beginShape();
+        vertex(0, -37);
+        vertex(-21, -22);
+        bezierVertex(0, -27, 0, -26, 21, -22);
+        endShape(CLOSE);
+        stroke(255, 255, 255, 100);
+        strokeWeight(3);
+        bezier(5, -54, 8, -51, 4, -56, 20, -53);
+        bezier(5, -49, 4, -56, 7, -45, 5, -47);
+        bezier(-23, -54, -21, -56, -35, -52, -37, -55);
+        popMatrix();
+        
+        return get(0, 0, 400, 400);
+    },
+    'boba': function(){
+        pushMatrix();
+        translate(200, 245);
+        scale(2);
+        rectMode(CENTER);
+        noStroke();
+        fill(0, 0, 0, 30);
+        ellipse(0, 69, 83, 13);
+        
+        strokeWeight(4);
+        stroke(115, 84, 63);
+        fill(156, 105, 69);
+        beginShape();
+        vertex(-30, -30);
+        bezierVertex(74, -21, 19, 30, 59, 45);
+        bezierVertex(63, 49, -15, 67, -39, 38);
+        endShape(CLOSE);
+        
+        noFill();
+        stroke(140, 140, 140);
+        strokeWeight(17);
+        arc(0, 20, 119, 55, -162, -18);
+        stroke(181, 181, 181);
+        strokeWeight(10);
+        arc(0, 20, 119, 55, -162, -18);
+        stroke(184, 184, 61);
+        fill(209, 209, 67);
+        strokeWeight(2);
+        ellipse(-40, -2, 18, 9);
+        ellipse(40, -2, 18, 9);
+        fill(161, 161, 161);
+        stroke(117, 117, 117);
+        strokeWeight(4);
+        rect(-57, 22, 20, 20, 50);
+        rect(60, 23, 20, 20, 50);
+        rect(-15, 35, 23, 63, 50);
+        rect(15, 35, 23, 63, 50);
+        rect(0, 0, 72, 90, 50);
+        noStroke();
+        fill(255, 255, 255, 80);
+        rect(-58, 21, 12, 12, 50);
+        rect(60, 22, 12, 12, 50);
+        stroke(184, 184, 61);
+        fill(209, 209, 67);
+        strokeWeight(2);
+        ellipse(-14, 54, 18, 9);
+        ellipse(16, 54, 18, 9);
+        noStroke();
+        fill(13, 89, 66);
+        stroke(4, 48, 34);
+        strokeWeight(3);
+        beginShape();
+        vertex(-29, 0);
+        vertex(-2, 0);
+        vertex(-4, 8);
+        vertex(-10, 9);
+        vertex(-15, 15);
+        vertex(-26, 15);
+        endShape(CLOSE);
+        beginShape();
+        vertex(29, 0);
+        vertex(2, 0);
+        vertex(4, 8);
+        vertex(10, 9);
+        vertex(15, 15);
+        vertex(26, 15);
+        endShape(CLOSE);
+        beginShape();
+        vertex(26, 19);
+        vertex(14, 18);
+        vertex(6, 13);
+        vertex(-6, 13);
+        vertex(-14, 19);
+        vertex(-27, 19);
+        vertex(-22, 30);
+        vertex(22, 30);
+        endShape(CLOSE);
+        arc(0, 33, 42, 15, 0, 180);
+        noStroke();
+        fill(255, 255, 255, 80);
+        rect(-3, -2, 54, 74, 50);
+        stroke(168, 168, 168);
+        noFill();
+        stroke(0, 0, 0, 30);
+        arc(0, 25, 75, 50, -310, -234);
+        
+        strokeWeight(4);
+        stroke(112, 112, 112);
+        fill(128, 128, 128);
+        rect(0, -49, 114, 33, 50);
+        rect(-52, -89, 3, 60, 50);
+        rect(-49, -111, 10, 18, 50);
+        
+        stroke(13, 117, 87);
+        fill(20, 153, 115);
+        beginShape();
+        vertex(-50, -60);
+        bezierVertex(-50, -110, 50, -112, 50, -60);
+        vertex(45, -25);
+        vertex(25, -5);
+        vertex(-25, -5);
+        vertex(-45, -27);
+        endShape(CLOSE);
+        
+        stroke(150, 28, 67);
+        rect(0, -62, 94, 5);
+        fill(150, 28, 67);
+        stroke(77, 3, 14);
+        bezier(-50, -65, -25, -74, 25, -70, 50, -66);
+        beginShape();
+        vertex(13, -5);
+        vertex(-13, -5);
+        bezierVertex(-19, -42, -22, -38, -47, -40);
+        vertex(-50, -60);
+        bezierVertex(-25, -65, 25, -65, 50, -60);
+        vertex(46, -42);
+        bezierVertex(22, -38, 19, -42, 13, -5);
+        endShape();
+        fill(28, 28, 28);
+        stroke(0);
+        beginShape();
+        vertex(7, -5);
+        vertex(-6, -5);
+        bezierVertex(-8, -60, 0, -50, -50, -50);
+        vertex(-50, -60);
+        bezierVertex(-25, -65, 25, -65, 50, -60);
+        vertex(50, -50);
+        bezierVertex(0, -50, 8, -60 ,7, -5);
+        endShape();
+        noFill();
+        stroke(255);
+        bezier(-38, -78, -32, -86, -22, -90, -12, -92);
+        point(-5, -93);
+        fill(255, 255,255,150);
+        noStroke();
+        quad(-19, -64, -16, -64, -31, -51, -39, -50);
+        quad(-24, -64, -10, -65, -24, -51, -47, -50);
+        noStroke();
+        fill(255, 255, 255, 40);
+        rect(-6, -57, 84, 86, 50);
+        popMatrix();
+        
+        return get(0, 0, 400, 400);
+    },
+};
+
+// Character data
+var side = '';
+var character = 0;
+var characters = [
+    {
+        name: 'Rebel Trooper',
+        img: images.rebel,
+    },
+    {
+        name: 'Leia Organa',
+        img: images.leia,
+    },
+    {
+        name: 'Han Solo',
+        img: images.han,
+    },
+    {
+        name: 'Stormtrooper',
+        img: images.stormtrooper,
+    },
+    {
+        name: 'Boba Fett',
+        img: images.boba,
+    },
+];
+
+// Mouse input variables
+var clicked = false;
+var overButton = false;
+
+// Key input
+var input = [];
+keyPressed = function() {
+    input[keyCode]= true;
+};
+keyReleased = function() {
+    input[keyCode]= false;
+};
+
+// Bullet Object
+var Bullet = function(originX, originY, angle) {
+    this.originX = originX; // The original x position of the bullet (where it's going away from).
+    this.originY = originY; // The original y position of the bullet (where it's going away from).
+    this.angle = angle; // Which way the bullet is going
+    this.sz = 10; // size of bullet
+    
+    this.howFarAway = 40; // how far away the bullet is from the origin
+    this.speed = 3; // the speed of the bullet
+};
+Bullet.prototype.display = function() {
+    // Constantly update the x & y positions of bullet
+    this.x = this.originX + sin(this.angle) * this.howFarAway;
+    this.y = this.originY + cos(this.angle) * this.howFarAway;
+    
+    fill(0);
+    ellipse(this.x, this.y, this.sz, this.sz);
+    
+    this.howFarAway += this.speed;
+};
+
+// Player Object
+var Player = function(x, y) {
+    this.x = x; // Player current X
+    this.y = y; // Player current Y
+    this.sz = 50; // Player size
+    this.moveSpeed = 20; // Why did I set this to 20?
+    this.direction = 0;
+    
+};
+Player.prototype.collide = function() {
+    for (var i = 0; i < enemyBullets.length; i++){
+        if (dist(this.x, this.y, enemyBullets[i].x, enemyBullets[i].y) < this.sz / 2 + enemyBullets[i].sz / 2){
+            enemyBullets.splice(i, 1);
+            scene = 'menu';
+        }
+    }
+};
+Player.prototype.update = function() {
+    this.collide();
+    if (input[87] || input[UP]) {
+        this.y -=3;    
+    }
+    if (input[83] || input[DOWN]) {
+        this.y +=3;    
+    }
+    if (input[65] || input[LEFT]) {
+        this.x -=3;    
+    }
+    if (input[68] || input[RIGHT]) {
+        this.x +=3;    
+    }
+    if (this.x <= this.sz / 2) {
+        this.x = this.sz / 2;    
+    }
+    if (this.y <= this.sz / 2) {
+        this.y = this.sz / 2;    
+    }
+    if (this.x >= width - this.sz / 2) {
+        this.x = width - this.sz / 2;    
+    }
+    if (this.y >= height - this.sz / 2) {
+        this.y = height - this.sz / 2;    
+    }
+
+};
+Player.prototype.display = function() {
+    this.update();
+    noStroke();
+    rectMode(CENTER);
+    imageMode(CENTER);
+    pushMatrix();
+    translate(this.x, this.y); 
+    rotate(atan2(mouseY - this.y, mouseX - this.x) + 90);
+    fill(0);
+    rect(0, -20, 5, 25);
+    popMatrix();
+    pushMatrix();
+    translate(this.x, this.y);
+    fill(255, 0, 0);
+    image(getImage("creatures/Winston"), 0, 0, this.sz, this.sz);
+    popMatrix();
+    
+};
+var player = new Player(300, 200);
+
+// Enemy Object
+var Enemy = function(x, y, type) {
+    this.x = x;
+    this.y = y;
+    this.sz = 50;
+    this.type = type;
+};
+Enemy.prototype.update = function() {
+    for (var j = 0; j < enemies.length; j++){
+        for (var i = 0; i < bullets.length; i++){
+            if (dist(this.x, this.y, bullets[i].x, bullets[i].y) < this.sz / 2 + bullets[i].sz / 2){
+                bullets.splice(i, 1);
+                enemies.splice(j, 1);
+            }
+        }
+    }
+    switch(this.type) {
+        case 'zigzag':
+            this.y += (sin(frameCount * 3) * 2);
+            this.x += 2;
+            if (this.x + this.sz / 2 >= width + 60) {
+                this.x = this.sz / 2 - 60;
+                this.y = random(this.sz / 2, height - this.sz / 2);
+            }
+        break;
+    }
+    
+};
+Enemy.prototype.display = function() {
+    this.update();
+    if (this.type === 'shooting') {
+        pushMatrix();
+        translate(this.x, this.y); 
+        rotate(atan2(player.y - this.y, player.x - this.x) + 90);
+        fill(0);
+        rect(0, -20, 5, 25);
+        popMatrix();
+    }
+    fill(255, 0, 0);
+    ellipse(this.x, this.y, this.sz, this.sz);
+};
+
+// Button Object
+var Button = function(x, y, txt, nxt){
+    this.x = x;
+    this.y = y;
+    this.txt = txt;
+    this.nxt = nxt;
+    this.plusSz = 0.2;
+};
+Button.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x + 22, this.y);
+    scale(1.2 - this.plusSz);
+    pushStyle();
+    rectMode(CENTER);
+    noFill();
+    stroke(255, 255, 255, 20);
+    for(var i = 0; i < 16; i += 3){
+        strokeWeight(i);
+        ellipse(-92, 0, 50, 50);
+    line(-71, -17, 60, -17);
+    line(-73, 17, 60, 17);
+    line(60, -16, 60, 17);
+    }
+    stroke(255);
+    strokeWeight(3);
+    ellipse(-92, 0, 50, 50);
+    line(-71, -17, 60, -17);
+    line(-73, 17, 60, 17);
+    line(60, -16, 60, 17);
+    fill(255);
+    textAlign(LEFT, CENTER);
+    textSize(20);
+    text(this.txt, -50, 0);
+    
+    if(this.txt === 'P L A Y'){
+        triangle(-98, -9, -83, 0, -98, 9);
+    }
+    if(this.txt === 'H O W'){
+        textSize(33);
+        text('?', -104, 0);
+    }
+    if(this.txt === 'S T O R Y'){
+        rect(-93, -7, 20, 0);
+        rect(-93, 7, 20, 0);
+        rect(-93, 0, 20, 0);
+    }
+    if(this.txt === 'B A C K'){
+        textSize(33);
+        text('\u2190', -111, -1);
+    }
+    if(this.txt === 'CHOOSE'){
+        textSize(33);
+        text('\u2192', -111, -1);
+    }
+    popStyle();
+    popMatrix();
+    
+    // Animation
+    if(mouseX > this.x - 100 && mouseX < this.x + 90 && mouseY > this.y - 20 && mouseY < this.y + 20){
+        overButton = true;
+        this.plusSz /= 1.1;
+        if(clicked){
+            if(this.nxt === 'characters'){
+                side = (this.x === 150) ? 'rebellion' : 'empire';
+            }
+            trans.active = true;
+            trans.nextScene = this.nxt;
+        }
+    } else {
+        this.plusSz *= 1.1;
+    }
+    
+    this.plusSz = constrain(this.plusSz, 0.01, 0.2);
+};
+var buttons = {
+    play: new Button(300, 210, 'P L A Y', 'sides'),
+    how: new Button(300, 273, 'H O W', 'how'),
+    story: new Button(300, 335, 'S T O R Y', 'story'),
+    back: new Button(300, 335, 'B A C K', 'menu'),
+    rebellion: new Button(150, 360, 'CHOOSE', 'characters'),
+    empire: new Button(450, 360, 'CHOOSE', 'characters'),
+};
+
+mouseClicked = function() {
+    clicked = true;
+    if (scene === 'game') {
+        bullets.push(new Bullet(player.x, player.y, 90- atan2(mouseY - player.y, mouseX - player.x)));
+    }
+};
+
+enemies.push(new Enemy(100, 100, 'zigzag'));
+
+draw = function() {
+    // Load images
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    // Switching scenes
+    switch(scene) {
+        case 'game':
+            background(255, 255, 255);
+            player.display();
+            for(var i = bullets.length - 1; i >= 0; i --) {
+                bullets[i].display();
+                if(bullets[i].howFarAway > 600) {
+                    bullets.splice(i, 1);
+                }
+            }
+            for(var i = enemyBullets.length - 1; i >= 0; i --) {
+                enemyBullets[i].display();
+                if(enemyBullets[i].howFarAway > 600) {
+                    enemyBullets.splice(i, 1);
+                }
+            }
+            for(var i = 0; i < enemies.length; i++) {
+                enemies[i].display();
+                if (frameCount % 50 === 1 && enemies[i].type === 'shooting') {
+                    enemyBullets.push(new Bullet(enemies[i].x, enemies[i].y, 90- atan2(player.y - enemies[i].y, player.x - enemies[i].x)));    
+                }
+            }
+            if (enemies.length <= 0) {
+                enemies.push(new Enemy(random(50, 550), random(50, 350), choose(['shooting', 'zigzag'])));   
+            }
+            
+        break;
+        case 'menu':
+            imageMode(CORNER);
+            image(images.menuBackground, 0, 0);
+            
+            fill(255, 255, 255, 20);
+            for(var i = 0; i < 360; i += 30){
+                pushMatrix();
+                translate(sin(i) * 8, cos(i) * 7);
+                textSize(55);
+                text("B A T T L E S", width/2, 140);
+                textSize(40);
+                text("STAR WARS", width/2 + 6, 95);
+                popMatrix();
+            }
+            
+            fill(255);
+            textSize(55);
+            text("B A T T L E S", width/2, 140);
+            textSize(40);
+            text("STAR WARS", width/2 + 6, 95);
+            
+            fill(255, 255, 255);
+            textSize(17);
+            text("JONAH YORDY", 80, 380);
+            fill(25);
+            text("CHESTER BANKS", 510, 380);
+            
+            buttons.play.draw();
+            buttons.how.draw();
+            buttons.story.draw();
+        break;
+        case 'how':
+            imageMode(CORNER);
+            image(images.menuBackground, 0, 0);
+            
+            fill(255, 255, 255, 20);
+            for(var i = 0; i < 360; i += 30){
+                pushMatrix();
+                translate(sin(i) * 8, cos(i) * 7);
+                textSize(40);
+                text("INSTRUCTIONS", width/2 + 6, 95);
+                popMatrix();
+            }
+            
+            fill(255);
+            textSize(40);
+            text("INSTRUCTIONS", width/2 + 6, 95);
+            textSize(15);
+            text('> Move with the arrow keys\n\n> Aim with mouse and click to shoot\n\n> Destroy enemies before they kill you\n\n> Save the galaxy!', 300, 210);
+            
+            fill(255, 255, 255);
+            textSize(17);
+            text("JONAH YORDY", 80, 380);
+            fill(25);
+            text("CHESTER BANKS", 510, 380);
+            
+            buttons.back.draw();
+        break;
+        case 'story':
+            imageMode(CORNER);
+            image(images.menuBackground, 0, 0);
+            
+            fill(255, 255, 255, 20);
+            for(var i = 0; i < 360; i += 30){
+                pushMatrix();
+                translate(sin(i) * 8, cos(i) * 7);
+                textSize(40);
+                text("STORY", width/2 + 6, 95);
+                popMatrix();
+            }
+            
+            fill(255);
+            textSize(40);
+            text("STORY", width/2 + 6, 95);
+            textSize(15);
+            text('> story goes here', 300, 210);
+            
+            fill(255, 255, 255);
+            textSize(17);
+            text("JONAH YORDY", 80, 380);
+            fill(25);
+            text("CHESTER BANKS", 510, 380);
+            
+            buttons.back.draw();
+        break;
+        
+        // HAWAII
+        case 'sides':
+            background(212, 212, 212);
+            
+            for(var i = 0; i < width; i += 50){
+                for(var j = 0; j < height; j += 50){
+                    noStroke();
+                    fill(0, 0, 0, 30);
+                    rect(i + 12, j, 37, 50);
+                    fill(255, 255, 255, 30);
+                    rect(i + 1, j, 5, 50);
+                    strokeWeight(3);
+                    stroke(0, 0, 0, 20);
+                    fill(0, 0, 0, 10 + sin(i+j*5)*35);
+                    rect(i, j, 50, 50);
+                    strokeWeight(3);
+                    stroke(0, 0, 0, 50);
+                    point(i + 6, j + 6);
+                    point(i + 44, j + 6);
+                    point(i + 6, j + 44);
+                    point(i + 44, j + 44);
+                }
+            }
+            
+            noStroke();
+            fill(0, 102, 255, 50);
+            rect(0, 0, 300, 400);
+            fill(255, 0, 0, 80);
+            rect(300, 0, 300, 400);
+            
+            // rebellion logo
+            pushMatrix();
+            translate(150, 200);
+            noStroke();
+            fill(0, 0, 0);
+            beginShape();
+            vertex(-38, -55);
+            bezierVertex(-118, 9, -36, 76, 0, 72);
+            bezierVertex(36, 76, 118, 9, 38, -55);
+            bezierVertex(74, 5, 27, 14, 26, 14);
+            bezierVertex(5, 11, 1, -28, 24, -41);
+            vertex(20, -50);
+            vertex(4, -35);
+            vertex(11, -57);
+            vertex(0, -74);
+            vertex(-11, -57);
+            vertex(-4, -35);
+            vertex(-20, -50);
+            vertex(-24, -41);
+            bezierVertex(-1, -28, -5, 11, -26, 14);
+            bezierVertex(-27, 14, -74, 5, -38, -55);
+            endShape();
+            popMatrix();
+            
+            // empire logo
+            pushMatrix();
+            translate(450, 198);
+            stroke(0, 0, 0);
+            strokeWeight(10);
+            noFill();
+            ellipse(0, 0, 139, 140);
+            strokeWeight(8);
+            ellipse(0, 0, 98, 98);
+            noFill();
+            strokeCap(SQUARE);
+            for(var i = 0; i < 360; i += 60){
+                pushMatrix();
+                rotate(i);
+                strokeWeight(8);
+                arc(0, 0, 113, 113, -44, -13);
+                strokeWeight(5);
+                line(0, 54, -1, 67);
+                rotate(31);
+                strokeWeight(26);
+                arc(0, 0, 65, 65, -44, -13);
+                popMatrix();
+            }
+            popMatrix();
+            
+            textSize(45);
+            for(var i = 0; i > -30; i -= 5){
+                fill(0, 0, 0, i + 40);
+                text('PICK A SIDE', 300 + i, 75);
+            }
+            fill(0, 0, 0);
+            text('PICK A SIDE', 300, 75);
+            fill(0);
+            textSize(15);
+            text('THE', 95, 290);
+            text('THE', 423, 290);
+            textSize(35);
+            text('REBELLION', 150, 310);
+            text('EMPIRE', 450, 310);
+            
+            buttons.rebellion.draw();
+            buttons.empire.draw();
+        break;
+        
+        case 'characters':
+            background(side === 'rebellion' ? 
+            color(137, 181, 214) : color(242, 121, 121));
+            
+            for(var i = 0; i < width; i += 50){
+                for(var j = 0; j < height; j += 50){
+                    noStroke();
+                    fill(0, 0, 0, 30);
+                    rect(i + 12, j, 37, 50);
+                    fill(255, 255, 255, 30);
+                    rect(i + 1, j, 5, 50);
+                    strokeWeight(3);
+                    stroke(0, 0, 0, 20);
+                    fill(0, 0, 0, 10 + sin(i+j*5)*35);
+                    rect(i, j, 50, 50);
+                    strokeWeight(3);
+                    stroke(0, 0, 0, 50);
+                    point(i + 6, j + 6);
+                    point(i + 44, j + 6);
+                    point(i + 6, j + 44);
+                    point(i + 44, j + 44);
+                }
+            }
+            
+            pushStyle();
+            pushMatrix();
+            translate(300, 250);
+            
+            noFill();
+            strokeWeight(4);
+            for(var i = 0; i > -90; i-=3){
+                stroke(255, 255, 255, i + 90);
+                arc(0, i + 86, 180- i / 4, 50, -180, 0);
+            }
+            
+            strokeWeight(53);
+            stroke(89, 89, 89);
+            bezier(-200, 170, -133, 70, 133, 70, 200, 170);
+            strokeWeight(44);
+            stroke(110, 110, 110);
+            bezier(-200, 170, -133, 70, 133, 70, 200, 170);
+            strokeWeight(15);
+            stroke(117, 117, 117);
+            bezier(-215, 170, -133, 51, 133, 53, 215, 170);
+            
+            strokeWeight(5);
+            fill(102, 102, 102);
+            stroke(71, 71, 71);
+            beginShape();
+            fill(77, 77, 77);
+            vertex(-95, 95);
+            vertex(-91, 107);
+            bezierVertex(-50, 135, 50, 135, 90, 107);
+            vertex(95, 95);
+            endShape();
+            fill(102, 102, 102);
+            beginShape();
+            vertex(-90, 83);
+            vertex(-95, 95);
+            bezierVertex(-50, 122, 50, 122, 95, 95);
+            vertex(90, 83);
+            endShape();
+            ellipse(0, 83, 180, 42);
+            
+            
+            
+            noFill();
+            strokeWeight(12);
+            for(var i = 0; i > -90; i-=3){
+                stroke(255, 255, 255, i + 90);
+                arc(0, i + 75, 180- i / 4, 37, 0, 180);
+            }
+            popMatrix();
+            popStyle();
+        break;
+    }
+    
+    // Transition
+    if(trans.active){
+        pushStyle();
+        rectMode(CENTER);
+        
+        pushMatrix();
+        translate(300, 200);
+        rotate(55);
+        noStroke();
+        fill(255, 255, 255, 255 - (trans.w / 3));
+        rect(0, 0, 700 - trans.w, 750);
+        popMatrix();
+        
+        pushMatrix();
+        translate(596, -8);
+        rotate(trans.r - 178);
+        translate(15, -62);
+        scale(2.0);
+        noStroke();
+        fill(255, 0, 0, 40);
+        for(var i = 0; i < 30; i += 3){
+            rect(0, -174, 15 + i, 278 + i, 100);
+        }
+        fill(255);
+        rect(0, -174, 14, 278, 100);
+        fill(163, 163, 163);
+        (rect)(0, 2, 22, 85, 0, 0, 5, 5);
+        fill(0, 0, 0, 30);
+        rect(0, -33, 26, 15, 15);
+        fill(181, 181, 181);
+        rect(0, -36, 26, 15, 15);
+        for(var i = 0; i < 68; i += 5){
+            fill(0, 0, 0, 30);
+            rect(-5, -23 + i, 20, 3);
+            rect(-7, -25 + i, 10, 3);
+        }
+        popMatrix();
+        
+        pushMatrix();
+        translate(11, 411);
+        rotate(trans.r + 1);
+        translate(15, -62);
+        scale(2.0);
+        noStroke();
+        fill(0, 170, 255, 40);
+        for(var i = 0; i < 30; i += 3){
+            rect(0, -174, 15 + i, 278 + i, 100);
+        }
+        fill(255);
+        rect(0, -174, 14, 278, 100);
+        fill(163, 163, 163);
+        (rect)(0, 2, 22, 85, 0, 0, 5, 5);
+        fill(0, 0, 0, 30);
+        rect(0, -33, 26, 15, 15);
+        fill(181, 181, 181);
+        rect(0, -36, 26, 15, 15);
+        for(var i = 0; i < 68; i += 5){
+            fill(0, 0, 0, 30);
+            rect(-5, -23 + i, 20, 3);
+            rect(-7, -25 + i, 10, 3);
+        }
+        popMatrix();
+        popStyle();
+        
+        if(!trans.out){
+            trans.r += (45 - trans.r) / 5;
+            if(trans.r < 60){
+                trans.w /= 1.5;
+            }
+            if(trans.w < 10){
+                scene = trans.nextScene;
+                trans.out = true;
+            }
+        } else {
+            trans.r += (100 - trans.r) / 5;
+            trans.w += (700 - trans.w) / 5;
+            if(trans.r > 96){
+                trans.active = false;
+                trans.r = 100;
+                trans.w = 700;
+                trans.out = false;
+            }
+        }
+    }
+    
+    // Draw the cursor
+    cursor(overButton ? 'pointer' : 'default');
+    
+    // Reset mouse properties
+    overButton = false;
+    clicked = false;
+    
+    //background(255);
+};
