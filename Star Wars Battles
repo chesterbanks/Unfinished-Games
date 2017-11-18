@@ -783,23 +783,38 @@ var character = 0;
 var characters = [
     {
         name: 'Rebel Trooper',
-        img: images.rebel,
+        img: 'rebel',
+        health: 6,
+        speed: 3, 
+        accuracy: 3,
     },
     {
         name: 'Leia Organa',
-        img: images.leia,
+        img: 'leia',
+        health: 8,
+        speed: 3, 
+        accuracy: 7,
     },
     {
         name: 'Han Solo',
-        img: images.han,
+        img: 'han',
+        health: 7,
+        speed: 5, 
+        accuracy: 10,
     },
     {
         name: 'Stormtrooper',
-        img: images.stormtrooper,
+        img: 'stormtrooper',
+        health: 3,
+        speed: 5, 
+        accuracy: 6,
     },
     {
         name: 'Boba Fett',
-        img: images.boba,
+        img: 'boba',
+        health: 6,
+        speed: 8, 
+        accuracy: 10,
     },
 ];
 
@@ -1025,6 +1040,7 @@ var buttons = {
     back: new Button(300, 335, 'B A C K', 'menu'),
     rebellion: new Button(150, 360, 'CHOOSE', 'characters'),
     empire: new Button(450, 360, 'CHOOSE', 'characters'),
+    backToSides: new Button(120, 45, 'B A C K', 'sides'),
 };
 
 mouseClicked = function() {
@@ -1254,13 +1270,14 @@ draw = function() {
             text('REBELLION', 150, 310);
             text('EMPIRE', 450, 310);
             
+            if(character !== 0){ character = 0; }
+            
             buttons.rebellion.draw();
             buttons.empire.draw();
         break;
         
         case 'characters':
-            background(side === 'rebellion' ? 
-            color(137, 181, 214) : color(242, 121, 121));
+            background(side === 'rebellion' ? color(137, 181, 214) : color(242, 121, 121));
             
             for(var i = 0; i < width; i += 50){
                 for(var j = 0; j < height; j += 50){
@@ -1322,7 +1339,7 @@ draw = function() {
             endShape();
             ellipse(0, 83, 180, 42);
             
-            
+            image(images[characters[character].img], -100, -110, 200, 200);
             
             noFill();
             strokeWeight(12);
@@ -1332,6 +1349,63 @@ draw = function() {
             }
             popMatrix();
             popStyle();
+            
+            textSize(35);
+            fill(255);
+            text(characters[character].name, 300, 100);
+            
+            noStroke();
+            fill(0, 0, 0, 100);
+            rect(34, 158, 140, 85, 5);
+            fill(255);
+            textSize(20);
+            textAlign(LEFT, CENTER);
+            text('Health: ' + characters[character].health + '\nSpeed: ' + characters[character].speed + '\nAccuracy: ' + characters[character].accuracy, 45, 200);
+            textAlign(CENTER, CENTER);
+            
+            noStroke();
+            fill(255);
+            if((side === 'rebellion' && character === 0) || (side === 'empire' && character === 3)){
+                fill(255, 255, 255, 100);
+            }
+            triangle(100, 85, 100, 115, 75, 100);
+            
+            fill(255);
+            if((side === 'rebellion' && character === 2) || (side === 'empire' && character === 4)){
+                fill(255, 255, 255, 100);
+            }
+            triangle(500, 85, 500, 115, 525, 100);
+            
+            if(side === 'empire' && character < 3){
+                character = 3;
+            }
+            
+            if(mouseX > 75 && mouseX < 100 && mouseY > 85 && mouseY < 115 && ((side === 'rebellion' && character > 0) || (side === 'empire' && character > 3))){
+                overButton = true;
+                if(clicked){
+                    character --;
+                    if(side === 'rebellion' && character < 0){
+                        character = 2;
+                    }
+                    if(side === 'empire' && character < 3){
+                        character = 4;
+                    }
+                }
+            }
+            if(mouseX > 500 && mouseX < 525 && mouseY > 85 && mouseY < 115 && ((side === 'rebellion' && character < 2) || (side === 'empire' && character < 4))){
+                overButton = true;
+                if(clicked){
+                    character ++;
+                    if(side === 'rebellion' && character > 2){
+                        character = 0;
+                    }
+                    if(side === 'empire' && character > 4){
+                        character = 3;
+                    }
+                }
+            }
+            
+            buttons.backToSides.draw();
         break;
     }
     
