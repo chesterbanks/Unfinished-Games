@@ -1,6 +1,20 @@
 rectMode(CENTER);
 
+var scene = 'Logo';
 var overButton = false;
+
+var images = {
+    frost: function(){
+        for(var i = 0; i < 400; i += 5){
+            strokeWeight(random(3));
+            stroke(255, 255, 255, 30);
+            line(random(400), 0, random(400), 400);
+            line(400, random(400), 0, random(400));
+        }
+        
+        return get(0, 0, width, height);
+    },
+};
 
 var hill = function(x, y, w, h, colo){
     pushMatrix();
@@ -48,7 +62,7 @@ var mountain = function(x, y, sz, colo){
 var Snow = function(){
     this.x = random(width);
     this.y = -30;
-    this.sz = random(10);
+    this.sz = random(1, 10);
 };
 Snow.prototype.draw = function() {
     pushMatrix();
@@ -56,8 +70,10 @@ Snow.prototype.draw = function() {
     rotate(frameCount*5 + this.y);
     fill(214, 234, 243, 50);
     ellipse(0, 0, this.sz, this.sz * 2);
+    ellipse(0, 0, this.sz * 2, this.sz);
     fill(214, 234, 243);
-    ellipse(0, 0, this.sz / 2, this.sz);
+    ellipse(0, 0, this.sz / 5, this.sz);
+    ellipse(0, 0, this.sz, this.sz / 5);
     popMatrix();
     
     this.y += this.sz / 3;
@@ -111,80 +127,183 @@ var txtButtons = {
     ],
 };
 
-draw = function() {
-    background(130, 232, 237);
-    noStroke();
-    mountain(97, 166, 40, color(53, 153, 160));
-    mountain(315, 166, 40, color(53, 153, 160));
-    mountain(200, 160, 40, color(62, 178, 188));
-    mountain(376, 156, 40, color(62, 178, 188));
-    hill(45, 127, 55, 55, color(128, 175, 196));
-    hill(-8, 234, 45, 45, color(90, 121, 136));
-    hill(285, 161, 45, 45, color(90, 121, 136));
-    hill(123, 201, 40, 40, color(90, 121, 136));
-    hill(200, 219, 50, 50, color(128, 175, 196));
-    hill(366, 219, 40, 40, color(128, 175, 196));
+var logo = function(x, y, sz){
+    var logoColors = [
+        color(17, 67, 138),
+        color(87, 156, 217),
+        color(56, 179, 255),
+        color(69, 192, 230),
+    ];
     
-    Snows.push(new Snow());
-    for(var i = Snows.length - 1; i >= 0; i --){
-        Snows[i].draw();
-        if(Snows[i].y > 400){
-            Snows.splice(i, 1);
+    pushMatrix();
+    translate(x, y);
+    scale(sz);
+    noFill();
+    strokeCap(SQUARE);
+    strokeWeight(44);
+    stroke(136, 167, 207);
+    arc(5, 8, 170, 170, -333, -30);
+    strokeWeight(11);
+    // Outer layer
+    stroke(logoColors[0]);
+    arc(0, 0, 200, 200, -85, -30);
+    arc(0, 0, 180, 180, -75, -30);
+    arc(0, 0, 200, 200, -300, -240);
+    arc(0, 0, 180, 180, -285, -250);
+    stroke(logoColors[1]);
+    arc(0, 0, 200, 200, -125, -85);
+    arc(0, 0, 180, 180, -115, -75);
+    arc(0, 0, 200, 200, -200, -160);
+    arc(0, 0, 180, 180, -200, -150);
+    stroke(logoColors[2]);
+    arc(0, 0, 200, 200, -160, -125);
+    arc(0, 0, 180, 180, -150, -116);
+    arc(0, 0, 200, 200, -330, -300);
+    arc(0, 0, 180, 180, -330, -286);
+    stroke(logoColors[3]);
+    arc(0, 0, 200, 200, -240, -200);
+    arc(0, 0, 180, 180, -250, -200);
+    
+    // Inner layer
+    stroke(logoColors[0]);
+    arc(0, 0, 160, 160, -200, -160);
+    arc(0, 0, 140, 140, -200, -150);
+    stroke(logoColors[1]);
+    arc(0, 0, 160, 160, -300, -240);
+    arc(0, 0, 140, 140, -285, -250);
+    stroke(logoColors[2]);
+    arc(0, 0, 160, 160, -240, -200);
+    arc(0, 0, 140, 140, -250, -200);
+    arc(0, 0, 160, 160, -125, -85);
+    arc(0, 0, 140, 140, -115, -75);
+    stroke(logoColors[3]);
+    arc(0, 0, 160, 160, -85, -30);
+    arc(0, 0, 140, 140, -75, -30);
+    arc(0, 0, 160, 160, -330, -300);
+    arc(0, 0, 140, 140, -330, -286);
+    arc(0, 0, 160, 160, -160, -125);
+    arc(0, 0, 140, 140, -150, -116);
+    
+    stroke(0, 0, 0, 50);
+    strokeWeight(20);
+    arc(0, 0, 150, 150, 30, 330);
+    
+    strokeWeight(20);
+    stroke(255, 255, 255, 130);
+    arc(0, 0, 183, 183, -180, -81);
+    arc(0, 0, 154, 156, -325, -289);
+    popMatrix();
+};
+
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
+
+draw = function() {
+    for(var i in images){
+        if(typeof images[i] !== 'object'){
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
         }
     }
     
-    fill(214, 234, 243);
-    beginShape();
-    vertex(400, 400);
-    vertex(0, 400);
-    vertex(0, 300);
-    bezierVertex(146, 223, 265, 361, 400, 300);
-    endShape();
-    fill(190, 217, 227);
-    beginShape();
-    vertex(400, 400);
-    vertex(0, 400);
-    vertex(0, 325);
-    bezierVertex(146, 239, 265, 384, 400, 325);
-    endShape();
-    fill(155, 190, 207);
-    beginShape();
-    vertex(400, 400);
-    vertex(0, 400);
-    vertex(0, 350);
-    bezierVertex(146, 265, 265, 402, 400, 350);
-    endShape();
-    
-    textFont(createFont('Century Gothic Bold'));
-    textAlign(CENTER, CENTER);
-    
-    noStroke();
-    fill(0, 0, 0, 30);
-    rect(230, 182, 190, 55);
-    rect(200, 231, 130, 55);
-    fill(0);
-    rect(230, 175, 190, 55);
-    fill(255, 255, 255);
-    rect(200, 225, 130, 55);
-    textSize(50);
-    fill(255);
-    text('WINTER', 230, 175);
-    fill(0);
-    text('WAR', 200, 225);
-    fill(0, 0, 0);
-    textSize(16);
-    text('C H E S T E R  B A N K S', 222, 136);
-    
-    noStroke();
-    fill(255, 255, 255, 30);
-    for(var i = 0; i < 400; i += 20){
-        rect(57, 200, 115, i);
+    if(scene === 'Logo'){
+        background(201, 254, 255);
+        logo(200, 200, 1.2);
+        
+        stroke(127, 225, 227);
+        pushMatrix();
+        translate(200, 200);
+        rotate(frameCount * 1.7);
+        arc(0, 0, 310, 320, 0, 180 - cos(frameCount*1)*150);
+        popMatrix();
+        
+        image(images.frost, 0, 0);
+        
+        if(frameCount > 180 || clicked){
+            scene = 'Menu';
+        }
     }
-    for(var i = 0; i < txtButtons.menu.length; i ++){
-        txtButtons.menu[i].draw();
+    if(scene === 'Menu'){
+        background(130, 232, 237);
+        noStroke();
+        mountain(97, 166, 40, color(53, 153, 160));
+        mountain(315, 166, 40, color(53, 153, 160));
+        mountain(200, 160, 40, color(62, 178, 188));
+        mountain(376, 156, 40, color(62, 178, 188));
+        hill(45, 127, 55, 55, color(128, 175, 196));
+        hill(-8, 234, 45, 45, color(90, 121, 136));
+        hill(285, 161, 45, 45, color(90, 121, 136));
+        hill(123, 201, 40, 40, color(90, 121, 136));
+        hill(200, 219, 50, 50, color(128, 175, 196));
+        hill(366, 219, 40, 40, color(128, 175, 196));
+        
+        Snows.push(new Snow());
+        for(var i = Snows.length - 1; i >= 0; i --){
+            Snows[i].draw();
+            if(Snows[i].y > 350){
+                Snows.splice(i, 1);
+            }
+        }
+        
+        fill(214, 234, 243);
+        beginShape();
+        vertex(400, 400);
+        vertex(0, 400);
+        vertex(0, 300);
+        bezierVertex(146, 223, 265, 361, 400, 300);
+        endShape();
+        fill(190, 217, 227);
+        beginShape();
+        vertex(400, 400);
+        vertex(0, 400);
+        vertex(0, 325);
+        bezierVertex(146, 239, 265, 384, 400, 325);
+        endShape();
+        fill(155, 190, 207);
+        beginShape();
+        vertex(400, 400);
+        vertex(0, 400);
+        vertex(0, 350);
+        bezierVertex(146, 265, 265, 402, 400, 350);
+        endShape();
+        
+        textFont(createFont('Century Gothic Bold'));
+        textAlign(CENTER, CENTER);
+        
+        noStroke();
+        fill(0, 0, 0, 30);
+        rect(230, 182, 190, 55);
+        rect(200, 231, 130, 55);
+        fill(0);
+        rect(230, 175, 190, 55);
+        fill(255, 255, 255);
+        rect(200, 225, 130, 55);
+        textSize(50);
+        fill(255);
+        text('WINTER', 230, 175);
+        fill(0);
+        text('WAR', 200, 225);
+        fill(0, 0, 0);
+        textSize(16);
+        text('C H E S T E R  B A N K S', 222, 136);
+        fill(255);
+        //text('E N I G M A', 181, 116);
+        fill(0, 0, 0, 50);
+        textSize(16);
+        text('december 2017', 322, 384);
+        
+        noStroke();
+        fill(255, 255, 255, 30);
+        for(var i = 0; i < 400; i += 20){
+            rect(57, 200, 115, i);
+        }
+        for(var i = 0; i < txtButtons.menu.length; i ++){
+            txtButtons.menu[i].draw();
+        }
     }
     
     cursor(overButton ? 'pointer' : 'default');
     
     overButton = false;
+    clicked = false;
 };
