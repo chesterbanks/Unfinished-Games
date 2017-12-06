@@ -1,0 +1,190 @@
+rectMode(CENTER);
+
+var overButton = false;
+
+var hill = function(x, y, w, h, colo){
+    pushMatrix();
+    translate(x, y);
+    scale(w / 50, h / 50);
+    fill(colo);
+    rect(0, 104, 100, 196);
+    fill(0, 0, 0, 20);
+    for(var i = 0; i < 100; i += 20){
+        rect(i - 40, 2 + noise(i/7, 0.61) * 62, 20, 50, 50);
+    }
+    fill(198, 219, 228);
+    rect(0, 15, 100, 30);
+    for(var i = 0; i < 100; i += 20){
+        rect(i - 40, -4 + noise(i/7, 0.61) * 62, 20, 50, 50);
+    }
+    fill(214, 234, 243);
+    
+    arc(0, 0, 100, 100, -180, 0);
+    for(var i = 0; i < 100; i += 20){
+        rect(i - 40, -17 + noise(i/7, 0.37) * 62, 20, 50, 50);
+    }
+    popMatrix();
+};
+var mountain = function(x, y, sz, colo){
+    pushMatrix();
+    translate(x, y);
+    rotate(45);
+    scale(sz / 50);
+    fill(colo);
+    rect(0, 0, 200, 200, 50);
+    fill(88, 204, 212);
+    (rect)(-60, -60, 80, 80, 30, 0, 0, 0);
+    rotate(-45);
+    fill(colo);
+    rect(0, -54, 113, 59);
+    fill(88, 204, 212);
+    arc(-14, -86, 30, 20, 0, 180);
+    arc(13, -86, 30, 20, 0, 180);
+    arc(42, -86, 30, 20, 7, 191);
+    arc(-43, -86, 30, 20, 0, 176);
+    popMatrix();
+};
+
+var Snow = function(){
+    this.x = random(width);
+    this.y = -30;
+    this.sz = random(10);
+};
+Snow.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(frameCount*5 + this.y);
+    fill(214, 234, 243, 50);
+    ellipse(0, 0, this.sz, this.sz * 2);
+    fill(214, 234, 243);
+    ellipse(0, 0, this.sz / 2, this.sz);
+    popMatrix();
+    
+    this.y += this.sz / 3;
+    this.x += this.sz / 13;
+};
+var Snows = [];
+
+var txtButton = function(y, txt, nxt){
+    this.x = 15;
+    this.y = y;
+    this.txt = txt;
+    this.nxt = nxt;
+    this.colo = [0, 0, 0];
+    this.sz = 0.5;
+};
+txtButton.prototype.draw = function() {
+    textAlign(LEFT, CENTER);
+
+    textSize(15);
+    pushMatrix();
+    translate(this.x, this.y);
+    scale(1.5 - this.sz);
+    fill(this.colo[0], this.colo[1], this.colo[2]);
+    text(this.txt, 0, 0);
+    popMatrix();
+    
+    // 53, 153, 160
+    if(mouseY > this.y - 10 && mouseY < this.y + 10){
+        overButton = true;
+        this.sz  += (0.01 - this.sz)/5;
+        this.colo[0] += (53 - this.colo[0])/5;
+        this.colo[1] += (153 - this.colo[1])/5;
+        this.colo[2] += (160 - this.colo[2])/5;
+        this.x += (20 - this.x)/5;
+    } else {
+        this.sz  += (0.5 - this.sz)/5;
+        this.colo[0] += (0.1 - this.colo[0])/5;
+        this.colo[1] += (0.1 - this.colo[1])/5;
+        this.colo[2] += (0.1 - this.colo[2])/5;
+        this.x += (15 - this.x)/5;
+    }
+};
+var txtButtons = {
+    menu: [
+        new txtButton(190, 'play', 'Game'),
+        new txtButton(220, 'how', 'Game'),
+        new txtButton(250, 'credits', 'Game'),
+        new txtButton(280, 'story', 'Game'),
+        new txtButton(160, 'about', 'Game'),
+        new txtButton(130, 'settings', 'Game'),
+    ],
+};
+
+draw = function() {
+    background(130, 232, 237);
+    noStroke();
+    mountain(97, 166, 40, color(53, 153, 160));
+    mountain(315, 166, 40, color(53, 153, 160));
+    mountain(200, 160, 40, color(62, 178, 188));
+    mountain(376, 156, 40, color(62, 178, 188));
+    hill(45, 127, 55, 55, color(128, 175, 196));
+    hill(-8, 234, 45, 45, color(90, 121, 136));
+    hill(285, 161, 45, 45, color(90, 121, 136));
+    hill(123, 201, 40, 40, color(90, 121, 136));
+    hill(200, 219, 50, 50, color(128, 175, 196));
+    hill(366, 219, 40, 40, color(128, 175, 196));
+    
+    Snows.push(new Snow());
+    for(var i = Snows.length - 1; i >= 0; i --){
+        Snows[i].draw();
+        if(Snows[i].y > 400){
+            Snows.splice(i, 1);
+        }
+    }
+    
+    fill(214, 234, 243);
+    beginShape();
+    vertex(400, 400);
+    vertex(0, 400);
+    vertex(0, 300);
+    bezierVertex(146, 223, 265, 361, 400, 300);
+    endShape();
+    fill(190, 217, 227);
+    beginShape();
+    vertex(400, 400);
+    vertex(0, 400);
+    vertex(0, 325);
+    bezierVertex(146, 239, 265, 384, 400, 325);
+    endShape();
+    fill(155, 190, 207);
+    beginShape();
+    vertex(400, 400);
+    vertex(0, 400);
+    vertex(0, 350);
+    bezierVertex(146, 265, 265, 402, 400, 350);
+    endShape();
+    
+    textFont(createFont('Century Gothic Bold'));
+    textAlign(CENTER, CENTER);
+    
+    noStroke();
+    fill(0, 0, 0, 30);
+    rect(230, 182, 190, 55);
+    rect(200, 231, 130, 55);
+    fill(0);
+    rect(230, 175, 190, 55);
+    fill(255, 255, 255);
+    rect(200, 225, 130, 55);
+    textSize(50);
+    fill(255);
+    text('WINTER', 230, 175);
+    fill(0);
+    text('WAR', 200, 225);
+    fill(0, 0, 0);
+    textSize(16);
+    text('C H E S T E R  B A N K S', 222, 136);
+    
+    noStroke();
+    fill(255, 255, 255, 30);
+    for(var i = 0; i < 400; i += 20){
+        rect(57, 200, 115, i);
+    }
+    for(var i = 0; i < txtButtons.menu.length; i ++){
+        txtButtons.menu[i].draw();
+    }
+    
+    cursor(overButton ? 'pointer' : 'default');
+    
+    overButton = false;
+};
