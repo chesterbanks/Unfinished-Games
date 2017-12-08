@@ -3,18 +3,8 @@ rectMode(CENTER);
 var scene = 'Logo';
 var overButton = false;
 
-var images = {
-    frost: function(){
-        for(var i = 0; i < 400; i += 5){
-            strokeWeight(random(3));
-            stroke(255, 255, 255, 30);
-            line(random(400), 0, random(400), 400);
-            line(400, random(400), 0, random(400));
-        }
-        
-        return get(0, 0, width, height);
-    },
-};
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
 
 var hill = function(x, y, w, h, colo){
     pushMatrix();
@@ -59,6 +49,35 @@ var mountain = function(x, y, sz, colo){
     popMatrix();
 };
 
+var images = {
+    frost: function(){
+        for(var i = 0; i < 400; i += 5){
+            strokeWeight(random(3));
+            stroke(255, 255, 255, 30);
+            line(random(400), 0, random(400), 400);
+            line(400, random(400), 0, random(400));
+        }
+        
+        return get(0, 0, width, height);
+    },
+    snowBG: function(){
+        background(130, 232, 237);
+        noStroke();
+        mountain(97, 166, 40, color(53, 153, 160));
+        mountain(315, 166, 40, color(53, 153, 160));
+        mountain(200, 160, 40, color(62, 178, 188));
+        mountain(376, 156, 40, color(62, 178, 188));
+        hill(45, 127, 55, 55, color(128, 175, 196));
+        hill(-8, 234, 45, 45, color(90, 121, 136));
+        hill(285, 161, 45, 45, color(90, 121, 136));
+        hill(123, 201, 40, 40, color(90, 121, 136));
+        hill(200, 219, 50, 50, color(128, 175, 196));
+        hill(366, 219, 40, 40, color(128, 175, 196));
+        
+        return get(0, 0, width, height);
+    },
+};
+
 var Snow = function(){
     this.x = random(width);
     this.y = -30;
@@ -80,6 +99,8 @@ Snow.prototype.draw = function() {
     this.x += this.sz / 13;
 };
 var Snows = [];
+
+var menu;
 
 var txtButton = function(y, txt, nxt){
     this.x = 15;
@@ -108,6 +129,16 @@ txtButton.prototype.draw = function() {
         this.colo[1] += (153 - this.colo[1])/5;
         this.colo[2] += (160 - this.colo[2])/5;
         this.x += (20 - this.x)/5;
+        if(clicked){
+            if(this.txt === 'home'){ 
+                menu.slide = 'out';
+            } else if (this.txt === 'play'){
+                scene = 'Game';
+            } else {
+                menu.slide = 'in';
+                menu.title = this.txt;
+            }
+        }
     } else {
         this.sz  += (0.5 - this.sz)/5;
         this.colo[0] += (0.1 - this.colo[0])/5;
@@ -118,12 +149,13 @@ txtButton.prototype.draw = function() {
 };
 var txtButtons = {
     menu: [
-        new txtButton(190, 'play', 'Game'),
-        new txtButton(220, 'how', 'Game'),
-        new txtButton(250, 'credits', 'Game'),
-        new txtButton(280, 'story', 'Game'),
-        new txtButton(160, 'about', 'Game'),
-        new txtButton(130, 'settings', 'Game'),
+        new txtButton(170, 'play', 'Game'),
+        new txtButton(230, 'how', 'Game'),
+        new txtButton(260, 'credits', 'Game'),
+        new txtButton(200, 'home', 'Home'),
+        new txtButton(290, 'story', 'Game'),
+        new txtButton(140, 'about', 'Game'),
+        new txtButton(110, 'settings', 'Game'),
     ],
 };
 
@@ -195,8 +227,125 @@ var logo = function(x, y, sz){
     popMatrix();
 };
 
-var clicked = false;
-mouseClicked = function(){ clicked = true; };
+var Menu = function(){
+    this.slide = 'none';
+    this.x = 295;
+    this.title = 'about';
+    this.txt = 'This game was made in December 2017 by Chester Banks as an entry to Legolas Greenleaf\'s Christmas Contest.';
+};
+Menu.prototype.draw = function() {
+    image(images.snowBG, 0, 0);
+    Snows.push(new Snow());
+    for(var i = Snows.length - 1; i >= 0; i --){
+        Snows[i].draw();
+        if(Snows[i].y > 350){
+            Snows.splice(i, 1);
+        }
+    }
+    
+    fill(214, 234, 243);
+    beginShape();
+    vertex(400, 400);
+    vertex(0, 400);
+    vertex(0, 300);
+    bezierVertex(146, 223, 265, 361, 400, 300);
+    endShape();
+    fill(190, 217, 227);
+    beginShape();
+    vertex(400, 400);
+    vertex(0, 400);
+    vertex(0, 325);
+    bezierVertex(146, 239, 265, 384, 400, 325);
+    endShape();
+    fill(155, 190, 207);
+    beginShape();
+    vertex(400, 400);
+    vertex(0, 400);
+    vertex(0, 350);
+    bezierVertex(146, 265, 265, 402, 400, 350);
+    endShape();
+    
+    textFont(createFont('Century Gothic Bold'));
+    textAlign(CENTER, CENTER);
+    
+    pushMatrix();
+    translate(295 - this.x, 0);
+    fill(0, 0, 0, 30);
+    rect(230, 182, 190, 55);
+    rect(200, 231, 130, 55);
+    fill(0);
+    rect(230, 175, 190, 55);
+    fill(255, 255, 255);
+    rect(200, 225, 130, 55);
+    textSize(50);
+    fill(255);
+    text('WINTER', 230, 175);
+    fill(0);
+    text('WAR', 200, 225);
+    fill(0, 0, 0);
+    textSize(16);
+    text('C H E S T E R  B A N K S', 222, 136);
+    fill(255);
+    popMatrix();
+    //text('E N I G M A', 181, 116);
+    
+    fill(0, 0, 0, 50);
+    textSize(16);
+    text('december 2017', 322, 384);
+    
+    pushMatrix();
+    translate(this.x, 0);
+    pushStyle();
+    textFont(createFont('Century Gothic'));
+    textAlign(LEFT, TOP);
+    fill(255, 255, 255);
+    textSize(50);
+    text(this.title, 130, 55);
+    fill(255, 255, 255, 150);
+    rect(256, 228, 267, 230, 10);
+    fill(0);
+    textSize(14);
+    if(this.title === 'story'){ textSize(12); }
+    text(this.txt, 135, 123, 243, 350);
+    popStyle();
+    popMatrix();
+    
+    rectMode(CENTER);
+    noStroke();
+    fill(255, 255, 255, 30);
+    for(var i = 0; i < 400; i += 20){
+        rect(57, 200, 115, i);
+    }
+    for(var i = 0; i < txtButtons.menu.length; i ++){
+        txtButtons.menu[i].draw();
+    }
+    
+    if(this.slide === 'in'){
+        this.x += (1 - this.x) / 10;
+    }
+    if(this.slide === 'out'){
+        this.x += (295 - this.x) / 5;
+    }
+    
+    switch(this.title){
+        case 'about':
+            this.txt = 'This game was made in December 2017 by Chester Banks as an entry to Legolas Greenleaf\'s Christmas Contest.';
+        break;
+        case 'credits':
+            this.txt = '> Jett for the idea for the storyline\n\n> Google for the background image\n\nI made the rest!';
+        break;
+        case 'how':
+            this.txt = '> Move with the arrow keys\n\n> Collect the coins\n\n> Avoid the fire monsters\n\n> Jump on the ice flowers to freeze all the fire monsters\n\n> The gifts hold weapons';
+        break;
+        case 'settings':
+            this.txt = '';
+        break;
+        case 'story':
+            this.txt = 'You are the Prince of Snowtopia. For your birthday, you were able to go visit the Lake of Lortenium, where you can see the future in the reflection.\n\nWhen you looked in, you saw your land under the control of the Fire Lords.\n\nYou rushed back to Snowtopia, but it has already happened! The Fire Lords are roaming Snowtopia.\n\nCan you rid Snowtopia of the Fire Lords and save your land?';
+        break;
+    }
+};
+menu = new Menu();
 
 draw = function() {
     for(var i in images){
@@ -206,6 +355,7 @@ draw = function() {
         }
     }
     
+    rectMode(CENTER);
     if(scene === 'Logo'){
         background(201, 254, 255);
         logo(200, 200, 1.2);
@@ -224,82 +374,7 @@ draw = function() {
         }
     }
     if(scene === 'Menu'){
-        background(130, 232, 237);
-        noStroke();
-        mountain(97, 166, 40, color(53, 153, 160));
-        mountain(315, 166, 40, color(53, 153, 160));
-        mountain(200, 160, 40, color(62, 178, 188));
-        mountain(376, 156, 40, color(62, 178, 188));
-        hill(45, 127, 55, 55, color(128, 175, 196));
-        hill(-8, 234, 45, 45, color(90, 121, 136));
-        hill(285, 161, 45, 45, color(90, 121, 136));
-        hill(123, 201, 40, 40, color(90, 121, 136));
-        hill(200, 219, 50, 50, color(128, 175, 196));
-        hill(366, 219, 40, 40, color(128, 175, 196));
-        
-        Snows.push(new Snow());
-        for(var i = Snows.length - 1; i >= 0; i --){
-            Snows[i].draw();
-            if(Snows[i].y > 350){
-                Snows.splice(i, 1);
-            }
-        }
-        
-        fill(214, 234, 243);
-        beginShape();
-        vertex(400, 400);
-        vertex(0, 400);
-        vertex(0, 300);
-        bezierVertex(146, 223, 265, 361, 400, 300);
-        endShape();
-        fill(190, 217, 227);
-        beginShape();
-        vertex(400, 400);
-        vertex(0, 400);
-        vertex(0, 325);
-        bezierVertex(146, 239, 265, 384, 400, 325);
-        endShape();
-        fill(155, 190, 207);
-        beginShape();
-        vertex(400, 400);
-        vertex(0, 400);
-        vertex(0, 350);
-        bezierVertex(146, 265, 265, 402, 400, 350);
-        endShape();
-        
-        textFont(createFont('Century Gothic Bold'));
-        textAlign(CENTER, CENTER);
-        
-        noStroke();
-        fill(0, 0, 0, 30);
-        rect(230, 182, 190, 55);
-        rect(200, 231, 130, 55);
-        fill(0);
-        rect(230, 175, 190, 55);
-        fill(255, 255, 255);
-        rect(200, 225, 130, 55);
-        textSize(50);
-        fill(255);
-        text('WINTER', 230, 175);
-        fill(0);
-        text('WAR', 200, 225);
-        fill(0, 0, 0);
-        textSize(16);
-        text('C H E S T E R  B A N K S', 222, 136);
-        fill(255);
-        //text('E N I G M A', 181, 116);
-        fill(0, 0, 0, 50);
-        textSize(16);
-        text('december 2017', 322, 384);
-        
-        noStroke();
-        fill(255, 255, 255, 30);
-        for(var i = 0; i < 400; i += 20){
-            rect(57, 200, 115, i);
-        }
-        for(var i = 0; i < txtButtons.menu.length; i ++){
-            txtButtons.menu[i].draw();
-        }
+        menu.draw();
     }
     
     cursor(overButton ? 'pointer' : 'default');
