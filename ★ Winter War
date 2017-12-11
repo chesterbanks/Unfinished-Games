@@ -1,6 +1,13 @@
 rectMode(CENTER);
 
-var scene = 'Logo';
+var rectCollide = function(one, two){
+    return one.x+one.w > two.x &&
+        one.y+one.h > two.y &&
+        one.x < two.x+two.w &&
+        one.y < two.y+two.h;
+};
+
+var scene = 'Game';
 var overButton = false;
 
 var clicked = false;
@@ -73,6 +80,12 @@ var images = {
         hill(123, 201, 40, 40, color(90, 121, 136));
         hill(200, 219, 50, 50, color(128, 175, 196));
         hill(366, 219, 40, 40, color(128, 175, 196));
+        
+        return get(0, 0, width, height);
+    },
+    blurredBG: function(){
+        image(images.snowBG, 0, 0);
+        filter(BLUR, 2);
         
         return get(0, 0, width, height);
     },
@@ -347,6 +360,116 @@ Menu.prototype.draw = function() {
 };
 menu = new Menu();
 
+var keys = [];
+keyPressed = function(){
+    keys[keyCode] = true;
+};
+keyReleased = function(){
+    keys[keyCode] = false;
+};
+
+var Block = function(x, y, w, h){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+};
+Block.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    fill(214, 234, 243, 20);
+    for(var i = 50; i > 10; i -= 5){
+        rect(0, 0, this.w, i);
+    }
+    fill(155, 190, 207);
+    rect(0, 0, this.w, this.h);
+    fill(190, 217, 227);
+    rect(0, 0, this.w, this.h / 3);
+    fill(214, 234, 243);
+    rect(0, -4, this.w, this.h / 5);
+    popMatrix();
+};
+var Blocks = [];
+var possiblePos = [0, 100, 200];
+for(var i = 280; i > -600; i -= 70){
+    Blocks.push(new Block(possiblePos[abs(i/70)%3], i, 200, 20));
+}
+
+var Player = function(){
+    this.x = 200;
+    this.y = 315;
+    this.w = 30;
+    this.h = 30;
+    this.xvel = 0;
+    this.yvel = 0;
+    this.maxX = 5;
+    this.jumping = false;
+};
+Player.prototype.applyCollisions = function(xvel, yvel) {
+    for (var i = 0; i < Blocks.length; i++) {
+        if (!rectCollide(this, Blocks[i])) { continue; }
+        if (xvel < 0) {
+            this.x = Blocks[i].x + Blocks[i].w;
+            this.xvel = 0;
+        }
+        if (xvel > 0) {
+            this.x = Blocks[i].x - this.w;
+            this.xvel = 0;
+        }
+        if (yvel < 0) {
+            this.y = Blocks[i].y + Blocks[i].h;
+            this.yvel = 0;
+        }
+        if (yvel > 0) {
+            this.y = Blocks[i].y - this.h;
+            this.yvel = 0;
+            this.jumping = false;
+        }
+    }
+    if (this.y >= 315 && this.yvel > 0) {
+        this.jumping = false;
+        this.yvel = 0;
+        this.y = 315;
+    }
+};
+Player.prototype.draw = function() {
+    noStroke();
+    fill(212, 212, 212);
+    rect(this.x, this.y, this.w, this.h, 5);
+    
+    if(keys[RIGHT]){
+        this.xvel ++;
+    }
+    if(keys[LEFT]){
+        this.xvel --;
+    }
+    if(!keys[LEFT] && !keys[RIGHT]){
+        this.xvel /= 1.1;
+    }
+    if(this.xvel < 0.1 && this.xvel > 0.1){ 
+        this.xvel = 0; 
+    }
+    this.xvel = constrain(this.xvel, -this.maxX, this.maxX);
+    
+    if ((keys[UP] || keys[87]) && !this.jumping) {
+        this.yvel -= 11;
+        this.jumping = true;
+    }
+    
+    this.jumping = true;
+    this.x += this.xvel;
+    this.applyCollisions(this.xvel, 0);
+    this.y += this.yvel;
+    this.applyCollisions(0, this.yvel);
+    this.yvel += 0.6;
+};
+var player = new Player();
+
+// Camera - thank you to Lionofgd
+var Camera = {
+    y: 0
+};
+
 draw = function() {
     for(var i in images){
         if(typeof images[i] !== 'object'){
@@ -375,6 +498,37 @@ draw = function() {
     }
     if(scene === 'Menu'){
         menu.draw();
+    }
+    if(scene === 'Game'){
+        image(images.blurredBG, 0, 0);
+        
+        Snows.push(new Snow());
+        for(var i = Snows.length - 1; i >= 0; i --){
+            Snows[i].draw();
+            if(Snows[i].y > 450){
+                Snows.splice(i, 1);
+            }
+        }
+        
+        pushMatrix();
+        translate(0, Camera.y);
+        if(player.y < 200){
+            Camera.y -= (Camera.y - (200 - player.y)) / 15;
+        }
+        noStroke();
+        rectMode(CORNER);
+        fill(214, 234, 243);
+        rect(0, 340, 400, 30);
+        fill(190, 217, 227);
+        rect(0, 350, 400, 40);
+        fill(155, 190, 207);
+        rect(0, 370, 400, 60);
+        
+        for(var i = Blocks.length - 1; i >= 0; i --){
+            Blocks[i].draw();
+        }
+        player.draw();
+        popMatrix();
     }
     
     cursor(overButton ? 'pointer' : 'default');
