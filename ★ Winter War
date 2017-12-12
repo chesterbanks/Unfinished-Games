@@ -89,12 +89,43 @@ var images = {
         
         return get(0, 0, width, height);
     },
+    cloud: function(){
+        rectMode(CORNER);
+        noStroke();
+        fill(255, 255, 255);
+        pushMatrix();
+        translate(183, 147);
+        scale(1.7);
+        arc(98, 0, 50, 50, -179, 0);
+        ellipse(75, -21, 30, 30);
+        arc(-80, 0, 50, 50, -179, 0);
+        arc(-38, 0, 90, 90, -179, 0);
+        arc(19, -30, 110, 112, -179, 0);
+        rect(-21, -32, 96, 32);
+        fill(235);
+        arc(98, 0, 30, 22, -179, 0);
+        arc(81, 0, 30, 38, -179, 0);
+        ellipse(75, -20, 11, 16);
+        arc(-80, 0, 20, 20, -179, 0);
+        arc(-38, 0, 70, 50, -179, 0);
+        arc(19, -30, 79, 50, -179, 0);
+        rect(-21, -30, 96, 30);
+        popMatrix();
+        
+        return get(0, 0, 400, 150);
+    },
 };
+
+var Clouds = [];
+for(var i = -1000; i < 0; i += 50){
+    Clouds.push({x: random(400), y: i, sz: random(2, 5)});
+}
 
 var Snow = function(){
     this.x = random(width);
     this.y = -30;
     this.sz = random(1, 10);
+    this.xSpeed = random(-2, 2);
 };
 Snow.prototype.draw = function() {
     pushMatrix();
@@ -109,7 +140,7 @@ Snow.prototype.draw = function() {
     popMatrix();
     
     this.y += this.sz / 3;
-    this.x += this.sz / 13;
+    this.x += this.xSpeed;
 };
 var Snows = [];
 
@@ -391,16 +422,17 @@ Block.prototype.draw = function() {
 };
 var Blocks = [];
 var possiblePos = [0, 100, 200];
-for(var i = 280; i > -600; i -= 70){
+for(var i = 280; i > -1000; i -= 70){
     Blocks.push(new Block(possiblePos[abs(i/70)%3], i, 200, 20));
 }
 
-var Player = function(){
-    this.x = 200;
-    this.y = 315;
+var Player = function(x, y, type){
+    this.type = type;
+    this.x = x;
+    this.y = y;
     this.w = 30;
     this.h = 30;
-    this.xvel = 0;
+    this.xvel = 3;
     this.yvel = 0;
     this.maxX = 5;
     this.jumping = false;
@@ -433,10 +465,47 @@ Player.prototype.applyCollisions = function(xvel, yvel) {
     }
 };
 Player.prototype.draw = function() {
+    rectMode(CENTER);
     noStroke();
-    fill(212, 212, 212);
-    rect(this.x, this.y, this.w, this.h, 5);
+    pushMatrix();
+    translate(this.x + (this.w / 2), this.y + (this.h / 2));
+    if(this.type === 'rock'){
+        
+        fill(237, 14, 14);
+        rect(0, 0, this.w, this.h, 5);
+        fill(255, 170, 0, 30);
+        for(var i = this.w * 1.1; i >= 0; i -= 5){
+            rect(0, 0, i, i);
+        }
+        fill(255, 255, 255);
+        ellipse(-5, 0, 7, 7);
+        ellipse(5, 0, 8, 8);
+    } else {
+        fill(255, 255, 255);
+        rect(0, 0, this.w, this.h, 5);
+        fill(10, 39, 51);
+        ellipse(-5, 0, 7, 7);
+        ellipse(5, 0, 8, 8);
+    }
+    popMatrix();
+    rectMode(CORNER);
     
+    this.xvel = constrain(this.xvel, -this.maxX, this.maxX);
+    if(this.x + this.w > width || this.x < 0){
+        this.xvel = -this.xvel;
+    }
+    this.x = constrain(this.x, 0, width - this.w);
+
+    this.jumping = true;
+    this.x += this.xvel;
+    if(this.type !== 'rock'){
+        this.applyCollisions(this.xvel, 0);
+    }
+    this.y += this.yvel;
+    this.applyCollisions(0, this.yvel);
+    this.yvel += 0.6;
+};
+Player.prototype.interact = function(){
     if(keys[RIGHT]){
         this.xvel ++;
     }
@@ -446,25 +515,17 @@ Player.prototype.draw = function() {
     if(!keys[LEFT] && !keys[RIGHT]){
         this.xvel /= 1.1;
     }
-    if(this.xvel < 0.1 && this.xvel > 0.1){ 
+    if(this.xvel < 0.1 && this.xvel > -0.1){ 
         this.xvel = 0; 
     }
-    this.xvel = constrain(this.xvel, -this.maxX, this.maxX);
     
     if ((keys[UP] || keys[87]) && !this.jumping) {
         this.yvel -= 11;
         this.jumping = true;
     }
-    
-    this.jumping = true;
-    this.x += this.xvel;
-    this.applyCollisions(this.xvel, 0);
-    this.y += this.yvel;
-    this.applyCollisions(0, this.yvel);
-    this.yvel += 0.6;
 };
-var player = new Player();
-
+var player = new Player(200, 315);
+var Rocks = [];
 // Camera - thank you to Lionofgd
 var Camera = {
     y: 0
@@ -500,8 +561,27 @@ draw = function() {
         menu.draw();
     }
     if(scene === 'Game'){
+        // Sky
+        background(130, 232, 237);
+        
+        // Mountains & hills
+        pushMatrix();
+        translate(0, Camera.y);
         image(images.blurredBG, 0, 0);
         
+        // Clouds
+        for(var i = 0; i < Clouds.length; i ++){
+            if(Clouds[i].y + Camera.y > -100 && Clouds[i].y + Camera.y < 500){
+                image(images.cloud, Clouds[i].x, Clouds[i].y, 400 / Clouds[i].sz, 150 / Clouds[i].sz);
+                Clouds[i].x += 10 / Clouds[i].sz;
+                if(Clouds[i].x > width + (400 / Clouds[i].sz)){
+                    Clouds[i].x = -(400 / Clouds[i].sz);
+                }
+            }
+        }
+        popMatrix();
+        
+        // Snow
         Snows.push(new Snow());
         for(var i = Snows.length - 1; i >= 0; i --){
             Snows[i].draw();
@@ -510,11 +590,21 @@ draw = function() {
             }
         }
         
+        // The foreground
         pushMatrix();
+        
+        // Translate the foreground with the Camera object
         translate(0, Camera.y);
-        if(player.y < 200){
-            Camera.y -= (Camera.y - (200 - player.y)) / 15;
+        
+        // If player.y is on the top of the screen, make the camera follow it
+        if(player.y < 100){
+            Camera.y -= (Camera.y - (100 - player.y)) / 15;
+        } else {
+            // Otherwise, ease to 0.
+            Camera.y += (0 - Camera.y) / 15;
         }
+        
+        // The ground
         noStroke();
         rectMode(CORNER);
         fill(214, 234, 243);
@@ -524,10 +614,17 @@ draw = function() {
         fill(155, 190, 207);
         rect(0, 370, 400, 60);
         
+        // Draw all the blocks that are on the screen
         for(var i = Blocks.length - 1; i >= 0; i --){
-            Blocks[i].draw();
+            if(Blocks[i].y + Camera.y > -20 && Blocks[i].y + Camera.y < height + 20){
+                Blocks[i].draw();
+            }
+        }
+        for(var i = Rocks.length - 1; i >= 0; i --){
+            Rocks[i].draw();
         }
         player.draw();
+        player.interact();
         popMatrix();
     }
     
