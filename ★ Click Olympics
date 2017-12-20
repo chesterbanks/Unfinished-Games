@@ -1,4 +1,4 @@
-var scene = 'Logo';
+var scene = 'Kayaking';
 
 textAlign(CENTER, CENTER);
 
@@ -123,6 +123,9 @@ var logo = new Logo();
 var overButton = false;
 var clicked = false;
 mouseClicked = function(){ clicked = true; };
+var keys = [];
+keyPressed = function(){ keys[keyCode] = true; };
+keyReleased = function(){ keys[keyCode] = false; };
 
 var scores = [0, 0, 0, 0];
 
@@ -225,6 +228,187 @@ Hurdle.prototype.draw = function() {
 };
 var Hurdles = [];
 
+var Kayak = function(){
+    this.x = 185;
+    this.y = 360;
+    this.w = 35;
+    this.h = 110;
+    this.xvel = 0;
+    this.yvel = 0;
+    
+    this.wake = function(x, y, angle){
+        this.x = x;
+        this.y = y;
+        this.sz = 29;
+        this.angle = angle;
+        
+        this.trans = 50;
+    };
+    this.wakes = [];
+    this.wake.prototype.draw = function() {
+        noStroke();
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(this.angle);
+        fill(255, 255, 255, this.trans);
+        ellipse(-5, 0, 30 - this.sz, 30 - this.sz);
+        ellipse(5, 0, 30 - this.sz, 30 - this.sz);
+        popMatrix();
+        
+        this.sz /= 1.1;
+        
+        this.trans -= 1;
+    };
+};
+Kayak.prototype.draw = function() {
+    if(keyIsPressed){
+        this.wakes.push(new this.wake(this.x + this.w / 2, this.y + this.h, this.xvel));
+    }
+    
+    for(var i in this.wakes){
+        this.wakes[i].draw();
+        if(this.wakes[i].trans < 0){
+            this.wakes.splice(i, 1);
+        }
+    }
+    
+    strokeWeight(3);
+    fill(242, 154, 39);
+    stroke(196, 119, 24);
+    pushMatrix();
+    translate(this.x + this.w / 2, this.y + this.h / 2);
+    rotate(this.xvel * 5);
+    //scale(3);
+    beginShape();
+    vertex(0, 55);
+    bezierVertex(-27, 53, -20, -30, 0, -50);
+    bezierVertex(20, -30, 27, 53, 0, 55);
+    endShape();
+    noStroke();
+    
+    fill(255, 255, 255,50);
+    beginShape();
+    vertex(0, 35);
+    bezierVertex(-27, 33, -20, -30, 0, -50);
+    bezierVertex(20, -30, 27, 31, 0, 36);
+    endShape();
+    
+    stroke(255);
+    bezier(-9, -17, -9, -21, -7, -25, -4, -32);
+    point(-3, -37);
+    
+    fill(130, 130, 130);
+    ellipse(0, 8, 21, 30);
+    stroke(150, 150, 150);
+    for(var i = -4; i < 23; i += 5){
+        if(i < -3 || i > 20){
+            line(-4, i, 5, i);
+        } else {
+            line(-9, i, 9, i);
+        }
+    }
+    
+    noFill();
+    stroke(196, 119, 24);
+    beginShape();
+    vertex(0, 55);
+    bezierVertex(-27, 53, -20, -30, 0, -50);
+    bezierVertex(20, -30, 27, 53, 0, 55);
+    endShape();
+    
+    ellipse(0, 8, 21, 30);
+    
+    strokeWeight(1);
+    stroke(138, 138, 138);
+    line(-8, 33, 8, 33);
+    line(-4, 38, 8, 33);
+    line(-4, 38, 5, 41);
+    line(-3, 44, 5, 41);
+    line(-3, 44, 5, 44);
+    line(-3, 41, 5, 44);
+    line(-3, 41, 5, 38);
+    line(-8, 33, 5, 38);
+    strokeWeight(2);
+    stroke(100);
+    point(-8, 33);
+    point(8, 33);
+    point(5, 38);
+    point(-4, 38);
+    point(-3, 41);
+    point(5, 41);
+    point(5, 44);
+    point(-3, 44);
+    popMatrix();
+    
+    
+    if(keys[LEFT]){
+        this.xvel -= 0.5;
+    }
+    if(keys[RIGHT]){
+        this.xvel += 0.5;
+    }
+    if(!keys[LEFT] && !keys[RIGHT]){
+        this.xvel /= 1.1;
+    }
+    this.xvel = constrain(this.xvel, -3, 3);
+    this.x += this.xvel;
+    
+    if(keys[UP]){
+        this.yvel -= 0.5;
+    }
+    if(keys[DOWN]){
+        this.yvel += 0.5;
+    }
+    if(!keys[UP] && !keys[DOWN]){
+        this.yvel /= 1.1;
+    }
+    this.yvel = constrain(this.yvel, -3, 3);
+    this.y += this.yvel;
+};
+var kayak = new Kayak();
+
+var Rock = function(){
+    this.x = random(30, 370);
+    this.y = -50;
+    this.w = 30;
+    this.h = 30;
+    this.speed = random(2, 4);
+};
+Rock.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x + this.w / 2, this.y + this.h / 2);
+    stroke(122, 122, 122);
+    fill(161, 161, 161);
+    beginShape();
+    vertex(-9, 15);
+    vertex(-15, -3);
+    vertex(-12, -13);
+    vertex(-3, -16);
+    vertex(14, -11);
+    vertex(17, -1);
+    vertex(13, 10);
+    endShape();
+    noStroke();
+    fill(0, 0, 0, 30);
+    beginShape();
+    vertex(-9, 15);
+    vertex(-2, 1);
+    vertex(10, -2);
+    vertex(8, -11);
+    vertex(14, -11);
+    vertex(17, -1);
+    vertex(13, 10);
+    endShape();
+    noFill();
+    stroke(133, 217, 242);
+    bezier(-18, 19, -5, 15, 13, 0, 22, 21);
+    popMatrix();
+    
+    this.y += this.speed;
+};
+var Rocks = [];
+var rockRate = 60;
+
 draw = function() {
     if(scene === 'Logo'){
         logo.draw();
@@ -306,6 +490,57 @@ draw = function() {
         text('∙ Click to lift the weight as high\nas you can.', 200, 279);
         
         Buttons.goLift.draw();
+    }
+    if(scene === 'Kayaking'){
+        background(184, 229, 242);
+        
+        noStroke();
+        for(var i = -15; i < 539; i += 20){
+            fill(255, 255, 255, sin(i - frameCount * 2) * i / 3);
+            pushMatrix();
+            translate(0, i);
+            beginShape();
+            vertex(0, 0);
+            bezierVertex(48, 39, 189, -41, 200, -40);
+            bezierVertex(290, -64, 319, 41, 400, -35);
+            vertex(400, -17);
+            bezierVertex(319, 61, 290, -44, 200, -20);
+            bezierVertex(189, -21, 48, 59, 0, 20);
+            endShape();
+            popMatrix();
+        }
+        
+        if(frameCount % rockRate === 0){
+            Rocks.push(new Rock());
+            rockRate --;
+        }
+        
+        kayak.draw();
+        for(var i = Rocks.length - 1; i >= 0; i --){
+            Rocks[i].draw();
+        }
+        
+        noStroke();
+        fill(0, 0, 0, 20);
+        for(var i = -30 + frameCount * 2 % 30; i < height + 30; i += 30){
+            triangle(0, i - 5, 36, i + 28, 0, i + 48);
+        }
+        endShape();
+        for(var i = -30 + frameCount * 2 % 30; i < height + 30; i += 30){
+            triangle(400, i - 5, 362, i + 28, 400, i + 48);
+        }
+        
+        fill(58, 209, 106);
+        for(var i = -30 + frameCount * 2 % 30; i < height + 30; i += 30){
+            triangle(0, i, 30, i + 28, 0, i + 39);
+        }
+        endShape();
+        for(var i = -30 + frameCount * 2 % 30; i < height + 30; i += 30){
+            triangle(400, i, 370, i + 28, 400, i + 39);
+        }
+        
+        //rect(180, 280, 40, 40);
+        
     }
     
     // Transition
