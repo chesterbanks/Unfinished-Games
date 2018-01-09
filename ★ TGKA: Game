@@ -11,6 +11,31 @@
 */
 // This program's LUCKY SUBSCRIBER is NAME!
 
+/* 
+    Stuck? Here's how to complete the game.
+    {
+        + Solve Jake's enigma. The answer is "doodle".
+        + Trade the bagel for Seth's lantern.
+        + Go into the forest.
+        + Find Legolas (he is at the bottom left of the map.)
+        + 
+    }
+*/
+
+/*
+    There are so many Khan references in this game I have to write them down to remember them all.
+    
+    ~ Subtle references ~
+        - Blue Leafs on menu
+        - Aqua Orchids in first map
+        - "doodle" is reference to Doodle Jump.
+    
+    ~ Characters ~
+        - Player - Chester Banks
+        - Jake (Enigma) gives you an enigma to solve
+        - Seth (Seth W. / Circle Box)
+*/
+
 /* Text settings */
 textFont(createFont('Avenir Bold'));
 textAlign(CENTER, CENTER);
@@ -284,7 +309,8 @@ var images = {
     },
 };
 
-/* Clicked variable */
+/* Mouse properties */
+var overButton = false;
 var clicked = false;
 mouseClicked = function(){ clicked = true; };
 
@@ -314,6 +340,7 @@ Button.prototype.draw = function() {
     rect(this.x, this.y, this.w - this.w2, this.h - this.h2, 5);
     
     if(mouseX > this.x - (this.w / 2) && mouseX < this.x + (this.w / 2) && mouseY > this.y - (this.h / 2) && mouseY < this.y + (this.h / 2)){
+        overButton = true;
         this.h2 /= 1.1;
         this.w2 /= 1.1;
         if(clicked){
@@ -1005,6 +1032,9 @@ Game.prototype.draw = function() {
     if(keyIsPressed && key.toString().toUpperCase() === 'I'){
         this.inventory = true;
     }
+    
+    fill(0, 0, 0, 50 + sin(frameCount * 2) * 50);
+    text('[ Press I for inventory ]', 90, 580);
 };
 game = new Game();
 
@@ -1065,6 +1095,10 @@ draw = function() {
         }
     }
     
-    /* Reset clicked */
+    /* Cursor */
+    cursor(overButton ? 'pointer': 'default');
+    
+    /* Reset mouse properties */
     clicked = false;
+    overButton = false;
 };
