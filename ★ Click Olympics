@@ -244,12 +244,28 @@ Player.prototype.drawTop = function() {
 var player = new Player();
 
 var Hurdle = function(){
-    
+    this.x = 210 + (floor(random(-1, 2)) * 60);
+    this.y = 580;
+    this.w = 50;
+    this.h = 9;
 };
-Hurdle.prototype.draw = function() {
+Hurdle.prototype.draw = function(){
     
+    fill(235);
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(36);
+    rect(0, 0, 8, 30);
+    rect(36, -23, 8, 30);
+    popMatrix();
+    
+    noStroke();
+    fill(255, 255, 255);
+    rect(this.x, this.y, this.w, this.h);
+    
+    this.y -= 4;
 };
-var Hurdles = [];
+var Hurdles = [new Hurdle()];
 
 var Kayak = function(){
     this.x = 185;
@@ -440,12 +456,12 @@ draw = function() {
         background(245);
         
         fill(60);
-        textFont(fonts.bigBold, 100);
-        text('CLICK', 200, 200);
-        textFont(fonts.big, 61);
-        text('OLYMPICS', 200, 265);
+        textFont(fonts.bigBold, 138);
+        text('MINI', 200, 173);
+        textFont(fonts.big, 66);
+        text('OLYMPICS', 200, 257);
         textFont(fonts.tiny);
-        text('A L L   Y O U   N E E D   I S   Y O U R   M O U S E', 200, 305);
+        text('C O M P E T E   F O R   T H E   U L T I M A T E   P R I Z E', 200, 298);
         
         noStroke();
         fill(58, 152, 207);
@@ -478,24 +494,40 @@ draw = function() {
         Buttons.goRun.draw();
     }
     if(scene === 'Running'){
-        background(60, 207, 104);
+        background(0, 77, 19);
         
         pushMatrix();
         translate(175, 228);
         rotate(-38);
         translate(-200, -200);
+        for(var i = -113; i < 513; i += 15){
+            for(var j = -124; j < 563; j += 15){
+                fill(255, 255, 255, noise(sin(i) / 5, 2.1, 1)*150);
+                rect(i, j - frameCount % (15), 15, 15);
+            }
+        }
         
         noStroke();
-        fill(0, 0, 0, 25);
+        fill(0, 0, 0, 45);
         rect(112, -90, 202, 686);
-        fill(255, 255, 255, 50);
+        fill(255, 255, 255, 150);
         rect(120, -102, 204, 694);
-        stroke(255, 255, 255, 100);
+        stroke(255, 255, 255, 150);
         for(var i = 128; i < 333; i += 60){
             line(i, -109, i, 542);
         }
+        
+        if(frameCount % 30 === 0){ Hurdles.push(new Hurdle()); }
+        
         player.drawTop();
+        for(var i = Hurdles.length - 1; i >= 0; i --){
+            Hurdles[i].draw();
+            if(Hurdles[i].y < 0){
+                Hurdles.splice(i, 1);
+            }
+        }
         player.drawBottom();
+        
         popMatrix();
     }
     if(scene === 'LiftingIntro'){
