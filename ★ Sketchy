@@ -1,9 +1,9 @@
 /**
  * S K E T C H Y
  * Chester Banks
- * February 15 2017
+ * March 12 2018
  * 
- * Trying out a couple new things with this program! The "sketchy" graphics style and a shop.
+ * This project has been a WIP for wayyy too long - decided to finally finish it.
  * 
  * Have a complaint? Compliment? Constructive criticism? Destructive criticism? Question? Suggestion? Advice? Rating? Review? Leave them all in the Tips & Thanks (except for questions, those can go in the Questions)!
 */
@@ -20,53 +20,50 @@
 
     TO ADD:
      1. Bomb power
-        FINISH ON MON
      2. Cloak power
-        FINISH ON MON
      3. Logo (more minimal) 
-        FINISH ON MON
      4. Score calculation screen, with bonus coins
-        FINISH ON WED
      5. Transitions
-        FINISH ON WED
      6. Shop background?
-        FINISH ON THU
      7. Power displays (choose which 5 powers you will use before the game, and then display those)
-        FINISH ON FRI
      8. Lucky subscriber text & easter eggs
-        FINISH ON FRI
      9. Get feedback from fellow programmers
         a) SlingBlade
         b) Planet
         c) AlexT
         d) Isaac Emerald
-        FINISH ON FRI
      10. Release
-        MON
 */
 
-textAlign(CENTER, CENTER);
+// Text settings
+textAlign(CENTER, CENTER); // center text
+
+// Font settings - load fonts here instead of in the draw function.
 var fonts = {
     titles: createFont('HelveticaNeue-UltraLight'),
     small: createFont('HelveticaNeue-Thin'),
     coin: createFont('Verdana'),
 };
 
-var scene = 'Game';
-var coins = 100;
-var timer = 0;
+var scene = 'Game'; // Scene variable
+var coins = 100; // Amount of coins
+var timer = 0; // Timer variable
 
+// Key movement
 var keys = [];
 var keyPressed = function(){ keys[keyCode] = true; };
 var keyReleased = function(){ keys[keyCode] = false; };
 
+// Mouse properties
 var clicked = false, overButton = false;
 mouseClicked = function(){ clicked = true; };
 
+// Circle vs. Circle collision detector
 var circleCollide = function(object1, object2){
     return dist(object1.x, object1.y, object2.x, object2.y) <= (object1.sz / 2) + (object2.sz / 2);
 };
 
+// Pre-loaded images
 var images = {
     'homeBG': function(){
         background(255);
@@ -152,8 +149,57 @@ var images = {
         
         return get(0, 0, width, height);
     },
+    'logoBG': function(){
+        background(0, 0, 0);
+        
+        colorMode(HSB);
+        for(var k = 0; k < 203; k ++){
+            pushMatrix();
+            translate(random(width), random(height));
+                stroke(random(255), 255, 255, random(255));
+            for(var i = 0; i < 131; i += 5){
+                pushMatrix();
+                rotate(random(360));
+                strokeWeight(random(10));
+                point(random(35), 0);
+                popMatrix();
+            }
+            popMatrix();
+        }
+        
+        colorMode(RGB);
+
+        
+        return get(0, 0, width, height);
+    },
+    'logoFG': function(){
+        strokeCap(SQUARE);
+        noFill();
+        strokeWeight(50);
+        stroke(0);
+        arc(317, 324, 286, 313, 36, 327);
+        
+        for(var r = 119; r < 411; r += 1){
+            for(var i = 0; i < 80; i += 5){
+                pushMatrix();
+                translate(300 + sin(r) * 150, 300 + cos(r) * 150);
+                rotate(random(360));
+                stroke(255, 255, 255);
+                strokeWeight(random(10));
+                point(random(35), 0);
+                stroke(0, 0, 0);
+                strokeWeight(random(5));
+                point(random(35), 0);
+                popMatrix();
+            }
+        
+        }
+        
+        return get(0, 0, 600, 600);
+    },
 };
 
+// Button object
 var button = function(x, y, w, h, txt, nxt, txtSz){
     this.x = x;
     this.y = y;
@@ -204,6 +250,7 @@ var buttons = {
     back: new button(80, 560, 120, 50, 'B A C K', 'Menu'),
 };
 
+// Alert object
 var Alert = function(title, desc, img){
     this.title = title;
     this.desc = desc;
@@ -273,20 +320,22 @@ Alert.prototype.draw = function() {
 };
 var Alerts = [];
 
+// Data for shop
 var shop = [
-    //{name: 'Shield', price: 5, bought: false, y: 100, info: 'A protective shield spins around you for five seconds.'},
     {name: 'Speed', price: 10, bought: false, y: 100, info: 'Move twice as fast for five seconds.'},
     {name: 'Health', price: 10, bought: false, y: 100, info: 'Refill your health'},
     {name: 'Forcefield', price: 30, bought: false, y: 100, info: 'Protective bubble surrounds you for five seconds.'},
     {name: 'Bomb', price: 10, bought: false, y: 250, info: 'Destroys all objects (excluding you) within a five foot raidus.'},
     {name: 'Cloak', price: 15, bought: false, y: 250, info: 'Hides you from everything that follows you.'},
     {name: 'Magnet', price: 10, bought: false, y: 250, info: 'Attracts nearby coins.'},
-    //{name: 'Block', price: 10, bought: false, y: 250, info: 'A stationary block that everything bounces off of.'},
 ];
 
-// Power ups
-var forcefield = false, magnet = false, speed = false;
+// Power up variables
+var forcefield = false;
+var magnet = false;
+var speed = false;
 
+// Player 
 var Player = function(){
     this.x = 300;
     this.y = 200;
@@ -368,6 +417,7 @@ Player.prototype.draw = function() {
 };
 var player = new Player();
 
+// Rocks
 var Rock = function(){
     this.timer = 0;
     this.trans = 255;
@@ -409,6 +459,7 @@ Rock.prototype.draw = function() {
 };
 var Rocks = [];
 
+// Rockets (more like missiles but I called them rockets because it's so close to Rocks)
 var Rocket = function(){
     this.speed = 3;
     
@@ -460,6 +511,7 @@ Rocket.prototype.draw = function() {
 };
 var Rockets = [];
 
+// Coins
 var Coin = function(){
     this.x = random(100, 500);
     this.y = random(100, 400);
@@ -490,6 +542,7 @@ Coin.prototype.draw = function() {
 };
 var Coins = [];
 
+// Bombs
 var Bomb = function(x, y){
     this.x = x;
     this.y = y;
@@ -574,6 +627,7 @@ Bomb.prototype.draw = function() {
 };
 var Bombs = [new Bomb(300, 300)];
 
+// Power ups
 var Power = function(x, y, type){
     this.x = x;
     this.y = y;
@@ -756,6 +810,18 @@ Power.prototype.draw = function() {
 };
 var Powers = [new Power(50, 505, 'Magnet'), new Power(150, 520, 'Forcefield'), new Power(250, 535, 'Health'), new Power(350, 535, 'Speed'), new Power(450, 520, 'Cloak'), new Power(550, 505, 'Bomb')];
 
+// Reset game values
+var resetGameValues = function(){
+    // Reset stuff
+    if(Coins.length > 0 && Rocks.length > 0 && Rockets.length > 0){
+        Coins = [];
+        Rocks = [];
+        Rockets = [];
+        player = new Player();
+    }
+};
+
+// The draw function
 draw = function() {
     background(255);
     
@@ -767,11 +833,7 @@ draw = function() {
     }
     
     if(scene === 'Menu'){
-        // Reset stuff
-        Coins = [];
-        Rocks = [];
-        Rockets = [];
-        player = new Player();
+        resetGameValues();
         
         image(images.homeBG, 0, 0);
         
@@ -804,7 +866,7 @@ draw = function() {
         strokeWeight(2);
         rect(50, 50, 500, 400);
         
-        for(var i in Rocks){
+        for(var i = Rocks.length - 1; i >= 0; i --){
             Rocks[i].draw();
             if(circleCollide(Rocks[i], player)){
                 if(forcefield){
@@ -820,7 +882,7 @@ draw = function() {
             }
         }
         
-        for(var i in Rockets){
+        for(var i = Rockets.length - 1; i >= 0; i --){
             Rockets[i].draw();
             if(circleCollide(Rockets[i], player)){
                 if(forcefield){
@@ -835,7 +897,7 @@ draw = function() {
             }
         }
         
-        for(var i in Coins){
+        for(var i = Coins.length - 1; i >= 0; i --){
             Coins[i].draw();
             if(circleCollide(player, Coins[i])){
                 coins ++;
@@ -843,7 +905,7 @@ draw = function() {
             }
         }
         
-        for(var i in Bombs){
+        for(var i = Bombs.length - 1; i >= 0; i --){
             Bombs[i].draw();
             if(Bombs[i].sz > 150){
                 Bombs.splice(i, 1);
@@ -878,7 +940,7 @@ draw = function() {
         text(coins, 540, 570);
         popStyle();
         
-        for(var i in Powers){
+        for(var i = Powers.length - 1; i >= 0; i --){
             Powers[i].draw();
         }
         
@@ -1046,52 +1108,6 @@ draw = function() {
         arc(6, 20, 20, 20, 0, 180);
         arc(22, 20, 12, 12, 0, 180);
         popMatrix();
-        
-        // Block
-        /*pushMatrix();
-        translate(480, 250);
-        noStroke();
-        fill(222, 199, 199);
-        pushMatrix();
-        translate(3, 3);
-        rect(-25, -15, 26, 10, 2);
-        rect(5, -15, 20, 10, 2);
-        rect(-16, -2, 30, 10, 2);
-        rect(-25, -2, 5, 10, 2);
-        rect(18, -2, 7, 10, 2);
-        rect(-25, 12, 26, 8, 2);
-        rect(5, 12, 20, 8, 2);
-        popMatrix();
-        noFill();
-        stroke(173, 173, 173);
-        rect(-25, -20, 50, 40, 5);
-        rect(-25, -15, 26, 10, 2);
-        rect(5, -15, 20, 10, 2);
-        rect(-16, -2, 30, 10, 2);
-        rect(-25, -2, 5, 10, 2);
-        rect(18, -2, 7, 10, 2);
-        rect(-25, 12, 26, 8, 2);
-        rect(5, 12, 20, 8, 2);
-        popMatrix();*/
-        
-        // Shield
-        /*pushMatrix();
-        translate(120, 100);
-        noStroke();
-        fill(0, 179, 255, 100);
-        arc(-3, 3, 41, 58, 90, 180);
-        arc(-4, -21, 50, 110, 0, 90);
-        fill(255);
-        arc(0, 0, 41, 58, 0, 90);
-        arc(25, -30, 50, 20, 90, 170);
-        noFill();
-        stroke(117);
-        arc(-25, -30, 50, 20, 0, 90);
-        arc(25, -30, 50, 20, 90, 170);
-        arc(0, -20, 50, 100, 0, 180);
-        line(0, -30, 0, 30);
-        line(-23, 0, 23, 0);
-        popMatrix();*/
         
         for(var i = 0; i < shop.length; ++i){
             shop[i].x = 180 + ((i * 120) % 360);
