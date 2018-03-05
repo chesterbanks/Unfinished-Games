@@ -1,9 +1,9 @@
 /**
  * S K E T C H Y
  * Chester Banks
- * March 12 2018
+ * February 15 2017
  * 
- * This project has been a WIP for wayyy too long - decided to finally finish it.
+ * Trying out a couple new things with this program! The "sketchy" graphics style and a shop.
  * 
  * Have a complaint? Compliment? Constructive criticism? Destructive criticism? Question? Suggestion? Advice? Rating? Review? Leave them all in the Tips & Thanks (except for questions, those can go in the Questions)!
 */
@@ -25,7 +25,7 @@
      4. Score calculation screen, with bonus coins
      5. Transitions
      6. Shop background?
-     7. Power displays (choose which 5 powers you will use before the game, and then display those)
+    7. Power displays (choose which 5 powers you will use before the game, and then display those)
      8. Lucky subscriber text & easter eggs
      9. Get feedback from fellow programmers
         a) SlingBlade
@@ -45,7 +45,7 @@ var fonts = {
     coin: createFont('Verdana'),
 };
 
-var scene = 'Game'; // Scene variable
+var scene = 'Logo'; // Scene variable
 var coins = 100; // Amount of coins
 var timer = 0; // Timer variable
 
@@ -322,12 +322,12 @@ var Alerts = [];
 
 // Data for shop
 var shop = [
-    {name: 'Speed', price: 10, bought: false, y: 100, info: 'Move twice as fast for five seconds.'},
-    {name: 'Health', price: 10, bought: false, y: 100, info: 'Refill your health'},
-    {name: 'Forcefield', price: 30, bought: false, y: 100, info: 'Protective bubble surrounds you for five seconds.'},
-    {name: 'Bomb', price: 10, bought: false, y: 250, info: 'Destroys all objects (excluding you) within a five foot raidus.'},
-    {name: 'Cloak', price: 15, bought: false, y: 250, info: 'Hides you from everything that follows you.'},
-    {name: 'Magnet', price: 10, bought: false, y: 250, info: 'Attracts nearby coins.'},
+    {name: 'Speed', price: 10, y: 100, info: 'Move twice as fast for five seconds.', bought: 0},
+    {name: 'Health', price: 10, y: 100, info: 'Refill your health', bought: 0},
+    {name: 'Forcefield', price: 30, y: 100, info: 'Protective bubble surrounds you for five seconds.', bought: 0},
+    {name: 'Bomb', price: 10, y: 250, info: 'Destroys all objects (excluding you) within a five foot radius.', bought: 0},
+    {name: 'Cloak', price: 15, y: 250, info: 'Hides you from everything that follows you.', bought: 0},
+    {name: 'Magnet', price: 10, y: 250, info: 'Attracts nearby coins.', bought: 0},
 ];
 
 // Power up variables
@@ -821,14 +821,39 @@ var resetGameValues = function(){
     }
 };
 
+var logoSize = 600;
+
 // The draw function
 draw = function() {
+    // White background
     background(255);
     
+    // Load images in first frame
     for(var i in images){
         if(typeof images[i] !== 'object'){
             background(0, 0, 0, 0);
             images[i] = images[i]();
+        }
+    }
+    
+    if(scene === 'Logo'){
+        image(images.logoBG, 0, 0);
+        
+        imageMode(CENTER);
+        pushMatrix();
+        translate(300, 300);
+        rotate(logoSize - 10);
+        image(images.logoFG, 0, 0, 600 - logoSize, 600 - logoSize);
+        popMatrix();
+        imageMode(CORNER);
+        
+        logoSize /= 1.1;
+        
+        if(frameCount > 150){
+            background(0, 0, 0);
+        }
+        if(frameCount > 155){
+            scene = 'Menu';
         }
     }
     
@@ -1116,9 +1141,11 @@ draw = function() {
             translate(shop[i].x, shop[i].y);
             noFill();
             if(dist(mouseX, mouseY, shop[i].x, shop[i].y) < 50){
+                overButton = true;
                 fill(0, 0, 0, 20);
                 if(clicked){
                     if(coins >= shop[i].price){
+                        shop[i].bought ++;
                         coins -= shop[i].price;
                     } else {
                         Alerts.push(new Alert('Too Pricey', 'Uh-oh! You don\'t have enough money to buy this item!'));
@@ -1143,8 +1170,6 @@ draw = function() {
             }
         }
         
-        
-        
         fill(0);
         buttons.back.draw();
     }
@@ -1168,15 +1193,20 @@ draw = function() {
         buttons.back.draw();
     }
     
-    for(var i = 0; i < Alerts.length; ++i){
-        Alerts[i].draw();
-        if(Alerts[i].s > 1){
-            Alerts.splice(i, 1);
+    // Draw all alerts, but only if there are any
+    if(Alerts.length > 0){
+        for(var i = 0; i < Alerts.length; ++i){
+            Alerts[i].draw();
+            if(Alerts[i].s > 1){
+                Alerts.splice(i, 1);
+            }
         }
     }
     
+    // If the mouse is over a button, set the cursor as a pointer (hand), otherwise, set it as the default
     cursor(overButton ? 'pointer' : 'default');
     
+    // Reset mouse properties
     overButton = false;
     clicked = false;
 };
