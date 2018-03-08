@@ -1,3 +1,43 @@
+/*
+  You play as Prince Nolan, the son of Lord Raken of the Western Isles.
+  
+  You are going to travel Kemira for the coronation of the young King Trevor, who will be the ruler of all of Mardolia (the Western Isles are part of it).
+  
+  On the way to Kemira, you hear from various townspeople that there is an evil sorcerer spotted. The sorcerer has only been seen as a shadow, but he has struck in a few places on the way to Kemira. When you witness someone dying from grief of someone's child being taken by the sorcerer, you vow to avenge them to find and defeat the sorcerer.
+  
+  You arrive at Kemira for the coronation. You sit politely in the pew while King Trevor is crowned, but in the middle of the coronation, someone bursts in. It is Trevor's mother, the Lady Lolia. Sobbing, she screams that Princess Penelope (Trevor's sister) has been kidnapped.
+  
+  You rush to help, and discover that Penelope has been taken by the same sorcerer that you heard about on your way here.
+  
+  After receiving gifts from the wise wizard Riro, you set off to where you heard the princess was being kept - the sorcerer's tower in Madguard.
+  
+  Madguard is not far and you soon arrive, only to be met by a dragon that breathes fire and spits acid. Thanks to the shield you recieved from the wizard, you survive and plunge your sword into the dragon.
+  
+  Night is falling and time is running out. You rush into the tower and up the twisting staircase.
+  
+  Inside, the princess is tied to a chair. You are taken aback by her beauty, and hurry to cut her ropes. 
+  
+  "Prince Nolan!" she says. "You saved me!"
+  
+  "Of course, my dear," you say. "I could not leave you to the sorcerer."
+  
+  "Oh, Prince. It is not a sorcerer, it is a sorceress."
+  
+  As she says this, her pink dress turns black and her pretty smile darkens to an evil grin. She pulls a dark sceptre out from behind her back.
+  
+  "Nolan, I am the sorceress."
+  
+  She lunges at you with a jagged knife, but somehow you leap out of the way. Remembering your promise to the peasant, you yank your sword out of its sheath and knock her knife out of her hand.
+  
+  "How dare you! You may have disposed of my physical weapons, but you won't be any match for my magic!"
+  
+  She grabs her sceptre and starts to say a magic spell, but as she walks away from you, she missteps and falls down the staircase to her death.
+  
+  When you return to Kemira, you  musttell the royal family about their daughter. To your surprise, they refuse to believe your story. King Trevor, in his anger, says that you are just making it up because you failed to rescue the princess.
+  
+  Shocked, you protest and say it is completely true. The King and his mother refuse to listen, and you are banished to the Dark Lands.
+*/
+
 var tree = function(x, y, sz, r, color, cloud){
     noStroke();
     fill(color);
@@ -27,41 +67,414 @@ var clicked = false;
 
 mouseClicked = function(){ clicked = true; };
 
-draw = function() {
-    /* B A C K G R O U N D */
-    background(107, 173, 209);
+var images = {
+    'menuBG': function(){
+        var imgs = [];
+        textFont(createFont('Impact'));
+        textAlign(CENTER, CENTER);
+        textSize(76);
+        fill(255);
+        background(0, 0, 0, 0);
+        var txt = 'BOWMASTERS';
+        var spaces = [0, -2, 8, 16, 4, -4, -8, -11, -6, -4];
+        for(var i = 0; i < txt.length; i ++){
+            pushMatrix();
+            
+            var totalTranslate = 0;
+            for(var j = 0; j <= i; j ++){
+                totalTranslate += spaces[j];
+            }
+            
+            translate(totalTranslate + 24 + i * 45, 32);
+            if(i < 3){
+                translate(0, -8 + i * 1.7);
+            }
+            if(i > 4){
+                translate(0, 7 + i * -3.1);
+            }
+            
+            if(i === 5 || i === 9){ translate(0, 1); }
+            
+            rotate((i - 4.0) *2);
+            fill(0, 0, 0, 30);
+            text(txt[i], 0, 6+ abs(i - 3.5) *8);
+            fill(191, 191, 191);
+            text(txt[i], 0, 2+abs(i - 3.5) *8);
+            fill(255);
+            text(txt[i], 0, abs(i - 3.5) *8);
+            popMatrix();
+        }
+        for(var i = 0; i < 93; i ++){
+            imgs.push(get(0, i, 442, 1));
+        }
+        
+        background(67, 76, 105);
+        noStroke();
+        fill(232, 182, 90, 3);
+        for(var i = 0; i < 600; i += 15){
+            pushMatrix();
+            rectMode(CENTER);
+            translate(300, 300);
+            rotate(i);
+            rect(0, 0, i, i);
+            rectMode(CORNER);
+            popMatrix();
+        }
+        
+        noStroke();
+        pushMatrix();
+        translate(300, 145);
+        
+        pushMatrix();
+        rotate(-10);
+        translate(-83, -32);
+        fill(171, 74, 25);
+        beginShape();
+        vertex(-194, -16);
+        vertex(-140, -16);
+        vertex(-118, 55);
+        vertex(-200, 61);
+        vertex(-176, 27);
+        endShape();
+        fill(0, 0, 0, 30);
+        triangle(-170, 25, -140, -16, -118, 55);
+        popMatrix();
+        
+        pushMatrix();
+        scale(-1, 1);
+        rotate(-10);
+        translate(-85, -32);
+        fill(171, 74, 25);
+        beginShape();
+        vertex(-194, -16);
+        vertex(-140, -16);
+        vertex(-118, 55);
+        vertex(-200, 61);
+        vertex(-176, 27);
+        endShape();
+        fill(0, 0, 0, 30);
+        triangle(-170, 31, -140, -16, -118, 55);
+        popMatrix();
+        
+        fill(222, 104, 44);
+        beginShape();
+        vertex(-252, 37);
+        bezierVertex(-60, 10, 60, 5, 251, 43);
+        vertex(220, -39);
+        bezierVertex(110, -81, -109, -75, -221, -45);
+        endShape();
+        
+        imageMode(CENTER);
+        pushMatrix();
+        for(var i = 0; i < imgs.length; i += 1){
+            image(imgs[i], 0, i - 64, 398 - i * -1, 1);
+        }
+        popMatrix();
+        
+        popMatrix();
+        
+        textFont(createFont('Avenir'));
+        fill(0, 0, 0, 50);
+        rect(0, 547, 600, 40);
+        fill(255, 255, 255);
+        textSize(14);
+        text('||   P Y T H O N   P R O G R A M M I N G   &   C H E S T E R   B A N K S   ||', 300, 567);
+        
+        noStroke();
+        fill(0, 0, 0, 30);
+        ellipse(486, 519, 89, 30);
+        ellipse(105, 519, 60, 30);
+        
+        return get(0, 0, width, height);
+    },
+    'fantasyBG': function(){
+        var haze = function(color, y){
+            fill(color);
+            for(var i = 60; i < 200; i += 6){
+                rect(300, y, 600, i);
+            }
+        };
+        
+        rectMode(CENTER);
+        noStroke();
+        background(41, 7, 7);
+        
+        haze(color(196, 47, 47, 2), 120);
+        haze(color(247, 137, 19, 4), 240);
+        haze(color(235, 247, 69, 3), 349);
+        haze(color(77, 245, 68, 1), 415);
+        haze(color(12, 146, 235, 5), 415);
+        haze(color(35, 46, 173, 5), 507);
+        
+        noStroke();
+        for(var i = 0; i < 600; i += 5){
+            (fill)(random(255), random(30));
+            rect(300, i, random(1000), random(10));
+        }
+        
+        filter(BLUR, 2);
+        
+        for(var i = 0; i < 437; i ++){
+            stroke(255, 255, 255, random(100));
+            strokeWeight(random(6));
+            point(random(width), random(400));
+        }
+        
+        
+        noStroke();
+        fill(1, 26, 3);
+        rect(300, 577, 600, 100);
+        
+        noFill();
+        for(var i = 0; i < 1037; i ++){
+            stroke(35 - random(100), 126 + random(-80, -50), 45 - random(45));
+            strokeWeight(random(5));
+            pushMatrix();
+            translate(random(600), random(540, 627));
+            bezier(0, 0, -4 + random(10), -9, -3 + random(10), -34, random(5), -25);
+            popMatrix();
+        }
+        
+        return get (0, 0, width, height);
+    },
+};
+
+var princessPenelope = function(x, y, sz, r){
+    /* P R I N C E S S P E N E L O P E */
+    pushMatrix();
+    translate(x, y);
+    rotate(r);
+    scale(sz);
     
-    // Clouds
-    tree(227, 332, 0.8, -72 + frameCount % 150, color(146, 192, 217), 1);
-    tree(257, 192, 0.2, -104 + frameCount/2 % 200, color(146, 192, 217), 1);
-    tree(331, 192, 0.5, 191 - frameCount/2 % 300, color(146, 192, 217), 1);
-    tree(359, 436, 1.5, 51 - frameCount/2 % 300, color(146, 192, 217), 1);
+    // shadow
+    noStroke();
+    fill(0, 0, 0, 10);
+    ellipse(-11, 184, 159, 39);
+    ellipse(-11, 184, 127, 27);
+    ellipse(-11, 184, 96, 14);
     
-    // Trees
-    fill(31, 87, 31);
-    arc(300, 600, 1145, 578, -180, 0);
-    tree(331, 555, 0.7, 3, color(28, 102, 28));
-    tree(209, 643, 1.0, -29, color(24, 94, 24));
-    tree(427, 661, 1.1, 20, color(24, 102, 24));
-    tree(260, 608, 1.0, -12, color(45, 145, 45));
-    tree(157, 643, 1.2, -29, color(39, 135, 39));
-    tree(461, 690, 1.4, -1, color(39, 140, 39));
-    tree(300, 599, 1.0, 0, color(55, 168, 55));
-    tree(181, 627, 1.2, -15, color(55, 168, 55));
-    tree(461, 690, 1.4, 15, color(55, 168, 55));
+    // hair
+    noStroke();
+    fill(230, 230, 135);
+    beginShape();
+    vertex(-12, -166);
+    bezierVertex(-50, -203, -50, -121, -70 + sin(frameCount * 3) * 5, -134);
+    bezierVertex(-108, -75, -76, -115, -93, -71);
+    bezierVertex(-66, -82, -103, -38, -119 + sin(frameCount * 3) * 15, -53);
+    bezierVertex(-130, 7, -50+ sin(-frameCount * 3) * 15, 29, 54+ sin(frameCount * 3) * 15, 0);
+    bezierVertex(42, 10, 23, -75, 41, -51);
+    bezierVertex(67, -101, -2, -192, -12, -166);
+    endShape();
     
-    // Grass
-    fill(55, 168, 55);
-    arc(300, 600, 1000, 371, -180, 0);
-    fill(57, 184, 57);
-    arc(300, 600, 1000, 333, -180, 0);
-    fill(41, 204, 46);
-    arc(300, 600, 1000, 300, -180, 0);
+    fill(209, 209, 107);
+    beginShape();
+    vertex(-12, -135);
+    bezierVertex(-50, -163, -50, -110, -74 + sin(frameCount * 3) * 5, -114);
+    bezierVertex(-74, -75, -66, -115, -80, -82);
+    bezierVertex(-75, -82, -60, -38, -102 + sin(frameCount * 3) * 15, -40);
+    bezierVertex(-112, -31, -48+ sin(-frameCount * 3) * 15, 36, 42+ sin(frameCount * 3) * 15, -2);
+    bezierVertex(22, 10, 12, -72, 37, -67);
+    bezierVertex(40, -101, -2, -158, -12, -123);
+    endShape();
     
+    // arms
+    noFill();
+    stroke(247, 229, 210);
+    strokeWeight(10);
+    bezier(-42, -65, -37, -60, -59, -45, -68, -25);
+    bezier(-52, 17, -66, 2, -67, -1, -67, -25);
+    bezier(45, -7, 21, -16, 35, -55, -8, -73);
+    ellipse(47, -9, 2, 10);
+    strokeWeight(15);
+    stroke(212, 136, 158);
+    bezier(16, -54, 4, -68, 12, -65, -8, -73);
+    
+    // shoes
+    noStroke();
+    fill(242, 142, 172);
+    ellipse(-53, 178, 10, 20);
+    ellipse(-4, 180, 10, 20);
+    ellipse(11, 178, 40, 20);
+    ellipse(-39, 176, 40, 21);
+    
+    // back part of dress
+    noStroke();
+    fill(212, 100, 133);
+    beginShape();
+    vertex(-68, 92);
+    bezierVertex(24, 41, 26, 100, 48, 133);
+    bezierVertex(31, 163, -11, 175, -52 + sin(frameCount*3)*5, 152);
+    bezierVertex(-52, 149, -104, 150, -105 + sin(frameCount*3)*5, 126);
+    endShape();
+    
+    // legs
+    noFill();
+    stroke(247, 229, 210);
+    strokeWeight(16);
+    bezier(0, 100, 0, 100, 0, 100, 0, 171);
+    bezier(-33, 126, -40, 142, -46, 163, -50, 170);
+    line(0, 171, 11, 173);
+    line(-46, 172, -40, 172);
+    
+    noStroke();
+    fill(255, 255, 255);
+    ellipse(19, 169, 10, 10);
+    ellipse(-32, 169, 10, 10);
+    
+    // dress
+    noStroke();
+    fill(242, 142, 172);
+    beginShape();
+    vertex(14, -18);
+    bezierVertex(24, 41, 26, 100, 48, 133);
+    bezierVertex(31, 164, -11, 168, -52 + sin(frameCount*3)*5, 133);
+    bezierVertex(-86, 108, -102, 125, -105 + sin(frameCount*3)*5, 127);
+    bezierVertex(-13, 38, -68, 26, -30, -17);
+    bezierVertex(-24, -16, -32, -21, -34, -59);
+    bezierVertex(-49, -50, -38, -45, -44, -46);
+    bezierVertex(-37, -32, -68, -45, -63, -47);
+    bezierVertex(-45, -67, -50, -94, 0, -75);
+    bezierVertex(21, -41, 19, -33, 12, -18);
+    endShape();
+    noFill();
+    strokeWeight(3);
+    stroke(255);
+    bezier(-26, -19, -4, -9, -5, -4, 6, 0);
+    bezier(15, -12, 13, -10, 11, -4, 6, 0);
+    bezier(-86 + sin(frameCount*3)*5, 110, -30, 117, -7, 181, 43, 128);
+    bezier(-58, -51, -58, -48, -47, -45, -43, -46);
+    
+    // dress shading
+    noStroke();
+    fill(255, 255, 255, 50);
+    beginShape();
+    vertex(3, 50);
+    bezierVertex(14, 111, 14, 100, 38, 130);
+    bezierVertex(30, 149, 7, 163, -52 + sin(frameCount*3)*5, 120);
+    bezierVertex(10, 106, -24, 81, 4, 44);
+    endShape();
+    
+    fill(0, 0, 0, 30);
+    beginShape();
+    vertex(-34, -65);
+    bezierVertex(-9, -10, -50, 115, -86 + sin(frameCount*3)*5, 120);
+    bezierVertex(-86, 113, -102, 127, -105 + sin(frameCount*3)*5, 127);
+    bezierVertex(-13, 38, -68, 26, -30, -17);
+    endShape();
+    
+    // hand
+    noStroke();
+    fill(247, 229, 210);
+    ellipse(-46, 16, 15, 22);
+    
+    
+    // head
+    noStroke();
+    fill(247, 229, 210);
+    ellipse(-18, -86, 10, 10);
+    ellipse(-17, -124, 55, 70);
+    
+    // front hair
+    noStroke();
+    fill(230, 230, 126);
+    beginShape();
+    vertex(-35, -135);
+    bezierVertex(-36, -152, -11, -129, -16, -163);
+    vertex(-51, -150);
+    endShape();
+    beginShape();
+    vertex(11, -135);
+    bezierVertex(-8, -152, -3, -149, -18, -163);
+    vertex(15, -150);
+    endShape();
+    
+    // Nose
+    noFill();
+    strokeWeight(1);
+    stroke(0, 0, 0, 20);
+    bezier(-18, -107, -5, -106, -19, -113, -16, -116);
+    
+    // mouth
+    noFill();
+    strokeWeight(2);
+    stroke(255, 0, 51, 80);
+    bezier(-27, -104, -22, -101, -19, -99, -9, -101);
+    bezier(-27, -104, -22, -103, -19, -101, -9, -103);
+    
+    // eyes
+    noStroke();
+    pushMatrix();
+    rotate(2);
+    translate(-5, 0);
+    fill(36, 36, 36);
+    rect(-32, -129, 6, 5);
+    rect(-3, -129, 5, 5);
+    ellipse(-25, -119, 15, 5);
+    ellipse(-5, -119, 15, 5);
+    fill(255);
+    arc(-25, -120, 15, 20, -180, 0);
+    arc(-5, -120, 15, 20, -180, 0);
+    ellipse(-25, -120, 15, 5);
+    ellipse(-5, -120, 15, 5);
+    fill(0, 149, 255);
+    ellipse(-24, -124, 10, 10);
+    ellipse(-6, -124, 10, 10);
+    fill(23, 86, 128);
+    ellipse(-24, -124, 5, 5);
+    ellipse(-6, -124, 5, 5);
+    fill(255);
+    ellipse(-26, -126, 3, 3);
+    ellipse(-8, -126, 3, 3);
+    popMatrix();
+    
+    // eyebrows
+    noFill();
+    stroke(204, 186, 108);
+    bezier(-32, -135, -30, -136, -24, -139, -20, -137);
+    bezier(2, -136, 0, -137, -6, -139, -10, -137);
+    
+    // crown made of KA Gold™
+    noStroke();
+    pushMatrix();
+    translate(-28, -160);
+    rotate(-21);
+    scale(0.5);
+    fill(84, 81, 20, 40);
+    ellipse(-8, 0, 60, 23);
+    fill(201, 224, 52);
+    beginShape();
+    vertex(-30, 0);
+    bezierVertex(-10, 5, 10, 5, 30, 0);
+    bezierVertex(30, -50, 30, -50, 40, -60);
+    vertex(38, -64);
+    bezierVertex(9, -50, 13, 23, 7, -67);
+    vertex(-7, -67);
+    bezierVertex(-13, 23, -9, -50, -38, -64);
+    vertex(-40, -60);
+    bezierVertex(-30, -50, -30, -50, -30, 0);
+    endShape();
+    fill(63, 202, 217);
+    ellipse(0, -67, 20, 20);
+    ellipse(40, -63, 10, 10);
+    ellipse(-40, -63, 10, 10);
+    fill(255, 255, 255, 100);
+    ellipse(-2, -69, 13, 13);
+    ellipse(39, -65, 5, 5);
+    ellipse(-42, -64, 5, 5);
+    fill(255);
+    ellipse(-5, -72, 3, 3);
+    ellipse(38, -66, 2, 2);
+    ellipse(-43, -65, 2, 2);
+    popMatrix();
+    
+    popMatrix();
+};
+var princeNolan = function(x, y, sz, r){
     /* P R I N C E N O L A N */
     pushMatrix();
-    translate(460, 380);
-    scale(0.8);
+    translate(x, y);
+    rotate(r);
+    scale(sz);
     
     // shadow
     noStroke();
@@ -313,237 +726,50 @@ draw = function() {
     
     popMatrix();
     
+};
+
+draw = function() {
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
     
+    /* B A C K G R O U N D */
+    background(107, 173, 209);
     
+    // Clouds
+    tree(227, 332, 0.8, -72 + frameCount % 150, color(146, 192, 217), 1);
+    tree(257, 192, 0.2, -104 + frameCount/2 % 200, color(146, 192, 217), 1);
+    tree(331, 192, 0.5, 191 - frameCount/2 % 300, color(146, 192, 217), 1);
+    tree(359, 436, 1.5, 51 - frameCount/2 % 300, color(146, 192, 217), 1);
     
+    // Trees
+    fill(31, 87, 31);
+    arc(300, 600, 1145, 578, -180, 0);
+    tree(331, 555, 0.7, 3, color(28, 102, 28));
+    tree(209, 643, 1.0, -29, color(24, 94, 24));
+    tree(427, 661, 1.1, 20, color(24, 102, 24));
+    tree(260, 608, 1.0, -12, color(45, 145, 45));
+    tree(157, 643, 1.2, -29, color(39, 135, 39));
+    tree(461, 690, 1.4, -1, color(39, 140, 39));
+    tree(300, 599, 1.0, 0, color(55, 168, 55));
+    tree(181, 627, 1.2, -15, color(55, 168, 55));
+    tree(461, 690, 1.4, 15, color(55, 168, 55));
     
-    /* P R I N C E S S P E N E L O P E */
-    pushMatrix();
-    translate(180, 407);
-    scale(0.8);
+    // Grass
+    fill(55, 168, 55);
+    arc(300, 600, 1000, 371, -180, 0);
+    fill(57, 184, 57);
+    arc(300, 600, 1000, 333, -180, 0);
+    fill(41, 204, 46);
+    arc(300, 600, 1000, 300, -180, 0);
     
-    // shadow
-    noStroke();
-    fill(0, 0, 0, 10);
-    ellipse(-11, 184, 159, 39);
-    ellipse(-11, 184, 127, 27);
-    ellipse(-11, 184, 96, 14);
-    
-    // hair
-    noStroke();
-    fill(230, 230, 135);
-    beginShape();
-    vertex(-12, -166);
-    bezierVertex(-50, -203, -50, -121, -70 + sin(frameCount * 3) * 5, -134);
-    bezierVertex(-108, -75, -76, -115, -93, -71);
-    bezierVertex(-66, -82, -103, -38, -119 + sin(frameCount * 3) * 15, -53);
-    bezierVertex(-130, 7, -50+ sin(-frameCount * 3) * 15, 29, 54+ sin(frameCount * 3) * 15, 0);
-    bezierVertex(42, 10, 23, -75, 41, -51);
-    bezierVertex(67, -101, -2, -192, -12, -166);
-    endShape();
-    
-    fill(209, 209, 107);
-    beginShape();
-    vertex(-12, -135);
-    bezierVertex(-50, -163, -50, -110, -74 + sin(frameCount * 3) * 5, -114);
-    bezierVertex(-74, -75, -66, -115, -80, -82);
-    bezierVertex(-75, -82, -60, -38, -102 + sin(frameCount * 3) * 15, -40);
-    bezierVertex(-112, -31, -48+ sin(-frameCount * 3) * 15, 36, 42+ sin(frameCount * 3) * 15, -2);
-    bezierVertex(22, 10, 12, -72, 37, -67);
-    bezierVertex(40, -101, -2, -158, -12, -123);
-    endShape();
-    
-    // arms
-    noFill();
-    stroke(247, 229, 210);
-    strokeWeight(10);
-    bezier(-42, -65, -37, -60, -59, -45, -68, -25);
-    bezier(-52, 17, -66, 2, -67, -1, -67, -25);
-    bezier(45, -7, 21, -16, 35, -55, -8, -73);
-    ellipse(47, -9, 2, 10);
-    strokeWeight(15);
-    stroke(212, 136, 158);
-    bezier(16, -54, 4, -68, 12, -65, -8, -73);
-    
-    // shoes
-    noStroke();
-    fill(242, 142, 172);
-    ellipse(-53, 178, 10, 20);
-    ellipse(-4, 180, 10, 20);
-    ellipse(11, 178, 40, 20);
-    ellipse(-39, 176, 40, 21);
-    
-    // back part of dress
-    noStroke();
-    fill(212, 100, 133);
-    beginShape();
-    vertex(-68, 92);
-    bezierVertex(24, 41, 26, 100, 48, 133);
-    bezierVertex(31, 163, -11, 175, -52 + sin(frameCount*3)*5, 152);
-    bezierVertex(-52, 149, -104, 150, -105 + sin(frameCount*3)*5, 126);
-    endShape();
-    
-    // legs
-    noFill();
-    stroke(247, 229, 210);
-    strokeWeight(16);
-    bezier(0, 100, 0, 100, 0, 100, 0, 171);
-    bezier(-33, 126, -40, 142, -46, 163, -50, 170);
-    line(0, 171, 11, 173);
-    line(-46, 172, -40, 172);
-    
-    noStroke();
-    fill(255, 255, 255);
-    ellipse(19, 169, 10, 10);
-    ellipse(-32, 169, 10, 10);
-    
-    // dress
-    noStroke();
-    fill(242, 142, 172);
-    beginShape();
-    vertex(14, -18);
-    bezierVertex(24, 41, 26, 100, 48, 133);
-    bezierVertex(31, 164, -11, 168, -52 + sin(frameCount*3)*5, 133);
-    bezierVertex(-86, 108, -102, 125, -105 + sin(frameCount*3)*5, 127);
-    bezierVertex(-13, 38, -68, 26, -30, -17);
-    bezierVertex(-24, -16, -32, -21, -34, -59);
-    bezierVertex(-49, -50, -38, -45, -44, -46);
-    bezierVertex(-37, -32, -68, -45, -63, -47);
-    bezierVertex(-45, -67, -50, -94, 0, -75);
-    bezierVertex(21, -41, 19, -33, 12, -18);
-    endShape();
-    noFill();
-    strokeWeight(3);
-    stroke(255);
-    bezier(-26, -19, -4, -9, -5, -4, 6, 0);
-    bezier(15, -12, 13, -10, 11, -4, 6, 0);
-    bezier(-86 + sin(frameCount*3)*5, 110, -30, 117, -7, 181, 43, 128);
-    bezier(-58, -51, -58, -48, -47, -45, -43, -46);
-    
-    // dress shading
-    noStroke();
-    fill(255, 255, 255, 50);
-    beginShape();
-    vertex(3, 50);
-    bezierVertex(14, 111, 14, 100, 38, 130);
-    bezierVertex(30, 149, 7, 163, -52 + sin(frameCount*3)*5, 120);
-    bezierVertex(10, 106, -24, 81, 4, 44);
-    endShape();
-    
-    fill(0, 0, 0, 30);
-    beginShape();
-    vertex(-34, -65);
-    bezierVertex(-9, -10, -50, 115, -86 + sin(frameCount*3)*5, 120);
-    bezierVertex(-86, 113, -102, 127, -105 + sin(frameCount*3)*5, 127);
-    bezierVertex(-13, 38, -68, 26, -30, -17);
-    endShape();
-    
-    // hand
-    noStroke();
-    fill(247, 229, 210);
-    ellipse(-46, 16, 15, 22);
-    
-    
-    // head
-    noStroke();
-    fill(247, 229, 210);
-    ellipse(-18, -86, 10, 10);
-    ellipse(-17, -124, 55, 70);
-    
-    // front hair
-    noStroke();
-    fill(230, 230, 126);
-    beginShape();
-    vertex(-35, -135);
-    bezierVertex(-36, -152, -11, -129, -16, -163);
-    vertex(-51, -150);
-    endShape();
-    beginShape();
-    vertex(11, -135);
-    bezierVertex(-8, -152, -3, -149, -18, -163);
-    vertex(15, -150);
-    endShape();
-    
-    // Nose
-    noFill();
-    strokeWeight(1);
-    stroke(0, 0, 0, 20);
-    bezier(-18, -107, -5, -106, -19, -113, -16, -116);
-    
-    // mouth
-    noFill();
-    strokeWeight(2);
-    stroke(255, 0, 51, 80);
-    bezier(-27, -104, -22, -101, -19, -99, -9, -101);
-    bezier(-27, -104, -22, -103, -19, -101, -9, -103);
-    
-    // eyes
-    noStroke();
-    pushMatrix();
-    rotate(2);
-    translate(-5, 0);
-    fill(36, 36, 36);
-    rect(-32, -129, 6, 5);
-    rect(-3, -129, 5, 5);
-    ellipse(-25, -119, 15, 5);
-    ellipse(-5, -119, 15, 5);
-    fill(255);
-    arc(-25, -120, 15, 20, -180, 0);
-    arc(-5, -120, 15, 20, -180, 0);
-    ellipse(-25, -120, 15, 5);
-    ellipse(-5, -120, 15, 5);
-    fill(0, 149, 255);
-    ellipse(-24, -124, 10, 10);
-    ellipse(-6, -124, 10, 10);
-    fill(23, 86, 128);
-    ellipse(-24, -124, 5, 5);
-    ellipse(-6, -124, 5, 5);
-    fill(255);
-    ellipse(-26, -126, 3, 3);
-    ellipse(-8, -126, 3, 3);
-    popMatrix();
-    
-    // eyebrows
-    noFill();
-    stroke(204, 186, 108);
-    bezier(-32, -135, -30, -136, -24, -139, -20, -137);
-    bezier(2, -136, 0, -137, -6, -139, -10, -137);
-    
-    // crown made of KA Gold™
-    noStroke();
-    pushMatrix();
-    translate(-28, -160);
-    rotate(-21);
-    scale(0.5);
-    fill(84, 81, 20, 40);
-    ellipse(-8, 0, 60, 23);
-    fill(201, 224, 52);
-    beginShape();
-    vertex(-30, 0);
-    bezierVertex(-10, 5, 10, 5, 30, 0);
-    bezierVertex(30, -50, 30, -50, 40, -60);
-    vertex(38, -64);
-    bezierVertex(9, -50, 13, 23, 7, -67);
-    vertex(-7, -67);
-    bezierVertex(-13, 23, -9, -50, -38, -64);
-    vertex(-40, -60);
-    bezierVertex(-30, -50, -30, -50, -30, 0);
-    endShape();
-    fill(63, 202, 217);
-    ellipse(0, -67, 20, 20);
-    ellipse(40, -63, 10, 10);
-    ellipse(-40, -63, 10, 10);
-    fill(255, 255, 255, 100);
-    ellipse(-2, -69, 13, 13);
-    ellipse(39, -65, 5, 5);
-    ellipse(-42, -64, 5, 5);
-    fill(255);
-    ellipse(-5, -72, 3, 3);
-    ellipse(38, -66, 2, 2);
-    ellipse(-43, -65, 2, 2);
-    popMatrix();
-    
-    popMatrix();
+    rectMode(CORNER);
+    princessPenelope(160, 418, 0.8);
+    princeNolan(470, 398, 0.8);
     
     noFill();
     stroke(255);
