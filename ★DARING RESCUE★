@@ -1,0 +1,594 @@
+var tree = function(x, y, sz, r, color, cloud){
+    noStroke();
+    fill(color);
+    pushMatrix();
+    translate(x, y);
+    scale(sz);
+    rotate(r);
+    if(cloud !== 1){
+        beginShape();
+        vertex(-10, -184);
+        vertex(10, -183);
+        bezierVertex(0, -200, 0, -200, 10, -328);
+        vertex(-13, -327);
+        bezierVertex(-3, -267, -3, -223, -18, -178);
+        endShape();
+    }
+    
+    ellipse(0, -339, 150, 150);
+    for(var i = 0; i < 360; i += 30){
+        ellipse(sin(i) * 75, -339 + cos(i) * 75, 40 + sin(i*5)*20, 40 + sin(i*5)*20);
+    }
+    popMatrix();
+};
+
+var overButton = false;
+var clicked = false;
+
+mouseClicked = function(){ clicked = true; };
+
+draw = function() {
+    /* B A C K G R O U N D */
+    background(107, 173, 209);
+    
+    // Clouds
+    tree(227, 332, 0.8, -72 + frameCount % 150, color(146, 192, 217), 1);
+    tree(257, 192, 0.2, -104 + frameCount/2 % 200, color(146, 192, 217), 1);
+    tree(331, 192, 0.5, 191 - frameCount/2 % 300, color(146, 192, 217), 1);
+    tree(359, 436, 1.5, 51 - frameCount/2 % 300, color(146, 192, 217), 1);
+    
+    // Trees
+    fill(31, 87, 31);
+    arc(300, 600, 1145, 578, -180, 0);
+    tree(331, 555, 0.7, 3, color(28, 102, 28));
+    tree(209, 643, 1.0, -29, color(24, 94, 24));
+    tree(427, 661, 1.1, 20, color(24, 102, 24));
+    tree(260, 608, 1.0, -12, color(45, 145, 45));
+    tree(157, 643, 1.2, -29, color(39, 135, 39));
+    tree(461, 690, 1.4, -1, color(39, 140, 39));
+    tree(300, 599, 1.0, 0, color(55, 168, 55));
+    tree(181, 627, 1.2, -15, color(55, 168, 55));
+    tree(461, 690, 1.4, 15, color(55, 168, 55));
+    
+    // Grass
+    fill(55, 168, 55);
+    arc(300, 600, 1000, 371, -180, 0);
+    fill(57, 184, 57);
+    arc(300, 600, 1000, 333, -180, 0);
+    fill(41, 204, 46);
+    arc(300, 600, 1000, 300, -180, 0);
+    
+    /* P R I N C E N O L A N */
+    pushMatrix();
+    translate(460, 380);
+    scale(0.8);
+    
+    // shadow
+    noStroke();
+    fill(0, 0, 0, 10);
+    ellipse(-11, 209, 159, 39);
+    ellipse(-11, 210, 127, 27);
+    ellipse(-11, 208, 96, 14);
+    
+    // cape
+    fill(201, 74, 74);
+    beginShape();
+    vertex(-70, -72);
+    bezierVertex(200 + sin(-frameCount * 4) * 10, -123, -25, 100, 137 + sin(-frameCount * 4) * 15, 115);
+    bezierVertex(70, 201, -25, 162, -56, 149);
+    bezierVertex(-104, 119, -40, 34, -70, -72);
+    endShape();
+    strokeWeight(8);
+    stroke(255, 255, 255);
+    bezier(137 + sin(-frameCount * 4) * 15, 115, 70, 201, -25, 162, -56, 149);
+    
+    // arms
+    noFill();
+    stroke(23, 100, 145);
+    strokeWeight(23);
+    bezier(-71, -65, -85, -42, -87, -35, -92, -16);
+    bezier(-71, 51, -59, 35, -87, 27, -92, -10);
+    bezier(51, -65, 65, -42, 67, -35, 58, -16);
+    bezier(21, 51, 8, 35, 34, 27, 56, -10);
+    stroke(247, 234, 205);
+    point(16, 45);
+    point(21, 52);
+    point(-71, 47);
+    point(-73, 52);
+    
+    // legs
+    noFill();
+    stroke(31, 100, 135);
+    strokeWeight(34);
+    bezier(-6, 46, 0, 100, 0, 100, 0, 128);
+    bezier(-37, 46, -35, 100, -43, 107, -36, 128);
+    
+    // boots
+    noStroke();
+    pushMatrix();
+    scale(0.9);
+    rotate(-21);
+    translate(-90, -7);
+    fill(148, 108, 48);
+    rect(-18, 132, 28, 73, 10);
+    (rect)(-39, 182, 32, 23, 5, 0, 0, 0);
+    fill(168, 121, 50);
+    rect(-18, 132, 38, 20);
+    arc(18, 152, 18, 40, -90, 0);
+    arc(-17, 152, 18, 40, -180, 0);
+    popMatrix();
+    
+    fill(171, 124, 53);
+    rect(-15, 132, 28, 73, 10);
+    (rect)(-14, 177, 42, 28, 0, 50, 5, 10);
+    fill(156, 118, 64);
+    (rect)(3, 177, 25, 28, 50, 50, 0, 0);
+    fill(201, 144, 58);
+    rect(-18, 132, 38, 20);
+    arc(18, 152, 18, 40, -90, 0);
+    arc(-17, 152, 18, 40, -180, 0);
+    
+    
+    // middle
+    noStroke();
+    fill(62, 140, 179);
+    beginShape();
+    vertex(-69, -75);
+    bezierVertex(-23, -93, 23, -80, 40, -75);
+    bezierVertex(35, -30, 20, -16, 9, 33);
+    vertex(26, 94);
+    vertex(-9, 100);
+    vertex(-22, 45);
+    vertex(-38, 98);
+    vertex(-72, 94);
+    vertex(-52, 25);
+    bezierVertex(-67, -31, -76, -36, -69, -75);
+    endShape();
+    
+    // belt
+    noFill();
+    stroke(130, 83, 45);
+    strokeCap(SQUARE);
+    strokeWeight(20);
+    arc(-17, -113, 300, 300, 80, 105);
+    stroke(255, 208, 0);
+    strokeWeight(5);
+    rect(-36, 26, 29, 19, 5);
+    stroke(191, 191, 191);
+    rect(-20, 33, 12, 5, 5);
+    stroke(232, 232, 232);
+    rect(-20, 33, 12, 1, 5);
+    
+    // head
+    noStroke();
+    fill(247, 229, 210);
+    ellipse(-18, -86, 10, 10);
+    ellipse(-17, -124, 55, 70);
+    
+    // front hair
+    noStroke();
+    fill(82, 53, 21);
+    beginShape();
+    vertex(9, -130);
+    vertex(8, -139);
+    vertex(-6, -152);
+    vertex(-10, -148);
+    vertex(-20, -150);
+    vertex(-29, -150);
+    vertex(-32, -146);
+    vertex(-39, -145);
+    vertex(-40, -141);
+    vertex(-49, -159);
+    vertex(-35, -158);
+    vertex(-39, -176);
+    vertex(-25, -164);
+    vertex(-22, -175);
+    vertex(-13, -166);
+    vertex(-1, -163);
+    vertex(0, -170);
+    vertex(8, -155);
+    vertex(13, -151);
+    vertex(13, -136);
+    vertex(12, -126);
+    vertex(8, -125);
+    endShape();
+    
+    // Nose
+    noFill();
+    strokeWeight(1);
+    stroke(0, 0, 0, 20);
+    bezier(-15, -107, -26, -106, -19, -113, -16, -116);
+    
+    // mouth
+    noFill();
+    strokeWeight(2);
+    stroke(0, 0, 0, 80);
+    bezier(-25, -101, -14, -96, -10, -99, -5, -104);
+    
+    // eyes
+    noStroke();
+    pushMatrix();
+    rotate(2);
+    translate(-5, 0);
+    fill(255);
+    arc(-25, -120, 15, 20, -180, 0);
+    arc(-5, -120, 15, 20, -180, 0);
+    ellipse(-25, -120, 15, 5);
+    ellipse(-5, -120, 15, 5);
+    fill(48, 166, 68);
+    ellipse(-25, -124, 10, 10);
+    ellipse(-7, -124, 10, 10);
+    fill(21, 79, 34);
+    ellipse(-25, -124, 5, 5);
+    ellipse(-7, -124, 5, 5);
+    fill(255);
+    ellipse(-27, -126, 3, 3);
+    ellipse(-9, -126, 3, 3);
+    popMatrix();
+    
+    // eyebrows
+    noFill();
+    strokeCap(SQUARE);
+    strokeWeight(4);
+    stroke(0, 0, 0);
+    bezier(-32, -135, -30, -132, -24, -139, -18, -137);
+    bezier(2, -136, 0, -132, -6, -139, -12, -137);
+    
+    // cape frONT
+    noStroke();
+    fill(201, 74, 74);
+    beginShape();
+    vertex(-30, -83);
+    bezierVertex(-28, -76, -14, -59, -8, -85);
+    bezierVertex(-1, -99, 48, -95, 47, -65);
+    bezierVertex(6, -48, -50, -41, -70, -79);
+    bezierVertex(-70, -92, -30, -94, -30, -83);
+    endShape();
+    
+    strokeCap(ROUND);
+    strokeWeight(13);
+    stroke(255, 255, 255);
+    bezier(42, -69, 6, -48, -50, -41, -65, -79);
+    
+    // crown made of KA Gold™
+    noStroke();
+    pushMatrix();
+    translate(-5, -156);
+    rotate(16);
+    scale(0.5);
+    fill(84, 81, 20, 40);
+    ellipse(4, 0, 60, 23);
+    fill(201, 224, 52);
+    beginShape();
+    vertex(-30, 0);
+    bezierVertex(-10, 5, 10, 5, 30, 0);
+    bezierVertex(30, -50, 30, -50, 40, -60);
+    vertex(38, -64);
+    bezierVertex(9, -50, 13, 23, 7, -67);
+    vertex(-7, -67);
+    bezierVertex(-13, 23, -9, -50, -38, -64);
+    vertex(-40, -60);
+    bezierVertex(-30, -50, -30, -50, -30, 0);
+    endShape();
+    fill(94, 207, 68);
+    ellipse(0, -14, 20, 20);
+    ellipse(0, -67, 20, 20);
+    ellipse(40, -63, 10, 10);
+    ellipse(-40, -63, 10, 10);
+    fill(255, 255, 255, 100);
+    ellipse(-2, -16, 13, 13);
+    ellipse(-2, -69, 13, 13);
+    ellipse(39, -65, 5, 5);
+    ellipse(-42, -64, 5, 5);
+    fill(255);
+    ellipse(-5, -17, 3, 3);
+    ellipse(-5, -72, 3, 3);
+    ellipse(38, -66, 2, 2);
+    ellipse(-43, -65, 2, 2);
+    popMatrix();
+    
+    // shoulders (great song by for KING AND COUNTRY)
+    noStroke();
+    fill(62, 140, 179);
+    ellipse(36, -71, 40, 40);
+    ellipse(-71, -71, 35, 35);
+    
+    // shoulder thingyes
+    fill(186, 186, 63);
+    for(var i = -3; i < 35; i += 5){
+        arc(i + 21, -187 + sin(i +75) * 111, 5, 22, 0, 180);
+    }
+    for(var i = -2; i < 33; i += 4){
+        arc(i + -86, -188 + sin(i +75) * 111, 4, 14, 0, 180);
+    }
+    fill(205, 207, 85);
+    ellipse(36, -83, 40, 20);
+    ellipse(-71, -84, 35, 15);
+    
+    // thing that goes from shoulder to hip
+    noFill();
+    strokeWeight(15);
+    stroke(205, 207, 85);
+    bezier(-71, -80, -49, -24, -16, 16, 14, 27);
+    
+    popMatrix();
+    
+    
+    
+    
+    
+    /* P R I N C E S S P E N E L O P E */
+    pushMatrix();
+    translate(180, 407);
+    scale(0.8);
+    
+    // shadow
+    noStroke();
+    fill(0, 0, 0, 10);
+    ellipse(-11, 184, 159, 39);
+    ellipse(-11, 184, 127, 27);
+    ellipse(-11, 184, 96, 14);
+    
+    // hair
+    noStroke();
+    fill(230, 230, 135);
+    beginShape();
+    vertex(-12, -166);
+    bezierVertex(-50, -203, -50, -121, -70 + sin(frameCount * 3) * 5, -134);
+    bezierVertex(-108, -75, -76, -115, -93, -71);
+    bezierVertex(-66, -82, -103, -38, -119 + sin(frameCount * 3) * 15, -53);
+    bezierVertex(-130, 7, -50+ sin(-frameCount * 3) * 15, 29, 54+ sin(frameCount * 3) * 15, 0);
+    bezierVertex(42, 10, 23, -75, 41, -51);
+    bezierVertex(67, -101, -2, -192, -12, -166);
+    endShape();
+    
+    fill(209, 209, 107);
+    beginShape();
+    vertex(-12, -135);
+    bezierVertex(-50, -163, -50, -110, -74 + sin(frameCount * 3) * 5, -114);
+    bezierVertex(-74, -75, -66, -115, -80, -82);
+    bezierVertex(-75, -82, -60, -38, -102 + sin(frameCount * 3) * 15, -40);
+    bezierVertex(-112, -31, -48+ sin(-frameCount * 3) * 15, 36, 42+ sin(frameCount * 3) * 15, -2);
+    bezierVertex(22, 10, 12, -72, 37, -67);
+    bezierVertex(40, -101, -2, -158, -12, -123);
+    endShape();
+    
+    // arms
+    noFill();
+    stroke(247, 229, 210);
+    strokeWeight(10);
+    bezier(-42, -65, -37, -60, -59, -45, -68, -25);
+    bezier(-52, 17, -66, 2, -67, -1, -67, -25);
+    bezier(45, -7, 21, -16, 35, -55, -8, -73);
+    ellipse(47, -9, 2, 10);
+    strokeWeight(15);
+    stroke(212, 136, 158);
+    bezier(16, -54, 4, -68, 12, -65, -8, -73);
+    
+    // shoes
+    noStroke();
+    fill(242, 142, 172);
+    ellipse(-53, 178, 10, 20);
+    ellipse(-4, 180, 10, 20);
+    ellipse(11, 178, 40, 20);
+    ellipse(-39, 176, 40, 21);
+    
+    // back part of dress
+    noStroke();
+    fill(212, 100, 133);
+    beginShape();
+    vertex(-68, 92);
+    bezierVertex(24, 41, 26, 100, 48, 133);
+    bezierVertex(31, 163, -11, 175, -52 + sin(frameCount*3)*5, 152);
+    bezierVertex(-52, 149, -104, 150, -105 + sin(frameCount*3)*5, 126);
+    endShape();
+    
+    // legs
+    noFill();
+    stroke(247, 229, 210);
+    strokeWeight(16);
+    bezier(0, 100, 0, 100, 0, 100, 0, 171);
+    bezier(-33, 126, -40, 142, -46, 163, -50, 170);
+    line(0, 171, 11, 173);
+    line(-46, 172, -40, 172);
+    
+    noStroke();
+    fill(255, 255, 255);
+    ellipse(19, 169, 10, 10);
+    ellipse(-32, 169, 10, 10);
+    
+    // dress
+    noStroke();
+    fill(242, 142, 172);
+    beginShape();
+    vertex(14, -18);
+    bezierVertex(24, 41, 26, 100, 48, 133);
+    bezierVertex(31, 164, -11, 168, -52 + sin(frameCount*3)*5, 133);
+    bezierVertex(-86, 108, -102, 125, -105 + sin(frameCount*3)*5, 127);
+    bezierVertex(-13, 38, -68, 26, -30, -17);
+    bezierVertex(-24, -16, -32, -21, -34, -59);
+    bezierVertex(-49, -50, -38, -45, -44, -46);
+    bezierVertex(-37, -32, -68, -45, -63, -47);
+    bezierVertex(-45, -67, -50, -94, 0, -75);
+    bezierVertex(21, -41, 19, -33, 12, -18);
+    endShape();
+    noFill();
+    strokeWeight(3);
+    stroke(255);
+    bezier(-26, -19, -4, -9, -5, -4, 6, 0);
+    bezier(15, -12, 13, -10, 11, -4, 6, 0);
+    bezier(-86 + sin(frameCount*3)*5, 110, -30, 117, -7, 181, 43, 128);
+    bezier(-58, -51, -58, -48, -47, -45, -43, -46);
+    
+    // dress shading
+    noStroke();
+    fill(255, 255, 255, 50);
+    beginShape();
+    vertex(3, 50);
+    bezierVertex(14, 111, 14, 100, 38, 130);
+    bezierVertex(30, 149, 7, 163, -52 + sin(frameCount*3)*5, 120);
+    bezierVertex(10, 106, -24, 81, 4, 44);
+    endShape();
+    
+    fill(0, 0, 0, 30);
+    beginShape();
+    vertex(-34, -65);
+    bezierVertex(-9, -10, -50, 115, -86 + sin(frameCount*3)*5, 120);
+    bezierVertex(-86, 113, -102, 127, -105 + sin(frameCount*3)*5, 127);
+    bezierVertex(-13, 38, -68, 26, -30, -17);
+    endShape();
+    
+    // hand
+    noStroke();
+    fill(247, 229, 210);
+    ellipse(-46, 16, 15, 22);
+    
+    
+    // head
+    noStroke();
+    fill(247, 229, 210);
+    ellipse(-18, -86, 10, 10);
+    ellipse(-17, -124, 55, 70);
+    
+    // front hair
+    noStroke();
+    fill(230, 230, 126);
+    beginShape();
+    vertex(-35, -135);
+    bezierVertex(-36, -152, -11, -129, -16, -163);
+    vertex(-51, -150);
+    endShape();
+    beginShape();
+    vertex(11, -135);
+    bezierVertex(-8, -152, -3, -149, -18, -163);
+    vertex(15, -150);
+    endShape();
+    
+    // Nose
+    noFill();
+    strokeWeight(1);
+    stroke(0, 0, 0, 20);
+    bezier(-18, -107, -5, -106, -19, -113, -16, -116);
+    
+    // mouth
+    noFill();
+    strokeWeight(2);
+    stroke(255, 0, 51, 80);
+    bezier(-27, -104, -22, -101, -19, -99, -9, -101);
+    bezier(-27, -104, -22, -103, -19, -101, -9, -103);
+    
+    // eyes
+    noStroke();
+    pushMatrix();
+    rotate(2);
+    translate(-5, 0);
+    fill(36, 36, 36);
+    rect(-32, -129, 6, 5);
+    rect(-3, -129, 5, 5);
+    ellipse(-25, -119, 15, 5);
+    ellipse(-5, -119, 15, 5);
+    fill(255);
+    arc(-25, -120, 15, 20, -180, 0);
+    arc(-5, -120, 15, 20, -180, 0);
+    ellipse(-25, -120, 15, 5);
+    ellipse(-5, -120, 15, 5);
+    fill(0, 149, 255);
+    ellipse(-24, -124, 10, 10);
+    ellipse(-6, -124, 10, 10);
+    fill(23, 86, 128);
+    ellipse(-24, -124, 5, 5);
+    ellipse(-6, -124, 5, 5);
+    fill(255);
+    ellipse(-26, -126, 3, 3);
+    ellipse(-8, -126, 3, 3);
+    popMatrix();
+    
+    // eyebrows
+    noFill();
+    stroke(204, 186, 108);
+    bezier(-32, -135, -30, -136, -24, -139, -20, -137);
+    bezier(2, -136, 0, -137, -6, -139, -10, -137);
+    
+    // crown made of KA Gold™
+    noStroke();
+    pushMatrix();
+    translate(-28, -160);
+    rotate(-21);
+    scale(0.5);
+    fill(84, 81, 20, 40);
+    ellipse(-8, 0, 60, 23);
+    fill(201, 224, 52);
+    beginShape();
+    vertex(-30, 0);
+    bezierVertex(-10, 5, 10, 5, 30, 0);
+    bezierVertex(30, -50, 30, -50, 40, -60);
+    vertex(38, -64);
+    bezierVertex(9, -50, 13, 23, 7, -67);
+    vertex(-7, -67);
+    bezierVertex(-13, 23, -9, -50, -38, -64);
+    vertex(-40, -60);
+    bezierVertex(-30, -50, -30, -50, -30, 0);
+    endShape();
+    fill(63, 202, 217);
+    ellipse(0, -67, 20, 20);
+    ellipse(40, -63, 10, 10);
+    ellipse(-40, -63, 10, 10);
+    fill(255, 255, 255, 100);
+    ellipse(-2, -69, 13, 13);
+    ellipse(39, -65, 5, 5);
+    ellipse(-42, -64, 5, 5);
+    fill(255);
+    ellipse(-5, -72, 3, 3);
+    ellipse(38, -66, 2, 2);
+    ellipse(-43, -65, 2, 2);
+    popMatrix();
+    
+    popMatrix();
+    
+    noFill();
+    stroke(255);
+    strokeWeight(2);
+    for(var i = -199; i < 213; i += 45){
+        pushMatrix();
+        translate(i + 54, 12);
+        scale(0.8, 0.6);
+        bezier(273, 40, 308, 60, 307, 18, 327, 37);
+        bezier(320, 42, 297, 48, 338, 59, 327, 37);
+        popMatrix();
+        pushMatrix();
+        translate(i + 54, 177);
+        scale(0.8, 0.6);
+        bezier(273, 40, 308, 60, 307, 18, 327, 37);
+        bezier(320, 42, 297, 48, 338, 59, 327, 37);
+        popMatrix();
+    }
+    
+    textFont(createFont('Avenir Bold'));
+    textAlign(CENTER, CENTER);
+    fill(0, 0, 0, 50);
+    textSize(89);
+    text('R E S C U E', 300, 151);
+    textSize(66);
+    text('D  A  R  I  N  G', 300, 87);
+    fill(255, 255, 255);
+    textSize(89);
+    text('R E S C U E', 300, 143);
+    textSize(66);
+    text('D  A  R  I  N  G', 300, 78);
+    
+    noFill();
+    stroke(255);
+    strokeWeight(2);
+    triangle(266, 475, 266, 364, 359, 418);
+    noStroke();
+    fill(255);
+    if(mouseY > mouseX / 1.7 + 213 && mouseY < -mouseX / 1.7 + 627 && mouseX > 266){
+        overButton = true;
+    }
+    triangle(270, 468, 270, 370, 353, 418);
+    
+    cursor(overButton ? 'pointer' : 'default');
+    
+    overButton = false;
+    clicked = false;
+};
