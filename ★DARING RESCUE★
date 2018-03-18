@@ -38,8 +38,9 @@
   Shocked, you protest and say it is completely true. The King and his mother refuse to listen, and you are banished to the Dark Lands.
 */
 
-var scene = '';
+var scene = 'Game';
 
+// Scenery
 var tree = function(x, y, sz, r, color, cloud){
     noStroke();
     fill(color);
@@ -63,47 +64,122 @@ var tree = function(x, y, sz, r, color, cloud){
     }
     popMatrix();
 };
+var hill = function(x, y, xsz, ysz, color){
+    pushMatrix();
+    translate(x, y);
+    scale(xsz, ysz);
+    noStroke();
+    fill(color);
+    
+    beginShape();
+    vertex(360, 0);
+    vertex(-422, 0);
+    bezierVertex(-104, -511, 75, -189, 19, -26);
+    endShape();
+    
+    fill(6, 46, 3, 20);
+    for(var i = 0; i < 6; i ++){
+        beginShape();
+        vertex(403, 0);
+        vertex(-415, 0);
+        bezierVertex(-104, -511, -43 - (i * 53), -146 + (i * 61), 19, -26);
+        endShape();
+    }
+    popMatrix();
+};
 
+// Mouse events
 var overButton = false;
 var clicked = false;
-
 mouseClicked = function(){ clicked = true; };
 
+// Key events
+var keys = [];
+keyPressed = function(){ keys[keyCode] = true; };
+keyReleased = function(){ keys[keyCode] = false; };
+
+// Images
 var images = {
-    
+    'grassyBG': function(){
+        /* B A C K G R O U N D */
+        background(107, 173, 209);
+        
+        // Clouds
+        tree(227, 332, 0.8, -72 + frameCount % 150, color(146, 192, 217), 1);
+        tree(257, 192, 0.2, -104 + frameCount/2 % 200, color(146, 192, 217), 1);
+        tree(331, 192, 0.5, 191 - frameCount/2 % 300, color(146, 192, 217), 1);
+        tree(359, 436, 1.5, 51 - frameCount/2 % 300, color(146, 192, 217), 1);
+        
+        // Trees
+        fill(31, 87, 31);
+        arc(300, 600, 1145, 578, -180, 0);
+        tree(331, 555, 0.7, 3, color(28, 102, 28));
+        tree(209, 643, 1.0, -29, color(24, 94, 24));
+        tree(427, 661, 1.1, 20, color(24, 102, 24));
+        tree(260, 608, 1.0, -12, color(45, 145, 45));
+        tree(157, 643, 1.2, -29, color(39, 135, 39));
+        tree(461, 690, 1.4, -1, color(39, 140, 39));
+        tree(300, 600, 1.0, 0, color(55, 168, 55));
+        tree(181, 644, 1.2, -15, color(55, 168, 55));
+        tree(461, 690, 1.4, 15, color(55, 168, 55));
+        
+        // Grass
+        fill(55, 168, 55);
+        arc(300, 600, 1000, 371, -180, 0);
+        fill(57, 184, 57);
+        arc(300, 600, 1000, 333, -180, 0);
+        fill(41, 204, 46);
+        arc(300, 600, 1000, 300, -180, 0);
+        
+        return get(0, 0, width, height);
+    },
+    'sky': function(){
+        noStroke();
+        for(var i = 0; i < 600; i += 10){
+            fill(lerpColor(
+                color(88, 173, 201), color(231, 242, 217), i/height));
+            rect(0, i, 600, 10);
+        }
+        
+        return get(0, 0, 600, 600);
+    },
+    'grass': function(){
+        noStroke();
+fill(26, 94, 32);
+        rect(0, 531, 600, 79);
+        
+        pushMatrix();
+        translate(0, 341);
+        scale(1, 0.4);
+        stroke(16, 87, 22);
+        for(var i = 0; i < width; i += 1){
+            line(i, 232 + noise(i, 0.96, 32)*470, i, 332 + noise(i, 0.96, 32)*492);
+        }
+        
+        stroke(33, 112, 37);
+        for(var i = 0; i < width; i += 1){
+            line(i, 305 + noise(i, 0.96, 32)*470, i, 332 + noise(i, 0.96, 32)*470);
+        }
+        
+        stroke(52, 135, 59);
+        for(var i = 0; i < width; i += 1){
+            line(i + 5, 264 + noise(i, 0.96, 32)*470, i + 5, 305 + noise(i, 0.96, 32)*470);
+        }
+        
+        stroke(76, 191, 86);
+        for(var i = 0; i < width + 10; i += 1){
+            line(i - 10, 231 + noise(i, 0.96, 32)*470, i - 10, 277 + noise(i, 0.96, 32)*470);
+        }
+        popMatrix();
+
+        
+        return get(0, 0, 600, 600);
+    },
 };
 
-var grassyBG = function(){
-    /* B A C K G R O U N D */
-    background(107, 173, 209);
-    
-    // Clouds
-    tree(227, 332, 0.8, -72 + frameCount % 150, color(146, 192, 217), 1);
-    tree(257, 192, 0.2, -104 + frameCount/2 % 200, color(146, 192, 217), 1);
-    tree(331, 192, 0.5, 191 - frameCount/2 % 300, color(146, 192, 217), 1);
-    tree(359, 436, 1.5, 51 - frameCount/2 % 300, color(146, 192, 217), 1);
-    
-    // Trees
-    fill(31, 87, 31);
-    arc(300, 600, 1145, 578, -180, 0);
-    tree(331, 555, 0.7, 3, color(28, 102, 28));
-    tree(209, 643, 1.0, -29, color(24, 94, 24));
-    tree(427, 661, 1.1, 20, color(24, 102, 24));
-    tree(260, 608, 1.0, -12, color(45, 145, 45));
-    tree(157, 643, 1.2, -29, color(39, 135, 39));
-    tree(461, 690, 1.4, -1, color(39, 140, 39));
-    tree(300, 599, 1.0, 0, color(55, 168, 55));
-    tree(181, 627, 1.2, -15, color(55, 168, 55));
-    tree(461, 690, 1.4, 15, color(55, 168, 55));
-    
-    // Grass
-    fill(55, 168, 55);
-    arc(300, 600, 1000, 371, -180, 0);
-    fill(57, 184, 57);
-    arc(300, 600, 1000, 333, -180, 0);
-    fill(41, 204, 46);
-    arc(300, 600, 1000, 300, -180, 0);
-};
+// I stored things that I only use once to make it more organized. It doesn't necessarily make the code faster, but it can be easier to read this way.
+
+// Characters - couldn't use get() because they are animated.
 var princessPenelope = function(x, y, sz, r){
     /* P R I N C E S S P E N E L O P E */
     pushMatrix();
@@ -353,19 +429,19 @@ var princessPenelope = function(x, y, sz, r){
     
     popMatrix();
 };
-var princeNolan = function(x, y, sz, r){
+var princeNolan = function(x, y, xSz, ySz, r, running){
     /* P R I N C E N O L A N */
     pushMatrix();
     translate(x, y);
     rotate(r);
-    scale(sz);
+    scale(xSz, ySz);
     
     // shadow
     noStroke();
-    fill(0, 0, 0, 10);
-    ellipse(-11, 209, 159, 39);
-    ellipse(-11, 210, 127, 27);
-    ellipse(-11, 208, 96, 14);
+    fill(0, 0, 0, 30);
+    ellipse(-11, 203, 159, 39);
+    ellipse(-11, 203, 127, 27);
+    ellipse(-11, 204, 96, 14);
     
     // cape
     fill(201, 74, 74);
@@ -378,6 +454,15 @@ var princeNolan = function(x, y, sz, r){
     strokeWeight(8);
     stroke(255, 255, 255);
     bezier(137 + sin(-frameCount * 4) * 15, 115, 70, 201, -25, 162, -56, 149);
+    
+    noStroke();
+    fill(0, 0, 0, 30);
+    beginShape();
+    vertex(-70, -72);
+    bezierVertex(166 + sin(-frameCount * 4) * 10, -93, -44, 100, 92 + sin(-frameCount * 4) * 15, 130);
+    bezierVertex(70, 164, -28, 161, -48, 128);
+    bezierVertex(-94, 119, -40, 34, -70, -72);
+    endShape();
     
     // arms
     noFill();
@@ -397,34 +482,77 @@ var princeNolan = function(x, y, sz, r){
     noFill();
     stroke(31, 100, 135);
     strokeWeight(34);
-    bezier(-6, 46, 0, 100, 0, 100, 0, 128);
-    bezier(-37, 46, -35, 100, -43, 107, -36, 128);
-    
-    // boots
-    noStroke();
-    pushMatrix();
-    scale(0.9);
-    rotate(-21);
-    translate(-90, -7);
-    fill(148, 108, 48);
-    rect(-18, 132, 28, 73, 10);
-    (rect)(-39, 182, 32, 23, 5, 0, 0, 0);
-    fill(168, 121, 50);
-    rect(-18, 132, 38, 20);
-    arc(18, 152, 18, 40, -90, 0);
-    arc(-17, 152, 18, 40, -180, 0);
-    popMatrix();
-    
-    fill(171, 124, 53);
-    rect(-15, 132, 28, 73, 10);
-    (rect)(-14, 177, 42, 28, 0, 50, 5, 10);
-    fill(156, 118, 64);
-    (rect)(3, 177, 25, 28, 50, 50, 0, 0);
-    fill(201, 144, 58);
-    rect(-18, 132, 38, 20);
-    arc(18, 152, 18, 40, -90, 0);
-    arc(-17, 152, 18, 40, -180, 0);
-    
+    if(running){
+        pushMatrix();
+        translate(-3, 58);
+        rotate(-6 + sin(frameCount * 5) * 30);
+        bezier(0, 0, -44, 70, -19, 66, -7, 94);
+        
+        noStroke();
+        pushMatrix();
+        scale(0.9);
+        rotate(-21);
+        translate(-35, -43);
+        fill(148, 108, 48);
+        rect(-18, 132, 28, 73, 10);
+        (rect)(-39, 182, 32, 23, 5, 0, 0, 0);
+        fill(168, 121, 50);
+        rect(-18, 132, 38, 20);
+        arc(18, 152, 18, 40, -90, 0);
+        arc(-17, 152, 18, 40, -180, 0);
+        popMatrix();
+        popMatrix();
+        
+        pushMatrix();
+        translate(-34, 46);
+        rotate(-15 + sin(-frameCount * 5) * 30);
+        noFill();
+        stroke(31, 100, 135);
+        bezier(0, 0, -44, 70, -19, 66, -7, 94);
+        
+        noStroke();
+        pushMatrix();
+        scale(0.9);
+        rotate(-21);
+        translate(-43, -35);
+        fill(148, 108, 48);
+        rect(-18, 132, 28, 73, 10);
+        (rect)(-39, 182, 32, 23, 5, 0, 0, 0);
+        fill(168, 121, 50);
+        rect(-18, 132, 38, 20);
+        arc(18, 152, 18, 40, -90, 0);
+        arc(-17, 152, 18, 40, -180, 0);
+        popMatrix();
+        popMatrix();
+    } else {
+        bezier(-6, 46, 0, 100, 0, 100, 0, 128);
+        bezier(-37, 46, -35, 100, -43, 107, -36, 128);
+        
+        // boots
+        noStroke();
+        pushMatrix();
+        scale(0.9);
+        rotate(-21);
+        translate(-90, -7);
+        fill(148, 108, 48);
+        rect(-18, 132, 28, 73, 10);
+        (rect)(-39, 182, 32, 23, 5, 0, 0, 0);
+        fill(168, 121, 50);
+        rect(-18, 132, 38, 20);
+        arc(18, 152, 18, 40, -90, 0);
+        arc(-17, 152, 18, 40, -180, 0);
+        popMatrix();
+        
+        fill(171, 124, 53);
+        rect(-15, 132, 28, 73, 10);
+        (rect)(-14, 177, 42, 28, 0, 50, 5, 10);
+        fill(156, 118, 64);
+        (rect)(3, 177, 25, 28, 50, 50, 0, 0);
+        fill(201, 144, 58);
+        rect(-18, 132, 38, 20);
+        arc(18, 152, 18, 40, -90, 0);
+        arc(-17, 152, 18, 40, -180, 0);
+    }
     
     // middle
     noStroke();
@@ -608,26 +736,51 @@ var princeNolan = function(x, y, sz, r){
     stroke(205, 207, 85);
     bezier(-71, -80, -49, -24, -16, 16, 14, 27);
     
+    // Shading
+    noStroke();
+    fill(0, 0, 0, 30);
+    
+    if(xSz > 0){
+        beginShape();
+        vertex(40, -75);
+        bezierVertex(35, -30, 20, -16, 9, 33);
+        vertex(26, 94);
+        vertex(-10, 104);
+        vertex(7, 31);
+        vertex(-38, 99);
+        vertex(-32, 35);
+        vertex(-52, 22);
+        bezierVertex(48, 30, -3, -36, 39, -75);
+        endShape();
+    } else {
+        beginShape();
+        vertex(-70, -75);
+        bezierVertex(-59, 9, -11, 25, 9, 33);
+        vertex(26, 94);
+        vertex(-9, 107);
+        vertex(3, 50);
+        vertex(-22, 50);
+        vertex(-38, 101);
+        vertex(-72, 93);
+        vertex(-27, 48);
+        vertex(-56, 41);
+        bezierVertex(-67, -31, -76, -36, -69, -75);
+        endShape();
+    }
+    
     popMatrix();
     
 };
 
-draw = function() {
-    for(var i in images){
-        if (typeof images[i] !== "object") {
-            colorMode(RGB, 255);
-            background(0, 0, 0, 0);
-            images[i] = images[i]();
-        }
-    }
-    
+// Scenes
+var menu = function(){
     // Background
-    grassyBG();
+    image(images.grassyBG, 0, 0);
     
     // The princess and the prince
     rectMode(CORNER);
     princessPenelope(184, 412, 0.8);
-    princeNolan(470, 398, 0.8);
+    princeNolan(470, 398, 0.8, 0.8);
     
     // Bezier border around title
     noFill();
@@ -673,6 +826,116 @@ draw = function() {
         overButton = true;
     }
     triangle(260, 468, 260, 370, 343, 418);
+};
+
+// Player
+var Player = function(){
+    this.x = 67;
+    this.y = 452;
+    
+    this.xvel = 0;
+    this.yvel = 0;
+    
+    this.direction = 'right';
+};
+Player.prototype.draw = function() {
+    if(keys[RIGHT]){
+        this.direction = 'right';
+        this.xvel ++;
+        princeNolan(this.x, this.y, -0.4, 0.4, 0, true);
+    } else if (keys[LEFT]){
+        this.direction = 'left';
+        this.xvel --;
+        princeNolan(this.x, this.y, 0.4, 0.4, 0, true);
+    } else {
+        this.xvel /= 1.1;
+        princeNolan(this.x, this.y, this.direction === 'left' ? 0.4 : -0.4, 0.4, 0, false);
+    }
+    
+    this.x += this.xvel;
+    this.xvel = constrain(this.xvel, -5, 5);
+};
+var player = new Player();
+
+var Game = function(){
+    this.x = 0;
+    
+    this.hills = [];
+    for(var i = 0; i < 20; i ++){
+        var darkness = random(50, 100);
+        var negative = floor(random(2));
+        
+        this.hills.push({x: i * 269, y: 558, xsz: (negative === 0 ? 1  * random(0.5, 1.0): -1 * random(0.5, 1.0)), ysz: random(0.5, 1.2), color: color(83 - darkness, 176 - darkness, 117 - darkness)});
+    }
+    
+    this.hills2 = [];
+    for(var i = 0; i < 20; i ++){
+        var darkness = random(50);
+        var negative = floor(random(2));
+        
+        this.hills2.push({x: i * 361, y: 600, xsz: (negative === 0 ? 1 : -1) * random(0.5, 1.0), ysz: random(0.5, 1), color: color(83 - darkness, 176 - darkness, 117 - darkness)});
+    }
+};
+Game.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, 0);
+    
+    for(var i = 0; i < 20; i ++){
+        image(images.sky, i * 600, 0);
+    }
+    
+    for(var i = 0; i < this.hills.length; i ++){
+        if(this.hills[i].x + this.x / 2 > -300 && this.hills[i].x + this.x / 2 < 800){
+            hill(this.hills[i].x - this.x / 2, this.hills[i].y, this.hills[i].xsz, this.hills[i].ysz, this.hills[i].color);
+        }
+    }
+    
+    for(var i = 0; i < this.hills2.length; i ++){
+        if(this.hills2[i].x + this.x / 2.4 > -300 && this.hills2[i].x + this.x / 2.4 < 900){
+            hill(this.hills2[i].x - this.x / 2.4, this.hills2[i].y, this.hills2[i].xsz, this.hills2[i].ysz, this.hills2[i].color);
+            fill(255);
+        }
+    }
+    
+    for(var i = 0; i < 20; i ++){
+        image(images.grass, i * 600, 0);
+    }
+    
+    if(player.x > 200){
+        this.x -= player.xvel * 1.2;
+    } else {
+        this.x /= 1.1;
+    }
+    
+    player.draw();
+    
+    popMatrix();
+};
+var game = new Game();
+
+draw = function() {
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            colorMode(RGB, 255);
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    switch (scene) {
+        default: 
+            println('You done messed up, Chester. There\'s no scene called "' + scene + '"'); 
+            noLoop();
+        break;
+        
+        case 'Menu':
+            menu();
+        break;
+        
+        case 'Game':
+            game.draw();
+        break;
+    }
     
     // Set cursor
     cursor(overButton ? 'pointer' : 'default');
