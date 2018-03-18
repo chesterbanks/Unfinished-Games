@@ -69,13 +69,18 @@ var hill = function(x, y, xsz, ysz, color){
     translate(x, y);
     scale(xsz, ysz);
     noStroke();
-    fill(color);
+    fill(red(color), green(color), blue(color), 100);
     
-    beginShape();
-    vertex(360, 0);
-    vertex(-422, 0);
-    bezierVertex(-104, -511, 75, -189, 19, -26);
-    endShape();
+    for(var i = 0; i < 360; i += 60){
+        pushMatrix();
+        translate(sin(i)*10, cos(i)*10);
+        beginShape();
+        vertex(360, 0);
+        vertex(-422, 0);
+        bezierVertex(-104, -511, 75, -189, 19, -26);
+        endShape();
+        popMatrix();
+    }
     
     fill(6, 46, 3, 20);
     for(var i = 0; i < 6; i ++){
@@ -86,6 +91,25 @@ var hill = function(x, y, xsz, ysz, color){
         endShape();
     }
     popMatrix();
+};
+var cloud = function(x, y, sz, speed){
+    noStroke();
+    fill(255, 255, 255, 20);
+    
+    for(var i = 0; i < 360; i += 60){
+        pushMatrix();
+        translate(sin(i)*5 + (((frameCount + x) * speed) % 8000) - 150, y + cos(i)*5);
+        scale(1.4 + (sz - 1), 1.0 + (sz - 1));
+        beginShape();
+        vertex(-100, 0);
+        bezierVertex(-50, 16, 50, 16, 100, 0);
+        bezierVertex(126, -45, 97, -107, 56, -58);
+        bezierVertex(115, -147, -113, -156, -49, -46);
+        bezierVertex(-99, -70, -113, -65, -75, -22);
+        bezierVertex(-99, -37, -119, -20, -100, 0);
+        endShape();
+        popMatrix();
+    }
 };
 
 // Mouse events
@@ -875,29 +899,54 @@ var Game = function(){
         
         this.hills2.push({x: i * 361, y: 600, xsz: (negative === 0 ? 1 : -1) * random(0.5, 1.0), ysz: random(0.5, 1), color: color(83 - darkness, 176 - darkness, 117 - darkness)});
     }
+    
+    this.clouds = [];
+    for(var i = 0; i < 20; i ++){
+        this.clouds.push({x: (i * 360) + random(-50, 50), y: random(500), sz: random(0.1, 1.0), speed: random(1, 5)});
+    }
 };
 Game.prototype.draw = function() {
+    background(0);
+    
     pushMatrix();
+    scale(0.09);
     translate(this.x, 0);
     
-    for(var i = 0; i < 20; i ++){
+    for(var i = 0; i < 12; i ++){
         image(images.sky, i * 600, 0);
     }
     
+    pushMatrix();
+    translate(3500, 5000);
+    rotate(-109);
+    translate(5000, 0);
+    fill(242, 255, 0);
+    ellipse(0, 0, 300, 300);
+    fill(253, 255, 222, 100);
+    for(var i = 400; i > 200; i -= 30){
+        ellipse(0, 0, i, i);
+    }
+    
+    popMatrix();
+    
+    for(var i = 0; i < this.clouds.length; i ++){
+        cloud(this.clouds[i].x, this.clouds[i].y, this.clouds[i].sz, this.clouds[i].speed);
+    }
+    
     for(var i = 0; i < this.hills.length; i ++){
-        if(this.hills[i].x + this.x / 2 > -300 && this.hills[i].x + this.x / 2 < 800){
+        if(this.hills[i].x + this.x / 2 > -300){
             hill(this.hills[i].x - this.x / 2, this.hills[i].y, this.hills[i].xsz, this.hills[i].ysz, this.hills[i].color);
         }
     }
     
     for(var i = 0; i < this.hills2.length; i ++){
-        if(this.hills2[i].x + this.x / 2.4 > -300 && this.hills2[i].x + this.x / 2.4 < 900){
+        if(this.hills2[i].x + this.x / 2.4 > -300){
             hill(this.hills2[i].x - this.x / 2.4, this.hills2[i].y, this.hills2[i].xsz, this.hills2[i].ysz, this.hills2[i].color);
             fill(255);
         }
     }
     
-    for(var i = 0; i < 20; i ++){
+    for(var i = 0; i < 12; i ++){
         image(images.grass, i * 600, 0);
     }
     
