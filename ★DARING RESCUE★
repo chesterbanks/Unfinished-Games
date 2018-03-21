@@ -1,4 +1,12 @@
 /*
+    1. Pre-game stuff (menu, how, creds, etc)
+    2. Game screen
+    3. After 3 seconds of testing out the game, a Royal Decree pops up on the screen. It says something about the princess being captured and you have to go to the right to go to the coronation before time runs out
+    4. You can talk to citizens
+    5. Cutscene? Final battle scene? End screen?
+*/
+
+/*
   You play as Prince Nolan, the son of Lord Raken of the Western Isles.
   
   You are going to travel Kemira for the coronation of the young King Trevor, who will be the ruler of all of Mardolia (the Western Isles are part of it).
@@ -71,7 +79,7 @@ var hill = function(x, y, xsz, ysz, color){
     noStroke();
     fill(red(color), green(color), blue(color), 100);
     
-    for(var i = 0; i < 360; i += 60){
+    for(var i = 0; i < 360; i += 89){
         pushMatrix();
         translate(sin(i)*10, cos(i)*10);
         beginShape();
@@ -83,7 +91,7 @@ var hill = function(x, y, xsz, ysz, color){
     }
     
     fill(6, 46, 3, 20);
-    for(var i = 0; i < 6; i ++){
+    for(var i = 0; i < 3; i ++){
         beginShape();
         vertex(403, 0);
         vertex(-415, 0);
@@ -909,7 +917,7 @@ Game.prototype.draw = function() {
     background(0);
     
     pushMatrix();
-    scale(0.09);
+    //scale(0.09);
     translate(this.x, 0);
     
     for(var i = 0; i < 12; i ++){
@@ -955,6 +963,29 @@ Game.prototype.draw = function() {
     } else {
         this.x /= 1.1;
     }
+    
+    rectMode(CENTER);
+    pushMatrix();
+    translate(500, 400);
+    fill(224, 223, 208);
+    rect(0, 33, 381, 180);
+    
+    strokeWeight(9);
+    stroke(122, 82, 58);
+    fill(224, 223, 208);
+    rect(26, 32, 80, 171);
+    
+    strokeWeight(2);
+    stroke(120, 120, 120);
+    fill(145, 145, 145);
+    for(var i = -42; i < 125; i += 30){
+        rect(-184, i, 30, 30);
+        rect(176, i, 30, 30);
+        rect(i - 141, 109, 30, 30);
+        if(i < 75){ rect(i + 128, 108, 30, 30); }
+    }
+    popMatrix();
+    rectMode(CORNER);
     
     player.draw();
     
