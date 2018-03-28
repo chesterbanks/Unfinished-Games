@@ -1,0 +1,134 @@
+var media = 'Twitter';
+
+draw = function() {
+    if(media === 'Insta'){
+        background(124, 61, 166);
+        
+        noStroke();
+        fill(230, 113, 181, 10 + sin(frameCount * 5) * 5);
+        for(var i = 0; i < 362; i += 10){
+            ellipse(510, 82, i, i);
+        }
+        fill(207, 45, 137, 10);
+        for(var i = 0; i < 862; i += 10){
+            ellipse(400, 482, i, i);
+        }
+        fill(207, 44, 76, 10);
+        for(var i = 0; i < 774; i += 5){
+            ellipse(41, 550, i + sin(frameCount * 5) * 50, i + sin(frameCount * 5) * 50);
+        }
+        fill(209, 109, 42, 10);
+        for(var i = 0; i < 604; i += 5){
+            ellipse(41, 550, i, i);
+        }
+        fill(185, 214, 88, 5);
+        for(var i = 0; i < 323; i += 12){
+            ellipse(41, 550, i, i);
+        }
+        fill(185, 214, 88, 2);
+        for(var i = 0; i < 253; i += 5){
+            ellipse(41, 550, i, i);
+        }
+        
+        rectMode(CENTER);
+        stroke(255, 255, 255);
+        strokeWeight(40);
+        rect(300, 300, 400, 400, 115);
+        ellipse(300, 300, 200, 200);
+        point(415, 175);
+        
+        
+        stroke(255);
+    }
+    if(media === 'Facebook'){
+        background(46, 69, 135);
+        
+        pushMatrix();
+        //translate(300, 300);
+        noStroke();
+        fill(255, 255, 255);
+        
+        beginShape();
+        vertex(450, 600);
+        vertex(350, 600);
+        vertex(350, 350);
+        vertex(280, 350);
+        vertex(280, 265);
+        vertex(350, 265);
+        vertex(350, 163);
+        bezierVertex(350, 92, 417, 80, 530, 100);
+        vertex(530, 177);
+        bezierVertex(434, 161, 453, 190, 450, 265);
+        vertex(521, 265);
+        vertex(501, 356);
+        vertex(450, 356);
+        endShape();
+        
+        popMatrix();
+        
+        stroke(255);
+    }
+    if(media === 'YouTube'){
+        background(250, 0, 7);
+        
+        noStroke();
+        fill(0, 0, 0, 30);
+        rect(300, 309, 352, 251, 106);
+        fill(255, 255, 255);
+        rect(300, 300, 352, 251, 106);
+        
+        fill(250, 0, 7);
+        pushMatrix();
+        translate(298, 300);
+        rotate(30);
+        beginShape();
+        for(var i = 0; i < 360; i += 120){
+            vertex(sin(i) * 55,  cos(i) * 55);
+        }
+        endShape(CLOSE);
+        popMatrix();
+        
+        stroke(255, 255, 255);
+    }
+    if(media === 'Twitter'){
+        background(110, 188, 240);
+        
+        noStroke();
+        fill(255, 255, 255);
+        stroke(255, 255, 255, 60);
+        strokeWeight(15);
+        pushMatrix();
+        translate(328, 344);
+        scale(2);
+        beginShape();
+        vertex(-107, 49);
+        bezierVertex(-25, 97, 71, 43, 72, -56);
+        bezierVertex(75, -55, 92, -74, 92, -76);
+        bezierVertex(76, -70, 81, -71, 70, -70);
+        bezierVertex(76, -75, 81, -80, 85, -90);
+        bezierVertex(76, -89, 66, -82, 60, -83);
+        bezierVertex(22, -114, -16, -81, -10, -45);
+        bezierVertex(-39, -43, -85, -72, -94, -88);
+        bezierVertex(-106, -67, -99, -45, -82, -33);
+        bezierVertex(-82, -33, -85, -31, -101, -38);
+        bezierVertex(-100, -17, -85, -1, -69, 3);
+        bezierVertex(-77, 6, -80, 4, -87, 4);
+        bezierVertex(-82, 17, -69, 30, -47, 32);
+        bezierVertex(-55, 40, -74, 48, -107, 49);
+        endShape();
+        popMatrix();
+        
+        stroke(255, 255, 255);
+    }
+    
+    noFill();
+    strokeWeight(41);
+    rect(300, 300, 600, 600);
+    
+    noStroke();
+    fill(255);
+    rect(300, 565, 30, 30);
+    fill(0, 0, 0);
+    rect(298, 565, 7, 10, 10);
+    rect(307, 565, 7, 10, 10);
+};
