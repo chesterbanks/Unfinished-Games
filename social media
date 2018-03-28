@@ -60,7 +60,28 @@ Dude.prototype.draw = function() {
 };
 var Dudes = [new Dude(458, 565, 0), new Dude(160, 36, -180), new Dude(35, 300, 90), new Dude(565, 300, -90)];
 
+var Thumb = function(){
+    
+};
+Thumb.prototype.draw = function() {
+    pushMatrix();
+    translate(336, 500);
+    rotate(180);
+    scale(0.5);
+    fill(255);
+    rect(-20, 0, 10, 35);
+    quad(-10, -17, -10, 18, 21, 21, 29, -9);
+    beginShape();
+    vertex(-10, -17);
+    bezierVertex(-3, -24, 4, -25, 9, -35);
+    bezierVertex(21, -14, -7, -13, 4, -9);
+    endShape();
+    popMatrix();
+};
+var Thumbs = [];
+
 var media = 'YouTube';
+
 
 rectMode(CENTER);
 draw = function() {
