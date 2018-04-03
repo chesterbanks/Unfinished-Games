@@ -1,0 +1,137 @@
+var keys = [];
+
+var rectCollide = function(one, two){
+    return one.x+one.w > two.x && one.y+one.h > two.y && one.x < two.x+two.w && one.y < two.y+two.h;
+};
+
+/* Block */
+var Block = function(x, y, w, h){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+};
+Block.prototype.draw = function() {
+    stroke(0, 0, 0, 100);
+    fill(20, 20, 20, 100);
+    rect(this.x + 5, this.y + 5, this.w, this.h);
+    stroke(61, 61, 61);
+    fill(102, 102, 102);
+    rect(this.x, this.y, this.w, this.h);
+};
+var Blocks = [new Block(0, 0, 30, 800), new Block(0, 0, 800, 30), new Block(800, 0, 30, 800), new Block(0, 800, 800, 30), new Block(451, 381, 50, 50)];
+
+/* Player */
+var Player = function(x, y, w, h){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    
+    this.xvel = 0;
+    this.yvel = 0;
+    
+    this.speed = 1;
+    this.maxVel = 3;
+};
+Player.prototype.draw = function() {
+    stroke(0, 0, 0, 100);
+    fill(20, 20, 20, 100);
+    rect(this.x + 5, this.y + 5, this.w, this.h);
+    stroke(130, 21, 21);
+    fill(219, 61, 61);
+    rect(this.x, this.y, this.w, this.h);
+    
+    if(keys[LEFT]){
+        this.xvel -= this.speed;
+    } 
+    if(keys[RIGHT]){
+        this.xvel += this.speed;
+    }
+    if(!keys[LEFT] && !keys[RIGHT]){
+        this.xvel /= 1.1;
+    }
+    this.xvel = constrain(this.xvel, -this.maxVel, this.maxVel);
+    
+    this.x += this.xvel;
+    for(var i = Blocks.length - 1; i >= 0; i --){
+        if(rectCollide(this, Blocks[i])){
+            if(this.xvel > 0){
+                this.x = Blocks[i].x - this.w;
+                this.xvel = 0;
+            }
+            if(this.xvel < 0){
+                this.x = Blocks[i].x + Blocks[i].w;
+                this.xvel = 0;
+            }
+        }
+    }
+    
+    
+    if(keys[UP]){
+        this.yvel -= this.speed;
+    } 
+    if(keys[DOWN]){
+        this.yvel += this.speed;
+    }
+    if(!keys[UP] && !keys[DOWN]){
+        this.yvel /= 1.1;
+    }
+    this.yvel = constrain(this.yvel, -this.maxVel, this.maxVel);
+    
+    this.y += this.yvel;
+    for(var i = Blocks.length - 1; i >= 0; i --){
+        if(rectCollide(this, Blocks[i])){
+            if(this.yvel > 0){
+                this.y = Blocks[i].y - this.h;
+                this.yvel = 0;
+            }
+            if(this.yvel < 0){
+                this.y = Blocks[i].y + Blocks[i].h;
+                this.yvel = 0;
+            }
+        }
+    }
+    
+    
+};
+var player = new Player(300, 300, 30, 30);
+
+/* Camera */
+var Camera = {
+    x: 0,
+    y: 0,
+    
+    xMin: 300, xMax: 530,
+    yMin: 300, yMax: 530,
+};
+
+/* Draw function */
+draw = function() {
+    background(255);
+    
+    pushMatrix();
+    translate(Camera.x, Camera.y);
+    
+    for(var i = Blocks.length - 1; i >= 0; i --){
+        Blocks[i].draw();
+    }
+    
+    player.draw();
+    popMatrix();
+    
+    if(player.x > Camera.xMin && player.x < Camera.xMax){
+        Camera.x -= player.xvel;
+    }
+    if(player.y > Camera.yMin && player.y < Camera.yMax){
+        Camera.y -= player.yvel;
+    }
+};
+
+/* Event handlers */
+keyPressed = function(){ 
+    keys[keyCode] = true; 
+};
+keyReleased = function(){ 
+    keys[keyCode] = false; 
+};
