@@ -4,6 +4,8 @@ var rectCollide = function(one, two){
     return one.x+one.w > two.x && one.y+one.h > two.y && one.x < two.x+two.w && one.y < two.y+two.h;
 };
 
+
+
 /* Block */
 var Block = function(x, y, w, h){
     this.x = x;
@@ -12,14 +14,24 @@ var Block = function(x, y, w, h){
     this.h = h;
 };
 Block.prototype.draw = function() {
-    stroke(0, 0, 0, 100);
-    fill(20, 20, 20, 100);
-    rect(this.x + 5, this.y + 5, this.w, this.h);
-    stroke(61, 61, 61);
-    fill(102, 102, 102);
-    rect(this.x, this.y, this.w, this.h);
+    noStroke();
+    fill(255, 255, 255);
+    //rect(this.x, this.y, this.w, this.h);
+    for(var i = 0; i < this.w; i += 30){
+        for(var j = 0; j < this.h; j += 30){
+            colorMode(HSB);
+            fill((frameCount * 2 + ((this.x+i)/5+(this.y+j)/5)) % 255, 255, 255, 55 + sin((this.y+j)+(this.x+i)+frameCount*2)*100);
+            rect(this.x + i, this.y + j, 30, 30);
+            colorMode(RGB);
+            fill(255, 255, 255, 30);
+            rect(this.x + i, this.y + j, 28, 8);
+            rect(this.x + i, this.y + j, 8, 28);
+            rect(this.x + i, this.y + j, 19, 15);
+            rect(this.x + i, this.y + j, 5, 5);
+        }
+    }
 };
-var Blocks = [new Block(0, 0, 30, 800), new Block(0, 0, 800, 30), new Block(800, 0, 30, 800), new Block(0, 800, 800, 30), new Block(451, 381, 50, 50)];
+var Blocks = [new Block(0, 0, 30, 800), new Block(0, 0, 800, 30), new Block(800, 0, 30, 800), new Block(0, 800, 800, 30), new Block(451, 30, 60, 210)];
 
 /* Player */
 var Player = function(x, y, w, h){
@@ -35,11 +47,11 @@ var Player = function(x, y, w, h){
     this.maxVel = 3;
 };
 Player.prototype.draw = function() {
-    stroke(0, 0, 0, 100);
-    fill(20, 20, 20, 100);
+    stroke(97, 97, 97, 100);
+    fill(128, 128, 128, 100);
     rect(this.x + 5, this.y + 5, this.w, this.h);
-    stroke(130, 21, 21);
-    fill(219, 61, 61);
+    stroke(199, 180, 104);
+    fill(136, 199, 64);
     rect(this.x, this.y, this.w, this.h);
     
     if(keys[LEFT]){
@@ -108,10 +120,17 @@ var Camera = {
 
 /* Draw function */
 draw = function() {
-    background(255);
+    background(8, 8, 8);
     
     pushMatrix();
     translate(Camera.x, Camera.y);
+    
+    strokeWeight(1);
+    stroke(255, 255, 255, 30);
+    for(var i = 0; i < 800; i += 22){
+        line(0, i, 800, i);
+        line(i, 800, i, 0);
+    }
     
     for(var i = Blocks.length - 1; i >= 0; i --){
         Blocks[i].draw();
