@@ -154,15 +154,29 @@ draw = function() {
     
     // bgs
     noStroke();
+    fill(230, 230, 230);
+    rect(0, -624, 565, 585);
     fill(207, 54, 54);
     rect(-500, 640, 670, 510);
+    fill(56, 49, 153);
+    rect(220, 640, 670, 573);
+    fill(221, 235, 21);
+    rect(945, 825, 757, 755);
+    fill(52, 186, 67);
+    rect(945, 20, 545, 755);
     fill(123, 198, 235);
     rect(-600, -620, 560, 640);
     fill(105, 46, 194);
     rect(-705, 80, 665, 510);
     textSize(100);
+    fill(0, 153, 255);
+    text('Google', 280, -350);
+    fill(25);
+    text('Spotify', 1225, 380);
+    text('Snapchat', 1330, 1190);
     fill(255);
     text('YouTube', -170, 890);
+    text('Discord', 560, 920);
     text('Instagram', -370, 330);
     text('Twitter', -315, -310);
     
