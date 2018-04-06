@@ -52,7 +52,7 @@ var images = {
         background(0, 0, 0, 0);
         noStroke();
         fill(255, 255, 255);
-        stroke(255, 255, 255, 60);
+        //stroke(255, 255, 255, 60);
         strokeWeight(15);
         pushMatrix();
         translate(328, 344);
@@ -97,6 +97,78 @@ var images = {
         popMatrix();
         
         rectMode(CORNER);
+        return get(0, 0, 600, 600);
+    },
+    'facebook': function(){
+        background(255, 255, 255);
+        
+        pushMatrix();
+        noStroke();
+        fill(46, 69, 135);
+        
+        beginShape();
+        vertex(450, 600);
+        vertex(350, 600);
+        vertex(350, 350);
+        vertex(280, 350);
+        vertex(280, 265);
+        vertex(350, 265);
+        vertex(350, 163);
+        bezierVertex(350, 92, 417, 80, 530, 100);
+        vertex(530, 177);
+        bezierVertex(434, 161, 453, 190, 450, 265);
+        vertex(521, 265);
+        vertex(501, 356);
+        vertex(450, 356);
+        endShape();
+        
+        popMatrix();
+        
+        return get(0, 0, 600, 600);
+    },
+    'google': function(){
+        background(255, 255, 255);
+        pushMatrix();
+        translate(300, 300);
+        strokeCap(SQUARE);
+        noFill();
+        strokeWeight(75);
+        stroke(235, 79, 52);
+        arc(0, 0, 300, 300, -160, -30);
+        stroke(209, 204, 44);
+        arc(0, 0, 300, 300, -218, -159);
+        stroke(57, 176, 82);
+        arc(0, 0, 300, 300, -303, -218);
+        stroke(39, 136, 240);
+        arc(0, 0, 300, 300, -361, -302);
+        strokeWeight(65);
+        line(0, 19, 171, 19);
+        strokeWeight(18);
+        line(0, -5, 187, -5);
+        popMatrix();
+        
+        return get(0, 0, 600, 600);
+    },
+    'spotify': function(){
+        background(0, 0, 0, 0);
+        
+        pushMatrix();
+        translate(300, 300);
+        rotate(10);
+        fill(46, 184, 60);
+        noStroke();
+        ellipse(0, 0, 500, 500);
+        noFill();
+        stroke(25);
+        strokeCap(ROUND);
+        strokeWeight(50);
+        arc(0, -7, 345, 124, -148, -32);
+        strokeWeight(35);
+        arc(0, 87, 345, 154, -135, -45);
+        strokeWeight(25);
+        arc(0, 146, 306, 154, -135, -45);
+        popMatrix();
+        
         return get(0, 0, 600, 600);
     },
 };
@@ -253,23 +325,23 @@ draw = function() {
     
     pushMatrix();
     translate(Camera.x, Camera.y);
-    translate(150, 150);
+    //translate(150, 150);
     
-    scale(0.2);
+    //scale(0.2);
     
     // bgs
     noStroke();
-    fill(230, 230, 230);
+    fill(245, 245, 245);
     rect(0, -624, 565, 585);
-    fill(39, 69, 186);
+    fill(46, 69, 135);
     rect(615, -624, 1265, 585);
     fill(230, 28, 28);
     rect(-500, 640, 670, 510);
-    fill(56, 49, 153);
+    fill(65, 84, 174);
     rect(220, 640, 670, 573);
     fill(221, 235, 21);
     rect(945, 825, 757, 755);
-    fill(46, 184, 60);
+    fill(15, 15, 15);
     rect(945, 20, 545, 755);
     fill(241, 242, 234);
     rect(1542, 20, 615, 755);
@@ -277,23 +349,21 @@ draw = function() {
     rect(1755, 825, 415, 415);
     fill(123, 198, 235);
     rect(-600, -712, 560, 640);
-    fill(105, 46, 194);
     image(images.insta, -640, -10);
     image(images.tweet, -545, -619, 450, 450);
     image(images.yt, -463, 600);
+    image(images.facebook, 1085, -485, 300, 300);
+    image(images.google, 140, -485, 300, 300);
+    image(images.spotify, 1070, 240, 300, 300);
     textSize(100);
     fill(0, 153, 255);
-    text('Google', 280, -350);
     fill(25);
-    text('Spotify', 1225, 380);
-    text('Snapchat', 1330, 1190);
-    text('Amazon', 1860, 379);
+    //text('Spotify', 1225, 380);
+    //text('Snapchat', 1330, 1190);
+    //text('Amazon', 1860, 379);
     fill(255);
-    text('KA', 1970, 1040);
-    text('Facebook', 1240, -340);
-    //text('YouTube', -170, 890);
-    text('Discord', 560, 920);
-    //text('Twitter', -315, -310);
+    //text('KA', 1970, 1040);
+    //text('Discord', 560, 920);
     
     strokeWeight(1);
     stroke(255, 255, 255, 30);
