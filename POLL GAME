@@ -171,6 +171,46 @@ var images = {
         
         return get(0, 0, 600, 600);
     },
+    'discord': function(){
+        pushMatrix();
+        translate(300, 300);
+        noStroke();
+        fill(255, 255, 255);
+        beginShape();
+        vertex(0, -83);
+        bezierVertex(40, -87, 79, -64, 93, -54);
+        bezierVertex(65, -80, 55, -83, 36, -87);
+        vertex(38, -94);
+        bezierVertex(76, -86, 84, -78, 103, -63);
+        bezierVertex(119, -37, 126, -5, 139, 74);
+        bezierVertex(133, 90, 94, 111, 58, 111);
+        vertex(49, 99);
+        bezierVertex(68, 95, 104, 77, 100, 61);
+        bezierVertex(74, 83, 64, 93, 0, 94);
+        endShape();
+        pushMatrix();
+        scale(-1, 1);
+        beginShape();
+        vertex(0, -83);
+        bezierVertex(40, -87, 79, -64, 93, -54);
+        bezierVertex(65, -80, 55, -83, 36, -87);
+        vertex(38, -94);
+        bezierVertex(76, -86, 84, -78, 103, -63);
+        bezierVertex(119, -37, 126, -5, 139, 74);
+        bezierVertex(133, 90, 94, 111, 58, 111);
+        vertex(49, 99);
+        bezierVertex(68, 95, 104, 77, 100, 61);
+        bezierVertex(74, 83, 64, 93, 0, 94);
+        endShape();
+        popMatrix();
+        
+        fill(121, 135, 255);
+        ellipse(43, 27, 44, 48);
+        ellipse(-43, 27, 44, 48);
+        popMatrix();
+        
+        return get(0, 0, 600, 600);
+    },
 };
 
 
@@ -182,9 +222,16 @@ var Block = function(x, y, w, h){
     this.h = h;
 };
 Block.prototype.draw = function() {
-    stroke(201, 201, 201);
-    fill(255, 255, 255);
+    colorMode(HSB);
+    stroke((abs(this.x) + abs(this.y) + frameCount) % 255, 255, 255, 100);
+    fill(0, 0, 0);
+    strokeWeight(4);
     rect(this.x, this.y, this.w, this.h);
+    noStroke();
+    fill((abs(this.x) + abs(this.y) + frameCount) % 255, 255, 255, 100);
+    strokeWeight(4);
+    rect(this.x + this.w / 6, this.y + this.h / 6, this.w / 1.5, this.h / 1.5);
+    colorMode(RGB);
 };
 var Blocks = [];
 
@@ -243,8 +290,8 @@ Player.prototype.draw = function() {
     stroke(97, 97, 97, 100);
     fill(128, 128, 128, 100);
     rect(this.x + 5, this.y + 5, this.w, this.h);
-    stroke(199, 180, 104);
-    fill(136, 199, 64);
+    stroke(209, 209, 209);
+    fill(255, 255, 255);
     rect(this.x, this.y, this.w, this.h);
 
     if(keys[LEFT]){
@@ -337,7 +384,7 @@ draw = function() {
     rect(615, -624, 1265, 585);
     fill(230, 28, 28);
     rect(-500, 640, 670, 510);
-    fill(65, 84, 174);
+    fill(121, 135, 255);
     rect(220, 640, 670, 573);
     fill(221, 235, 21);
     rect(945, 825, 757, 755);
@@ -355,6 +402,7 @@ draw = function() {
     image(images.facebook, 1085, -485, 300, 300);
     image(images.google, 140, -485, 300, 300);
     image(images.spotify, 1070, 240, 300, 300);
+    image(images.discord, 250, 630);
     textSize(100);
     fill(0, 153, 255);
     fill(25);
@@ -373,7 +421,9 @@ draw = function() {
     }
     
     for(var i = Blocks.length - 1; i >= 0; i --){
-        Blocks[i].draw();
+        if(Blocks[i].x + Camera.x > -50 && Blocks[i].x + Camera.x < 650 && Blocks[i].y + Camera.y > -50 && Blocks[i].y + Camera.y < 650){
+            Blocks[i].draw();
+        }
     }
     
     player.draw();
@@ -385,6 +435,10 @@ draw = function() {
     if(player.y > Camera.yMin && player.y < Camera.yMax){
         Camera.y -= player.yvel;
     }
+    
+    //background(121, 135, 255);
+    
+    
 };
 
 /* Event handlers */
