@@ -81,25 +81,30 @@ var images = {
         return get(0, 0, 600, 600);
     },
     'yt': function(){
-        rectMode(CENTER);
+            pushMatrix();
+        translate(300, 300);
         noStroke();
-        fill(0, 0, 0, 30);
-        rect(300, 309, 352, 251, 106);
-        fill(255, 255, 255);
-        rect(300, 300, 352, 251, 106);
-        
+        fill(255);
+        for(var i = -1; i < 1; i += 0.5){
+            pushMatrix();
+            scale(1, floor(i));
+            if(abs(i) === 0.5){ scale(-1, 0); }
+            beginShape();
+            vertex(0, 0);
+            vertex(0, -150);
+            bezierVertex(-200, -150, -200, -170, -200, 0);
+            endShape();
+            popMatrix();
+        }
         fill(250, 0, 7);
-        pushMatrix();
-        translate(298, 300);
         rotate(30);
         beginShape();
         for(var i = 0; i < 360; i += 120){
-            vertex(sin(i) * 55,  cos(i) * 55);
+            vertex(sin(i) * 65,  cos(i) * 65);
         }
         endShape(CLOSE);
-        popMatrix();
         
-        rectMode(CORNER);
+        popMatrix();
         return get(0, 0, 600, 600);
     },
     'facebook': function(){
@@ -210,6 +215,90 @@ var images = {
         fill(121, 135, 255);
         ellipse(43, 27, 44, 48);
         ellipse(-43, 27, 44, 48);
+        popMatrix();
+        
+        return get(0, 0, 600, 600);
+    },
+    'snapchat': function(){
+        strokeWeight(4);
+        strokeCap(ROUND);
+        pushMatrix();
+        translate(300, 300);
+        scale(2);
+        stroke(0);
+        fill(255);
+        beginShape();
+        vertex(0, -83);
+        bezierVertex(39, -84, 64, -55, 51, -10);
+        bezierVertex(59, -1, 70, -19, 76, -7);
+        bezierVertex(75, 4, 59, 1, 52, 10);
+        bezierVertex(41, 11, 78, 51, 95, 51);
+        bezierVertex(92, 58, 71, 58, 69, 64);
+        vertex(65, 74);
+        bezierVertex(26, 67, 40, 90, 0, 94);
+        endShape();
+        
+        pushMatrix();
+        scale(-1, 1);
+        beginShape();
+        vertex(0, -83);
+        bezierVertex(39, -84, 64, -55, 51, -10);
+        bezierVertex(59, -1, 70, -19, 76, -7);
+        bezierVertex(75, 4, 59, 1, 52, 10);
+        bezierVertex(41, 11, 78, 51, 95, 51);
+        bezierVertex(92, 58, 71, 58, 69, 64);
+        vertex(65, 74);
+        bezierVertex(26, 67, 40, 90, 0, 94);
+        endShape();
+        popMatrix();
+        popMatrix();
+        
+        return get(0, 0, 600, 600);  
+    },
+    'amazon': function(){
+        pushMatrix();
+        translate(300, 300);
+        fill(45);
+        textSize(300);
+        textFont(createFont('Arial Bold'));
+        text('a', 0, 0);
+        stroke(45);
+        strokeWeight(20);
+        line(-41, -2, -58, -6);
+        stroke(248, 165, 27);
+        noFill();
+        strokeWeight(10);
+        arc(0, 125, 243, 61, 27, 136);
+        arc(0, 126, 245, 61, 24, 148);
+        arc(0, 122, 243, 83, 24, 159);
+        pushMatrix();
+        translate(103, 146);
+        rotate(52);
+        noStroke();
+        fill(248, 165, 27);
+        beginShape();
+        vertex(30, 0);
+        bezierVertex(31, -7, 15, -46, 0, -50);
+        bezierVertex(-15, -46, -31, -10, -30, 0);
+        bezierVertex(-14, -20, -16, -20, 0, -35);
+        bezierVertex(13, -28, 14, -20,  30, 0);
+        endShape();
+        popMatrix();
+        popMatrix();
+        
+        return get(0, 0, 600, 600);
+    },
+    'ka': function(){
+        pushMatrix();
+        translate(300, 300);
+        noStroke();
+        fill(255, 255, 255);
+        beginShape();
+        vertex(-124, 120);
+        bezierVertex(-179, -23, -54, -139, 117, -152);
+        bezierVertex(142, -16, 61, 160, -102, 138);
+        bezierVertex(-91, 120, 106, -134, -124, 120);
+        endShape();
         popMatrix();
         
         return get(0, 0, 600, 600);
@@ -380,7 +469,7 @@ draw = function() {
     //scale(0.15);
     
     // bgs
-noStroke();
+    noStroke();
     fill(245, 245, 245);
     rect(0, -900, 740, 855);
     fill(46, 69, 135);
@@ -406,7 +495,10 @@ noStroke();
     image(images.facebook, 1288, -560, 300, 300);
     image(images.google, 209, -631, 300, 300);
     image(images.spotify, 1254, 251, 300, 300);
-    image(images.discord, 167, 874);
+    image(images.discord, 167, 915);
+    image(images.snapchat, 1173, 1040);
+    image(images.amazon, 2015, 50);
+    image(images.ka, 2045, 814);
     
     for(var i = Blocks.length - 1; i >= 0; i --){
         if(Blocks[i].x + Camera.x > -50 && Blocks[i].x + Camera.x < 650 && Blocks[i].y + Camera.y > -50 && Blocks[i].y + Camera.y < 650){
@@ -423,10 +515,6 @@ noStroke();
     if(player.y > Camera.yMin && player.y < Camera.yMax){
         Camera.y -= player.yvel;
     }
-    
-    //background(121, 135, 255);
-    
-    
 };
 
 /* Event handlers */
