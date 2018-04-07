@@ -38,6 +38,9 @@ var images = {
             ellipse(41, 550, i, i);
         }
         
+        return get(0, 0, 600, 600);
+    },
+    'instafront': function(){
         rectMode(CENTER);
         stroke(255, 255, 255);
         strokeWeight(40);
@@ -238,16 +241,16 @@ var Blocks = [];
 /* Map making */
 var Rooms = [
     {x: 0, y: 0, w: 30, h: 20, gates: [8, 13, 13, 13]}, // Control center
-    {x: 7, y: 21, w: 23, h: 20, gates: [13, 28, 5, 36]}, // Discord
-    {x: -17, y: 21, w: 23, h: 18, gates: [-13, 36, 21, 39]}, // YouTube
-    {x: -22, y: -1, w: 21, h: 21, gates: [-13, 13, -13, 44]}, // Insta
-    {x: -20, y: -24, w: 19, h: 22, gates: [11, 13, -13, 44]}, // Twitter
-    {x: 0, y: -21, w: 19, h: 20, gates: [-4, -17, 8, 44]}, // Google
-    {x: 20, y: -21, w: 43, h: 20, gates: [-4, -23, 55, -17]}, // Facebook
-    {x: 51, y: 0, w: 21, h: 26, gates: [55, -4, 63, 8]}, // Amazon
-    {x: 58, y: 27, w: 15, h: 15, gates: [63, 20, 55, 29]}, // KA
-    {x: 31, y: 0, w: 19, h: 26, gates: [8, 8, 34, 13]}, // Spotify
-    {x: 31, y: 27, w: 26, h: 26, gates: [34, 29, 25, 28]}, // Snapchat
+    {x: 1, y: 21, w: 29, h: 40, gates: [13, 28, 5, 36]}, // Discord
+    {x: -32, y: 21, w: 31, h: 28, gates: [-13, 36, 21, 39]}, // YouTube
+    {x: -31, y: -10, w: 30, h: 30, gates: [-13, 13, -13, 44]}, // Insta
+    {x: -30, y: -43, w: 29, h: 32, gates: [11, 13, -13, 44]}, // Twitter
+    {x: 0, y: -31, w: 25, h: 30, gates: [-4, -17, 8, 44]}, // Google
+    {x: 26, y: -26, w: 43, h: 25, gates: [-4, 12, 55, -17]}, // Facebook
+    {x: 62, y: 0, w: 30, h: 26, gates: [55, -4, 84, 8]}, // Amazon
+    {x: 68, y: 27, w: 20, h: 20, gates: [84, 20, 55, 29]}, // KA
+    {x: 31, y: 0, w: 30, h: 26, gates: [55, 8, 34, 13]}, // Spotify
+    {x: 31, y: 27, w: 36, h: 36, gates: [34, 29, 25, 28]}, // Snapchat
 ];
 for(var i = 0; i < Rooms.length; i ++){
     Rooms[i].x = Rooms[i].x * 30;
@@ -374,51 +377,36 @@ draw = function() {
     translate(Camera.x, Camera.y);
     //translate(150, 150);
     
-    //scale(0.2);
+    //scale(0.15);
     
     // bgs
-    noStroke();
+noStroke();
     fill(245, 245, 245);
-    rect(0, -624, 565, 585);
+    rect(0, -900, 740, 855);
     fill(46, 69, 135);
-    rect(615, -624, 1265, 585);
+    rect(795, -762, 1265, 720);
     fill(230, 28, 28);
-    rect(-500, 640, 670, 510);
+    rect(-945, 640, 901, 806);
     fill(121, 135, 255);
-    rect(220, 640, 670, 573);
+    rect(43, 640, 839, 1170);
     fill(221, 235, 21);
-    rect(945, 825, 757, 755);
+    rect(945, 825, 1051, 1041);
     fill(15, 15, 15);
-    rect(945, 20, 545, 755);
+    rect(945, 20, 870, 755);
     fill(241, 242, 234);
-    rect(1542, 20, 615, 755);
-    fill(41, 227, 28);
-    rect(1755, 825, 415, 415);
+    rect(1875, 20, 871, 755);
+    fill(51, 214, 92);
+    rect(2053, 825, 565, 573);
     fill(123, 198, 235);
-    rect(-600, -712, 560, 640);
-    image(images.insta, -640, -10);
-    image(images.tweet, -545, -619, 450, 450);
-    image(images.yt, -463, 600);
-    image(images.facebook, 1085, -485, 300, 300);
-    image(images.google, 140, -485, 300, 300);
-    image(images.spotify, 1070, 240, 300, 300);
-    image(images.discord, 250, 630);
-    textSize(100);
-    fill(0, 153, 255);
-    fill(25);
-    //text('Spotify', 1225, 380);
-    //text('Snapchat', 1330, 1190);
-    //text('Amazon', 1860, 379);
-    fill(255);
-    //text('KA', 1970, 1040);
-    //text('Discord', 560, 920);
-    
-    strokeWeight(1);
-    stroke(255, 255, 255, 30);
-    for(var i = 0; i < 800; i += 22){
-        //line(0, i, 800, i);
-        //line(i, 800, i, 0);
-    }
+    rect(-870, -1260, 830, 910);
+    image(images.insta, -914, -283, 870, 870);
+    image(images.instafront, -695, -45, 400, 400);
+    image(images.tweet, -685, -1015, 450, 450);
+    image(images.yt, -799, 735);
+    image(images.facebook, 1288, -560, 300, 300);
+    image(images.google, 209, -631, 300, 300);
+    image(images.spotify, 1254, 251, 300, 300);
+    image(images.discord, 167, 874);
     
     for(var i = Blocks.length - 1; i >= 0; i --){
         if(Blocks[i].x + Camera.x > -50 && Blocks[i].x + Camera.x < 650 && Blocks[i].y + Camera.y > -50 && Blocks[i].y + Camera.y < 650){
