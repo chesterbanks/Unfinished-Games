@@ -1,6 +1,6 @@
 textFont(createFont('Courier'));
+textAlign(CENTER, CENTER);
 
-/** PUT ALL GRAPHICS CODE IN THE FUNCTION BELOW.  */
 var Floor = function(x, y, type){
     this.Painting = function(colo, shape, x, y, w, h, r){
         pushMatrix();
@@ -43,32 +43,35 @@ var Floor = function(x, y, type){
         for(var i = 0; i < 600; i += 50){
             rect(i, 0, 10 + random(30), 166);
         }
-        fill(230, 193, 184);
+        fill(209, 110, 88);
         rect(0, 165, 600, 25);
         fill(0, 0, 0, 30);
         rect(0, 181, 600, 3);
         rect(0, 171, 600, 2);
-        fill(186, 149, 139);
+        fill(173, 83, 60);
         rect(0, 190, 600, 10);
     } 
     
-    // YOUR NEW FLOOR
     if (type === 1){
         fill(96, 151, 219);
         rect(0, 0, 600, 190);
         stroke(0, 0, 0, 50);
+        strokeWeight(1);
         for(var i = -52; i < 600; i += 28){
             line(i + 50, 0, i, 200);
             line(i - 50, 0, i, 200);
         }
         noStroke();
-        fill(230, 193, 184);
+        fill(255, 255, 255);
         rect(0, 165, 600, 25);
-        fill(0, 0, 0, 30);
-        rect(0, 181, 600, 3);
-        rect(0, 171, 600, 2);
-        fill(186, 149, 139);
+        fill(219, 219, 219);
         rect(0, 190, 600, 10);
+        for(var i = 0; i < 600; i += 40){
+            fill(235);
+            rect(i + 20, 165, 19, 7);
+            rect(i, 173, 20, 9);
+            rect(i + 20, 181, 20, 9);
+        }
     }
     
     if (type === 2){
@@ -89,8 +92,8 @@ var Floor = function(x, y, type){
         fill(0, 0, 0, 50);
         rect(0, 192, 600, 8);
         
-        this.Painting(color(237, 255, 74), 'tri', 79, 60, 53, 35, -11);
-        this.Painting(color(255, 255, 255), 'circle', 440, 37, 44, 55, 8);
+        this.Painting(color(237, 255, 74), 'tri', 64, 60, 33, 22, -11);
+        this.Painting(color(255, 255, 255), 'circle', 440, 71, 44, 44, 8);
     }
     
     noStroke();
@@ -99,20 +102,150 @@ var Floor = function(x, y, type){
         rect(0, 0, 600, i);
     }
     fill(0, 0, 0, 3);
-    for(var i = 0; i < 146; i += 5){
-        rect(0, 200 - i, 600, i);
+    for(var i = 0; i < 72; i += 5){
+        rect(0, 165 - i, 600, i);
     }
     popMatrix();
 };
 
-background(255, 255, 255);
-Floor(0, 0, 2);
-Floor(0, 200, 1);
-Floor(0, 400, 0);
-fill(31, 31, 31);
-rect(225, 0, 150, 600);
-stroke(0, 0, 0, 30);
-for(var i = 0; i < 100; i += 14){
-    strokeWeight(i);
-    line(300, 0, 300, 600);
-}
+var images = {
+    'noiseTexture': function(){
+        var noiseScale=0.02;
+
+        noStroke();
+          for(var x=0; x < width; x+=5) {
+              for(var y = 0; y < height; y +=5){
+            var noiseVal = noise((x)*noiseScale, 
+                                    y*noiseScale);
+            fill(0, 0, 0, noiseVal*105);
+            rect(x, y, 5, 5);
+              }
+          }
+        
+        return get(0, 0, width, height);
+    },
+    'hotel': function(){
+        background(255, 255, 255);
+        Floor(0, 0, 2);
+        Floor(0, 200, 1);
+        Floor(0, 400, 0);
+        
+        
+        image(images.noiseTexture, 0, 165, 600, 35);
+        
+        fill(31, 31, 31);
+        rect(225, 0, 150, 600);
+        stroke(0, 0, 0, 30);
+        for(var i = 0; i < 100; i += 14){
+            strokeWeight(i);
+            line(300, 0, 300, 600);
+        }
+        
+        
+        return get(0, 0, 600, 600);
+    },
+    'elevator': function(){
+        pushMatrix();
+        translate(75, 20);
+        noStroke();
+        fill(181, 181, 181);
+        rect(-75, 0, 150, 200);
+        fill(0, 0, 0, 20);
+        for(var i = -62; i < 70; i += 15){
+            rect(i, 0, 1, 175);
+        }
+        fill(54, 54, 54);
+        rect(-75, 191, 150, 10);
+        rect(-75, 6, 150, 10);
+        fill(115, 115, 115);
+        rect(-75, 165, 150, 26);
+        rect(-75, -20, 150, 26);
+        
+        noStroke();
+        fill(255, 255, 255, 15);
+        for(var i = 0; i < 146; i += 5){
+            rect(-75, 16, 150, i);
+        }
+        fill(0, 0, 0, 3);
+        for(var i = 0; i < 72; i += 5){
+            rect(-75, 187 - i, 149, i);
+        }
+        
+        image(images.noiseTexture, -75, 16, 150, 149);
+        
+        pushMatrix();
+        translate(33, 67);
+        for(var i = 0; i < 3; i ++){
+            for(var j = 0; j < 5; j ++){
+                fill(120, 120, 120);
+                ellipse(i * 10, j * 10, 9, 9);
+                fill(153, 153, 153);
+                ellipse(i * 10, j * 10, 7, 7);
+                fill(255);
+                textSize(6);
+                text(i+j, i * 10, j * 10);
+            }
+        }
+        popMatrix();
+        
+        
+        fill(176, 139, 39);
+        rect(-60, 123, 9, 9, 20);
+        rect(48, 123, 9, 9, 20);
+        fill(222, 176, 49);
+        rect(-68, 128, 135, 9, 20);
+        fill(255, 255, 255, 100);
+        rect(-68, 128, 135, 5, 20);
+        popMatrix();
+            
+        return get(0, 0, 150, 220);
+    },
+};
+
+var keys = [];
+keyPressed = function(){ keys[keyCode] = true; };
+keyReleased = function(){ keys[keyCode] = false; };
+
+var Elevator = function(){
+    this.x = 300;
+    this.y = 200;
+    
+    this.destiny = 200;
+    this.go = false;
+};
+Elevator.prototype.draw = function() {
+    pushMatrix();
+    translate(this.x, this.y);
+    
+    image(images.elevator, -75, -21);
+    
+    popMatrix();
+    
+    
+    if(keys[UP] && !this.go){
+        this.destiny -= 200;
+        this.go = true;
+    }
+    if(keys[DOWN] && !this.go){
+        this.destiny += 200;
+        this.go = true;
+    }
+    if(!keys[UP] && !keys[DOWN]){ this.go = false; }
+    
+    this.y += (this.destiny - this.y) / 5;
+};
+var elevator = new Elevator();
+
+draw = function() {
+    for(var i in images){
+        if(typeof images[i] !== 'object'){
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+    
+    image(images.hotel, 0, 0);
+    
+    
+    elevator.draw();
+};
