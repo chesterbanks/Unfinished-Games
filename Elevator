@@ -1,0 +1,118 @@
+textFont(createFont('Courier'));
+
+/** PUT ALL GRAPHICS CODE IN THE FUNCTION BELOW.  */
+var Floor = function(x, y, type){
+    this.Painting = function(colo, shape, x, y, w, h, r){
+        pushMatrix();
+        translate(x, y);
+        rotate(r);
+        scale(w / 50, h / 50);
+        strokeWeight(1);
+        noFill();
+        stroke(255);
+        triangle(0, 0, 25, -25, 50, 0);
+        strokeWeight(5);
+        point(25, -25);
+        strokeWeight(9);
+        stroke(117, 81, 20);
+        rect(0, 0, 50, 50);
+        strokeWeight(3);
+        stroke(156, 112, 36);
+        fill(colo);
+        rect(0, 0, 50, 50);
+        fill(0);
+        noStroke();
+        if(shape === 'tri'){
+            triangle(18, 43, 38, 25, 18, 9);
+        }
+        if(shape === 'circle'){
+            ellipse(25, 25, 30, 30);
+        }
+        popMatrix();
+    };
+    
+    pushMatrix();
+    translate(x, y);
+    scale(1.0);
+    
+    noStroke();
+    if(type === 0){
+        fill(238, 240, 189);
+        rect(0, 0, 600, 190);
+        fill(255, 255, 255, 100);
+        for(var i = 0; i < 600; i += 50){
+            rect(i, 0, 10 + random(30), 166);
+        }
+        fill(230, 193, 184);
+        rect(0, 165, 600, 25);
+        fill(0, 0, 0, 30);
+        rect(0, 181, 600, 3);
+        rect(0, 171, 600, 2);
+        fill(186, 149, 139);
+        rect(0, 190, 600, 10);
+    } 
+    
+    // YOUR NEW FLOOR
+    if (type === 1){
+        fill(96, 151, 219);
+        rect(0, 0, 600, 190);
+        stroke(0, 0, 0, 50);
+        for(var i = -52; i < 600; i += 28){
+            line(i + 50, 0, i, 200);
+            line(i - 50, 0, i, 200);
+        }
+        noStroke();
+        fill(230, 193, 184);
+        rect(0, 165, 600, 25);
+        fill(0, 0, 0, 30);
+        rect(0, 181, 600, 3);
+        rect(0, 171, 600, 2);
+        fill(186, 149, 139);
+        rect(0, 190, 600, 10);
+    }
+    
+    if (type === 2){
+        fill(247, 107, 181);
+        rect(0, 0, 600, 190);
+        fill(143, 53, 105, 50);
+        for(var i = -4; i < 600; i += 50){
+            for(var j = 18; j < 200; j += 50){
+                ellipse(i, j, 20, 20);
+                ellipse(i + 25, j + 25, 25, 25);
+            }
+        }
+        fill(209, 58, 116);
+        rect(0, 165, 600, 35);
+        fill(0, 0, 0, 30);
+        rect(0, 181, 600, 3);
+        rect(0, 171, 600, 2);
+        fill(0, 0, 0, 50);
+        rect(0, 192, 600, 8);
+        
+        this.Painting(color(237, 255, 74), 'tri', 79, 60, 53, 35, -11);
+        this.Painting(color(255, 255, 255), 'circle', 440, 37, 44, 55, 8);
+    }
+    
+    noStroke();
+    fill(255, 255, 255, 3);
+    for(var i = 0; i < 146; i += 5){
+        rect(0, 0, 600, i);
+    }
+    fill(0, 0, 0, 3);
+    for(var i = 0; i < 146; i += 5){
+        rect(0, 200 - i, 600, i);
+    }
+    popMatrix();
+};
+
+background(255, 255, 255);
+Floor(0, 0, 2);
+Floor(0, 200, 1);
+Floor(0, 400, 0);
+fill(31, 31, 31);
+rect(225, 0, 150, 600);
+stroke(0, 0, 0, 30);
+for(var i = 0; i < 100; i += 14){
+    strokeWeight(i);
+    line(300, 0, 300, 600);
+}
