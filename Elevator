@@ -44,6 +44,9 @@ var clicked = false;
 var keys = [];
 keyPressed = function(){ keys[keyCode] = true; };
 keyReleased = function(){ keys[keyCode] = false; };
+mouseClicked = function(){
+    clicked = true;
+};
 
 // The rectangle collision function
 var rectCollide = function(one, two){
@@ -483,6 +486,9 @@ Button.prototype.draw = function() {
     if(mouseX > this.x - this.w / 2 && mouseX < this.x + this.w / 2 && mouseY > this.y - this.h / 2 && mouseY < this.y + this.h / 2){
         overButton = true;
         this.plusY += (6 - this.plusY) / 5;
+        if(clicked){
+            scene = this.nxt;
+        }
     } else {
         this.plusY /= 1.2;
     }
