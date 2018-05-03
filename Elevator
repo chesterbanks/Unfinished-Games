@@ -36,6 +36,11 @@ var scene = 'Menu';
 textFont(createFont('Courier'));
 textAlign(CENTER, CENTER);
 
+// Mouse properties
+var overButton = false;
+var clicked = false;
+
+// Key events
 var keys = [];
 keyPressed = function(){ keys[keyCode] = true; };
 keyReleased = function(){ keys[keyCode] = false; };
@@ -449,6 +454,45 @@ var myText = function(txt, x, y, sz){
     }
 };
 
+var Button = function(x, y, w, h, txt, nxt){
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.txt = txt;
+    this.nxt = nxt;
+    
+    this.plusY = 0;
+};
+Button.prototype.draw = function() {
+    rectMode(CENTER);
+    
+    fill(0, 0, 0, 30);
+    rect(this.x, this.y + 11, this.w - 10, this.h, 10);
+    fill(31, 31, 31);
+    rect(this.x, this.y + 7, this.w, this.h, 10);
+    fill(55 + (this.plusY * 5), 55 + (this.plusY * 5), 55 + (this.plusY * 5));
+    rect(this.x, this.y + this.plusY, this.w, this.h, 5);
+    
+    fill(255, 255, 255);
+    textSize(this.h - 30);
+    text(this.txt, this.x, this.y + this.plusY);
+    
+    rectMode(CORNER);
+    
+    if(mouseX > this.x - this.w / 2 && mouseX < this.x + this.w / 2 && mouseY > this.y - this.h / 2 && mouseY < this.y + this.h / 2){
+        overButton = true;
+        this.plusY += (6 - this.plusY) / 5;
+    } else {
+        this.plusY /= 1.2;
+    }
+    
+    this.plusY = constrain(this.plusY, 0.1, 5.5);
+};
+var play = new Button(300, 360, 400, 70, 'PLAY', 'Game');
+var how = new Button(300, 435, 400, 50, 'HOW', 'Game');
+var creds = new Button(300, 500,400, 50, 'CREDITS', 'Game');
+
 draw = function() {
     for(var i in images){
         if(typeof images[i] !== 'object'){
@@ -466,10 +510,22 @@ draw = function() {
         pushMatrix();
         translate(0, 6);
         fill(255, 255, 255, 100);
-        rect(0, 150, 600, 133);
+        rect(11, 150, 581, 133);
         myText('ELEVATOR', 11, 200, 60);
         myText('CHESTER BANKS', 49, 163, 22);
         popMatrix();
+        
+        noFill();
+        stroke(255, 255, 255);
+        strokeWeight(3);
+        rect(10, 10, 580, 580);
+        strokeWeight(1);
+        rect(4, 5, 591, 590);
+        
+        noStroke();
+        play.draw();
+        how.draw();
+        creds.draw();
     }
     if(scene === 'Game'){
         image(images.hotel, 0, 0);
@@ -506,4 +562,9 @@ draw = function() {
             People[i].draw();
         }
     }
+    
+    cursor(overButton ? 'pointer' : 'default');
+    
+    overButton = false;
+    clicked = false;
 };
