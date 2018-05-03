@@ -1,5 +1,44 @@
+/**
+ * Elevator
+ * Chester Banks
+ * May 6 2018
+*/
+
+/* 
+    T A B L E   O F   C O N T E N T S
+    
+    Text settings
+    Key events
+    Collision detection function
+    Floor graphic
+    Images
+        Noise texture
+        Hotel
+        Elevator
+    Elevator
+        Constructor
+        Prototype
+        Variable
+    Collision boxes
+    Person
+        Constructor
+        Prototype.applyCollisions
+        Prototype.draw
+        Variable
+    Draw function
+        Image loading
+        Game scene
+*/
+
+var scene = 'Menu';
+
+// Text settings
 textFont(createFont('Courier'));
 textAlign(CENTER, CENTER);
+
+var keys = [];
+keyPressed = function(){ keys[keyCode] = true; };
+keyReleased = function(){ keys[keyCode] = false; };
 
 // The rectangle collision function
 var rectCollide = function(one, two){
@@ -242,6 +281,9 @@ var images = {
         ellipse(0, -60, 20, 10);
         popMatrix();
         
+        return get(0, 0, 600, 600);
+    },
+    'shaft': function(){
         fill(31, 31, 31);
         rect(225, 0, 150, 600);
         stroke(0, 0, 0, 30);
@@ -250,6 +292,11 @@ var images = {
             line(300, 0, 300, 600);
         }
         
+        return get(0, 0, width, height);
+    },
+    'hotelBlurred': function(){
+        image(images.hotel, 0, 0);
+        filter(BLUR, 1.5);
         
         return get(0, 0, 600, 600);
     },
@@ -310,10 +357,6 @@ var images = {
         return get(0, 0, 150, 220);
     },
 };
-
-var keys = [];
-keyPressed = function(){ keys[keyCode] = true; };
-keyReleased = function(){ keys[keyCode] = false; };
 
 var Elevator = function(){
     this.x = 300;
@@ -393,6 +436,19 @@ Person.prototype.draw = function() {
 };
 var People = [];
 
+var myText = function(txt, x, y, sz){
+    textSize(sz);
+    for(var i = 0; i < txt.length; i ++){
+        fill(0);
+        if(i % 2 === 0){
+            fill(0);
+            rect(x + sz + i * sz, y, sz * 1.05, sz * 1.05);
+            fill(255, 255, 255);
+        }
+        text(txt[i], x + (sz * 1.5) + i * sz, y + (sz / 2));
+    }
+};
+
 draw = function() {
     for(var i in images){
         if(typeof images[i] !== 'object'){
@@ -401,32 +457,53 @@ draw = function() {
         }
     }
     
-    image(images.hotel, 0, 0);
-    
-    noFill();
-    stroke(255);
-    strokeWeight(2);
-    ellipse(203, 29, 27, 28);
-    noStroke();
-    fill(255);
-    ellipse(203, 29, 20, 20);
-    
-    fill(0, 0, 0);
-    textSize(21);
-    text('FLOOR 3', 165, 28);
-    text('FLOOR', 425, 226);
-    text('FLOOR', 155, 427);
-    
-    
-    elevator.draw();
-    
-    collisionBoxes[0] = {x: elevator.x - 75, y: elevator.y + 180, w: 150, h: 20};
-    collisionBoxes[1] = {x: elevator.x - 75, y: elevator.y + -20, w: 150, h: 20};
-    
-    if(frameCount % 100 === 0){
-        People.push(new Person());
+    if(scene === 'Menu'){
+        background(130, 130, 130);
+        textFont(createFont('Trocchi'));
+        
+        image(images.hotelBlurred, 0, 0);
+        
+        pushMatrix();
+        translate(0, 6);
+        fill(255, 255, 255, 100);
+        rect(0, 150, 600, 133);
+        myText('ELEVATOR', 11, 200, 60);
+        myText('CHESTER BANKS', 49, 163, 22);
+        popMatrix();
     }
-    for(var i = People.length - 1; i >= 0; i --){
-        People[i].draw();
+    if(scene === 'Game'){
+        image(images.hotel, 0, 0);
+        image(images.shaft, 0, 0);
+        
+        noFill();
+        stroke(255);
+        strokeWeight(2);
+        ellipse(203, 29, 27, 28);
+        ellipse(201, 429, 27, 28);
+        ellipse(474, 227, 27, 28);
+        noStroke();
+        fill(255);
+        ellipse(203, 29, 20, 20);
+        ellipse(201, 429, 20, 20);
+        ellipse(474, 227, 20, 20);
+        
+        fill(0, 0, 0);
+        textSize(21);
+        text('FLOOR 3', 165, 28);
+        text('FLOOR 2', 436, 226);
+        text('FLOOR 1', 163, 427);
+        
+        
+        elevator.draw();
+        
+        collisionBoxes[0] = {x: elevator.x - 75, y: elevator.y + 180, w: 150, h: 20};
+        collisionBoxes[1] = {x: elevator.x - 75, y: elevator.y + -20, w: 150, h: 20};
+        
+        if(frameCount % 100 === 0){
+            People.push(new Person());
+        }
+        for(var i = People.length - 1; i >= 0; i --){
+            People[i].draw();
+        }
     }
 };
