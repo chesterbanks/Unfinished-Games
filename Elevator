@@ -364,6 +364,107 @@ var images = {
             
         return get(0, 0, 150, 220);
     },
+    'menuBG': function(){
+        rectMode(CENTER);
+        background(232, 126, 204);
+        
+        pushMatrix();
+        scale(3);
+        noStroke();
+        fill(143, 53, 105, 30);
+        for(var i = -4; i < 210; i += 50){
+            for(var j = 18; j < 177; j += 50){
+                ellipse(i, j, 20, 20);
+                ellipse(i + 25, j + 25, 25, 25);
+            }
+        }
+        popMatrix();
+        strokeWeight(1);
+        beginShape();
+        vertex(126, 121);
+        bezierVertex(251, 131, 352, 126, 476, 123);
+        vertex(463, 550);
+        vertex(137, 550);
+        endShape();
+        fill(232, 232, 223);
+        rect(300, 345, 314, 410);
+        fill(0, 0, 0, 30);
+        quad(160, 168, 439, 167, 433, 550, 170, 550);
+        fill(250, 250, 250);
+        rect(300, 361, 263, 369);
+        fill(43, 29, 24);
+        rect(300, 362, 1, 375);
+        fill(43, 29, 24, 5);
+        for(var i = 0; i < 19; i += 3){
+            rect(300, 362, i, 375);
+        }
+        noFill();
+        
+        stroke(255, 255, 255);
+        quad(158, 165, 442, 165, 433, 550, 170, 550);
+        strokeWeight(3);
+        stroke(0, 0, 0, 30);
+        line(144, 141, 160, 168);
+        line(456, 141, 438, 167);
+        
+        strokeWeight(12);
+        stroke(255, 255, 255, 20);
+        fill(240, 240, 235);
+        beginShape();
+        vertex(0, 515);
+        vertex(-17, 488);
+        bezierVertex(10, 511, 175, 500, 143, 515);
+        endShape();
+        
+        beginShape();
+        vertex(600, 515);
+        vertex(637-17, 488);
+        bezierVertex(600, 511, 600, 500, 456, 515);
+        endShape();
+        
+        noStroke();
+        fill(232, 232, 223);
+        rect(54, 532, 177, 35);
+        rect(545, 532, 177, 35);
+        
+        fill(242, 164, 223);
+        rect(300, 575, 600, 50);
+        
+        fill(0, 0, 0, 20);
+        beginShape();
+        vertex(0, 550);
+        vertex(0, 566);
+        bezierVertex(180, 554, 432, 550, 600, 565);
+        vertex(600, 550);
+        endShape();
+        beginShape();
+        vertex(0, 550);
+        vertex(-25, 588);
+        bezierVertex(180, 554, 432, 550, 630, 592);
+        vertex(600, 550);
+        endShape();
+        
+        fill(163, 163, 163);
+        ellipse(500, 300, 35, 35);
+        ellipse(500, 339, 30, 30);
+        fill(237, 237, 237);
+        arc(500, 300, 35, 35, -180, 0);
+        arc(500, 339, 30, 30, -180, 0);
+        fill(232, 232, 232);
+        ellipse(500, 300, 30, 30);
+        ellipse(500, 339, 25, 25);
+        fill(240, 65, 150);
+        textSize(23);
+        text('\u25B2', 500, 298);
+        textSize(15);
+        text('\u25BC', 500, 341);
+        
+        rectMode(CORNER);
+        
+        filter(BLUR, 2);
+        
+        return get(0, 0, 600, 600);
+    },
 };
 
 var Elevator = function(){
@@ -444,16 +545,16 @@ Person.prototype.draw = function() {
 };
 var People = [];
 
-var myText = function(txt, x, y, sz){
+var myText = function(txt, x, y, sz, jiggle){
     textSize(sz);
     for(var i = 0; i < txt.length; i ++){
         fill(0);
-        if(i % 2 === 0){
+        if(i % 2 === 0 && txt[i] !== ' '){
             fill(0);
-            rect(x + sz + i * sz, y, sz * 1.05, sz * 1.05);
+            rect(x + sz + i * sz, y + (jiggle ? sin((i*30)+frameCount*5)*5 : 0), sz * 1.05, sz * 1.05);
             fill(255, 255, 255);
         }
-        text(txt[i], x + (sz * 1.5) + i * sz, y + (sz / 2));
+        text(txt[i], x + (sz * 1.5) + i * sz, y + (sz / 2) + (jiggle ? sin((i*30)+frameCount*5)*5 : 0));
     }
 };
 
@@ -471,8 +572,19 @@ Button.prototype.draw = function() {
     rotate(10 +this.sz - (this.plusSz * 180));
     scale((this.sz / 175) + this.plusSz);
     translate(-200, -175);
+    strokeWeight(35);
+    stroke(0, 0, 0, 20);
+    beginShape();
+    vertex(200, 85);
+    vertex(275, 130);
+    vertex(275, 220);
+    vertex(200, 260);
+    vertex(125, 220);
+    vertex(125, 130);
+    vertex(200, 85);
+    endShape();
     strokeWeight(15);
-    stroke(255, 255, 255, 210);
+    stroke(255, 255, 255);
     fill(30, 73, 87);
     beginShape();
     vertex(200, 85);
@@ -535,9 +647,8 @@ Button.prototype.draw = function() {
         this.plusSz += (0 - this.plusSz) / 6;
     }
 };
-var play = new Button(300, 430, 175,  'Game');
-var how = new Button(440, 430, 100,  'How');
-var about = new Button(160, 430, 100,  'About');
+
+var menuSz = 71;
 
 draw = function() {
     for(var i in images){
@@ -549,13 +660,20 @@ draw = function() {
     
     if(scene === 'Menu'){
         background(115, 175, 240);
+        
+        pushMatrix();
+        translate(300, 200);
+        scale(1 + menuSz);
+        rotate(menuSz * 2);
+        translate(-300, -200);
+        
         textFont(createFont('Trocchi'));
         
-        //image(images.hotelBlurred, 0, 0);
+        image(images.menuBG, 0, 0);
         
         noStroke();
         pushMatrix();
-        translate(0, 6);
+        translate(0, 8);
         fill(255, 255, 255, 100);
         rect(11, 150, 581, 133);
         myText('ELEVATOR', 11, 200, 60);
@@ -570,10 +688,13 @@ draw = function() {
         rect(4, 5, 591, 590);
         
         noStroke();
-        play.draw();
-        how.draw();
-        about.draw();
+        fill(255);
+        fill(0);
+        myText('CLICK TO BEGIN', 141, 307, 20, true);
         
+        popMatrix();
+        
+        menuSz /= 1.05;
     }
     if(scene === 'Game'){
         image(images.hotel, 0, 0);
