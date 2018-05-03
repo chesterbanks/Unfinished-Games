@@ -457,47 +457,87 @@ var myText = function(txt, x, y, sz){
     }
 };
 
-var Button = function(x, y, w, h, txt, nxt){
+var Button = function(x, y, sz, nxt){
     this.x = x;
     this.y = y;
-    this.w = w;
-    this.h = h;
-    this.txt = txt;
+    this.sz = sz;
     this.nxt = nxt;
     
-    this.plusY = 0;
+    this.plusSz = 0;
 };
 Button.prototype.draw = function() {
-    rectMode(CENTER);
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(10 +this.sz - (this.plusSz * 180));
+    scale((this.sz / 175) + this.plusSz);
+    translate(-200, -175);
+    strokeWeight(15);
+    stroke(255, 255, 255, 210);
+    fill(30, 73, 87);
+    beginShape();
+    vertex(200, 85);
+    vertex(275, 130);
+    vertex(275, 220);
+    vertex(200, 260);
+    vertex(125, 220);
+    vertex(125, 130);
+    vertex(200, 85);
+    endShape();
     
-    fill(0, 0, 0, 30);
-    rect(this.x, this.y + 11, this.w - 10, this.h, 10);
-    fill(31, 31, 31);
-    rect(this.x, this.y + 7, this.w, this.h, 10);
-    fill(55 + (this.plusY * 5), 55 + (this.plusY * 5), 55 + (this.plusY * 5));
-    rect(this.x, this.y + this.plusY, this.w, this.h, 5);
+    stroke(43, 20, 7, 210);
+    stroke(7, 34, 41, 210);
+    beginShape();
+    vertex(200, 95);
+    vertex(265, 140);
+    vertex(265, 210);
+    vertex(200, 250);
+    vertex(135, 210);
+    vertex(135, 140);
+    vertex(200, 95);
+    endShape();
     
-    fill(255, 255, 255);
-    textSize(this.h - 30);
-    text(this.txt, this.x, this.y + this.plusY);
+    noFill();
+    if(this.nxt === 'Game'){
+        strokeWeight(5);
+        stroke(255, 255, 255);
+        triangle(217, 203, 173, 174, 217, 144);
+    }
+    if(this.nxt === 'How'){
+        pushMatrix();
+        translate(196, 175);
+        rotate(-112);
+        textSize(78);
+        fill(255);
+        text('?', 0, 0);
+        popMatrix();
+    }
+    if(this.nxt === 'About'){
+        pushMatrix();
+        translate(190, 205);
+        rotate(-112);
+        stroke(255);
+        strokeWeight(8);
+        for(var i = 0; i < 3; i ++){
+            line(0, i * 20, 50, i * 20);
+        }
+        popMatrix();
+    }
     
-    rectMode(CORNER);
+    popMatrix();
     
-    if(mouseX > this.x - this.w / 2 && mouseX < this.x + this.w / 2 && mouseY > this.y - this.h / 2 && mouseY < this.y + this.h / 2){
+    if(dist(mouseX, mouseY, this.x, this.y) < this.sz / 2){
         overButton = true;
-        this.plusY += (6 - this.plusY) / 5;
+        this.plusSz += (0.1 - this.plusSz) / 6;
         if(clicked){
             scene = this.nxt;
         }
     } else {
-        this.plusY /= 1.2;
+        this.plusSz += (0 - this.plusSz) / 6;
     }
-    
-    this.plusY = constrain(this.plusY, 0.1, 5.5);
 };
-var play = new Button(300, 360, 400, 70, 'PLAY', 'Game');
-var how = new Button(300, 435, 400, 50, 'HOW', 'Game');
-var creds = new Button(300, 500,400, 50, 'CREDITS', 'Game');
+var play = new Button(300, 430, 175,  'Game');
+var how = new Button(440, 430, 100,  'How');
+var about = new Button(160, 430, 100,  'About');
 
 draw = function() {
     for(var i in images){
@@ -508,11 +548,12 @@ draw = function() {
     }
     
     if(scene === 'Menu'){
-        background(130, 130, 130);
+        background(115, 175, 240);
         textFont(createFont('Trocchi'));
         
-        image(images.hotelBlurred, 0, 0);
+        //image(images.hotelBlurred, 0, 0);
         
+        noStroke();
         pushMatrix();
         translate(0, 6);
         fill(255, 255, 255, 100);
@@ -531,7 +572,8 @@ draw = function() {
         noStroke();
         play.draw();
         how.draw();
-        creds.draw();
+        about.draw();
+        
     }
     if(scene === 'Game'){
         image(images.hotel, 0, 0);
