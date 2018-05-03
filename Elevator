@@ -1,6 +1,15 @@
 textFont(createFont('Courier'));
 textAlign(CENTER, CENTER);
 
+// The rectangle collision function
+var rectCollide = function(one, two){
+    // Checks one's right side with two's left side, one's bottom side with two's top, one's left side with two's right side, and one's top side with two's bottom side (in that order).
+    return one.x + one.w > two.x &&
+        one.y + one.h > two.y &&
+        one.x < two.x + two.w &&
+        one.y < two.y + two.h;
+};
+
 var Floor = function(x, y, type){
     this.Painting = function(colo, shape, x, y, w, h, r){
         pushMatrix();
@@ -22,11 +31,49 @@ var Floor = function(x, y, type){
         rect(0, 0, 50, 50);
         fill(0);
         noStroke();
-        if(shape === 'tri'){
-            triangle(18, 43, 38, 25, 18, 9);
+        if(shape === ':zoomeyes:'){
+            for(var i = 0; i < 8; i += 1){
+                pushMatrix();
+                translate(i - 3, i - 3);
+                fill(255, 255, 255, 50);
+                ellipse(16, 25, 15, 28);
+                ellipse(34, 25, 15, 28);
+                fill(25, 25, 25, 100);
+                ellipse(13, 29, 7, 14);
+                ellipse(31, 29, 7, 14);
+                popMatrix();
+            }
         }
-        if(shape === 'circle'){
-            ellipse(25, 25, 30, 30);
+        if(shape === 'elmt'){
+            noStroke();
+            fill(247, 179, 102);
+            rect(7, 7, 7, 7);
+            rect(14, 14, 21, 7);
+            rect(35, 7, 7, 7);
+            rect(7, 20, 14, 7);
+            rect(28, 20, 14, 7);
+            rect(7, 20, 7, 14);
+            rect(35, 20, 7, 14);
+            rect(21, 35, 7, 7);
+        }
+        if(shape === ':angryCry:'){
+            fill(235, 65, 91, 25);
+            for(var i = 0; i < 40; i += 3){
+                rect(0, 0, 50, i);
+            }
+            stroke(0);
+            strokeWeight(5);
+            arc(15, -50, 160, 160, 70, 75);
+            arc(15, -50, 160, 160, 85, 90);
+            strokeWeight(7);
+            point(20, 33);
+            point(40, 29);
+            strokeWeight(4);
+            arc(32, 54, 30, 30, -110, -70);
+            noStroke();
+            fill(41, 162, 227);
+            bezier(15, 35, -4, 63, 38, 62, 15, 35);
+            bezier(44, 35, 39, 54, 60, 62, 46, 31);
         }
         popMatrix();
     };
@@ -72,6 +119,7 @@ var Floor = function(x, y, type){
             rect(i, 173, 20, 9);
             rect(i + 20, 181, 20, 9);
         }
+        this.Painting(color(227, 162, 41), ':angryCry:', 150, 71, 44, 44, 8);
     }
     
     if (type === 2){
@@ -92,8 +140,8 @@ var Floor = function(x, y, type){
         fill(0, 0, 0, 50);
         rect(0, 192, 600, 8);
         
-        this.Painting(color(237, 255, 74), 'tri', 64, 60, 33, 22, -11);
-        this.Painting(color(255, 255, 255), 'circle', 440, 71, 44, 44, 8);
+        this.Painting(color(0, 0, 0), ':zoomeyes:', 64, 60, 33, 22, -11);
+        this.Painting(color(255, 255, 255), 'elmt', 440, 71, 44, 44, 8);
     }
     
     noStroke();
@@ -105,6 +153,7 @@ var Floor = function(x, y, type){
     for(var i = 0; i < 72; i += 5){
         rect(0, 165 - i, 600, i);
     }
+    
     popMatrix();
 };
 
@@ -130,8 +179,68 @@ var images = {
         Floor(0, 200, 1);
         Floor(0, 400, 0);
         
-        
         image(images.noiseTexture, 0, 165, 600, 35);
+        
+        pushMatrix();
+        translate(158, 143);
+        fill(0, 0, 0, 60);
+        ellipse(0, 35 ,50, 10);
+        fill(163, 110, 70);
+        rect(-30, 3, 10, 30, 5);
+        rect(20, 3, 10, 30, 5);
+        fill(150, 102, 63);
+        rect(-5, 3, 10, 40, 5);
+        fill(166, 110, 64);
+        ellipse(0, 3, 70, 25);
+        fill(207, 139, 83);
+        ellipse(0, 0, 70, 20);
+        popMatrix();
+        
+        pushMatrix();
+        translate(550, 343);
+        scale(0.7, 1.0);
+        fill(0, 0, 0, 60);
+        ellipse(0, 35 ,50, 10);
+        fill(163, 110, 70);
+        rect(-30, 3, 10, 30, 5);
+        rect(20, 3, 10, 30, 5);
+        fill(150, 102, 63);
+        rect(-5, 3, 10, 40, 5);
+        fill(166, 110, 64);
+        ellipse(0, 3, 70, 25);
+        fill(207, 139, 83);
+        ellipse(0, 0, 70, 20);
+        popMatrix();
+        
+        pushMatrix();
+        translate(450, 543);
+        fill(0, 0, 0, 30);
+        ellipse(0, 35 ,50, 10);
+        fill(163, 110, 70);
+        rect(-30, 3, 10, 30, 5);
+        rect(20, 3, 10, 30, 5);
+        fill(150, 102, 63);
+        rect(-5, 3, 10, 40, 5);
+        fill(166, 110, 64);
+        ellipse(0, 3, 70, 25);
+        fill(207, 139, 83);
+        ellipse(0, 0, 70, 20);
+        
+        
+        // lamp
+        noStroke();
+        fill(52, 159, 186);
+        ellipse(0, -10, 30, 30);
+        ellipse(0, -25, 15, 15);
+        ellipse(0, -35, 8, 8);
+        fill(255, 255, 255, 30);
+        ellipse(-3, -12, 20, 20);
+        fill(255, 255, 255);
+        quad(-10, -60, 10, -60, 15, -35, -15, -35);
+        ellipse(0, -35, 30, 10);
+        fill(235, 235, 235);
+        ellipse(0, -60, 20, 10);
+        popMatrix();
         
         fill(31, 31, 31);
         rect(225, 0, 150, 600);
@@ -236,6 +345,54 @@ Elevator.prototype.draw = function() {
 };
 var elevator = new Elevator();
 
+var collisionBoxes = [
+    {x: elevator.x - 75, y: elevator.y + 180, w: 150, h: 20},
+    {x: elevator.x - 75, y: elevator.y + -20, w: 150, h: 20},
+    {x: -50, y: 180, w: 275, h: 20},
+    {x: 375, y: 180, w: 275, h: 20},
+    {x: -50, y: 380, w: 275, h: 20},
+    {x: 375, y: 380, w: 275, h: 20},
+    {x: -50, y: 580, w: 275, h: 20},
+    {x: 375, y: 580, w: 275, h: 20},
+];
+
+var Person = function(){
+    this.x = -50 + floor(random(2)) * 700;
+    this.y = 150 + floor(random(3)) * 200;
+    this.w = 30;
+    this.h = 30;
+    
+    this.xvel = this.x < 50 ? 1 : -1;
+    
+    this.yvel = 0;
+};
+Person.prototype.applyCollisions = function(xvel, yvel) {
+    for (var i = 0; i < collisionBoxes.length; i++) {
+        if (!rectCollide(this, collisionBoxes[i])) { continue; }
+        if (yvel < 0) {
+            this.y = collisionBoxes[i].y + collisionBoxes[i].h;
+            this.yvel = 0;
+        }
+        if (yvel > 0) {
+            this.y = collisionBoxes[i].y - this.h;
+            this.yvel = 0;
+            this.jumping = false;
+        }
+    }
+};
+Person.prototype.draw = function() {
+    fill(0, 0, 0);
+    
+    rect(this.x, this.y, this.w, this.h);
+    
+    this.x += this.xvel;
+    this.applyCollisions(this.xvel, 0);
+    this.y += this.yvel;
+    this.applyCollisions(0, this.yvel);
+    this.yvel += 0.6;
+};
+var People = [];
+
 draw = function() {
     for(var i in images){
         if(typeof images[i] !== 'object'){
@@ -246,6 +403,30 @@ draw = function() {
     
     image(images.hotel, 0, 0);
     
+    noFill();
+    stroke(255);
+    strokeWeight(2);
+    ellipse(203, 29, 27, 28);
+    noStroke();
+    fill(255);
+    ellipse(203, 29, 20, 20);
+    
+    fill(0, 0, 0);
+    textSize(21);
+    text('FLOOR 3', 165, 28);
+    text('FLOOR', 425, 226);
+    text('FLOOR', 155, 427);
+    
     
     elevator.draw();
+    
+    collisionBoxes[0] = {x: elevator.x - 75, y: elevator.y + 180, w: 150, h: 20};
+    collisionBoxes[1] = {x: elevator.x - 75, y: elevator.y + -20, w: 150, h: 20};
+    
+    if(frameCount % 100 === 0){
+        People.push(new Person());
+    }
+    for(var i = People.length - 1; i >= 0; i --){
+        People[i].draw();
+    }
 };
