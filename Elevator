@@ -512,11 +512,14 @@ var Person = function(){
     this.x = -50 + floor(random(2)) * 700;
     this.y = 150 + floor(random(3)) * 200;
     this.w = 30;
-    this.h = 30;
+    this.h = 60;
     
     this.xvel = this.x < 50 ? 1 : -1;
     
     this.yvel = 0;
+    
+    this.skin = random(50, 255);
+    this.shirt = random(255);
 };
 Person.prototype.applyCollisions = function(xvel, yvel) {
     for (var i = 0; i < collisionBoxes.length; i++) {
@@ -533,9 +536,63 @@ Person.prototype.applyCollisions = function(xvel, yvel) {
     }
 };
 Person.prototype.draw = function() {
-    fill(0, 0, 0);
+    fill(0, 0, 0, 50);
     
-    rect(this.x, this.y, this.w, this.h);
+    //rect(this.x, this.y, this.w, this.h);
+    
+    pushMatrix();
+    translate(this.x, this.y);
+    scale(-this.xvel, 1);
+    
+    noStroke();
+    
+    pushMatrix();
+    translate(21, 42);
+    rotate(sin(frameCount * 8) * 35);
+    fill(15, 30, 38);
+    rect(-5, 2, 11, 14, 5);
+    popMatrix();
+    
+    pushMatrix();
+    translate(8, 42);
+    rotate(sin(-frameCount * 8) * 35);
+    fill(15, 30, 38);
+    rect(-5, 2, 11, 14, 5);
+    popMatrix();
+    
+    colorMode(HSB);
+    fill(this.shirt, 225, 205);
+    rect(2, 24, 26, 25, 5);
+    colorMode(RGB);
+    fill(255, 255, 255, 50);
+    rect(2, 24, 26, 13, 5);
+    rect(2, 24, 26, 19, 5);
+    
+    fill(this.skin + 20, this.skin - 20, this.skin - 50);
+    if(this.skin > 200){ fill(240, 219, 183); }
+    rect(0, 0, 30, 25, 9);
+    fill(255, 255, 255, 30);
+    rect(-1, 0, 28, 17, 9);
+    rect(2, 0, 26, 9, 9);
+    
+    fill(31, 31, 31);
+    rect(7, 6, 7, 9, 5);
+    rect(17, 6, 7, 9, 5);
+    
+    fill(217, 217, 217);
+    rect(7, 6, 3, 3, 5);
+    rect(17, 6, 3, 3, 5);
+    
+    fill(this.skin + 20, this.skin - 20, this.skin - 50);
+    if(this.skin > 200){ fill(240, 219, 183); }
+    pushMatrix();
+    translate(10, 0);
+    rotate(sin(frameCount*5)*10);
+    ellipse(-10, 31, 10, 10);
+    rotate(sin(-frameCount*5)*30);
+    ellipse(10, 31, 10, 10);
+    popMatrix();
+    popMatrix();
     
     this.x += this.xvel;
     this.applyCollisions(this.xvel, 0);
@@ -706,6 +763,7 @@ draw = function() {
         if(clicked){ 
             trans.active = true; 
             trans.nextScene = 'How';
+            clicked = false;
         }
     }
     if(scene === 'How'){
@@ -713,8 +771,19 @@ draw = function() {
         
         noStroke();
         myText('INSTRUCTIONS', 0, 38, 44);
+        myText('CLICK TO PLAY!', 141, 530, 20, true);
         
+        fill(255, 255, 255, 100);
+        rect(90, 153, 420, 300, 10);
+        fill(0, 0, 0);
+        textSize(15);
+        text('\u27A4 You are the elevator. Move it up and down with the arrow keys.\n\n\u27A4 Each person has a number over their head: this is the floor that they need to get to.\n\n\u27A4 Deliver each person to their desired floor.\n\n\u27A4 You lose a life if someone does not get to the floor they need to get to.\n\n\u27A4 You will INSTANTLY lose if you let someone fall down the elevator shaft.', 100, 100, 400, 400);
         
+        if(clicked){ 
+            trans.active = true; 
+            trans.nextScene = 'Game';
+            clicked = false;
+        }
     }
     if(scene === 'Game'){
         image(images.hotel, 0, 0);
