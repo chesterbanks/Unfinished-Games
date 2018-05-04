@@ -650,6 +650,13 @@ Button.prototype.draw = function() {
 
 var menuSz = 71;
 
+var trans = {
+    active: false,
+    out: false,
+    nextScene: '',
+    sizeDivide: 0.1,
+};
+
 draw = function() {
     for(var i in images){
         if(typeof images[i] !== 'object'){
@@ -695,6 +702,19 @@ draw = function() {
         popMatrix();
         
         menuSz /= 1.05;
+        
+        if(clicked){ 
+            trans.active = true; 
+            trans.nextScene = 'How';
+        }
+    }
+    if(scene === 'How'){
+        image(images.menuBG, 0, 0);
+        
+        noStroke();
+        myText('INSTRUCTIONS', 0, 38, 44);
+        
+        
     }
     if(scene === 'Game'){
         image(images.hotel, 0, 0);
@@ -731,6 +751,38 @@ draw = function() {
             People[i].draw();
         }
     }
+    
+    // Transition
+    if(trans.active){
+        for(var i = 0; i < 845; i += 50){
+            var weight = 64 - (i / trans.sizeDivide);
+            
+            noFill();
+            strokeWeight(weight);
+            stroke(255);
+            if(weight > 0){
+                ellipse(300, 300, i, i);
+            }
+        }
+        
+        if(!trans.out){
+            trans.sizeDivide += 0.5;
+            if(trans.sizeDivide > 22){
+                scene = trans.nextScene;
+                trans.out = true;
+            }
+        } else {
+            trans.sizeDivide -= 0.5;
+            if(trans.sizeDivide < 0.2){
+                trans.sizeDivide = 0.2;
+                trans.active = false;
+                trans.out = false;
+            }
+        }
+    }
+    
+    
+    rectMode(CORNER);
     
     cursor(overButton ? 'pointer' : 'default');
     
