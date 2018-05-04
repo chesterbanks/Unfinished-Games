@@ -33,7 +33,7 @@
 var scene = 'Menu';
 
 // Text settings
-textFont(createFont('Courier'));
+textFont(createFont('Courier New'));
 textAlign(CENTER, CENTER);
 
 // Mouse properties
@@ -499,7 +499,6 @@ var elevator = new Elevator();
 
 var collisionBoxes = [
     {x: elevator.x - 75, y: elevator.y + 180, w: 150, h: 20},
-    {x: elevator.x - 75, y: elevator.y + -20, w: 150, h: 20},
     {x: -50, y: 180, w: 275, h: 20},
     {x: 375, y: 180, w: 275, h: 20},
     {x: -50, y: 380, w: 275, h: 20},
@@ -538,9 +537,10 @@ Person.prototype.applyCollisions = function(xvel, yvel) {
     }
 };
 Person.prototype.draw = function() {
-    fill(0, 0, 0, 50);
-    
+    fill(0);
     //rect(this.x, this.y, this.w, this.h);
+    
+    noStroke();
     
     pushMatrix();
     translate(this.x, this.y);
@@ -549,11 +549,15 @@ Person.prototype.draw = function() {
     fill(0);
     textSize(17);
     text(this.floorDestination, 15, -20);
+    popMatrix();
+    
+    pushMatrix();
+    translate(this.x, this.y);
     
     scale(-this.xvel, 1);
-    
-    noStroke();
-    
+    if(this.xvel > 0){
+        translate(-this.w, 0);
+    }
     
     pushMatrix();
     translate(21, 42);
@@ -740,7 +744,7 @@ draw = function() {
         rotate(menuSz * 2);
         translate(-300, -200);
         
-        textFont(createFont('Trocchi'));
+        //textFont(createFont('Trocchi'));
         
         image(images.menuBG, 0, 0);
         
@@ -786,7 +790,7 @@ draw = function() {
         rect(90, 153, 420, 300, 10);
         fill(0, 0, 0);
         textSize(15);
-        text('\u27A4 You are the elevator. Move it up and down with the arrow keys.\n\n\u27A4 Each person has a number over their head: this is the floor that they need to get to.\n\n\u27A4 Deliver each person to their desired floor.\n\n\u27A4 You lose a life if someone does not get to the floor they need to get to.\n\n\u27A4 You will INSTANTLY lose if you let someone fall down the elevator shaft.', 100, 100, 400, 400);
+        text('\u27A4 You are the elevator. Move up and down with the arrow keys.\n\n\u27A4 Each person has a number over their head: this is the floor that they need to get to.\n\n\u27A4 Deliver each person to their desired floor.\n\n\u27A4 You lose a life if someone does not get to the floor they need to get to.\n\n\u27A4 You will INSTANTLY lose if you let someone fall down the elevator shaft.', 100, 100, 400, 400);
         
         if(clicked){ 
             trans.active = true; 
@@ -820,13 +824,18 @@ draw = function() {
         elevator.draw();
         
         collisionBoxes[0] = {x: elevator.x - 75, y: elevator.y + 180, w: 150, h: 20};
-        collisionBoxes[1] = {x: elevator.x - 75, y: elevator.y + -20, w: 150, h: 20};
         
         if(frameCount % 300 === 0){
             People.push(new Person());
         }
         for(var i = People.length - 1; i >= 0; i --){
             People[i].draw();
+        }
+        
+        fill(0, 0, 0, 120);
+        for(var i = collisionBoxes.length - 1; i >= 0; i --){
+            var t = collisionBoxes[i];
+            //rect(t.x, t.y, t.w, t.h);
         }
     }
     
