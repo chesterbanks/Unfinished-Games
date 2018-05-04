@@ -521,6 +521,8 @@ var Person = function(){
     
     this.skin = random(50, 255);
     this.shirt = random(255);
+    
+    this.delivered = 100;
 };
 Person.prototype.applyCollisions = function(xvel, yvel) {
     for (var i = 0; i < collisionBoxes.length; i++) {
@@ -545,6 +547,12 @@ Person.prototype.draw = function() {
     pushMatrix();
     translate(this.x, this.y);
     fill(255, 255, 255, 150);
+    if(this.delivered === 0){
+        fill(250, 10, 26, 150);
+    }
+    if(this.delivered === 1){
+        fill(61, 232, 9, 150);
+    }
     ellipse(15, -20, 30, 30);
     fill(0);
     textSize(17);
@@ -607,11 +615,21 @@ Person.prototype.draw = function() {
     popMatrix();
     popMatrix();
     
+    // Movement
     this.x += this.xvel;
     this.applyCollisions(this.xvel, 0);
     this.y += this.yvel;
     this.applyCollisions(0, this.yvel);
     this.yvel += 0.6;
+    
+    // Check if the person was delivered to the right floor
+    if((this.xvel > 0 && this.x > 375) || (this.xvel < 0 && this.x < 225)){
+        if((this.floorDestination === 1 && this.y > 400) || (this.floorDestination  === 2 && this.y > 200 && this.y < 400) || (this.floorDestination  === 3 && this.y < 200)){
+            this.delivered = 1;
+        } else {
+            this.delivered = 0;
+        }
+    }
 };
 var People = [];
 
@@ -728,6 +746,7 @@ var trans = {
 };
 
 draw = function() {
+    // Load images
     for(var i in images){
         if(typeof images[i] !== 'object'){
             background(0, 0, 0, 0);
@@ -743,8 +762,6 @@ draw = function() {
         scale(1 + menuSz);
         rotate(menuSz * 2);
         translate(-300, -200);
-        
-        //textFont(createFont('Trocchi'));
         
         image(images.menuBG, 0, 0);
         
@@ -820,7 +837,6 @@ draw = function() {
         text('FLOOR 2', 436, 226);
         text('FLOOR 1', 163, 427);
         
-        
         elevator.draw();
         
         collisionBoxes[0] = {x: elevator.x - 75, y: elevator.y + 180, w: 150, h: 20};
@@ -830,12 +846,6 @@ draw = function() {
         }
         for(var i = People.length - 1; i >= 0; i --){
             People[i].draw();
-        }
-        
-        fill(0, 0, 0, 120);
-        for(var i = collisionBoxes.length - 1; i >= 0; i --){
-            var t = collisionBoxes[i];
-            //rect(t.x, t.y, t.w, t.h);
         }
     }
     
@@ -868,11 +878,10 @@ draw = function() {
         }
     }
     
-    
-    rectMode(CORNER);
-    
+    // Cursor
     cursor(overButton ? 'pointer' : 'default');
     
+    // Reset mouse properties
     overButton = false;
     clicked = false;
 };
