@@ -514,6 +514,8 @@ var Person = function(){
     this.w = 30;
     this.h = 60;
     
+    this.floorDestination = floor(random(1, 4));
+    
     this.xvel = this.x < 50 ? 1 : -1;
     
     this.yvel = 0;
@@ -542,9 +544,16 @@ Person.prototype.draw = function() {
     
     pushMatrix();
     translate(this.x, this.y);
+    fill(255, 255, 255, 150);
+    ellipse(15, -20, 30, 30);
+    fill(0);
+    textSize(17);
+    text(this.floorDestination, 15, -20);
+    
     scale(-this.xvel, 1);
     
     noStroke();
+    
     
     pushMatrix();
     translate(21, 42);
@@ -758,7 +767,7 @@ draw = function() {
         
         popMatrix();
         
-        menuSz /= 1.05;
+        menuSz /= 1.08;
         
         if(clicked){ 
             trans.active = true; 
@@ -813,7 +822,7 @@ draw = function() {
         collisionBoxes[0] = {x: elevator.x - 75, y: elevator.y + 180, w: 150, h: 20};
         collisionBoxes[1] = {x: elevator.x - 75, y: elevator.y + -20, w: 150, h: 20};
         
-        if(frameCount % 100 === 0){
+        if(frameCount % 300 === 0){
             People.push(new Person());
         }
         for(var i = People.length - 1; i >= 0; i --){
