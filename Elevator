@@ -1,20 +1,25 @@
 /**
  * Elevator
  * Chester Banks
- * May 6 2018
+ * May 16 2018
 */
 
 /* 
-    T A B L E   O F   C O N T E N T S
-    
+    TABLE OF CONTENTS
+    ~~~~~~~~~~~~~~~~~
+    Variables
+    Transition object
     Text settings
+    Mouse & key properties
     Key events
-    Collision detection function
+    Rectangle collision function
     Floor graphic
     Images
         Noise texture
         Hotel
+        Elevator shaft
         Elevator
+        Menu background
     Elevator
         Constructor
         Prototype
@@ -25,28 +30,39 @@
         Prototype.applyCollisions
         Prototype.draw
         Variable
+    Custom text function
+    Buttons
     Draw function
         Image loading
-        Game scene
+        Menu
+        Instructions
+        Game
+    Transition
+    Cursor
+    Reset mouse properties
+    Event handlers
 */
 
+// Variables
 var scene = 'Menu';
+var menuSz = 71;
+
+// Transition object
+var trans = {
+    active: false,
+    out: false,
+    nextScene: '',
+    sizeDivide: 0.1,
+};
 
 // Text settings
 textFont(createFont('Courier New'));
 textAlign(CENTER, CENTER);
 
-// Mouse properties
+// Mouse & key properties
 var overButton = false;
 var clicked = false;
-
-// Key events
 var keys = [];
-keyPressed = function(){ keys[keyCode] = true; };
-keyReleased = function(){ keys[keyCode] = false; };
-mouseClicked = function(){
-    clicked = true;
-};
 
 // The rectangle collision function
 var rectCollide = function(one, two){
@@ -57,6 +73,7 @@ var rectCollide = function(one, two){
         one.y < two.y + two.h;
 };
 
+// Floor graphic
 var Floor = function(x, y, type){
     this.Painting = function(colo, shape, x, y, w, h, r){
         pushMatrix();
@@ -204,6 +221,7 @@ var Floor = function(x, y, type){
     popMatrix();
 };
 
+// Images
 var images = {
     'noiseTexture': function(){
         var noiseScale=0.02;
@@ -301,12 +319,6 @@ var images = {
         }
         
         return get(0, 0, width, height);
-    },
-    'hotelBlurred': function(){
-        image(images.hotel, 0, 0);
-        filter(BLUR, 1.5);
-        
-        return get(0, 0, 600, 600);
     },
     'elevator': function(){
         pushMatrix();
@@ -467,6 +479,7 @@ var images = {
     },
 };
 
+// Elevator object
 var Elevator = function(){
     this.x = 300;
     this.y = 200;
@@ -494,9 +507,13 @@ Elevator.prototype.draw = function() {
     if(!keys[UP] && !keys[DOWN]){ this.go = false; }
     
     this.y += (this.destiny - this.y) / 5;
+    
+    fill(255);
+    ellipse(this.x, this.y, 5, 5);
 };
 var elevator = new Elevator();
 
+// Collision boxes
 var collisionBoxes = [
     {x: elevator.x - 75, y: elevator.y + 180, w: 150, h: 20},
     {x: -50, y: 180, w: 275, h: 20},
@@ -507,6 +524,7 @@ var collisionBoxes = [
     {x: 375, y: 580, w: 275, h: 20},
 ];
 
+// Person object
 var Person = function(){
     this.x = -50 + floor(random(2)) * 700;
     this.y = 150 + floor(random(3)) * 200;
@@ -552,6 +570,9 @@ Person.prototype.draw = function() {
     }
     if(this.delivered === 1){
         fill(61, 232, 9, 150);
+    }
+    if(this.x + this.w < 375 && this.x > 225 && (this.y < elevator.y - 20 || this.y > elevator.y + 200)){
+        fill(9, 0, 255);
     }
     ellipse(15, -20, 30, 30);
     fill(0);
@@ -620,7 +641,7 @@ Person.prototype.draw = function() {
     this.applyCollisions(this.xvel, 0);
     this.y += this.yvel;
     this.applyCollisions(0, this.yvel);
-    this.yvel += 0.6;
+    this.yvel += 0.9;
     
     // Check if the person was delivered to the right floor
     if((this.xvel > 0 && this.x > 375) || (this.xvel < 0 && this.x < 225)){
@@ -633,6 +654,7 @@ Person.prototype.draw = function() {
 };
 var People = [];
 
+// Custom text
 var myText = function(txt, x, y, sz, jiggle){
     textSize(sz);
     for(var i = 0; i < txt.length; i ++){
@@ -646,6 +668,7 @@ var myText = function(txt, x, y, sz, jiggle){
     }
 };
 
+// Buttons
 var Button = function(x, y, sz, nxt){
     this.x = x;
     this.y = y;
@@ -736,15 +759,7 @@ Button.prototype.draw = function() {
     }
 };
 
-var menuSz = 71;
-
-var trans = {
-    active: false,
-    out: false,
-    nextScene: '',
-    sizeDivide: 0.1,
-};
-
+// Draw function
 draw = function() {
     // Load images
     for(var i in images){
@@ -754,6 +769,7 @@ draw = function() {
         }
     }
     
+    // Menu
     if(scene === 'Menu'){
         background(115, 175, 240);
         
@@ -796,6 +812,8 @@ draw = function() {
             clicked = false;
         }
     }
+    
+    // Instructions
     if(scene === 'How'){
         image(images.menuBG, 0, 0);
         
@@ -815,6 +833,8 @@ draw = function() {
             clicked = false;
         }
     }
+    
+    // Game
     if(scene === 'Game'){
         image(images.hotel, 0, 0);
         image(images.shaft, 0, 0);
@@ -841,11 +861,14 @@ draw = function() {
         
         collisionBoxes[0] = {x: elevator.x - 75, y: elevator.y + 180, w: 150, h: 20};
         
-        if(frameCount % 300 === 0){
+        if(frameCount % 200 === 0){
             People.push(new Person());
         }
         for(var i = People.length - 1; i >= 0; i --){
             People[i].draw();
+            if(People[i].x < -100 || People[i].x > 700){
+                People.splice(i, 1);
+            }
         }
     }
     
@@ -884,4 +907,15 @@ draw = function() {
     // Reset mouse properties
     overButton = false;
     clicked = false;
+};
+
+// Event handlers
+keyPressed = function(){ 
+    keys[keyCode] = true; 
+};
+keyReleased = function(){ 
+    keys[keyCode] = false; 
+};
+mouseClicked = function(){
+    clicked = true;
 };
