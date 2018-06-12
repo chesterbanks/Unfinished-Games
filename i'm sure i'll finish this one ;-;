@@ -1,0 +1,152 @@
+// spot it! @o@
+
+background(255, 255, 245);
+
+noStroke();
+fill(162, 232, 221);
+rect(25, 25, 550, 550);
+
+var chooseRandomUniqueNumbers = function(range){
+    var nums = [];
+
+    while(nums.length < 10){
+        // add however many needed
+        for(var i = 0; i < 10 - nums.length; i ++){
+            nums.push(floor(random(range)));
+        }
+        //println('Array after originals: ' + nums);
+        
+        // remove duplicates
+        for(var i = 0; i < nums.length; i ++){
+            for(var j = 0; j < nums.length; j ++){
+                if(nums[i] === nums[j] && i !== j){
+                    nums.splice(i, 1);
+                }
+            }
+        }
+        //println('Array after removed duplicates: ' + nums);
+    }
+    
+    return nums;
+};
+
+var possibleImages = [
+    getImage("avatars/aqualine-sapling"),
+    getImage("avatars/aqualine-seed"),
+    getImage("avatars/aqualine-seedling"),
+    getImage("avatars/aqualine-tree"),
+    getImage("avatars/aqualine-ultimate"),
+    getImage("avatars/avatar-team"),
+    getImage("avatars/duskpin-sapling"),
+    getImage("avatars/duskpin-seed"),
+    getImage("avatars/duskpin-seedling"),
+    getImage("avatars/duskpin-tree"),
+    getImage("avatars/duskpin-ultimate"),
+    getImage("avatars/leaf-blue"),
+    getImage("avatars/leaf-green"),
+    getImage("avatars/leaf-grey"),
+    getImage("avatars/leaf-orange"),
+    getImage("avatars/leaf-red"),
+    getImage("avatars/leaf-yellow"),
+    getImage("avatars/leafers-sapling"),
+    getImage("avatars/leafers-seed"),
+    getImage("avatars/leafers-seedling"),
+    getImage("avatars/leafers-tree"),
+    getImage("avatars/leafers-ultimate"),
+    getImage("avatars/marcimus"),
+    getImage("avatars/marcimus-orange"),
+    getImage("avatars/marcimus-purple"),
+    getImage("avatars/marcimus-red"),
+    getImage("avatars/mr-pants"),
+    getImage("avatars/mr-pants-green"),
+    getImage("avatars/mr-pants-orange"),
+    getImage("avatars/mr-pants-pink"),
+    getImage("avatars/mr-pants-purple"),
+    getImage("avatars/mr-pants-with-hat"),
+    getImage("avatars/mr-pink"),
+    getImage("avatars/mr-pink-green"),
+    getImage("avatars/mr-pink-orange"),
+    getImage("avatars/old-spice-man"),
+    getImage("avatars/old-spice-man-blue"),
+    getImage("avatars/orange-juice-squid"),
+    getImage("avatars/piceratops-sapling"),
+    getImage("avatars/piceratops-seed"),
+    getImage("avatars/piceratops-seedling"),
+    getImage("avatars/piceratops-tree"),
+    getImage("avatars/piceratops-ultimate"),
+    getImage("avatars/primosaur-sapling"),
+    getImage("avatars/primosaur-seed"),
+    getImage("avatars/primosaur-seedling"),
+    getImage("avatars/primosaur-tree"),
+    getImage("avatars/primosaur-ultimate"),
+    getImage("avatars/purple-pi"),
+    getImage("avatars/purple-pi-pink"),
+    getImage("avatars/purple-pi-teal"),
+    getImage("avatars/questionmark"),
+    getImage("avatars/robot_female_1"),
+    getImage("avatars/robot_female_2"),
+    getImage("avatars/robot_female_3"),
+    getImage("avatars/robot_male_1"),
+    getImage("avatars/robot_male_2"),
+    getImage("avatars/robot_male_3"),
+    getImage("avatars/spunky-sam"),
+    getImage("avatars/spunky-sam-green"),
+    getImage("avatars/spunky-sam-orange"),
+    getImage("avatars/spunky-sam-red"),
+    getImage("avatars/starky-sapling"),
+    getImage("avatars/starky-seed"),
+    getImage("avatars/starky-seedling"),
+    getImage("avatars/starky-tree"),
+    getImage("avatars/starky-ultimate"),
+    getImage("creatures/Hopper-Happy"),
+    getImage("creatures/Hopper-Cool"),
+    getImage("creatures/Hopper-Jumping"),
+    getImage("creatures/OhNoes"),
+    getImage("creatures/OhNoes-Happy"),
+    getImage("creatures/OhNoes-Hmm"),
+    getImage("creatures/BabyWinston"),
+    getImage("creatures/Winston"),
+];
+var xs = [-79, -3, 105, 86, 33, -10, -94, 2, 50, -74];
+var ys = [-72, -83, -3, 66, 104, 60, 2, -16, -94, 62];
+
+var centerCardIcons = [];
+
+var imageNums = chooseRandomUniqueNumbers(75);
+for(var i = 0; i < 10; i ++){
+    centerCardIcons.push({
+        img: possibleImages[imageNums[i]],
+        x: xs[i],
+        y: ys[i],
+        r: random(-50, 50)
+    });
+}
+
+pushMatrix();
+translate(300, 300);
+fill(126, 194, 183, 100);
+ellipse(0, 4, 325, 325);
+fill(255, 255, 245, 100);
+ellipse(0, 3, 310, 310);
+stroke(199, 199, 171);
+strokeWeight(4);
+fill(227, 227, 195);
+ellipse(0, 0, 300, 300);
+noStroke();
+for(var i = 0; i < 300; i += 10){
+    fill(255, 255, 255, 10);
+    ellipse(0, 0, i, i);
+}
+
+imageMode(CENTER);
+
+fill(45);
+for(var i = 0; i < centerCardIcons.length; i ++){
+    pushMatrix();
+    translate(centerCardIcons[i].x, centerCardIcons[i].y);
+    rotate(centerCardIcons[i].r);
+    image(centerCardIcons[i].img, 0, 0, 70, 70);
+    popMatrix();
+}
+
+popMatrix();
