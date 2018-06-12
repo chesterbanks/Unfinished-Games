@@ -1,10 +1,6 @@
 // spot it! @o@
 
-background(255, 255, 245);
-
-noStroke();
-fill(162, 232, 221);
-rect(25, 25, 550, 550);
+var overButton = false, clicked = false;
 
 var chooseRandomUniqueNumbers = function(range){
     var nums = [];
@@ -110,43 +106,69 @@ var possibleImages = [
 var xs = [-79, -3, 105, 86, 33, -10, -94, 2, 50, -74];
 var ys = [-72, -83, -3, 66, 104, 60, 2, -16, -94, 62];
 
-var centerCardIcons = [];
+var Card = function(x, y){
+    this.x = x;
+    this.y = y;
+    
+    this.icons = [];
+    
+    this.imageNums = chooseRandomUniqueNumbers(possibleImages.length);
+    for(var i = 0; i < 10; i ++){
+        this.icons.push({
+            img: possibleImages[this.imageNums[i]],
+            x: xs[i],
+            y: ys[i],
+            r: random(-50, 50),
+            sz: random(50, 70)
+        });
+    }
+};
 
-var imageNums = chooseRandomUniqueNumbers(75);
-for(var i = 0; i < 10; i ++){
-    centerCardIcons.push({
-        img: possibleImages[imageNums[i]],
-        x: xs[i],
-        y: ys[i],
-        r: random(-50, 50)
-    });
-}
+var centerCard = new Card(400, 200);
+var yourCard = new Card(200, 400);
 
-pushMatrix();
-translate(300, 300);
-fill(126, 194, 183, 100);
-ellipse(0, 4, 325, 325);
-fill(255, 255, 245, 100);
-ellipse(0, 3, 310, 310);
-stroke(199, 199, 171);
-strokeWeight(4);
-fill(227, 227, 195);
-ellipse(0, 0, 300, 300);
-noStroke();
-for(var i = 0; i < 300; i += 10){
-    fill(255, 255, 255, 10);
-    ellipse(0, 0, i, i);
-}
-
-imageMode(CENTER);
-
-fill(45);
-for(var i = 0; i < centerCardIcons.length; i ++){
+Card.prototype.draw = function() {
     pushMatrix();
-    translate(centerCardIcons[i].x, centerCardIcons[i].y);
-    rotate(centerCardIcons[i].r);
-    image(centerCardIcons[i].img, 0, 0, 70, 70);
+    translate(this.x, this.y);
+    fill(126, 194, 183, 100);
+    ellipse(0, 4, 325, 325);
+    fill(255, 255, 245, 100);
+    ellipse(0, 3, 310, 310);
+    stroke(199, 199, 171);
+    strokeWeight(4);
+    fill(227, 227, 195);
+    ellipse(0, 0, 300, 300);
+    noStroke();
+    for(var i = 0; i < 300; i += 10){
+        fill(255, 255, 255, 10);
+        ellipse(0, 0, i, i);
+    }
+    
+    imageMode(CENTER);
+    
+    fill(45);
+    for(var i = 0; i < this.icons.length; i ++){
+        pushMatrix();
+        translate(this.icons[i].x, this.icons[i].y);
+        rotate(this.icons[i].r);
+        image(this.icons[i].img, 0, 0, this.icons[i].sz, this.icons[i].sz);
+        popMatrix();
+    }
+    
     popMatrix();
-}
+};
+Card.prototype.choose = function(){
+    
+};
 
-popMatrix();
+draw = function() {
+    background(255, 255, 245);
+    
+    noStroke();
+    fill(162, 232, 221);
+    rect(25, 25, 550, 550);
+    
+    centerCard.draw();
+    yourCard.draw();
+    
+};
