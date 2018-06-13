@@ -1,7 +1,8 @@
 // spot it! @o@
+// I actually had think harder about the gameplay of this game - usually I'm just complacent and stick with what I already know
 
 var overButton = false, clicked = false;
-var scene = 'Game';
+var scene = 'Menu';
 var scores = [0, 0, 0];
 
 var loadGoogleFont = (function () {
@@ -169,8 +170,8 @@ var Card = function(x, y){
 
 var centerCard = new Card(400, 200);
 var yourCard = new Card(200, 400);
-var carolineCard = new Card(600, 600);
-var joelCard = new Card(0, 0);
+var hopeCard = new Card(600, 600);
+var kyleCard = new Card(0, 0);
 
 Card.prototype.draw = function() {
     this.plusX /= 1.1;
@@ -338,8 +339,8 @@ draw = function() {
         fill(162, 232, 221);
         rect(25, 25, 550, 550);
         
-        joelCard.draw();
-        carolineCard.draw();
+        kyleCard.draw();
+        hopeCard.draw();
         
         yourCard.draw();
         centerCard.draw();
