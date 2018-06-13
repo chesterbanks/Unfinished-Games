@@ -1,7 +1,33 @@
 // spot it! @o@
 
 var overButton = false, clicked = false;
-var switchCards = false;
+var scene = 'Game';
+var scores = [0, 0, 0];
+
+var loadGoogleFont = (function () {
+    return this.Function ("gfName", 
+    "gfName = gfName.replace ( /\\s+/g, '+' );" + 
+    "var subsets = Array.prototype.slice.call ( arguments, 1, arguments.length - 1 );" + 
+    "var url = 'https://fonts.googleapis.com/css?family=' + gfName + ( subsets.length > 0 ? '&amp;subset=' + subsets : '' ), callback = arguments [ arguments.length - 1 ];" +
+    "var gfs = document.querySelectorAll('link[href=\"' + url+'\"]');" + 
+    "if (!gfs.length) {" + 
+        "var f = document.createElement('link');" + 
+        "f.setAttribute('rel', 'stylesheet');" + 
+        "f.setAttribute('type', 'text/css');" + 
+        "f.onload = callback;" +    
+        "f.setAttribute('href', url);" + 
+        "document.head.appendChild(f);" + 
+    "} else if (typeof callback === 'function') {" + 
+        "callback.call(gfs[0]);" + 
+    "}"
+);
+})();
+
+textAlign(CENTER, CENTER);
+loadGoogleFont("Emilys Candy");
+
+var newFont = 'Nixie One';
+loadGoogleFont(newFont);
 
 var chooseRandomUniqueNumbers = function(range){
     var nums = [];
@@ -26,7 +52,19 @@ var chooseRandomUniqueNumbers = function(range){
     
     return nums;
 };
+var scoreCircle = function(x, y, num){
+    fill(79, 25, 35, 30);
+    ellipse(x, y + 8, 50, 50);
+    fill(217, 102, 123);
+    ellipse(x, y + 3, 50, 50);
+    fill(242, 114, 137);
+    ellipse(x, y, 50, 50);
+    fill(255);
+    textSize(25);
+    text(num, x, y);
+};
 
+var switchCards = false;
 var possibleImages = [
     getImage("avatars/aqualine-sapling"),
     getImage("avatars/aqualine-seed"),
@@ -131,6 +169,8 @@ var Card = function(x, y){
 
 var centerCard = new Card(400, 200);
 var yourCard = new Card(200, 400);
+var carolineCard = new Card(600, 600);
+var joelCard = new Card(0, 0);
 
 Card.prototype.draw = function() {
     this.plusX /= 1.1;
@@ -196,39 +236,152 @@ Card.prototype.choose = function(){
     }
 };
 
+var switchCardsFunc = function(){
+    centerCard.icons = yourCard.icons;
+    
+    yourCard.icons = [];
+
+    yourCard.imageNums = chooseRandomUniqueNumbers(possibleImages.length);
+    for(var i = 0; i < 12; i ++){
+        yourCard.icons.push({
+            img: possibleImages[yourCard.imageNums[i]],
+            x: xs[i],
+            y: ys[i],
+            r: random(-50, 50),
+            sz: random(50, 70),
+            hover: false
+        });
+    }
+    
+    centerCard.plusX = -200;
+    centerCard.plusY = 200;
+    yourCard.plusSz = -1;
+    
+    switchCards = false;
+};
+
+var circles = [];
+for(var i = 0; i < 21; i ++){
+    circles.push({y: random(17), sz: random(50, 30)});
+}
+
 draw = function() {
-    background(255, 255, 245);
+    textFont(createFont("Emilys Candy"));
+    textFont(createFont(newFont));
     
-    noStroke();
-    fill(162, 232, 221);
-    rect(25, 25, 550, 550);
-    
-    yourCard.draw();
-    centerCard.draw();
-    yourCard.choose();
-    
-    if(switchCards){
-        centerCard.icons = yourCard.icons;
+    if(scene === 'Menu'){
+        background(162, 232, 221);
         
-        yourCard.icons = [];
-    
-        yourCard.imageNums = chooseRandomUniqueNumbers(possibleImages.length);
-        for(var i = 0; i < 12; i ++){
-            yourCard.icons.push({
-                img: possibleImages[yourCard.imageNums[i]],
-                x: xs[i],
-                y: ys[i],
-                r: random(-50, 50),
-                sz: random(50, 70),
-                hover: false
-            });
+        noStroke();
+        pushMatrix();
+        translate(282, 276);
+        rotate(-14);
+        textSize(130);
+        fill(0, 0, 0, 30);
+        text('Spot It', 0, 7);
+        //textSize(130);
+        fill(227, 227, 218);
+        text('Spot It', 0, 3);
+        fill(255, 255, 245);
+        text('Spot It', 0, 0);
+        fill(125, 196, 184);
+        textSize(27);
+        text('c h e s t e r   b a n k s', 55, 90);
+        popMatrix();
+        
+        pushMatrix();
+        translate(18, 175);
+        rotate(-16);
+        for(var i = 0; i < circles.length; i ++){
+            fill(149, 219, 207);
+            ellipse(i * 30, circles[i].y, circles[i].sz * 2, circles[i].sz * 2);
+            ellipse(-91 + i * 30, 358 + circles[i].y, circles[i].sz * 2, circles[i].sz * 2);
         }
         
-        centerCard.plusX = -200;
-        centerCard.plusY = 200;
-        yourCard.plusSz = -1;
+        fill(255, 255, 245);
+        rect(-33, -159, 630, 170);
+        rect(-144, 371, 630, 202);
+        for(var i = 0; i < circles.length; i ++){
+            fill(255, 255, 245);
+            ellipse(i * 30, circles[i].y, circles[i].sz, circles[i].sz);
+            ellipse(-91 + i * 30, 358 + circles[i].y, circles[i].sz, circles[i].sz);
+        }
+        popMatrix();
         
-        switchCards = false;
+        pushMatrix();
+        translate(195, 543);
+        rotate(-15);
+        fill(125, 196, 184);
+        textSize(17);
+        var clicktobegin = 'CLICK TO BEGIN'.split('');
+        for(var i = 0; i < clicktobegin.length; i ++){
+            text(clicktobegin[i], i * 27, sin((i * 35)+frameCount * 10) * 5);
+        }
+        popMatrix();
+        
+        noFill();
+        strokeWeight(20);
+        stroke(255, 255, 245);
+        rect(0, 0, 600, 600);
+        
+        if(mouseY > 550 - (mouseX / 3)){
+            overButton = true;
+            if(clicked){
+                scene = 'Game';
+            }
+        }
+    }
+    if(scene === 'Game'){
+        background(255, 255, 245);
+        
+        noStroke();
+        fill(162, 232, 221);
+        rect(25, 25, 550, 550);
+        
+        joelCard.draw();
+        carolineCard.draw();
+        
+        yourCard.draw();
+        centerCard.draw();
+        yourCard.choose();
+        
+        noFill();
+        strokeCap(SQUARE);
+        stroke(212, 104, 124);
+        strokeWeight(23);
+        arc(-3, 3, 327, 327, 25, 54);
+        arc(600, 600, 320, 320, 212, 247);
+        stroke(242, 114, 137);
+        strokeWeight(23);
+        strokeCap(SQUARE);
+        arc(0, 0, 320, 320, 26, 54);
+        arc(600, 600, 320, 320, 213, 247);
+        fill(255);
+        textSize(17);
+        var txt = 'HOPE'.split('');
+        for(var i = 0; i < txt.length; i ++){
+            pushMatrix();
+            rotate((i * -6) - 41);
+            text(txt[i], 0, 160);
+            popMatrix();
+        }
+        var txt = 'KYLE'.split('');
+        for(var i = 0; i < txt.length; i ++){
+            pushMatrix();
+            translate(600, 600);
+            rotate((i * 6) - 52);
+            text(txt[i], 0, -160);
+            popMatrix();
+        }
+        
+        noStroke();
+        scoreCircle(109, 526, scores[0]);
+        scoreCircle(75, 139, scores[1]);
+        scoreCircle(547, 451, scores[2]);
+        
+        if(switchCards){
+            switchCardsFunc();
+        }
     }
     
     cursor(overButton ? 'pointer' : 'default');
