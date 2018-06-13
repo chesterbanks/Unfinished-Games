@@ -1,8 +1,66 @@
 // spot it! @o@
-// I actually had think harder about the gameplay of this game - usually I'm just complacent and stick with what I already know
+// I've gotten complacent with the mechanics of my games. Even though this game's gameplay seems simple enough, I did have to get out of my comfort zone and figure out some new stuff while I made this gameplay
+
+/**
+    If I made my own images, they would be:
+ * Frost main character
+ * Frost robots
+ * Art (MU)
+ * Mike (MU)
+ * Sulley (MU)
+ * Terry/Terri (MU)
+ * Squishy (MU)
+ * Ice cream cone (scoop it)
+ * Multi Click character
+ * River raid plane
+ * River raid copter
+ * Doctor
+ * Burger
+ * Ninja
+ * Red ninja
+ * Shuriken
+ * Obi Run Kenobi
+ * Texting Emoji
+ * Texting icon
+ * Texting angry emoji
+ * Knight monkey
+ * Guard monkey
+ * Robot monkey
+ * 5 block ninjas
+ * 
+ * 
+ * 
+ * 
+ * 8 pixel fruits
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * The little hexagon
+ * 5 characters from the case of the stolen shoes
+ * 
+ * 
+ * 
+ * 
+ * Pac man
+ * Pac man ghost
+ * Fish
+ * CB Logo
+ * Dungeon theif character
+ * Lime tamer
+ * Lime tamer's lime
+ * Scarecrow crow
+ * Scarecrow
+ * Dig deep treasure chest
+ * Descent skiier
+*/
 
 var overButton = false, clicked = false;
 var scene = 'Menu';
+var name = 'JACKSON ENOUGH';
 var scores = [0, 0, 0];
 
 var loadGoogleFont = (function () {
@@ -65,14 +123,60 @@ var scoreCircle = function(x, y, num){
     text(num, x, y);
 };
 
+var images = {
+    moon: function(){
+        pushMatrix();
+        translate(170, 170);
+        scale(1);
+        
+        for(var i = 0; i < 333; i += 30){
+            pushMatrix();
+            scale(1);
+            rotate(i);
+            rotate(0);
+            fill(49, 55, 64);
+            beginShape();
+            vertex(-30, -77);
+            vertex(30, -77);
+            vertex(45, -166);
+            bezierVertex(11, -93, -24, -122, -45, -166);
+            endShape();
+            popMatrix();
+        }
+        
+        fill(97, 123, 133);
+        ellipse(0, 0, 200, 200);
+        
+        fill(49, 55, 64, 100);
+        ellipse(-44, -68, 50, 50);
+        ellipse(58, -49, 30, 30);
+        ellipse(23, 22, 40, 40);
+        ellipse(-65, 61, 60, 60);
+        ellipse(83, 41, 30, 30);
+    
+        fill(0, 0, 0);
+        ellipse(-32, -23, 25, 25);
+        ellipse(32, -23, 25, 25);
+        
+        noFill();
+        strokeWeight(5);
+        stroke(43, 43, 43);
+        bezier(-14, -1, -6, -11, 1, -15, 14, -1);
+        popMatrix();
+        
+        return get(0, 0, 335, 335);
+    },
+};
+
 var switchCards = false;
 var possibleImages = [
-    getImage("avatars/aqualine-sapling"),
-    getImage("avatars/aqualine-seed"),
-    getImage("avatars/aqualine-seedling"),
-    getImage("avatars/aqualine-tree"),
-    getImage("avatars/aqualine-ultimate"),
-    getImage("avatars/avatar-team"),
+    //getImage("avatars/aqualine-sapling"),
+    'moon',
+    //getImage("avatars/aqualine-seed"),
+    //getImage("avatars/aqualine-seedling"),
+    //getImage("avatars/aqualine-tree"),
+    //getImage("avatars/aqualine-ultimate"),
+    //getImage("avatars/avatar-team"),
     getImage("avatars/duskpin-sapling"),
     getImage("avatars/duskpin-seed"),
     getImage("avatars/duskpin-seedling"),
@@ -208,7 +312,11 @@ Card.prototype.draw = function() {
             rotate(sin(frameCount * 10) * 10);
         }
         
-        image(this.icons[i].img, 0, 0, this.icons[i].sz, this.icons[i].sz);
+        if(typeof this.icons[i].img === "string"){
+            image(images[this.icons[i].img], 0, 0, this.icons[i].sz, this.icons[i].sz);
+        } else {
+            image(this.icons[i].img, 0, 0, this.icons[i].sz, this.icons[i].sz);
+        }
         popMatrix();
         
         this.icons[i].hover = false;
@@ -269,6 +377,13 @@ for(var i = 0; i < 21; i ++){
 draw = function() {
     textFont(createFont("Emilys Candy"));
     textFont(createFont(newFont));
+    
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
     
     if(scene === 'Menu'){
         background(162, 232, 221);
@@ -337,7 +452,7 @@ draw = function() {
         
         noStroke();
         fill(162, 232, 221);
-        rect(25, 25, 550, 550);
+        rect(15, 15, 570, 570);
         
         kyleCard.draw();
         hopeCard.draw();
@@ -351,12 +466,14 @@ draw = function() {
         stroke(212, 104, 124);
         strokeWeight(23);
         arc(-3, 3, 327, 327, 25, 54);
+        arc(199, 403, 320, 320, 124 - (name.length * 6), 135);
         arc(600, 600, 320, 320, 212, 247);
         stroke(242, 114, 137);
         strokeWeight(23);
         strokeCap(SQUARE);
         arc(0, 0, 320, 320, 26, 54);
         arc(600, 600, 320, 320, 213, 247);
+        arc(200, 400, 320, 320, 124 - (name.length * 6), 130);
         fill(255);
         textSize(17);
         var txt = 'HOPE'.split('');
@@ -366,7 +483,8 @@ draw = function() {
             text(txt[i], 0, 160);
             popMatrix();
         }
-        var txt = 'KYLE'.split('');
+        
+        txt = 'KYLE'.split('');
         for(var i = 0; i < txt.length; i ++){
             pushMatrix();
             translate(600, 600);
@@ -374,9 +492,16 @@ draw = function() {
             text(txt[i], 0, -160);
             popMatrix();
         }
+        for(var i = 0; i < name.length; i ++){
+            pushMatrix();
+            translate(200, 400);
+            rotate((i * -6) + 33);
+            text(name[i], 0, 160);
+            popMatrix();
+        }
         
         noStroke();
-        scoreCircle(109, 526, scores[0]);
+        scoreCircle(82, 508, scores[0]);
         scoreCircle(75, 139, scores[1]);
         scoreCircle(547, 451, scores[2]);
         
@@ -389,6 +514,8 @@ draw = function() {
     
     overButton = false;
     clicked = false;
+    
+    
 };
 
 mouseClicked = function(){ 
