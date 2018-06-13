@@ -1,13 +1,14 @@
 // spot it! @o@
 
 var overButton = false, clicked = false;
+var switchCards = false;
 
 var chooseRandomUniqueNumbers = function(range){
     var nums = [];
 
-    while(nums.length < 10){
+    while(nums.length < 12){
         // add however many needed
-        for(var i = 0; i < 10 - nums.length; i ++){
+        for(var i = 0; i < 12 - nums.length; i ++){
             nums.push(floor(random(range)));
         }
         //println('Array after originals: ' + nums);
@@ -103,23 +104,27 @@ var possibleImages = [
     getImage("creatures/BabyWinston"),
     getImage("creatures/Winston"),
 ];
-var xs = [-79, -3, 105, 86, 33, -10, -94, 2, 50, -74];
-var ys = [-72, -83, -3, 66, 104, 60, 2, -16, -94, 62];
+var xs = [-79, -3, 105, 86, 33, -10, -94, -25, 40, -74, 24, 60];
+var ys = [-72, -83, -3, 66, 104, 60, 2, -16, -94, 62, 18, -38];
 
 var Card = function(x, y){
     this.x = x;
     this.y = y;
+    this.plusX = 0;
+    this.plusY = 0;
+    this.plusSz = 0;
     
     this.icons = [];
     
     this.imageNums = chooseRandomUniqueNumbers(possibleImages.length);
-    for(var i = 0; i < 10; i ++){
+    for(var i = 0; i < 12; i ++){
         this.icons.push({
             img: possibleImages[this.imageNums[i]],
             x: xs[i],
             y: ys[i],
             r: random(-50, 50),
-            sz: random(50, 70)
+            sz: random(50, 70),
+            hover: false
         });
     }
 };
@@ -128,8 +133,13 @@ var centerCard = new Card(400, 200);
 var yourCard = new Card(200, 400);
 
 Card.prototype.draw = function() {
+    this.plusX /= 1.1;
+    this.plusY /= 1.1;
+    this.plusSz /= 1.1;
+    
     pushMatrix();
-    translate(this.x, this.y);
+    translate(this.x + this.plusX, this.y + this.plusY);
+    scale(this.plusSz + 1);
     fill(126, 194, 183, 100);
     ellipse(0, 4, 325, 325);
     fill(255, 255, 245, 100);
@@ -151,14 +161,39 @@ Card.prototype.draw = function() {
         pushMatrix();
         translate(this.icons[i].x, this.icons[i].y);
         rotate(this.icons[i].r);
+        scale(1);
+        if(this.icons[i].hover){
+            scale(1.2);
+            rotate(sin(frameCount * 10) * 10);
+        }
+        
         image(this.icons[i].img, 0, 0, this.icons[i].sz, this.icons[i].sz);
         popMatrix();
+        
+        this.icons[i].hover = false;
     }
     
     popMatrix();
 };
 Card.prototype.choose = function(){
-    
+    for(var i = 0; i < this.icons.length; i ++){
+        if(dist(mouseX, mouseY, this.x + this.icons[i].x, this.y + this.icons[i].y) < this.icons[i].sz / 2.5){
+            overButton = true;
+            this.icons[i].hover = true;
+            if(clicked){
+                var itsThere = false;
+                for(var j = 0; j < centerCard.icons.length; j ++){
+                    if(this.icons[i].img === centerCard.icons[j].img){
+                        itsThere = true;
+                    }
+                }
+                
+                if(itsThere){
+                    switchCards = true;
+                }
+            }
+        }
+    }
 };
 
 draw = function() {
@@ -168,7 +203,40 @@ draw = function() {
     fill(162, 232, 221);
     rect(25, 25, 550, 550);
     
-    centerCard.draw();
     yourCard.draw();
+    centerCard.draw();
+    yourCard.choose();
     
+    if(switchCards){
+        centerCard.icons = yourCard.icons;
+        
+        yourCard.icons = [];
+    
+        yourCard.imageNums = chooseRandomUniqueNumbers(possibleImages.length);
+        for(var i = 0; i < 12; i ++){
+            yourCard.icons.push({
+                img: possibleImages[yourCard.imageNums[i]],
+                x: xs[i],
+                y: ys[i],
+                r: random(-50, 50),
+                sz: random(50, 70),
+                hover: false
+            });
+        }
+        
+        centerCard.plusX = -200;
+        centerCard.plusY = 200;
+        yourCard.plusSz = -1;
+        
+        switchCards = false;
+    }
+    
+    cursor(overButton ? 'pointer' : 'default');
+    
+    overButton = false;
+    clicked = false;
+};
+
+mouseClicked = function(){ 
+    clicked = true; 
 };
