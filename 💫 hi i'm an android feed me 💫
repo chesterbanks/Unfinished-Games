@@ -1,3 +1,6 @@
+textFont(createFont('avenir'));
+textAlign(CENTER, CENTER);
+
 
 var Bot = function(startX){
     this.x = startX;
@@ -6,6 +9,10 @@ var Bot = function(startX){
     this.h = 72;
     
     this.xvel = 3;
+    
+    this.phrases = 'i need food, please, feed me, plz feed me, give me food, i need to eat, me hungry, im hungry, need food, plz, quiero comida, i want food, yum food, more'.split(', ');
+    this.phrase = this.phrases[floor(random(this.phrases.length))];
+    this.phraseTimer = random(360);
 };
 Bot.prototype.draw = function() {
     fill(25);
@@ -14,11 +21,23 @@ Bot.prototype.draw = function() {
     pushMatrix();
     translate(this.x + this.w / 2, this.y + this.h / 2);
     
+    rectMode(CENTER);
+    
+    if(this.phraseTimer < 180){
+        fill(245);
+        rect(0, -80, 91, 25, 5);
+        triangle(-20, -80, 20, -80, 0, -60);
+        fill(25);
+        text(this.phrase, 0, -80);
+    }
+    if(this.phraseTimer > 350){
+        this.phrase = this.phrases[floor(random(this.phrases.length))];
+    }
+    
     if(this.xvel > 0){
         scale(-1, 1);
     }
     
-    rectMode(CENTER);
     pushMatrix();
     translate(0, -20);
     rotate(sin(frameCount * 5) * 60);
@@ -57,6 +76,8 @@ Bot.prototype.draw = function() {
     if(this.x + this.w > width || this.x < 0){
         this.xvel = -this.xvel;
     }
+    
+    this.phraseTimer = (this.phraseTimer + 1) % 360;
 };
 
 var bots = [new Bot(350), new Bot(100)];
