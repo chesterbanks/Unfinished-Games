@@ -1,0 +1,79 @@
+
+var Bot = function(startX){
+    this.x = startX;
+    this.y = 478;
+    this.w = 50;
+    this.h = 72;
+    
+    this.xvel = 3;
+};
+Bot.prototype.draw = function() {
+    fill(25);
+    //rect(this.x, this.y, this.w, this.h);
+    
+    pushMatrix();
+    translate(this.x + this.w / 2, this.y + this.h / 2);
+    
+    if(this.xvel > 0){
+        scale(-1, 1);
+    }
+    
+    rectMode(CENTER);
+    pushMatrix();
+    translate(0, -20);
+    rotate(sin(frameCount * 5) * 60);
+    fill(235);
+    rect(0, 20, 13, 37, 5);
+    popMatrix();
+    pushMatrix();
+    rotate(sin(frameCount * 5) * 20);
+    fill(225);
+    rect(0, 21, 13, 29, 5);
+    rotate(-sin(frameCount * 5) * 40);
+    fill(245);
+    rect(0, 21, 13, 29, 5);
+    popMatrix();
+    
+    fill(245);
+    (rect)(0, -4, 35, 43, 0, 0, 5, 5);
+    pushMatrix();
+    translate(17, -27);
+    rotate(20 -sin(frameCount * 15) * 15);
+    arc(-17, 0, 35, 40, -180, 0);
+    fill(0);
+    ellipse(-25, -6, 5, 5);
+    popMatrix();
+    
+    pushMatrix();
+    translate(0, -20);
+    rotate(-sin(frameCount * 5) * 60);
+    fill(255, 255, 255);
+    rect(0, 20, 13, 37, 5);
+    popMatrix();
+    rectMode(CORNER);
+    popMatrix();
+    
+    this.x += this.xvel;
+    if(this.x + this.w > width || this.x < 0){
+        this.xvel = -this.xvel;
+    }
+};
+
+var bots = [new Bot(350), new Bot(100)];
+
+draw = function() {
+    noStroke();
+    for(var i = 0; i < height; i += 5){
+        fill(lerpColor(
+            color(40, 189, 122),
+            color(121, 232, 134),
+            i / height));
+        rect(0, i, 400, 5);
+    }
+    
+    fill(227, 255, 242);
+    rect(0, 550, 400, 50);
+    
+    bots[0].draw();
+    bots[1].draw();
+};
