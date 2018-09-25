@@ -10,7 +10,7 @@ var Bot = function(startX){
     
     this.xvel = 3;
     
-    this.phrases = 'i need food, please, feed me, plz feed me, give me food, i need to eat, me hungry, im hungry, need food, plz, quiero comida, i want food, yum food, more'.split(', ');
+    this.phrases = 'i need food, please, feed me, plz feed me, give me food, i need to eat, me hungry, im hungry, need food, plz, quiero comida, i want food, yum food, more, can i have food, give me more, food is amazing, i luv food, yummy food'.split(', ');
     this.phrase = this.phrases[floor(random(this.phrases.length))];
     this.phraseTimer = random(360);
 };
