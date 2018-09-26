@@ -17,6 +17,17 @@ textAlign(CENTER, CENTER);
 var clicked = false;
 mouseClicked = function(){ clicked = true; };
 
+var rectCircleCollide = function(r, c){
+    return dist(r.x, r.y, c.x, c.y) < c.sz / 2 || 
+        dist(r.x + r.w, r.y, c.x, c.y) < c.sz / 2 ||
+        dist(r.x, r.y + r.h, c.x, c.y) < c.sz / 2 ||
+        dist(r.x + r.w, r.y + r.h, c.x, c.y) < c.sz / 2 ||
+        (c.x + (c.sz / 2) > r.x && c.x + (c.sz / 2) < r.x + r.w && c.y > r.y && c.y < r.y + r.h) ||
+        (c.x - (c.sz / 2) > r.x && c.x - (c.sz / 2) < r.x + r.w && c.y > r.y && c.y < r.y + r.h) ||
+        (c.x > r.x && c.x < r.x + r.w && c.y + (c.sz / 2) > r.y && c.y + (c.sz / 2) < r.y + r.h) || 
+        (c.x > r.x && c.x < r.x + r.w && c.y - (c.sz / 2) > r.y && c.y - (c.sz / 2) < r.y + r.h);
+};
+
 var Food = function(x, power){
     this.x = x;
     this.y = 50;
