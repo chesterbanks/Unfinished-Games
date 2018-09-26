@@ -1,12 +1,41 @@
+// drop food to the androids
+// they are constantly getting more hungry
+// don't let them run out of energy
+    // hamburgers +10
+    // fries +5
+    // apples +5
+    // cherries +1
+    // bombs -5 (drop these on the floor)
+
+// don't drop too much food on the floor
+    // if you drop 10 items on the floor you lose
+    // if you feed the androids 3 times in a row, your dropping count is cleared
+
 textFont(createFont('avenir'));
 textAlign(CENTER, CENTER);
 
+var clicked = false;
+mouseClicked = function(){ clicked = true; };
+
+var Food = function(x, power){
+    this.x = x;
+    this.y = 50;
+    this.power = power;
+};
+Food.prototype.draw = function() {
+    fill(255);
+    ellipse(this.x, this.y, 15, 15);
+    
+    this.y += this.power;
+};
+var Foods = [];
 
 var Bot = function(startX){
     this.x = startX;
     this.y = 478;
     this.w = 50;
     this.h = 72;
+    this.hunger = -4;
     
     this.xvel = 3;
     
@@ -63,12 +92,21 @@ Bot.prototype.draw = function() {
     ellipse(-25, -6, 5, 5);
     popMatrix();
     
+    
+    rectMode(CORNERS);
+    fill(232, 89, 49, 150);
+    rect(-15, 17, 15, -this.hunger);
+    fill(255, 255, 255, 50);
+    rect(0, 17, 12, -this.hunger);
+    
+    rectMode(CENTER);
     pushMatrix();
     translate(0, -20);
     rotate(-sin(frameCount * 5) * 60);
     fill(255, 255, 255);
     rect(0, 20, 13, 37, 5);
     popMatrix();
+    
     rectMode(CORNER);
     popMatrix();
     
@@ -78,9 +116,13 @@ Bot.prototype.draw = function() {
     }
     
     this.phraseTimer = (this.phraseTimer + 1) % 360;
+    
+    this.hunger += 0.02;
 };
 
 var bots = [new Bot(350), new Bot(100)];
+
+var ballPower = 0, bSpeed = 1;
 
 draw = function() {
     noStroke();
@@ -97,4 +139,29 @@ draw = function() {
     
     bots[0].draw();
     bots[1].draw();
+    
+    for(var i = Foods.length - 1; i >= 0; i --){
+        Foods[i].draw();
+    }
+    
+    fill(255, 255, 255, 50);
+    rect(mouseX - 20, 20, 40, 10);
+    fill(255, 255, 255, 50);
+    rect(mouseX - 20, 20, ballPower, 10);
+    fill(255);
+    ellipse(mouseX, 50, 15, 15);
+    
+    if(mouseIsPressed){
+        ballPower += bSpeed;
+        if(ballPower > 40 || ballPower < 0){
+            bSpeed = -bSpeed;
+        }
+    } else {
+        ballPower = 0;
+    }
+    if(clicked){
+        Foods.push(new Food(mouseX, ballPower / 2));
+    }
+    
+    clicked = false;
 };
