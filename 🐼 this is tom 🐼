@@ -1,0 +1,380 @@
+textAlign(CENTER, CENTER);
+
+var scene = 'Menu';
+
+var mouse = {
+    clicked: false,
+    overButton: false,
+};
+
+var trans = {
+    active: false,
+    out: false,
+    nextScene: '',
+    x: 300,
+};
+
+/* Credit to 木 for this bit of code: https://www.khanacademy.org/computer-programming/hello-google-fonts/6633982602379264 */
+var loadGoogleFont = (function () {
+    return this.Function ( "gfName", "gfName = gfName.replace ( /\\s+/g, '+' );var subsets = Array.prototype.slice.call ( arguments, 1, arguments.length - 1 ), url = 'https://fonts.googleapis.com/css?family=' + gfName + ( subsets.length > 0 ? '&amp;subset=' + subsets : '' ), callback = arguments [ arguments.length - 1 ], gfs = document.querySelectorAll('link[href=\"'+url+'\"]');if(!gfs.length){var f=document.createElement('link');f.setAttribute('rel','stylesheet');f.setAttribute('type','text/css');f.onload=callback;f.setAttribute('href',url);document.head.appendChild(f);}else if ( typeof callback === 'function' ) { callback.call ( gfs [ 0 ] ); }");
+})();
+var fontloaded = false;
+
+if ( !fontloaded ) {
+    loadGoogleFont('Work+Sans', 'latin-ext', 'vietnamese');
+}
+
+textFont(createFont('Work Sans'));
+
+var drag = {};
+
+var myShape = function(x, y, radius, sides, r){
+    pushMatrix();
+    translate(x, y);
+    rotate(r);
+    beginShape();
+    for(var i = 0; i < 360; i += 360 / sides){
+        vertex(sin(i) * radius, cos(i) * radius);
+    }
+    endShape(CLOSE);
+    popMatrix();
+};
+
+var explosion = function(x, y){
+    this.x = x;
+    this.y = y;
+    this.x2 = 0;
+    this.sz = random(20);
+    this.trans = 255;
+    this.r = random(360);
+    
+    this.sides = random(3, 8);
+    this.collidedThisFrame = false;
+};
+explosion.prototype.draw = function() {
+    noStroke();
+    fill(255, 255, 255, this.trans);
+    pushMatrix();
+    translate(this.x, this.y);
+    rotate(this.r);
+    translate(this.x2, 0);
+    beginShape();
+    for(var i = 0; i < 360; i += 360 / this.sides){
+        vertex(sin(i) * this.sz, cos(i) * this.sz);
+    }
+    endShape(CLOSE);
+    popMatrix();
+    
+    this.x2 += this.sz / 20;
+    this.trans /= 1.1;
+};
+var explosions = [];
+
+var ball = function(x, y, run, rise, rad){
+    this.x = x;
+    this.y = y;
+    this.r = rad || random(10, 50);
+    this.xvel = run / 10;
+    this.yvel = rise / 10;
+    
+    this.color = color(255, 255, 255);
+    this.i = 0;
+};
+var balls = [new ball(200, 200, 0, 0, 50)];
+ball.prototype.draw = function() {
+    rectMode(CENTER);
+    
+    pushMatrix();
+    translate(200, 200);
+    rotate(atan2(this.y - 200, this.x - 200));
+    translate((Math.sqrt(((this.x - 200) * (this.x - 200)) + ((this.y - 200) * (this.y - 200)))), 0);
+    noStroke();
+    fill(0, 0, 0, 30);
+    quad(0, -this.r, 0, this.r, 400, this.r + (5000 / dist(this.x, this.y, 200, 200)), 400, -this.r - (5000 / dist(this.x, this.y, 200, 200)));
+    popMatrix();
+    
+    noStroke();
+    fill(this.color);
+    ellipse(this.x, this.y, this.r * 2, this.r * 2);
+    
+    if(this.i === 0){
+        pushMatrix();
+        translate(this.x, this.y);
+        scale(0.7);
+        noStroke();
+        fill(36, 36, 36);
+        ellipse(30, 10, 20, 20);
+        ellipse(-30, 10, 20, 20);
+        noFill();
+        stroke(36);
+        strokeWeight(3);
+        arc(0, 17, 30, 19, 33, 145);
+        popMatrix();
+    }
+    
+    this.x += this.xvel;
+    this.y += this.yvel;
+};
+ball.prototype.check = function() {
+    //this.color = color(245, 245, 245);
+    for(var i = balls.length - 1; i >= 0; i --){
+        if((dist(this.x, this.y, balls[i].x, balls[i].y) < (this.r + balls[i].r)) && balls[i].i !== this.i){
+            //this.color = color(255, 0, 0);
+            explosions.push(new explosion(
+                (((this.x * balls[i].r) + (balls[i].x * this.r)) / (this.r + balls[i].r)),
+                (((this.y * balls[i].r) + (balls[i].y * this.r)) / (this.r + balls[i].r))
+            ));
+            
+            this.xvel = -(balls[i].x - this.x)/ 50;
+            this.yvel = -(balls[i].y - this.y) / 50;
+        }
+    }
+};
+
+var txtButton = function(txt, x, y, w, h, nxt){
+    this.txt = txt;
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.nxt = nxt;
+    
+    this.s = 1;
+    
+    this.glow = false;
+    this.glowPower = 30;
+    this.glowDistance = 0;
+};
+txtButton.prototype.draw = function() {
+    if(mouseX > this.x - this.w / 2 && mouseX < this.x + this.w / 2 && mouseY > this.y - this.h / 2 && mouseY < this.y + this.h / 2){
+        mouse.overButton = true;
+        
+        if(mouse.clicked){
+            trans.active = true;
+            trans.nextScene = this.nxt;
+        }
+        
+        if(mouseIsPressed){
+            this.s += (0.8 - this.s) / 3;
+        } else {
+            this.s += (1 - this.s) / 7;
+        }
+        
+        this.glow = true;
+        if(this.glow){
+            this.glowDistance += (5 - this.glowDistance) / 5;
+        }
+    } else if (this.glow){
+        this.glowDistance += (50 - this.glowDistance) / 5;
+        this.glowPower /= 1.1;
+        if(this.glowPower < 10){
+            this.glow = false;
+            this.glowPower = 30;
+            this.glowDistance = 0;
+        }
+    }
+    
+    pushMatrix();
+    translate(this.x, this.y);
+    scale(this.s);
+    rectMode(CENTER);
+    noStroke();
+    fill(0);
+    //rect(0, 0, this.w, this.h);
+    if(this.glow){
+        fill(255, 255, 255, this.glowPower);
+        for(var i = 0; i < 360; i += 30){
+            text(this.txt, sin(i) * this.glowDistance, cos(i) * this.glowDistance);
+        }
+    }
+    fill(255);
+    text(this.txt, 0, 0);
+    popMatrix();
+};
+var buttons = [new txtButton('start', 200, 335, 70, 30, 'How'), new txtButton('let\'s go', 200, 365, 70, 30, 'Game')];
+
+draw = function() {
+    background(49, 166, 162);
+    
+    noStroke();
+    fill(227, 249, 255, 20);
+    for(var i = 0; i < 400; i += 40){
+        myShape(200, 200, i/1.5, round(i/40), i - (frameCount/5));
+    }
+    
+    if(scene === 'Menu'){
+        pushMatrix();
+        translate(200, 130);
+        
+        if(dist(mouseX, mouseY, 200, 130) < 75 && mouseIsPressed){
+            scale(0.95);
+        }
+        noStroke();
+        fill(255, 255, 255);
+        ellipse(0, 0, 150, 150);
+        fill(36, 36, 36);
+        if(!(mouseIsPressed && dist(mouseX, mouseY, 200, 130) < 75)){
+            ellipse(30, 10, 20, 20);
+            ellipse(-30, 10, 20, 20);
+        }
+        noFill();
+        stroke(36);
+        strokeWeight(3);
+        if(dist(mouseX, mouseY, 200, 130) < 75){
+            mouse.overButton = true;
+            if(mouseIsPressed){
+                arc(-30, 13, 15, 25, -175, 0);
+                arc(30, 13, 15, 25, -175, 0);
+            }
+        }
+        arc(0, 17, 30, 19, 33, 145);
+        popMatrix();
+        
+        fill(255);
+        textSize(50);
+        text('this is tom', 200, 250);
+        textSize(15);
+        text('a deceptively simple game', 200, 279);
+        textSize(30);
+        
+        buttons[0].draw();
+    }
+    if(scene === 'How'){
+        pushMatrix();
+        translate(87, 65);
+        scale(0.5);
+        noStroke();
+        fill(255, 255, 255);
+        ellipse(0, 0, 150, 150);
+        fill(36, 36, 36);
+        ellipse(30, 10, 20, 20);
+        ellipse(-30, 10, 20, 20);
+        noFill();
+        stroke(36);
+        strokeWeight(3);
+        arc(0, 17, 30, 19, 33, 145);
+        popMatrix();
+        
+        textAlign(LEFT, TOP);
+        fill(255);
+        textSize(24);
+        text('this is tom.', 155, 45);
+        textSize(16);
+        text('fire a ball at him by dragging the mouse.\n\ndon\'t let him touch the edges of screen, he\'s allergic to them.\n\nkeep him away from the spiked balls.\n\nmake him run into a green ball for a time bonus.\n\nhe\'s broke, hit him up with some coins.', 40, 125, 325, 400);
+        
+        pushMatrix();
+        translate(0, -12);
+        stroke(255);
+        noFill();
+        bezier(180, 86, 206, 113, 176, 129, 131, 109);
+        line(129, 107, 143, 105);
+        line(129, 108, 133, 121);
+        popMatrix();
+        
+        textAlign(CENTER, CENTER);
+        textSize(20);
+        buttons[1].draw();
+    }
+    if(scene === 'Game'){
+        stroke(255, 255, 255, 50);
+        if(mouseIsPressed){
+            for(var i = 0; i < 5; i ++){
+                strokeWeight(10 + sin((i*50)+frameCount*10)*10);
+                point(drag.x - (drag.x-mouseX)*(i/4), drag.y - (drag.y-mouseY)*(i/4));
+            }
+        }
+        
+        for(var i = balls.length - 1; i >= 0; i --){
+            balls[i].i = i;
+            balls[i].draw();
+        }
+        for(var i = balls.length - 1; i >= 0; i --){
+            balls[i].check();
+            if(balls[i].x > 600 || balls[i].x < -200 || balls[i].y > 600 || balls[i].y < -200){
+                balls.splice(i, 1);
+            }
+        }
+        
+        for(var i = explosions.length - 1; i >= 0; i --){
+            explosions[i].draw();
+            if(explosions[i].trans < 3){
+                explosions.splice(i, 1);
+            }
+        }
+    }
+    
+    // Transition
+    if(trans.active){
+        rectMode(CORNER);
+        noStroke();
+        fill(255, 255, 255);
+        pushMatrix();
+        translate(-trans.x + 5, 0);
+        rect(204, -1, 0.3, 0.3, -31);
+        for(var i = 0; i < height; i += 50){
+            var myW = noise(i*0.6, i*0.01)*600;
+            
+            rect(-50, i, -25 + myW, 50, 50);
+            if(myW < noise((i+50)*0.6, (i+50)*0.01)*600){
+                rect(-70, i + 51, -6 + myW, 7, -25);
+                rect(-99, i + 34, 24 + myW, 18);
+            }
+            if(noise(i*0.6, i*0.01)*600 > noise((i+50)*0.6, (i+50)*0.01)*600){
+                rect(-108, i + 42, -5 + myW, 7, -25);
+                rect(-137, i + 49, 24 + myW, 24);
+            }
+        }
+        popMatrix();
+        pushMatrix();
+        translate(trans.x - 5, 0);
+        for(var i = 0; i < height; i += 50){
+            var myW = noise(i*0.6, i*0.01)*600;
+            
+            rect(myW - 76, i, 400, 51, 50);
+            if(myW < noise((i+50)*0.6, (i+50)*0.01)*600){
+                rect(myW - 38, i + 42, 27, 7, -25);
+                rect(myW - 38, i + 42, 33, 40);
+            }
+            if(myW > noise((i+50)*0.6, (i+50)*0.01)*600){
+                rect(myW - 75, i + 51, 27, 7, -25);
+                rect(myW - 76, i + 34, 33, 40);
+            }
+        }
+        popMatrix();
+        
+        if(!trans.out){
+            trans.x /= 1.5;
+        } else {
+            trans.x += (300 - trans.x) / 10;
+            if(trans.x > 290){
+                trans.x = 300;
+                trans.out = false;
+                trans.active = false;
+            }
+        }
+        if(trans.x < 5){
+            scene = trans.nextScene;
+            trans.out = true;
+        }
+    }
+    
+    cursor(mouse.overButton ? 'pointer' : 'default');
+    
+    mouse.overButton = false;
+    mouse.clicked = false;
+};
+
+mouseClicked = function(){
+    mouse.clicked = true;
+};
+mousePressed = function(){
+    if(scene === 'Game'){
+        drag.x = mouseX;
+        drag.y = mouseY;
+    }
+};
+mouseReleased = function(){
+    if(scene === 'Game'){
+        balls.push(new ball(mouseX, mouseY, (drag.x - mouseX) / 2, (drag.y - mouseY) / 2));
+    }
+};
