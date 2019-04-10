@@ -1,6 +1,7 @@
 textAlign(CENTER, CENTER);
 
-var scene = 'Menu';
+var scene = 'Game';
+var myCoins = 0;
 
 var mouse = {
     clicked: false,
@@ -70,17 +71,32 @@ explosion.prototype.draw = function() {
 };
 var explosions = [];
 
-var ball = function(x, y, run, rise, rad){
+var ball = function(x, y, run, rise, type, rad){
     this.x = x;
     this.y = y;
     this.r = rad || random(10, 50);
     this.xvel = run / 10;
     this.yvel = rise / 10;
     
-    this.color = color(255, 255, 255);
     this.i = 0;
+    this.trans = 255;
+    this.type = type;
+    
+    if(this.type === 0){
+        this.color = color(255, 255, 255);
+    } else {
+        this.color = color(231, 247, 91);
+    }
+    
+    if(this.type === 1){ 
+        this.rot = 1;
+        this.r = 1; 
+        this.destR = random(15, 25);
+        this.timer = 0;
+    }
 };
-var balls = [new ball(200, 200, 0, 0, 50)];
+var balls = [new ball(200, 200, 0, 0, 0, 50)];
+var coins = [];
 ball.prototype.draw = function() {
     rectMode(CENTER);
     
@@ -89,15 +105,48 @@ ball.prototype.draw = function() {
     rotate(atan2(this.y - 200, this.x - 200));
     translate((Math.sqrt(((this.x - 200) * (this.x - 200)) + ((this.y - 200) * (this.y - 200)))), 0);
     noStroke();
-    fill(0, 0, 0, 30);
+    fill(0, 0, 0, this.trans / 20);
     quad(0, -this.r, 0, this.r, 400, this.r + (5000 / dist(this.x, this.y, 200, 200)), 400, -this.r - (5000 / dist(this.x, this.y, 200, 200)));
     popMatrix();
     
-    noStroke();
-    fill(this.color);
-    ellipse(this.x, this.y, this.r * 2, this.r * 2);
+    if(this.type === 0){
+        noStroke();
+        fill(this.color);
+        ellipse(this.x, this.y, this.r * 2, this.r * 2);
+    }
     
-    if(this.i === 0){
+    if(this.type === 1){
+        this.timer ++;
+        
+        pushMatrix();
+        translate(this.x, this.y);
+        scale(this.r / 20);
+        rotate(this.rot);
+        noFill();
+        (stroke)(this.color, this.trans);
+        strokeWeight(3);
+        ellipse(0, 0, 1.9 * 20, 1.9 * 20);
+        strokeWeight(1.6 * 20);
+        point(0, 0);
+        fill(0, 0, 0, 30);
+        textSize(20);
+        text('$', 0 ,0);
+        popMatrix();
+        
+        if(this.collected){
+            this.r *= 1.1;
+            this.trans /= 1.1;
+            this.rot *= 2;
+        }
+        if(this.timer > 250){
+            this.r /= 1.1;
+            this.trans /= 1.1;
+        } else {
+            this.r += (this.destR - this.r) / 10;
+        }
+    }
+    
+    if(this.i === 0 && this.type === 0){
         pushMatrix();
         translate(this.x, this.y);
         scale(0.7);
@@ -125,8 +174,17 @@ ball.prototype.check = function() {
                 (((this.y * balls[i].r) + (balls[i].y * this.r)) / (this.r + balls[i].r))
             ));
             
-            this.xvel = -(balls[i].x - this.x)/ 50;
-            this.yvel = -(balls[i].y - this.y) / 50;
+            this.xvel = (this.xvel / 2)-(balls[i].x - this.x) / 50;
+            this.yvel = (this.yvel / 2)-(balls[i].y - this.y) / 50;
+        }
+    }
+    
+    if(this.i === 0){
+        for(var i = coins.length - 1; i >= 0; i --){
+            if(dist(this.x, this.y, coins[i].x, coins[i].y) < (this.r + coins[i].r) && !coins[i].collected){
+                myCoins ++;
+                coins[i].collected = true;
+            }
         }
     }
 };
@@ -194,7 +252,7 @@ txtButton.prototype.draw = function() {
 var buttons = [new txtButton('start', 200, 335, 70, 30, 'How'), new txtButton('let\'s go', 200, 365, 70, 30, 'Game')];
 
 draw = function() {
-    background(49, 166, 162);
+    background(29, 161, 161);
     
     noStroke();
     fill(227, 249, 255, 20);
@@ -276,6 +334,10 @@ draw = function() {
         buttons[1].draw();
     }
     if(scene === 'Game'){
+        if(frameCount % 500 === 0){
+            coins.push(new ball(random(50, 350), random(50, 350), 0, 0, 1));
+        }
+        
         stroke(255, 255, 255, 50);
         if(mouseIsPressed){
             for(var i = 0; i < 5; i ++){
@@ -284,6 +346,12 @@ draw = function() {
             }
         }
         
+        for(var i = coins.length - 1; i >= 0; i --){
+            coins[i].draw();
+            if(coins[i].trans < 10){
+                coins.splice(i, 1);
+            }
+        }
         for(var i = balls.length - 1; i >= 0; i --){
             balls[i].i = i;
             balls[i].draw();
@@ -375,6 +443,6 @@ mousePressed = function(){
 };
 mouseReleased = function(){
     if(scene === 'Game'){
-        balls.push(new ball(mouseX, mouseY, (drag.x - mouseX) / 2, (drag.y - mouseY) / 2));
+        balls.push(new ball(mouseX, mouseY, (drag.x - mouseX) / 2, (drag.y - mouseY) / 2, 0));
     }
 };
