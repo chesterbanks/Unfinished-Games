@@ -2,6 +2,8 @@ textAlign(CENTER, CENTER);
 
 var scene = 'Game';
 var myCoins = 0;
+var lives = 3;
+var shake = 0;
 
 var mouse = {
     clicked: false,
@@ -81,18 +83,22 @@ var ball = function(x, y, run, rise, type, rad){
     this.i = 0;
     this.trans = 255;
     this.type = type;
-    
-    if(this.type === 0){
-        this.color = color(255, 255, 255);
-    } else {
-        this.color = color(231, 247, 91);
-    }
+    this.color = color(255, 255, 255);
     
     if(this.type === 1){ 
+        this.color = color(231, 247, 91);
         this.rot = 1;
         this.r = 1; 
         this.destR = random(15, 25);
         this.timer = 0;
+    }
+    
+    if(this.type === 2){ 
+        this.color = color(230, 39, 55);
+        this.rot = 1;
+        this.r = 1; 
+        this.destR = random(15, 30);
+        this.timer = -100;
     }
 };
 var balls = [new ball(200, 200, 0, 0, 0, 50)];
@@ -102,6 +108,7 @@ ball.prototype.draw = function() {
     
     pushMatrix();
     translate(200, 200);
+    if(this.type === 2 && this.timer < 0){ translate(1000, 0); }
     rotate(atan2(this.y - 200, this.x - 200));
     translate((Math.sqrt(((this.x - 200) * (this.x - 200)) + ((this.y - 200) * (this.y - 200)))), 0);
     noStroke();
@@ -132,18 +139,50 @@ ball.prototype.draw = function() {
         textSize(20);
         text('$', 0 ,0);
         popMatrix();
+    }
+    
+    if(this.type === 2){
+        this.timer ++;
         
-        if(this.collected){
-            this.r *= 1.1;
-            this.trans /= 1.1;
-            this.rot *= 2;
-        }
-        if(this.timer > 250){
-            this.r /= 1.1;
-            this.trans /= 1.1;
+        pushMatrix();
+        translate(this.x, this.y);
+        rotate(this.rot);
+        
+        noStroke();
+        if(this.timer > 0){
+            fill(227 + sin((frameCount + this.r) * 5) * 30, 34 + sin((frameCount + this.x) * 5) * 30, 69, this.trans);
+            ellipse(0, 0, this.r * 2, this.r * 2);
+            for(var i = 0; i < 360; i += 360 / this.r * 2){
+                pushMatrix();
+                rotate(i);
+                triangle(10, -this.r * 0.9, -10, -this.r * 0.9, 0, -this.r * 1.3);
+                popMatrix();
+            }
         } else {
-            this.r += (this.destR - this.r) / 10;
+            fill(0, 0, 0, 60);
+            ellipse(0, 0, this.destR * 2, this.destR * 2);
+            fill(255);
+            textSize(this.destR);
+            text('!', 0, 0);
         }
+        popMatrix();
+    }
+    
+    if(this.collected){
+        if(this.type === 1){
+            this.r *= 1.04;
+        } else {
+            this.r /= 1.1;
+        }
+        this.rot *= 2;
+        
+        this.trans /= 1.1;
+    }
+    if(this.timer > 250){
+        this.r /= 1.1;
+        this.trans /= 1.1;
+    } else if (this.timer > 0) {
+        this.r += (this.destR - this.r) / 50;
     }
     
     if(this.i === 0 && this.type === 0){
@@ -154,10 +193,15 @@ ball.prototype.draw = function() {
         fill(36, 36, 36);
         ellipse(30, 10, 20, 20);
         ellipse(-30, 10, 20, 20);
-        noFill();
-        stroke(36);
-        strokeWeight(3);
-        arc(0, 17, 30, 19, 33, 145);
+        if(shake > 0){
+            arc(0, 25, 30, 30, -180, 0);
+            rect(0, 29, 30, 10);
+        } else {
+            noFill();
+            stroke(36);
+            strokeWeight(3);
+            arc(0, 17, 30, 19, 33, 145);
+        }
         popMatrix();
     }
     
@@ -182,8 +226,17 @@ ball.prototype.check = function() {
     if(this.i === 0){
         for(var i = coins.length - 1; i >= 0; i --){
             if(dist(this.x, this.y, coins[i].x, coins[i].y) < (this.r + coins[i].r) && !coins[i].collected){
-                myCoins ++;
-                coins[i].collected = true;
+                if(coins[i].type === 1){
+                    myCoins ++;
+                    coins[i].collected = true;
+                } else if (coins[i].timer > 5){
+                    shake = 1;
+                    lives --;
+                    coins[i].collected = true;
+                    
+                    this.xvel = (this.xvel)-(coins[i].x - this.x) / 10;
+                    this.yvel = (this.yvel)-(coins[i].y - this.y) / 10;
+                }
             }
         }
     }
@@ -334,8 +387,11 @@ draw = function() {
         buttons[1].draw();
     }
     if(scene === 'Game'){
-        if(frameCount % 500 === 0){
+        if(frameCount % 300 === 0){
             coins.push(new ball(random(50, 350), random(50, 350), 0, 0, 1));
+        }
+        if(frameCount % 400 === 0){
+            coins.push(new ball(random(50, 350), random(50, 350), 0, 0, 2));
         }
         
         stroke(255, 255, 255, 50);
@@ -367,6 +423,18 @@ draw = function() {
             explosions[i].draw();
             if(explosions[i].trans < 3){
                 explosions.splice(i, 1);
+            }
+        }
+        
+        if(shake > 0){
+            shake ++;
+            
+            noStroke();
+            fill(255, 0, 0, random(150));
+            rect(200, 200, 400, 400);
+            
+            if(shake > 10){
+                shake = -1;
             }
         }
     }
