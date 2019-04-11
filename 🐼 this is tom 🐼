@@ -1,7 +1,7 @@
 textAlign(CENTER, CENTER);
 
-var scene = 'Game';
-var myCoins = 0;
+var scene = 'Lose';
+var points = 0;
 var lives = 3;
 var shake = 0;
 
@@ -86,6 +86,7 @@ var ball = function(x, y, run, rise, type, rad){
     this.color = color(255, 255, 255);
     
     if(this.type === 1){ 
+        this.value = floor(random(1, 20)) * 5;
         this.color = color(231, 247, 91);
         this.rot = 1;
         this.r = 1; 
@@ -96,7 +97,7 @@ var ball = function(x, y, run, rise, type, rad){
     if(this.type === 2){ 
         this.color = color(230, 39, 55);
         this.rot = 1;
-        this.r = 1; 
+        this.r = 10; 
         this.destR = random(15, 30);
         this.timer = -100;
     }
@@ -104,6 +105,7 @@ var ball = function(x, y, run, rise, type, rad){
 var balls = [new ball(200, 200, 0, 0, 0, 50)];
 var coins = [];
 ball.prototype.draw = function() {
+    textAlign(CENTER, CENTER);
     rectMode(CENTER);
     
     pushMatrix();
@@ -127,17 +129,17 @@ ball.prototype.draw = function() {
         
         pushMatrix();
         translate(this.x, this.y);
-        scale(this.r / 20);
-        rotate(this.rot);
+        scale(this.r / 20 + (sin(frameCount*10)/10));
+        rotate(this.rot + sin(frameCount*10)*30);
         noFill();
-        (stroke)(this.color, this.trans);
+        (stroke)(255, this.trans);
         strokeWeight(3);
         ellipse(0, 0, 1.9 * 20, 1.9 * 20);
         strokeWeight(1.6 * 20);
         point(0, 0);
-        fill(0, 0, 0, 30);
-        textSize(20);
-        text('$', 0 ,0);
+        fill(26, 178, 181);
+        textSize(15);
+        text('+' + this.value, 0 ,0);
         popMatrix();
     }
     
@@ -150,13 +152,16 @@ ball.prototype.draw = function() {
         
         noStroke();
         if(this.timer > 0){
-            fill(227 + sin((frameCount + this.r) * 5) * 30, 34 + sin((frameCount + this.x) * 5) * 30, 69, this.trans);
+            //fill(227 + sin((frameCount + this.r) * 5) * 30, 34 + sin((frameCount + this.x) * 5) * 30, 69, this.trans);
+            fill(33);
             ellipse(0, 0, this.r * 2, this.r * 2);
-            for(var i = 0; i < 360; i += 360 / this.r * 2){
-                pushMatrix();
-                rotate(i);
-                triangle(10, -this.r * 0.9, -10, -this.r * 0.9, 0, -this.r * 1.3);
-                popMatrix();
+            if(this.r > 10){
+                for(var i = 0; i < 360; i += 360 / this.r * 2){
+                    pushMatrix();
+                    rotate(i);
+                    triangle(10, -this.r * 0.9, -10, -this.r * 0.9, 0, -this.r * 1.3);
+                    popMatrix();
+                }
             }
         } else {
             fill(0, 0, 0, 60);
@@ -227,13 +232,22 @@ ball.prototype.check = function() {
         for(var i = coins.length - 1; i >= 0; i --){
             if(dist(this.x, this.y, coins[i].x, coins[i].y) < (this.r + coins[i].r) && !coins[i].collected){
                 if(coins[i].type === 1){
-                    myCoins ++;
+                    points += coins[i].value;
                     coins[i].collected = true;
                 } else if (coins[i].timer > 5){
                     shake = 1;
                     lives --;
                     coins[i].collected = true;
                     
+                    this.xvel = (this.xvel)-(coins[i].x - this.x) / 10;
+                    this.yvel = (this.yvel)-(coins[i].y - this.y) / 10;
+                }
+            }
+        }
+    } else {
+        for(var i = coins.length - 1; i >= 0; i --){
+            if(dist(this.x, this.y, coins[i].x, coins[i].y) < (this.r + coins[i].r) && !coins[i].collected){
+                if (coins[i].r > 5 && coins[i].type === 2){
                     this.xvel = (this.xvel)-(coins[i].x - this.x) / 10;
                     this.yvel = (this.yvel)-(coins[i].y - this.y) / 10;
                 }
@@ -302,13 +316,13 @@ txtButton.prototype.draw = function() {
     text(this.txt, 0, 0);
     popMatrix();
 };
-var buttons = [new txtButton('start', 200, 335, 70, 30, 'How'), new txtButton('let\'s go', 200, 365, 70, 30, 'Game')];
+var buttons = [new txtButton('start', 200, 335, 70, 30, 'How'), new txtButton('let\'s go', 200, 365, 70, 30, 'Game'), new txtButton('resurrect tom and try again', 200, 345, 270, 50)];
 
 draw = function() {
-    background(29, 161, 161);
+    background(20, 154, 181);
     
     noStroke();
-    fill(227, 249, 255, 20);
+    fill(255, 255, 255, 20);
     for(var i = 0; i < 400; i += 40){
         myShape(200, 200, i/1.5, round(i/40), i - (frameCount/5));
     }
@@ -437,6 +451,63 @@ draw = function() {
                 shake = -1;
             }
         }
+        
+        /*for(var i = 0; i < lives; i ++){
+            noStroke();
+            fill(255);
+            pushMatrix();
+            translate(41 + (i * 30), 40);
+            scale(0.5);
+            ellipse(-11, -9, 25, 25);
+            ellipse(11, -9, 25, 25);
+            triangle(-20, 0, 20, 0, 0, -5);
+            triangle(-20, 0, 20, 0, 0, 22);
+            popMatrix();
+        }*/
+        
+        fill(255);
+        textSize(15);
+        textAlign(LEFT, CENTER);
+        text('tom has ' + points.toFixed(0) + ' points\ntom has ' + lives + ' out of 3 lives', 20, 35);
+        
+        points += 0.03;
+        
+        if(lives < 0){
+            trans.active = true;
+            trans.nextScene = 'Lose';
+            lives = 0;
+        }
+    }
+    if(scene === 'Lose'){
+        pushMatrix();
+        translate(200, 120);
+        scale(1);
+        noStroke();
+        fill(255, 255, 255);
+        ellipse(0, 0, 150, 150);
+        fill(36, 36, 36);
+        ellipse(30, 10, 20, 20);
+        ellipse(-30, 10, 20, 20);
+        noFill();
+        stroke(36);
+        strokeWeight(3);
+        arc(0, 30, 30, -19, 33, 145);
+        popMatrix();
+        
+        //textAlign(LEFT, TOP);
+        fill(255);
+        textSize(24);
+        text('you killed tom', 200, 230);
+        text('he died with ' + points.toFixed(0) + ' points.', 200, 285);
+        textSize(13);
+        text('nice going!', 200, 250);
+        text('that\'s something i guess', 200, 305);
+        textSize(16);
+        //text('fire a ball at him by dragging the mouse.\n\ndon\'t let him touch the edges of screen, he\'s allergic to them.\n\nkeep him away from the spiked balls.\n\nmake him run into a green ball for a time bonus.\n\nhe\'s broke, hit him up with some coins.', 40, 125, 325, 400);
+        
+        textAlign(CENTER, CENTER);
+        textSize(20);
+        buttons[2].draw();
     }
     
     // Transition
