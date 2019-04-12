@@ -1,9 +1,10 @@
 textAlign(CENTER, CENTER);
 
-var scene = 'Lose';
+var scene = 'Menu';
 var points = 0;
 var lives = 3;
 var shake = 0;
+var started = false;
 
 var mouse = {
     clicked: false,
@@ -12,9 +13,9 @@ var mouse = {
 
 var trans = {
     active: false,
+    nextScene: 'Game',
     out: false,
-    nextScene: '',
-    x: 300,
+    sz: 1500,
 };
 
 /* Credit to 木 for this bit of code: https://www.khanacademy.org/computer-programming/hello-google-fonts/6633982602379264 */
@@ -102,20 +103,20 @@ var ball = function(x, y, run, rise, type, rad){
         this.timer = -100;
     }
 };
-var balls = [new ball(200, 200, 0, 0, 0, 50)];
+var balls = [new ball(width / 2, height / 2, 0, 0, 0, 50)];
 var coins = [];
 ball.prototype.draw = function() {
     textAlign(CENTER, CENTER);
     rectMode(CENTER);
     
     pushMatrix();
-    translate(200, 200);
+    translate(300, 300);
     if(this.type === 2 && this.timer < 0){ translate(1000, 0); }
-    rotate(atan2(this.y - 200, this.x - 200));
-    translate((Math.sqrt(((this.x - 200) * (this.x - 200)) + ((this.y - 200) * (this.y - 200)))), 0);
+    rotate(atan2(this.y - 300, this.x - 300));
+    translate((Math.sqrt(((this.x - 300) * (this.x - 300)) + ((this.y - 300) * (this.y - 300)))), 0);
     noStroke();
     fill(0, 0, 0, this.trans / 20);
-    quad(0, -this.r, 0, this.r, 400, this.r + (5000 / dist(this.x, this.y, 200, 200)), 400, -this.r - (5000 / dist(this.x, this.y, 200, 200)));
+    quad(0, -this.r, 0, this.r, 600, this.r + (5000 / dist(this.x, this.y, 300, 300)), 600, -this.r - (5000 / dist(this.x, this.y, 300, 300)));
     popMatrix();
     
     if(this.type === 0){
@@ -239,8 +240,8 @@ ball.prototype.check = function() {
                     lives --;
                     coins[i].collected = true;
                     
-                    this.xvel = (this.xvel)-(coins[i].x - this.x) / 10;
-                    this.yvel = (this.yvel)-(coins[i].y - this.y) / 10;
+                    this.xvel = (this.xvel)-(coins[i].x - this.x) / 30;
+                    this.yvel = (this.yvel)-(coins[i].y - this.y) / 30;
                 }
             }
         }
@@ -248,11 +249,25 @@ ball.prototype.check = function() {
         for(var i = coins.length - 1; i >= 0; i --){
             if(dist(this.x, this.y, coins[i].x, coins[i].y) < (this.r + coins[i].r) && !coins[i].collected){
                 if (coins[i].r > 5 && coins[i].type === 2){
-                    this.xvel = (this.xvel)-(coins[i].x - this.x) / 10;
-                    this.yvel = (this.yvel)-(coins[i].y - this.y) / 10;
+                    this.xvel = (this.xvel)-(coins[i].x - this.x) / 30;
+                    this.yvel = (this.yvel)-(coins[i].y - this.y) / 30;
                 }
             }
         }
+    }
+};
+ball.prototype.checkWalls = function(){
+    if(this.x + this.r > width || this.x - this.r < 0){
+        this.xvel = -this.xvel * 1.5;
+        
+        shake = 1;
+        lives --;
+    }
+    if(this.y + this.r > width || this.y - this.r < 0){
+        this.yvel = -this.yvel * 1.5;
+        
+        shake = 1;
+        lives --;
     }
 };
 
@@ -277,6 +292,16 @@ txtButton.prototype.draw = function() {
         if(mouse.clicked){
             trans.active = true;
             trans.nextScene = this.nxt;
+            if(this.nxt === 'Game'){
+                started = false;
+                points = 0;
+                lives = 3;
+                shake = -1;
+                explosions = [];
+                coins = [];
+                balls = [];
+                balls.push(new ball(width / 2, height / 2, 0, 0, 0, 50));
+            }
         }
         
         if(mouseIsPressed){
@@ -316,36 +341,39 @@ txtButton.prototype.draw = function() {
     text(this.txt, 0, 0);
     popMatrix();
 };
-var buttons = [new txtButton('start', 200, 335, 70, 30, 'How'), new txtButton('let\'s go', 200, 365, 70, 30, 'Game'), new txtButton('resurrect tom and try again', 200, 345, 270, 50)];
+var buttons = [new txtButton('start', width / 2, height / 1.19, 105, 45, 'How'), new txtButton('let\'s go', width / 2, height / 1.1, 150, 45, 'Game'), new txtButton('resurrect tom and try again', width / 2, height / 1.15, 420, 50, 'Game')];
 
 draw = function() {
     background(20, 154, 181);
     
+    pushMatrix();
+    scale(width / 400);
     noStroke();
     fill(255, 255, 255, 20);
     for(var i = 0; i < 400; i += 40){
         myShape(200, 200, i/1.5, round(i/40), i - (frameCount/5));
     }
+    popMatrix();
     
     if(scene === 'Menu'){
         pushMatrix();
-        translate(200, 130);
-        
-        if(dist(mouseX, mouseY, 200, 130) < 75 && mouseIsPressed){
+        translate(width / 2, height / 3);
+        scale(width / 400);
+        if(mouseIsPressed && dist(mouseX, mouseY, width / 2, height / 3) < 75 * (width / 400)){
             scale(0.95);
         }
         noStroke();
         fill(255, 255, 255);
         ellipse(0, 0, 150, 150);
         fill(36, 36, 36);
-        if(!(mouseIsPressed && dist(mouseX, mouseY, 200, 130) < 75)){
+        if(!(mouseIsPressed && dist(mouseX, mouseY, width / 2, height / 3) < 75 * (width / 400))){
             ellipse(30, 10, 20, 20);
             ellipse(-30, 10, 20, 20);
         }
         noFill();
         stroke(36);
         strokeWeight(3);
-        if(dist(mouseX, mouseY, 200, 130) < 75){
+        if(dist(mouseX, mouseY, width / 2, height / 3) < 75 * (width / 400)){
             mouse.overButton = true;
             if(mouseIsPressed){
                 arc(-30, 13, 15, 25, -175, 0);
@@ -356,15 +384,17 @@ draw = function() {
         popMatrix();
         
         fill(255);
-        textSize(50);
-        text('this is tom', 200, 250);
-        textSize(15);
-        text('a deceptively simple game', 200, 279);
-        textSize(30);
+        textSize(50 * (width / 400));
+        text('this is tom', width / 2, height / 1.6);
+        textSize(15 * (width / 400));
+        text('a deceptively simple game', width / 2, height / 1.4);
         
+        textSize(30 * (width / 400));
         buttons[0].draw();
     }
     if(scene === 'How'){
+        pushMatrix();
+        scale(1.5);
         pushMatrix();
         translate(87, 65);
         scale(0.5);
@@ -395,16 +425,17 @@ draw = function() {
         line(129, 107, 143, 105);
         line(129, 108, 133, 121);
         popMatrix();
+        popMatrix();
         
         textAlign(CENTER, CENTER);
-        textSize(20);
+        textSize(38);
         buttons[1].draw();
     }
     if(scene === 'Game'){
-        if(frameCount % 300 === 0){
+        if(frameCount % 300 === 0 && started){
             coins.push(new ball(random(50, 350), random(50, 350), 0, 0, 1));
         }
-        if(frameCount % 400 === 0){
+        if(frameCount % 400 === 0 && started){
             coins.push(new ball(random(50, 350), random(50, 350), 0, 0, 2));
         }
         
@@ -428,10 +459,11 @@ draw = function() {
         }
         for(var i = balls.length - 1; i >= 0; i --){
             balls[i].check();
-            if(balls[i].x > 600 || balls[i].x < -200 || balls[i].y > 600 || balls[i].y < -200){
+            if(balls[i].x > width + 200 || balls[i].x < -200 || balls[i].y > height + 200 || balls[i].y < -200){
                 balls.splice(i, 1);
             }
         }
+        balls[0].checkWalls();
         
         for(var i = explosions.length - 1; i >= 0; i --){
             explosions[i].draw();
@@ -445,7 +477,7 @@ draw = function() {
             
             noStroke();
             fill(255, 0, 0, random(150));
-            rect(200, 200, 400, 400);
+            rect(width / 2, height / 2, width, height);
             
             if(shake > 10){
                 shake = -1;
@@ -466,19 +498,33 @@ draw = function() {
         }*/
         
         fill(255);
-        textSize(15);
+        textSize(23);
         textAlign(LEFT, CENTER);
         text('tom has ' + points.toFixed(0) + ' points\ntom has ' + lives + ' out of 3 lives', 20, 35);
+        if(!started){
+            textAlign(CENTER, CENTER);
+            textSize(30);
+            fill(255, 255, 255, 200 + sin(frameCount * 10) * 50);
+            text('fire a ball at tom to begin', width / 2, height / 1.14);
+        }
         
-        points += 0.03;
+        if(started){
+            points += 0.03;
+        }
         
         if(lives < 0){
             trans.active = true;
             trans.nextScene = 'Lose';
             lives = 0;
         }
+        
+        if(!started && balls[0].xvel !== 0 || balls[0].yvel !== 0){
+            started = true;
+        }
     }
     if(scene === 'Lose'){
+        pushMatrix();
+        scale(1.5);
         pushMatrix();
         translate(200, 120);
         scale(1);
@@ -498,53 +544,63 @@ draw = function() {
         fill(255);
         textSize(24);
         text('you killed tom', 200, 230);
-        text('he died with ' + points.toFixed(0) + ' points.', 200, 285);
+        text('he died with ' + points.toFixed(0) + ' points', 200, 285);
         textSize(13);
         text('nice going!', 200, 250);
         text('that\'s something i guess', 200, 305);
-        textSize(16);
-        //text('fire a ball at him by dragging the mouse.\n\ndon\'t let him touch the edges of screen, he\'s allergic to them.\n\nkeep him away from the spiked balls.\n\nmake him run into a green ball for a time bonus.\n\nhe\'s broke, hit him up with some coins.', 40, 125, 325, 400);
+        popMatrix();
         
         textAlign(CENTER, CENTER);
-        textSize(20);
+        textSize(35);
         buttons[2].draw();
     }
     
     // Transition
+    /*trans.x = -80;
     if(trans.active){
         rectMode(CORNER);
         noStroke();
         fill(255, 255, 255);
         pushMatrix();
-        translate(-trans.x + 5, 0);
+        translate(-trans.x, 0);
         rect(204, -1, 0.3, 0.3, -31);
-        for(var i = 0; i < height; i += 50){
-            var myW = noise(i*0.6, i*0.01)*600;
-            
-            rect(-50, i, -25 + myW, 50, 50);
-            if(myW < noise((i+50)*0.6, (i+50)*0.01)*600){
-                rect(-70, i + 51, -6 + myW, 7, -25);
-                rect(-99, i + 34, 24 + myW, 18);
-            }
-            if(noise(i*0.6, i*0.01)*600 > noise((i+50)*0.6, (i+50)*0.01)*600){
-                rect(-108, i + 42, -5 + myW, 7, -25);
-                rect(-137, i + 49, 24 + myW, 24);
+        for(var i = 0; i < 400; i += 50){
+            for(var j = 0; j < 2; j ++){
+                var myW = noise(i*0.6, i*0.01)*600;
+                
+                pushMatrix();
+                translate(0, j * 400);
+                rect(-50, i, -25 + myW, 50, 50);
+                if(myW < noise((i+50)*0.6, (i+50)*0.01)*600 && i < 350){
+                    rect(-70, i + 51, -6 + myW, 7, -25);
+                    rect(-99, i + 34, 24 + myW, 18);
+                }
+                if(noise(i*0.6, i*0.01)*600 > noise((i+50)*0.6, (i+50)*0.01)*600 && i < 350){
+                    rect(-108, i + 42, -5 + myW, 7, -25);
+                    rect(-137, i + 49, 24 + myW, 24);
+                }
+                popMatrix();
             }
         }
         popMatrix();
         pushMatrix();
-        translate(trans.x - 5, 0);
-        for(var i = 0; i < height; i += 50){
-            var myW = noise(i*0.6, i*0.01)*600;
-            
-            rect(myW - 76, i, 400, 51, 50);
-            if(myW < noise((i+50)*0.6, (i+50)*0.01)*600){
-                rect(myW - 38, i + 42, 27, 7, -25);
-                rect(myW - 38, i + 42, 33, 40);
-            }
-            if(myW > noise((i+50)*0.6, (i+50)*0.01)*600){
-                rect(myW - 75, i + 51, 27, 7, -25);
-                rect(myW - 76, i + 34, 33, 40);
+        translate(trans.x + 150, 0);
+        for(var i = 0; i < 400; i += 50){
+            for(var j = 0; j < 2; j ++){
+                var myW = noise(i*0.6, i*0.01)*600;
+                
+                pushMatrix();
+                translate(0, j * 400);
+                rect(myW - 76, i, 600, 51, 50);
+                if(myW < noise((i+50)*0.6, (i+50)*0.01)*600 && i < 350){
+                    rect(myW - 38, i + 42, 27, 7, -25);
+                    rect(myW - 38, i + 42, 33, 40);
+                }
+                if(myW > noise((i+50)*0.6, (i+50)*0.01)*600 && i < 350){
+                    rect(myW - 75, i + 51, 27, 7, -25);
+                    rect(myW - 76, i + 34, 33, 40);
+                }
+                popMatrix();
             }
         }
         popMatrix();
@@ -563,6 +619,32 @@ draw = function() {
             scene = trans.nextScene;
             trans.out = true;
         }
+    }*/
+    if(trans.active){
+        noStroke();
+        if(!trans.out){
+            fill(255, 255, 255, 255 - (trans.sz / 5));
+            for(var i = 1; i < 10; i ++){
+                ellipse(300, 300, (1500 - trans.sz) / i, (1500 - trans.sz) / i);
+            }
+            if(trans.sz < 50){
+                scene = trans.nextScene;
+                trans.sz = 1500;
+                trans.out = true;
+            }
+        } else {
+            fill(255, 255, 255, trans.sz / 5);
+            for(var i = 1; i < 10; i ++){
+                ellipse(300, 300, trans.sz / i, trans.sz / i);
+            }
+            if(trans.sz < 10){
+                trans.active = false;
+                trans.sz = 1500;
+                trans.out = false;
+            }
+        }
+        
+        trans.sz /= 1.2;
     }
     
     cursor(mouse.overButton ? 'pointer' : 'default');
