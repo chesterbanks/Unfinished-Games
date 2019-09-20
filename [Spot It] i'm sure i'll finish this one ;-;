@@ -1,3 +1,11 @@
+/*
+    khantober plans
+        1 | 
+        2 | 
+        3 | 
+        4 | 
+*/
+
 // spot it! @o@
 // I've gotten complacent with the mechanics of my games. Even though this game's gameplay seems simple enough, I did have to get out of my comfort zone and figure out some new stuff while I made this gameplay
 
@@ -60,8 +68,9 @@
 
 var overButton = false, clicked = false;
 var scene = 'Menu';
-var name = 'JACKSON ENOUGH';
+var name = 'JACKSON';
 var scores = [0, 0, 0];
+var timer = 60;
 
 var loadGoogleFont = (function () {
     return this.Function ("gfName", 
@@ -648,6 +657,7 @@ var centerCard = new Card(400, 200);
 var yourCard = new Card(200, 400);
 var hopeCard = new Card(600, 600);
 var kyleCard = new Card(0, 0);
+var backCard;
 
 Card.prototype.draw = function() {
     this.plusX /= 1.1;
@@ -719,6 +729,8 @@ Card.prototype.choose = function(){
 };
 
 var switchCardsFunc = function(){
+    backCard = new Card(400, 200);
+    backCard.icons = centerCard.icons;
     centerCard.icons = yourCard.icons;
     
     yourCard.icons = [];
@@ -827,9 +839,20 @@ draw = function() {
         fill(162, 232, 221);
         rect(15, 15, 570, 570);
         
-        kyleCard.draw();
-        hopeCard.draw();
+        fill(255, 255, 245);
+        textSize(100);
+        text(timer.toFixed(0), 465, 470);
+
         
+        timer -= 0.02;
+        
+        
+        //kyleCard.draw();
+        //hopeCard.draw();
+        
+        if(backCard){
+            backCard.draw();
+        }
         yourCard.draw();
         centerCard.draw();
         yourCard.choose();
@@ -838,18 +861,18 @@ draw = function() {
         strokeCap(SQUARE);
         stroke(212, 104, 124);
         strokeWeight(23);
-        arc(-3, 3, 327, 327, 25, 54);
+        //arc(-3, 3, 327, 327, 25, 54);
         arc(199, 403, 320, 320, 124 - (name.length * 6), 135);
-        arc(600, 600, 320, 320, 212, 247);
+        //arc(600, 600, 320, 320, 212, 247);
         stroke(242, 114, 137);
         strokeWeight(23);
         strokeCap(SQUARE);
-        arc(0, 0, 320, 320, 26, 54);
-        arc(600, 600, 320, 320, 213, 247);
+        //arc(0, 0, 320, 320, 26, 54);
+        //arc(600, 600, 320, 320, 213, 247);
         arc(200, 400, 320, 320, 124 - (name.length * 6), 130);
         fill(255);
         textSize(17);
-        var txt = 'HOPE'.split('');
+        /*var txt = 'HOPE'.split('');
         for(var i = 0; i < txt.length; i ++){
             pushMatrix();
             rotate((i * -6) - 41);
@@ -864,7 +887,7 @@ draw = function() {
             rotate((i * 6) - 52);
             text(txt[i], 0, -160);
             popMatrix();
-        }
+        }*/
         for(var i = 0; i < name.length; i ++){
             pushMatrix();
             translate(200, 400);
@@ -872,11 +895,10 @@ draw = function() {
             text(name[i], 0, 160);
             popMatrix();
         }
-        
         noStroke();
         scoreCircle(82, 508, scores[0]);
-        scoreCircle(75, 139, scores[1]);
-        scoreCircle(547, 451, scores[2]);
+        //scoreCircle(75, 139, scores[1]);
+        //scoreCircle(547, 451, scores[2]);
         
         if(switchCards){
             switchCardsFunc();
