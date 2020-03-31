@@ -1,6 +1,17 @@
+/**
+ * SAVE THE INTERNET
+ * Chester Banks
+ * 4.10.20
+ * 
+ * Figured I'd make one last game ¯\_(ツ)_/¯
+*/
+
+/* Settings */
 textAlign(CENTER, CENTER);
 textFont(createFont('Avenir Bold'));
 
+/* Important variables */
+var scene = 'Menu';
 var keys = [];
 
 /* Collision function */
@@ -303,6 +314,55 @@ var images = {
         
         return get(0, 0, 600, 600);
     },
+    'tiktok': function(){
+        background(0, 0, 0, 0);
+        noStroke();
+        fill(252, 16, 83);
+        strokeWeight(15);
+        pushMatrix();
+        translate(339, 290);
+        rect(-28, -150, 56, 223);
+        noFill();
+        strokeCap(SQUARE);
+        stroke(252, 16, 83);
+        strokeWeight(56);
+        arc(110, -150, 218, 210, 90, 180);
+        arc(-75, 75, 150, 150, -4, 269);
+        
+        noStroke();
+        fill(43, 246, 238);
+        strokeWeight(15);
+        pushMatrix();
+        translate(-15, -15);
+        rect(-28, -150, 56, 223);
+        noFill();
+        strokeCap(SQUARE);
+        stroke(43, 246, 238);
+        strokeWeight(56);
+        arc(110, -150, 218, 210, 90, 180);
+        arc(-75, 75, 150, 150, -4, 269);
+        popMatrix();
+        
+        noStroke();
+        fill(255, 255, 255);
+        beginShape();
+        vertex(-28, -150);
+        vertex(15, -150);
+        bezierVertex(17, -132, 33, -117, 42, -108);
+        bezierVertex(57, -77, 93, -75, 97, -73);
+        vertex(97, -31);
+        bezierVertex(65, -31, 37, -43, 13, -59);
+        vertex(13, 67);
+        bezierVertex(17, 139, -78, 199, -155, 139);
+        bezierVertex(-177, 125, -212, 6, -91, -27);
+        vertex(-91, 13);
+        bezierVertex(-149, 18, -147, 85, -116, 99);
+        bezierVertex(-78, 149, -28, 109, -28, 77);
+        endShape();
+        popMatrix();
+        
+        return get(0, 0, 600, 600);
+    },
 };
 
 
@@ -333,13 +393,14 @@ var Rooms = [
     {x: 1, y: 21, w: 29, h: 40, gates: [13, 28, 5, 36]}, // Discord
     {x: -32, y: 21, w: 31, h: 28, gates: [-13, 36, 21, 39]}, // YouTube
     {x: -31, y: -10, w: 30, h: 30, gates: [-13, 13, -13, 44]}, // Insta
-    {x: -30, y: -43, w: 29, h: 32, gates: [11, 13, -13, 44]}, // Twitter
+    {x: -30, y: -43, w: 29, h: 32, gates: [11, 13, -13, -38]}, // Twitter
     {x: 0, y: -31, w: 25, h: 30, gates: [-4, -17, 8, 44]}, // Google
     {x: 26, y: -26, w: 43, h: 25, gates: [-4, 12, 55, -17]}, // Facebook
     {x: 62, y: 0, w: 30, h: 26, gates: [55, -4, 84, 8]}, // Amazon
     {x: 68, y: 27, w: 20, h: 20, gates: [84, 20, 55, 29]}, // KA
     {x: 31, y: 0, w: 30, h: 26, gates: [55, 8, 34, 13]}, // Spotify
     {x: 31, y: 27, w: 36, h: 36, gates: [34, 29, 25, 28]}, // Snapchat
+    {x: -57, y: -49, w: 26, h: 38, gates: [-0, -38]}, // Tiktok
 ];
 for(var i = 0; i < Rooms.length; i ++){
     Rooms[i].x = Rooms[i].x * 30;
@@ -464,9 +525,10 @@ draw = function() {
     
     pushMatrix();
     translate(Camera.x, Camera.y);
-    //translate(150, 150);
     
-    //scale(0.15);
+    /* // use this to see whole screen
+    translate(150, 150);
+    scale(0.15); */
     
     // bgs
     noStroke();
@@ -488,6 +550,8 @@ draw = function() {
     rect(2053, 825, 565, 573);
     fill(123, 198, 235);
     rect(-870, -1260, 830, 910);
+    fill(0, 0, 0);
+    rect(-1686, -1443, 723, 1100);
     image(images.insta, -914, -283, 870, 870);
     image(images.instafront, -695, -45, 400, 400);
     image(images.tweet, -685, -1015, 450, 450);
@@ -499,11 +563,12 @@ draw = function() {
     image(images.snapchat, 1173, 1040);
     image(images.amazon, 2015, 50);
     image(images.ka, 2045, 814);
+    image(images.tiktok, -1610, -1188);
     
     for(var i = Blocks.length - 1; i >= 0; i --){
-        if(Blocks[i].x + Camera.x > -50 && Blocks[i].x + Camera.x < 650 && Blocks[i].y + Camera.y > -50 && Blocks[i].y + Camera.y < 650){
+        /*if(Blocks[i].x + Camera.x > -50 && Blocks[i].x + Camera.x < 650 && Blocks[i].y + Camera.y > -50 && Blocks[i].y + Camera.y < 650){*/
             Blocks[i].draw();
-        }
+        //}
     }
     
     player.draw();
