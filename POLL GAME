@@ -10,15 +10,27 @@
 textAlign(CENTER, CENTER);
 textFont(createFont('Avenir Bold'));
 
+var fonts = {
+    large: createFont('Avenir Bold'),
+    thin: createFont('Avenir'),
+    i: createFont('Avenir Italic')
+};
+
 /* Important variables */
 var scene = 'Menu';
 var keys = [];
+
+var mouse = {
+    clicked: false,
+    state: 'default'
+};
 
 /* Collision function */
 var rectCollide = function(one, two){
     return one.x+one.w > two.x && one.y+one.h > two.y && one.x < two.x+two.w && one.y < two.y+two.h;
 };
 
+/* Images */
 var images = {
     'insta': function(){
         background(124, 61, 166);
@@ -146,7 +158,7 @@ var images = {
         return get(0, 0, 600, 600);
     },
     'google': function(){
-        background(255, 255, 255);
+        background(0, 0, 0, 0);
         pushMatrix();
         translate(300, 300);
         strokeCap(SQUARE);
@@ -364,7 +376,25 @@ var images = {
         return get(0, 0, 600, 600);
     },
 };
-
+var imageNames = ['instafront', 'tweet', 'yt', 'facebook', 'google', 'spotify', 'discord', 'snapchat', 'amazon', 'ka', 'tiktok'];
+var loadImages = function(){
+    for(var i in images){
+        if (typeof images[i] !== "object") {
+            background(0, 0, 0, 0);
+            images[i] = images[i]();
+        }
+    }
+};
+var imageR = function(img, r, x, y, w, h){
+    pushMatrix();
+    pushStyle();
+    translate(x, y);
+    rotate(r);
+    imageMode(CENTER);
+    image(img, 0, 0, w, h);
+    popStyle();
+    popMatrix();
+};
 
 /* Block */
 var Block = function(x, y, w, h){
@@ -511,16 +541,96 @@ var Camera = {
     yMin: -Infinity, yMax: Infinity,
 };
 
-/* Draw function */
-draw = function() {
-    // Load those images
-    for(var i in images){
-        if (typeof images[i] !== "object") {
-            background(0, 0, 0, 0);
-            images[i] = images[i]();
+/* Buttons */
+var Button = function(x, y, w, h, txt, nxt){
+    this.x = x; this.y = y;
+    this.w = w; this.h = h;
+    this.txt = txt; this.nxt = nxt;
+};
+Button.prototype.draw = function() {
+    pushMatrix();
+    pushStyle();
+    
+    translate(this.x, this.y);
+    
+    rectMode(CENTER);
+    fill(255);
+    noStroke();
+    rect(0, 0, this.w, this.h);
+    triangle(this.w / 2, -this.h / 2, this.w / 2, this.h / 2, (this.w / 2) + (this.h / 2), 0);
+    triangle(-this.w / 2, -this.h / 2, -this.w / 2, this.h / 2, -(this.w / 2) - (this.h / 2), 0);
+    
+    textFont(fonts.large, this.h / 1.5);
+    fill(0);
+    text(this.txt, 0, 0);
+    
+    popStyle();
+    popMatrix();
+    
+    if(mouseX > this.x - this.w / 2 && mouseX < this.x + this.w / 2 && mouseY > this.y - this.h / 2 && mouseY < this.y + this.h / 2){
+        mouse.state = 'pointer';
+    }
+};
+
+/* Scenes */
+// Menu
+var Menu = function(){
+    this.Buttons = [
+        new Button(300, 400, 380, 80, 'BEGIN', 'Instructions'),
+        new Button(300, 475, 380, 40, 'ABOUT', 'Instructions'),
+        new Button(300, 528, 380, 40, 'STORY', 'Instructions'),
+    ];
+};
+Menu.prototype.draw = function() {
+    background(0);
+    
+    for(var i = 6; i < width; i += 50){
+        for (var j = 5; j < height; j += 50){
+            colorMode(HSB);
+            stroke((abs(i) + abs(j) + frameCount) % 255, 255, 222, 59);
+            fill(0, 0, 0);
+            strokeWeight(4);
+            rect(i, j, 40, 40);
+            noStroke();
+            fill((abs(i) + abs(j) + frameCount) % 255, 255, 254, 102);
+            strokeWeight(4);
+            rect(i + 5, j + 5, 30, 30);
+            colorMode(RGB);
         }
     }
     
+    pushMatrix();
+    translate(300, 235);
+    textFont(fonts.large, 150);
+    fill(255);
+    text('SAVE', 0, -76);
+    pushMatrix();
+    textSize(23);
+    translate(-180, 23);
+    rotate(-90);
+    text('THE', 0, 0);
+    popMatrix();
+    textSize(70);
+    text('INTERNET', 11, 20);
+    textFont(fonts.i, 13);
+    text('C  H  E  S  T  E  R     B  A  N  K  S     ||     A  P  R  I  L     2  0  2  0', 0, 69);
+    noFill();
+    strokeWeight(10);
+    stroke(255);
+    rect(-217, -151, 431, 245);
+    popMatrix();
+    
+    for(var i = 0; i < this.Buttons.length; i ++){
+        this.Buttons[i].draw();
+    }
+};
+var menu = new Menu();
+
+// Game
+var Game = function(){
+    
+};
+Game.prototype.draw = function() {
     background(8, 8, 8);
     
     pushMatrix();
@@ -581,6 +691,31 @@ draw = function() {
         Camera.y -= player.yvel;
     }
 };
+var game = new Game();
+
+/* Draw function */
+draw = function() {
+    // Load those images
+    loadImages();
+    
+    switch(scene){
+        default:
+            println('No scene found with the name "' + scene + '", try again!');
+            break;
+        case 'Menu':
+            menu.draw();
+            
+            break;
+        case 'Game':
+            game.draw();
+            break;
+    }
+    
+    cursor(mouse.state);
+    
+    mouse.state = 'default';
+    mouse.clicked = false;
+};
 
 /* Event handlers */
 keyPressed = function(){ 
@@ -588,4 +723,7 @@ keyPressed = function(){
 };
 keyReleased = function(){ 
     keys[keyCode] = false; 
+};
+mouseClicked = function(){
+    mouse.clicked = true;
 };
