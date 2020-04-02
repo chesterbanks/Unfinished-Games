@@ -1,16 +1,54 @@
+// nothing to see here hehe
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * SAVE THE INTERNET
  * Chester Banks
  * 4.10.20
  * 
  * Figured I'd make one last game ¯\_(ツ)_/¯
-*/
-/**
- * SAVE THE INTERNET
- * Chester Banks
- * 4.10.20
  * 
- * Figured I'd make one last game ¯\_(ツ)_/¯
+ * LOGO
+     MENU
+       ABOUT
+       STORY
+       SETTINGS
+         INSTRUCTIONS
+           GAME
+             WIN PAGE
+             LOSE PAGE
 */
 
 /* Settings */
@@ -24,7 +62,7 @@ var fonts = {
 };
 
 /* Important variables */
-var scene = 'Game';
+var scene = 'Customize';
 var keys = [];
 
 var mouse = {
@@ -603,6 +641,70 @@ Button.prototype.draw = function() {
 };
 
 /* Scenes */
+// Logo
+var logo = function(x, y, sz){
+    var logoColors = [
+        color(242, 242, 242),
+        color(209, 209, 209),
+        color(181, 181, 181),
+        color(255, 255, 255),
+    ];
+    
+    pushMatrix();
+    translate(x, y);
+    scale(sz);
+    noFill();
+    strokeCap(SQUARE);
+    stroke(0, 0, 0, 30);
+    strokeWeight(30);
+    arc(10, 20, 160, 160, 30, 330);
+    strokeWeight(11);
+    // Outer layer
+    stroke(logoColors[0]);
+    arc(0, 0, 200, 200, -85, -30);
+    arc(0, 0, 180, 180, -75, -30);
+    arc(0, 0, 200, 200, -300, -240);
+    arc(0, 0, 180, 180, -285, -250);
+    stroke(logoColors[1]);
+    arc(0, 0, 200, 200, -125, -85);
+    arc(0, 0, 180, 180, -115, -75);
+    arc(0, 0, 200, 200, -200, -160);
+    arc(0, 0, 180, 180, -200, -150);
+    stroke(logoColors[2]);
+    arc(0, 0, 200, 200, -160, -125);
+    arc(0, 0, 180, 180, -150, -116);
+    arc(0, 0, 200, 200, -330, -300);
+    arc(0, 0, 180, 180, -330, -286);
+    stroke(logoColors[3]);
+    arc(0, 0, 200, 200, -240, -200);
+    arc(0, 0, 180, 180, -250, -200);
+    
+    // Inner layer
+    stroke(logoColors[0]);
+    arc(0, 0, 160, 160, -200, -160);
+    arc(0, 0, 140, 140, -200, -150);
+    stroke(logoColors[1]);
+    arc(0, 0, 160, 160, -300, -240);
+    arc(0, 0, 140, 140, -285, -250);
+    stroke(logoColors[2]);
+    arc(0, 0, 160, 160, -240, -200);
+    arc(0, 0, 140, 140, -250, -200);
+    arc(0, 0, 160, 160, -125, -85);
+    arc(0, 0, 140, 140, -115, -75);
+    stroke(logoColors[3]);
+    arc(0, 0, 160, 160, -85, -30);
+    arc(0, 0, 140, 140, -75, -30);
+    arc(0, 0, 160, 160, -330, -300);
+    arc(0, 0, 140, 140, -330, -286);
+    arc(0, 0, 160, 160, -160, -125);
+    arc(0, 0, 140, 140, -150, -116);
+    
+    stroke(0, 0, 0, 50);
+    strokeWeight(20);
+    arc(0, 0, 150, 150, 30, 330);
+    popMatrix();
+};
+
 // Menu
 var Menu = function(){
     this.bg = function(){
@@ -659,6 +761,139 @@ Menu.prototype.draw = function() {
     }
 };
 var menu = new Menu();
+
+// Customization page
+var Customize = function(){
+    this.hue = 0;
+    this.outfit = 0;
+    this.typing = false;
+    this.name = '';
+};
+Customize.prototype.draw = function() {
+    // Background
+    menu.bg();
+    
+    // Title  
+    fill(255);
+    textFont(fonts.i, 31);
+    text('C U S T O M I Z E   Y O U R', 300, 99);
+    textFont(fonts.large, 80);
+    text('CHARACTER', 300, 150);
+    
+    // Body
+    pushMatrix();
+    translate(300, 375);
+    noStroke();
+    colorMode(HSB);
+    fill(this.hue % 255, 109, 204);
+    rect(-100, -150, 200, 300, 30);
+    colorMode(RGB);
+    
+    // Eyes
+    fill(30);
+    ellipse(-40, -70, 40, 40);
+    ellipse(40, -70, 40, 40);
+    
+    // Mouth
+    fill(235);
+    arc(0, -46, 50, 50, 0, 180);
+    
+    // Outfit
+    switch(this.outfit){
+        case 0:
+            fill(35);
+            rect(-100, -5, 200, 125);
+            fill(0, 0, 0);
+            triangle(-40, -5, 40, -5, 0, 66);
+            rect(-3, 56, 5, 62);
+            ellipse(10, 75, 10, 10);
+            ellipse(10, 100, 10, 10);
+            fill(235);
+            triangle(-20, -5, 20, -5, 0, 56);
+            break;
+        case 1:
+            fill(245, 245, 245);
+            rect(-100, -5, 200, 125);
+            noFill();
+            strokeWeight(6);
+            strokeCap(SQUARE);
+            stroke(235, 209, 59);
+            arc(0, -5, 100, 100, 0, 180);
+            arc(0, -1, 100, 81, 0, 180);
+            noStroke();
+            break;
+        case 2:
+            fill(35);
+            rect(-100, -5, 200, 125);
+            
+            fill(71, 71, 71);
+            rect(-100, 25, 200, 50);
+            rect(-100, 11, 200, 8);
+            rect(-100, 81, 200, 8);
+            
+            break;
+    }
+    
+    // Arrows
+    fill(235);
+    triangle(-115, 45, -115, 75, -140, 60);
+    triangle(115, 45, 115, 75, 140, 60);
+    
+    if(mouseX > 160 && mouseX < 185 && mouseY > 420 && mouseY < 450 && mouse.clicked){
+        this.outfit -= (this.outfit === 0 ? -2 : 1);
+    }
+    
+    if(mouseX > 415 && mouseX < 440 && mouseY > 420 && mouseY < 450 && mouse.clicked){
+        this.outfit += (this.outfit === 2 ? -2 : 1);
+    }
+    popMatrix();
+    
+    // Color picker
+    colorMode(HSB);
+    fill(255);
+    rect(520, 230, 35, 290);
+    for(var i = 0; i < 276; i += 20){
+        fill(i%255, 109, 204);
+        rect(525, 235 + i, 25, 20);
+        
+        // Detect mouse presses
+        if(mouseX > 525 && mouseX < 550 && mouseY > 235 + i && mouseY < 255 + i){
+            mouse.state = 'pointer';
+            if(mouseIsPressed){
+                this.hue = i;
+            }
+        }
+    }
+    colorMode(RGB);
+    
+    // Selected color arrows
+    pushMatrix();
+    translate(538, 245 + (this.hue));
+    fill(255);
+    triangle(-40, -7, -40, 7, -25, 0);
+    triangle(40, -7, 40, 7, 25, 0);
+    popMatrix();
+    
+    // Character name
+    stroke(196, 196, 196);
+    strokeWeight(2);
+    rect(23, 333, 155, 30);
+    if(mouseX > 23 && mouseX < 178 && mouseY > 333 && mouseY < 363 && mouse.clicked){
+        this.typing = true;
+    }
+    if(!(mouseX > 23 && mouseX < 178 && mouseY > 333 && mouseY < 363) && mouse.clicked){
+        this.typing = false;
+    }
+    textAlign(LEFT, CENTER);
+    fill(235);
+    textFont(fonts.i, 15);
+    text('Pick a name:', 30, 320);
+    fill(30);
+    textFont(fonts.thin, 20);
+    text(this.name + (this.typing && frameCount % 50 < 25 ? '|' : ''), 30, 347);
+    textAlign(CENTER, CENTER);
+};
+var customize = new Customize();
 
 // Game
 var Game = function(){
@@ -737,9 +972,15 @@ draw = function() {
             noLoop();
             println('No scene found with the name "' + scene + '", try again!');
             break;
+        case 'Logo':
+            menu.bg();
+            logo(300, 300, 2 + sin(frameCount * 20) / 40);
+            break;
+        case 'Customize':
+            customize.draw();
+            break;
         case 'Menu':
             menu.draw();
-            
             break;
         case 'Game':
             game.draw();
@@ -748,752 +989,9 @@ draw = function() {
     
     cursor(mouse.state);
     
-    mouse.state = 'default';
-    mouse.clicked = false;
-};
-
-/* Event handlers */
-keyPressed = function(){ 
-    keys[keyCode] = true; 
-};
-keyReleased = function(){ 
-    keys[keyCode] = false; 
-};
-mouseClicked = function(){
-    mouse.clicked = true;
-};
-
-/* Settings */
-textAlign(CENTER, CENTER);
-textFont(createFont('Avenir Bold'));
-
-var fonts = {
-    large: createFont('Avenir Bold'),
-    thin: createFont('Avenir'),
-    i: createFont('Avenir Italic')
-};
-
-/* Important variables */
-var scene = 'Menu';
-var keys = [];
-
-var mouse = {
-    clicked: false,
-    state: 'default'
-};
-
-/* Collision function */
-var rectCollide = function(one, two){
-    return one.x+one.w > two.x && one.y+one.h > two.y && one.x < two.x+two.w && one.y < two.y+two.h;
-};
-
-/* Images */
-var images = {
-    'insta': function(){
-        background(124, 61, 166);
-        
-        noStroke();
-        fill(230, 113, 181, 10 + sin(frameCount * 5) * 5);
-        for(var i = 0; i < 362; i += 10){
-            ellipse(510, 82, i, i);
-        }
-        fill(207, 45, 137, 10);
-        for(var i = 0; i < 862; i += 10){
-            ellipse(400, 482, i, i);
-        }
-        fill(207, 44, 76, 10);
-        for(var i = 0; i < 774; i += 5){
-            ellipse(41, 550, i + sin(frameCount * 5) * 50, i + sin(frameCount * 5) * 50);
-        }
-        fill(209, 109, 42, 10);
-        for(var i = 0; i < 604; i += 5){
-            ellipse(41, 550, i, i);
-        }
-        fill(185, 214, 88, 5);
-        for(var i = 0; i < 323; i += 12){
-            ellipse(41, 550, i, i);
-        }
-        fill(185, 214, 88, 2);
-        for(var i = 0; i < 253; i += 5){
-            ellipse(41, 550, i, i);
-        }
-        
-        return get(0, 0, 600, 600);
-    },
-    'instafront': function(){
-        rectMode(CENTER);
-        stroke(255, 255, 255);
-        strokeWeight(40);
-        rect(300, 300, 400, 400, 115);
-        ellipse(300, 300, 200, 200);
-        point(415, 175);
-        rectMode(CORNER);
-        
-        return get(0, 0, 600, 600);
-    },
-    'tweet': function(){
-        background(0, 0, 0, 0);
-        noStroke();
-        fill(255, 255, 255);
-        //stroke(255, 255, 255, 60);
-        strokeWeight(15);
-        pushMatrix();
-        translate(328, 344);
-        scale(2);
-        beginShape();
-        vertex(-107, 49);
-        bezierVertex(-25, 97, 71, 43, 72, -56);
-        bezierVertex(75, -55, 92, -74, 92, -76);
-        bezierVertex(76, -70, 81, -71, 70, -70);
-        bezierVertex(76, -75, 81, -80, 85, -90);
-        bezierVertex(76, -89, 66, -82, 60, -83);
-        bezierVertex(22, -114, -16, -81, -10, -45);
-        bezierVertex(-39, -43, -85, -72, -94, -88);
-        bezierVertex(-106, -67, -99, -45, -82, -33);
-        bezierVertex(-82, -33, -85, -31, -101, -38);
-        bezierVertex(-100, -17, -85, -1, -69, 3);
-        bezierVertex(-77, 6, -80, 4, -87, 4);
-        bezierVertex(-82, 17, -69, 30, -47, 32);
-        bezierVertex(-55, 40, -74, 48, -107, 49);
-        endShape();
-        popMatrix();
-        
-        return get(0, 0, 600, 600);
-    },
-    'yt': function(){
-            pushMatrix();
-        translate(300, 300);
-        noStroke();
-        fill(255);
-        for(var i = -1; i < 1; i += 0.5){
-            pushMatrix();
-            scale(1, floor(i));
-            if(abs(i) === 0.5){ scale(-1, 0); }
-            beginShape();
-            vertex(0, 0);
-            vertex(0, -150);
-            bezierVertex(-200, -150, -200, -170, -200, 0);
-            endShape();
-            popMatrix();
-        }
-        fill(250, 0, 7);
-        rotate(30);
-        beginShape();
-        for(var i = 0; i < 360; i += 120){
-            vertex(sin(i) * 65,  cos(i) * 65);
-        }
-        endShape(CLOSE);
-        
-        popMatrix();
-        return get(0, 0, 600, 600);
-    },
-    'facebook': function(){
-        background(255, 255, 255);
-        
-        pushMatrix();
-        noStroke();
-        fill(46, 69, 135);
-        
-        beginShape();
-        vertex(450, 600);
-        vertex(350, 600);
-        vertex(350, 350);
-        vertex(280, 350);
-        vertex(280, 265);
-        vertex(350, 265);
-        vertex(350, 163);
-        bezierVertex(350, 92, 417, 80, 530, 100);
-        vertex(530, 177);
-        bezierVertex(434, 161, 453, 190, 450, 265);
-        vertex(521, 265);
-        vertex(501, 356);
-        vertex(450, 356);
-        endShape();
-        
-        popMatrix();
-        
-        return get(0, 0, 600, 600);
-    },
-    'google': function(){
-        background(0, 0, 0, 0);
-        pushMatrix();
-        translate(300, 300);
-        strokeCap(SQUARE);
-        noFill();
-        strokeWeight(75);
-        stroke(235, 79, 52);
-        arc(0, 0, 300, 300, -160, -30);
-        stroke(209, 204, 44);
-        arc(0, 0, 300, 300, -218, -159);
-        stroke(57, 176, 82);
-        arc(0, 0, 300, 300, -303, -218);
-        stroke(39, 136, 240);
-        arc(0, 0, 300, 300, -361, -302);
-        strokeWeight(65);
-        line(0, 19, 171, 19);
-        strokeWeight(18);
-        line(0, -5, 187, -5);
-        popMatrix();
-        
-        return get(0, 0, 600, 600);
-    },
-    'spotify': function(){
-        background(0, 0, 0, 0);
-        
-        pushMatrix();
-        translate(300, 300);
-        rotate(10);
-        fill(46, 184, 60);
-        noStroke();
-        ellipse(0, 0, 500, 500);
-        noFill();
-        stroke(25);
-        strokeCap(ROUND);
-        strokeWeight(50);
-        arc(0, -7, 345, 124, -148, -32);
-        strokeWeight(35);
-        arc(0, 87, 345, 154, -135, -45);
-        strokeWeight(25);
-        arc(0, 146, 306, 154, -135, -45);
-        popMatrix();
-        
-        return get(0, 0, 600, 600);
-    },
-    'discord': function(){
-        pushMatrix();
-        translate(300, 300);
-        noStroke();
-        fill(255, 255, 255);
-        beginShape();
-        vertex(0, -83);
-        bezierVertex(40, -87, 79, -64, 93, -54);
-        bezierVertex(65, -80, 55, -83, 36, -87);
-        vertex(38, -94);
-        bezierVertex(76, -86, 84, -78, 103, -63);
-        bezierVertex(119, -37, 126, -5, 139, 74);
-        bezierVertex(133, 90, 94, 111, 58, 111);
-        vertex(49, 99);
-        bezierVertex(68, 95, 104, 77, 100, 61);
-        bezierVertex(74, 83, 64, 93, 0, 94);
-        endShape();
-        pushMatrix();
-        scale(-1, 1);
-        beginShape();
-        vertex(0, -83);
-        bezierVertex(40, -87, 79, -64, 93, -54);
-        bezierVertex(65, -80, 55, -83, 36, -87);
-        vertex(38, -94);
-        bezierVertex(76, -86, 84, -78, 103, -63);
-        bezierVertex(119, -37, 126, -5, 139, 74);
-        bezierVertex(133, 90, 94, 111, 58, 111);
-        vertex(49, 99);
-        bezierVertex(68, 95, 104, 77, 100, 61);
-        bezierVertex(74, 83, 64, 93, 0, 94);
-        endShape();
-        popMatrix();
-        
-        fill(121, 135, 255);
-        ellipse(43, 27, 44, 48);
-        ellipse(-43, 27, 44, 48);
-        popMatrix();
-        
-        return get(0, 0, 600, 600);
-    },
-    'snapchat': function(){
-        strokeWeight(4);
-        strokeCap(ROUND);
-        pushMatrix();
-        translate(300, 300);
-        scale(2);
-        stroke(0);
-        fill(255);
-        beginShape();
-        vertex(0, -83);
-        bezierVertex(39, -84, 64, -55, 51, -10);
-        bezierVertex(59, -1, 70, -19, 76, -7);
-        bezierVertex(75, 4, 59, 1, 52, 10);
-        bezierVertex(41, 11, 78, 51, 95, 51);
-        bezierVertex(92, 58, 71, 58, 69, 64);
-        vertex(65, 74);
-        bezierVertex(26, 67, 40, 90, 0, 94);
-        endShape();
-        
-        pushMatrix();
-        scale(-1, 1);
-        beginShape();
-        vertex(0, -83);
-        bezierVertex(39, -84, 64, -55, 51, -10);
-        bezierVertex(59, -1, 70, -19, 76, -7);
-        bezierVertex(75, 4, 59, 1, 52, 10);
-        bezierVertex(41, 11, 78, 51, 95, 51);
-        bezierVertex(92, 58, 71, 58, 69, 64);
-        vertex(65, 74);
-        bezierVertex(26, 67, 40, 90, 0, 94);
-        endShape();
-        popMatrix();
-        popMatrix();
-        
-        return get(0, 0, 600, 600);  
-    },
-    'amazon': function(){
-        pushMatrix();
-        translate(300, 300);
-        fill(45);
-        textSize(300);
-        textFont(createFont('Arial Bold'));
-        text('a', 0, 0);
-        stroke(45);
-        strokeWeight(20);
-        line(-41, -2, -58, -6);
-        stroke(248, 165, 27);
-        noFill();
-        strokeWeight(10);
-        arc(0, 125, 243, 61, 27, 136);
-        arc(0, 126, 245, 61, 24, 148);
-        arc(0, 122, 243, 83, 24, 159);
-        pushMatrix();
-        translate(103, 146);
-        rotate(52);
-        noStroke();
-        fill(248, 165, 27);
-        beginShape();
-        vertex(30, 0);
-        bezierVertex(31, -7, 15, -46, 0, -50);
-        bezierVertex(-15, -46, -31, -10, -30, 0);
-        bezierVertex(-14, -20, -16, -20, 0, -35);
-        bezierVertex(13, -28, 14, -20,  30, 0);
-        endShape();
-        popMatrix();
-        popMatrix();
-        
-        return get(0, 0, 600, 600);
-    },
-    'ka': function(){
-        pushMatrix();
-        translate(300, 300);
-        noStroke();
-        fill(255, 255, 255);
-        beginShape();
-        vertex(-124, 120);
-        bezierVertex(-179, -23, -54, -139, 117, -152);
-        bezierVertex(142, -16, 61, 160, -102, 138);
-        bezierVertex(-91, 120, 106, -134, -124, 120);
-        endShape();
-        popMatrix();
-        
-        return get(0, 0, 600, 600);
-    },
-    'tiktok': function(){
-        background(0, 0, 0, 0);
-        noStroke();
-        fill(252, 16, 83);
-        strokeWeight(15);
-        pushMatrix();
-        translate(339, 290);
-        rect(-28, -150, 56, 223);
-        noFill();
-        strokeCap(SQUARE);
-        stroke(252, 16, 83);
-        strokeWeight(56);
-        arc(110, -150, 218, 210, 90, 180);
-        arc(-75, 75, 150, 150, -4, 269);
-        
-        noStroke();
-        fill(43, 246, 238);
-        strokeWeight(15);
-        pushMatrix();
-        translate(-15, -15);
-        rect(-28, -150, 56, 223);
-        noFill();
-        strokeCap(SQUARE);
-        stroke(43, 246, 238);
-        strokeWeight(56);
-        arc(110, -150, 218, 210, 90, 180);
-        arc(-75, 75, 150, 150, -4, 269);
-        popMatrix();
-        
-        noStroke();
-        fill(255, 255, 255);
-        beginShape();
-        vertex(-28, -150);
-        vertex(15, -150);
-        bezierVertex(17, -132, 33, -117, 42, -108);
-        bezierVertex(57, -77, 93, -75, 97, -73);
-        vertex(97, -31);
-        bezierVertex(65, -31, 37, -43, 13, -59);
-        vertex(13, 67);
-        bezierVertex(17, 139, -78, 199, -155, 139);
-        bezierVertex(-177, 125, -212, 6, -91, -27);
-        vertex(-91, 13);
-        bezierVertex(-149, 18, -147, 85, -116, 99);
-        bezierVertex(-78, 149, -28, 109, -28, 77);
-        endShape();
-        popMatrix();
-        
-        return get(0, 0, 600, 600);
-    },
-};
-var imageNames = ['instafront', 'tweet', 'yt', 'facebook', 'google', 'spotify', 'discord', 'snapchat', 'amazon', 'ka', 'tiktok'];
-var loadImages = function(){
-    for(var i in images){
-        if (typeof images[i] !== "object") {
-            background(0, 0, 0, 0);
-            images[i] = images[i]();
-        }
+    if(!mouse.clicked){
+        background(0);
     }
-};
-var imageR = function(img, r, x, y, w, h){
-    pushMatrix();
-    pushStyle();
-    translate(x, y);
-    rotate(r);
-    imageMode(CENTER);
-    image(img, 0, 0, w, h);
-    popStyle();
-    popMatrix();
-};
-
-/* Block */
-var Block = function(x, y, w, h){
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-};
-Block.prototype.draw = function() {
-    colorMode(HSB);
-    stroke((abs(this.x) + abs(this.y) + frameCount) % 255, 255, 255, 100);
-    fill(0, 0, 0);
-    strokeWeight(4);
-    rect(this.x, this.y, this.w, this.h);
-    noStroke();
-    fill((abs(this.x) + abs(this.y) + frameCount) % 255, 255, 255, 100);
-    strokeWeight(4);
-    rect(this.x + this.w / 6, this.y + this.h / 6, this.w / 1.5, this.h / 1.5);
-    colorMode(RGB);
-};
-var Blocks = [];
-
-/* Map making */
-var Rooms = [
-    {x: 0, y: 0, w: 30, h: 20, gates: [8, 13, 13, 13]}, // Control center
-    {x: 1, y: 21, w: 29, h: 40, gates: [13, 28, 5, 36]}, // Discord
-    {x: -32, y: 21, w: 31, h: 28, gates: [-13, 36, 21, 39]}, // YouTube
-    {x: -31, y: -10, w: 30, h: 30, gates: [-13, 13, -13, 44]}, // Insta
-    {x: -30, y: -43, w: 29, h: 32, gates: [11, 13, -13, -38]}, // Twitter
-    {x: 0, y: -31, w: 25, h: 30, gates: [-4, -17, 8, 44]}, // Google
-    {x: 26, y: -26, w: 43, h: 25, gates: [-4, 12, 55, -17]}, // Facebook
-    {x: 62, y: 0, w: 30, h: 26, gates: [55, -4, 84, 8]}, // Amazon
-    {x: 68, y: 27, w: 20, h: 20, gates: [84, 20, 55, 29]}, // KA
-    {x: 31, y: 0, w: 30, h: 26, gates: [55, 8, 34, 13]}, // Spotify
-    {x: 31, y: 27, w: 36, h: 36, gates: [34, 29, 25, 28]}, // Snapchat
-    {x: -57, y: -49, w: 26, h: 38, gates: [-0, -38]}, // Tiktok
-];
-for(var i = 0; i < Rooms.length; i ++){
-    Rooms[i].x = Rooms[i].x * 30;
-    Rooms[i].y = Rooms[i].y * 30;
-    Rooms[i].w = Rooms[i].w * 30;
-    Rooms[i].h = Rooms[i].h * 30;
-    
-    for(var x = 0; x < Rooms[i].w; x += 30){
-        if(Rooms[i].x + x !== Rooms[i].gates[0] * 30 && Rooms[i].x + x !== (Rooms[i].gates[0] + 1) * 30){
-            Blocks.push(new Block((Rooms[i].x) + x, Rooms[i].y, 30, 30));
-        }
-        if(Rooms[i].x + x !== Rooms[i].gates[2] * 30 && Rooms[i].x + x !== (Rooms[i].gates[2] + 1) * 30){
-            Blocks.push(new Block(Rooms[i].x + x, Rooms[i].y + Rooms[i].h - 30, 30, 30));
-        }
-    }
-    for(var y = 0; y < Rooms[i].h; y += 30){
-        if(Rooms[i].y + y !== Rooms[i].gates[3] * 30 && Rooms[i].y + y !== (Rooms[i].gates[3] + 1) * 30){
-            Blocks.push(new Block(Rooms[i].x, Rooms[i].y + y, 30, 30));
-        }
-        if(Rooms[i].y + y !== Rooms[i].gates[1] * 30 && Rooms[i].y + y !== (Rooms[i].gates[1] + 1) * 30){
-            Blocks.push(new Block(Rooms[i].x + Rooms[i].w - 30, Rooms[i].y + y, 30, 30));
-        }
-    }
-}
-
-/* Player */
-var Player = function(x, y, w, h){
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-    
-    this.xvel = 0;
-    this.yvel = 0;
-    
-    this.speed = 1;
-    this.maxVel = 5;
-};
-Player.prototype.draw = function() {
-    stroke(97, 97, 97, 100);
-    fill(128, 128, 128, 100);
-    rect(this.x + 5, this.y + 5, this.w, this.h);
-    stroke(209, 209, 209);
-    fill(255, 255, 255);
-    rect(this.x, this.y, this.w, this.h);
-
-    if(keys[LEFT]){
-        this.xvel -= this.speed;
-    } 
-    if(keys[RIGHT]){
-        this.xvel += this.speed;
-    }
-    if(!keys[LEFT] && !keys[RIGHT]){
-        this.xvel /= 1.1;
-    }
-    this.xvel = constrain(this.xvel, -this.maxVel, this.maxVel);
-    
-    this.x += this.xvel;
-    for(var i = Blocks.length - 1; i >= 0; i --){
-        if(rectCollide(this, Blocks[i])){
-            if(this.xvel > 0){
-                this.x = Blocks[i].x - this.w;
-                this.xvel = 0;
-            }
-            if(this.xvel < 0){
-                this.x = Blocks[i].x + Blocks[i].w;
-                this.xvel = 0;
-            }
-        }
-    }
-    
-    
-    if(keys[UP]){
-        this.yvel -= this.speed;
-    } 
-    if(keys[DOWN]){
-        this.yvel += this.speed;
-    }
-    if(!keys[UP] && !keys[DOWN]){
-        this.yvel /= 1.1;
-    }
-    this.yvel = constrain(this.yvel, -this.maxVel, this.maxVel);
-    
-    this.y += this.yvel;
-    for(var i = Blocks.length - 1; i >= 0; i --){
-        if(rectCollide(this, Blocks[i])){
-            if(this.yvel > 0){
-                this.y = Blocks[i].y - this.h;
-                this.yvel = 0;
-            }
-            if(this.yvel < 0){
-                this.y = Blocks[i].y + Blocks[i].h;
-                this.yvel = 0;
-            }
-        }
-    }
-    
-    
-};
-var player = new Player(300, 300, 20, 20);
-
-/* Camera */
-var Camera = {
-    x: 0,
-    y: 0,
-    
-    xMin: -Infinity, xMax: Infinity,
-    yMin: -Infinity, yMax: Infinity,
-};
-
-/* Buttons */
-var Button = function(x, y, w, h, txt, nxt){
-    this.x = x; this.y = y;
-    this.w = w; this.h = h;
-    this.txt = txt; this.nxt = nxt;
-    this.brightness = 255;
-    this.d = 1;
-    
-    this.btnShape = function(){
-        beginShape();
-        vertex(-this.w / 2, -this.h / 2);
-        vertex(this.w / 2, -this.h / 2);
-        vertex((this.w / 2) + (this.h / 2), 0);
-        vertex(this.w / 2, this.h / 2);
-        vertex(-this.w / 2, this.h / 2);
-        vertex(-(this.w / 2) - (this.h / 2), 0);
-        endShape(CLOSE);
-    };
-};
-Button.prototype.draw = function() {
-    pushMatrix();
-    pushStyle();
-    
-    translate(this.x, this.y);
-    
-    noStroke();
-    for(var i = 0; i < 360; i += 50){
-        pushMatrix();
-        colorMode(HSB);
-        fill(i%255, 255, 255, 70);
-        translate(sin(i) * this.d, cos(i) * this.d);
-        this.btnShape();
-        popMatrix();
-    }
-    
-    fill(this.brightness);
-    this.btnShape();
-    
-    textFont(fonts.large, this.h / 1.5);
-    fill(255 - this.brightness);
-    text(this.txt, 0, 0);
-    
-    popStyle();
-    popMatrix();
-    
-    if(mouseX > this.x - this.w / 2 && mouseX < this.x + this.w / 2 && mouseY > this.y - this.h / 2 && mouseY < this.y + this.h / 2){
-        this.brightness /= 1.3;
-        this.d += (10 - this.d) / 7;
-        
-        mouse.state = 'pointer';
-    } else {
-        this.brightness += (255 - this.brightness) / 7;
-        this.d /= 1.1;
-    }
-};
-
-/* Scenes */
-// Menu
-var Menu = function(){
-    this.Buttons = [
-        new Button(300, 400, 380, 80, 'BEGIN', 'Instructions'),
-        new Button(300, 475, 380, 40, 'ABOUT', 'Instructions'),
-        new Button(300, 528, 380, 40, 'STORY', 'Instructions'),
-    ];
-};
-Menu.prototype.draw = function() {
-    background(0);
-    
-    for(var i = 6; i < width; i += 50){
-        for (var j = 5; j < height; j += 50){
-            colorMode(HSB);
-            stroke((abs(i) + abs(j) + frameCount) % 255, 255, 222, 59);
-            fill(0, 0, 0);
-            strokeWeight(4);
-            rect(i, j, 40, 40);
-            noStroke();
-            fill((abs(i) + abs(j) + frameCount) % 255, 255, 254, 102);
-            strokeWeight(4);
-            rect(i + 5, j + 5, 30, 30);
-            colorMode(RGB);
-        }
-    }
-    
-    pushMatrix();
-    translate(300, 235);
-    textFont(fonts.large, 150);
-    fill(255);
-    text('SAVE', 0, -76);
-    pushMatrix();
-    textSize(23);
-    translate(-180, 23);
-    rotate(-90);
-    text('THE', 0, 0);
-    popMatrix();
-    textSize(70);
-    text('INTERNET', 11, 20);
-    textFont(fonts.i, 13);
-    text('C  H  E  S  T  E  R     B  A  N  K  S     ||     A  P  R  I  L     2  0  2  0', 0, 69);
-    noFill();
-    strokeWeight(10);
-    stroke(255);
-    rect(-217, -151, 431, 245);
-    popMatrix();
-    
-    for(var i = 0; i < this.Buttons.length; i ++){
-        this.Buttons[i].draw();
-    }
-};
-var menu = new Menu();
-
-// Game
-var Game = function(){
-    
-};
-Game.prototype.draw = function() {
-    background(8, 8, 8);
-    
-    pushMatrix();
-    translate(Camera.x, Camera.y);
-    
-    /* // use this to see whole screen
-    translate(150, 150);
-    scale(0.15); */
-    
-    // bgs
-    noStroke();
-    fill(245, 245, 245);
-    rect(0, -900, 740, 855);
-    fill(46, 69, 135);
-    rect(795, -762, 1265, 720);
-    fill(230, 28, 28);
-    rect(-945, 640, 901, 806);
-    fill(121, 135, 255);
-    rect(43, 640, 839, 1170);
-    fill(221, 235, 21);
-    rect(945, 825, 1051, 1041);
-    fill(15, 15, 15);
-    rect(945, 20, 870, 755);
-    fill(241, 242, 234);
-    rect(1875, 20, 871, 755);
-    fill(51, 214, 92);
-    rect(2053, 825, 565, 573);
-    fill(123, 198, 235);
-    rect(-870, -1260, 830, 910);
-    fill(0, 0, 0);
-    rect(-1686, -1443, 723, 1100);
-    image(images.insta, -914, -283, 870, 870);
-    image(images.instafront, -695, -45, 400, 400);
-    image(images.tweet, -685, -1015, 450, 450);
-    image(images.yt, -799, 735);
-    image(images.facebook, 1288, -560, 300, 300);
-    image(images.google, 209, -631, 300, 300);
-    image(images.spotify, 1254, 251, 300, 300);
-    image(images.discord, 167, 915);
-    image(images.snapchat, 1173, 1040);
-    image(images.amazon, 2015, 50);
-    image(images.ka, 2045, 814);
-    image(images.tiktok, -1610, -1188);
-    
-    for(var i = Blocks.length - 1; i >= 0; i --){
-        /*if(Blocks[i].x + Camera.x > -50 && Blocks[i].x + Camera.x < 650 && Blocks[i].y + Camera.y > -50 && Blocks[i].y + Camera.y < 650){*/
-            Blocks[i].draw();
-        //}
-    }
-    
-    player.draw();
-    popMatrix();
-    
-    if(player.x > Camera.xMin && player.x < Camera.xMax){
-        Camera.x -= player.xvel;
-    }
-    if(player.y > Camera.yMin && player.y < Camera.yMax){
-        Camera.y -= player.yvel;
-    }
-};
-var game = new Game();
-
-/* Draw function */
-draw = function() {
-    // Load those images
-    loadImages();
-    
-    switch(scene){
-        default:
-            println('No scene found with the name "' + scene + '", try again!');
-            break;
-        case 'Menu':
-            menu.draw();
-            
-            break;
-        case 'Game':
-            game.draw();
-            break;
-    }
-    
-    cursor(mouse.state);
     
     mouse.state = 'default';
     mouse.clicked = false;
@@ -1501,7 +999,17 @@ draw = function() {
 
 /* Event handlers */
 keyPressed = function(){ 
-    keys[keyCode] = true; 
+    keys[keyCode] = true;
+    
+    if(scene === 'Customize' && customize.typing && keyCode !== SHIFT && keyCode !== 20 && keyCode !== UP && keyCode !== DOWN && keyCode !== LEFT && keyCode !== RIGHT && keyCode !== ENTER && keyCode !== CONTROL){
+        if(keyCode === BACKSPACE && customize.name.length > 0){
+            customize.name = customize.name.substring(0, customize.name.length - 1);
+        } else if (keyCode.toString === '"'){
+            customize.name += '\"';
+        } else if (textWidth(customize.name) < 130){
+            customize.name += key.toString();
+        }
+    }
 };
 keyReleased = function(){ 
     keys[keyCode] = false; 
