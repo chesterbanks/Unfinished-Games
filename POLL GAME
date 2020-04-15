@@ -42,19 +42,20 @@
  * 
  * LOGO
      MENU
+       CUSTOMIZATION
+         GAME
+         WIN PAGE
+         LOSE PAGE
        ABOUT
        STORY
-       SETTINGS
-         INSTRUCTIONS
-           GAME
-             WIN PAGE
-             LOSE PAGE
 */
 
+/** SETUP */
 /* Settings */
 textAlign(CENTER, CENTER);
 textFont(createFont('Avenir Bold'));
 
+// Make a font object so it easy to change the styling of the whole program at once.
 var fonts = {
     large: createFont('Avenir Bold'),
     thin: createFont('Avenir'),
@@ -62,17 +63,50 @@ var fonts = {
 };
 
 /* Important variables */
-var scene = 'Customize';
+var scene = 'Menu';
 var keys = [];
 
+// Mouse properties
 var mouse = {
     clicked: false,
     state: 'default'
 };
 
-/* Collision function */
+// Transition object
+var trans = {
+    active: false,
+    out: false,
+    next: '',
+    brightness: 255,
+    
+    run: function(){
+        mouse.state = 'wait';
+        
+        noStroke();
+        fill(0, 0, 0, 255 - trans.brightness);
+        rect(0, 0, width, height);
+        
+        
+        if(!trans.out){
+            trans.brightness /= 1.3;
+            if(trans.brightness < 5){
+                scene = trans.next;
+                trans.out = true;
+            }
+        } else {
+            trans.brightness += (255 - trans.brightness) / 8;
+            if(trans.brightness > 240){
+                trans.out = false;
+                trans.active = false;
+                trans.brightness = 255;
+            }
+        }
+    },
+};
+
+/* Check if two rectangles are colliding */
 var rectCollide = function(one, two){
-    return one.x+one.w > two.x && one.y+one.h > two.y && one.x < two.x+two.w && one.y < two.y+two.h;
+    return one.x + one.w > two.x && one.y + one.h > two.y && one.x < two.x + two.w && one.y < two.y + two.h;
 };
 
 /* Images */
@@ -454,8 +488,8 @@ var Blocks = [];
 /* Map making */
 var Rooms = [
     {x: 0, y: 0, w: 30, h: 20, gates: [8, 13, 13, 13]}, // Control center
-    {x: 1, y: 21, w: 29, h: 40, gates: [13, 28, 5, 36]}, // Discord
-    {x: -32, y: 21, w: 31, h: 28, gates: [-13, 36, 21, 39]}, // YouTube
+    {x: 1, y: 21, w: 29, h: 40, gates: [13, 28, -1, 36]}, // Discord
+    {x: -32, y: 21, w: 32, h: 28, gates: [-13, 36, 21, 0]}, // YouTube
     {x: -31, y: -10, w: 30, h: 30, gates: [-13, 13, -13, 44]}, // Insta
     {x: -30, y: -43, w: 29, h: 32, gates: [11, 13, -13, -38]}, // Twitter
     {x: 0, y: -31, w: 25, h: 30, gates: [-4, -17, 8, 44]}, // Google
@@ -502,20 +536,27 @@ var Player = function(x, y, w, h){
     
     this.speed = 1;
     this.maxVel = 4;
+    
+    this.name = '';
 };
 Player.prototype.draw = function() {
-    stroke(97, 97, 97, 100);
-    fill(128, 128, 128, 100);
-    //rect(this.x + 5, this.y + 5, this.w, this.h);
-    noStroke();
-    fill(255, 255, 255);
-    rect(this.x, this.y, this.w, this.h);
+    if(images.player){
+        image(images.player, this.x, this.y, this.w, this.h);
+    } else {
+        fill(255);
+        rect(this.x, this.y, this.w, this.h);
+    }
     
-    fill(0, 0, 0);
-    ellipse(this.x + this.w / 4, this.y + this.h / 3, 5, 5);
-    ellipse(this.x + this.w / 1.4, this.y + this.h / 3, 5, 5);
-    rect(this.x + this.w / 4, this.y + this.h / 2, this.w / 2, this.h / 15);
+    // Name
+    fill(0, 0, 0, 50);
+    textFont(fonts.thin, 12);
+    rectMode(CENTER);
+    rect(this.x + this.w / 2, this.y + this.h * 1.4, textWidth(this.name) * 1.2, 15);
+    rectMode(CORNER);
+    fill(245, 245, 245);
+    text(this.name, this.x + this.w / 2, this.y + this.h * 1.4);
 
+    // Movement on the x axis
     if(keys[LEFT]){
         this.xvel -= this.speed;
     } 
@@ -541,7 +582,7 @@ Player.prototype.draw = function() {
         }
     }
     
-    
+    // Movement on the y axis
     if(keys[UP]){
         this.yvel -= this.speed;
     } 
@@ -569,7 +610,7 @@ Player.prototype.draw = function() {
     
     
 };
-var player = new Player(300, 300, 20, 30);
+var player = new Player(300, 300, 20 * 1.5, 30 * 1.5);
 
 /* Camera */
 var Camera = {
@@ -630,7 +671,8 @@ Button.prototype.draw = function() {
         this.d += (10 - this.d) / 7;
         
         if(mouse.clicked){
-            scene = this.nxt;
+            trans.active = true;
+            trans.next = this.nxt;
         }
         
         mouse.state = 'pointer';
@@ -640,7 +682,7 @@ Button.prototype.draw = function() {
     }
 };
 
-/* Scenes */
+/** SCENES */
 // Logo
 var logo = function(x, y, sz){
     var logoColors = [
@@ -727,9 +769,9 @@ var Menu = function(){
     };
     
     this.Buttons = [
-        new Button(300, 400, 380, 80, 'BEGIN', 'Game'),
-        new Button(300, 475, 380, 40, 'ABOUT', 'Instructions'),
-        new Button(300, 528, 380, 40, 'STORY', 'Instructions'),
+        new Button(300, 400, 380, 80, 'BEGIN', 'Customize'),
+        new Button(300, 475, 380, 40, 'ABOUT', 'About'),
+        new Button(300, 528, 380, 40, 'STORY', 'Story'),
     ];
 };
 Menu.prototype.draw = function() {
@@ -762,17 +804,57 @@ Menu.prototype.draw = function() {
 };
 var menu = new Menu();
 
+// About & Story
+var textPage = function(title, txt){
+    this.title = title;
+    this.txt = txt;
+    this.btn = new Button(300, 550, 400, 50, 'BACK', 'Menu');
+};
+textPage.prototype.draw = function() {
+    menu.bg();
+    
+    fill(255);
+    textFont(fonts.large, 80);
+    text(this.title.toUpperCase(), 300, 80);
+    rect(25, 135, 550, 5);
+    
+    textFont(fonts.thin, 28);
+    text(this.txt, 50, 150, 500, 300);
+    
+    this.btn.draw();
+};
+var about = new textPage('About', '[ about the game ]');
+var story = new textPage('Story', '[ the storyline ]');
+
 // Customization page
 var Customize = function(){
     this.hue = 0;
     this.outfit = 0;
     this.typing = false;
     this.name = '';
+    
+    this.btn = new Button(300, 551, 300, 40, 'BEGIN', 'Game');
+    
+    this.snapshot = false;
+    
+    this.checkTyping = function(){
+        if(scene === 'Customize' && this.typing && keyCode !== SHIFT && keyCode !== 20 && keyCode !== UP && keyCode !== DOWN && keyCode !== LEFT && keyCode !== RIGHT && keyCode !== ENTER && keyCode !== CONTROL){
+            if(keyCode === BACKSPACE && this.name.length > 0){
+                this.name = this.name.substring(0, this.name.length - 1);
+            } else if (keyCode.toString === '"'){
+                this.name += '\"';
+            } else if (textWidth(this.name) < 130){
+                this.name += key.toString();
+            }
+        }
+    };
 };
 Customize.prototype.draw = function() {
     // Background
     menu.bg();
-    
+
+    pushMatrix();
+    translate(0, -25);
     // Title  
     fill(255);
     textFont(fonts.i, 31);
@@ -783,6 +865,13 @@ Customize.prototype.draw = function() {
     // Body
     pushMatrix();
     translate(300, 375);
+    
+    if(this.snapshot){
+        background(0, 0, 0, 0);
+        translate(-285, -327);
+        scale(0.15);
+    }
+    
     noStroke();
     colorMode(HSB);
     fill(this.hue % 255, 109, 204);
@@ -834,17 +923,28 @@ Customize.prototype.draw = function() {
             break;
     }
     
+    if(this.snapshot){
+        images.player = get(0, 0, 20 * 1.5, 30 * 1.5);
+        this.snapshot = false;
+    }
+    
     // Arrows
     fill(235);
     triangle(-115, 45, -115, 75, -140, 60);
     triangle(115, 45, 115, 75, 140, 60);
     
-    if(mouseX > 160 && mouseX < 185 && mouseY > 420 && mouseY < 450 && mouse.clicked){
-        this.outfit -= (this.outfit === 0 ? -2 : 1);
+    if(mouseX > 160 && mouseX < 185 && mouseY > 395 && mouseY < 425){
+        mouse.state = 'pointer';
+        if(mouse.clicked){
+            this.outfit -= (this.outfit === 0 ? -2 : 1);
+        }
     }
     
-    if(mouseX > 415 && mouseX < 440 && mouseY > 420 && mouseY < 450 && mouse.clicked){
-        this.outfit += (this.outfit === 2 ? -2 : 1);
+    if(mouseX > 415 && mouseX < 440 && mouseY > 395 && mouseY < 425){
+        mouse.state = 'pointer';
+        if(mouse.clicked){
+            this.outfit += (this.outfit === 2 ? -2 : 1);
+        }
     }
     popMatrix();
     
@@ -857,7 +957,7 @@ Customize.prototype.draw = function() {
         rect(525, 235 + i, 25, 20);
         
         // Detect mouse presses
-        if(mouseX > 525 && mouseX < 550 && mouseY > 235 + i && mouseY < 255 + i){
+        if(mouseX > 525 && mouseX < 550 && mouseY > 210 + i && mouseY < 230 + i){
             mouse.state = 'pointer';
             if(mouseIsPressed){
                 this.hue = i;
@@ -878,10 +978,13 @@ Customize.prototype.draw = function() {
     stroke(196, 196, 196);
     strokeWeight(2);
     rect(23, 333, 155, 30);
-    if(mouseX > 23 && mouseX < 178 && mouseY > 333 && mouseY < 363 && mouse.clicked){
-        this.typing = true;
+    if(mouseX > 23 && mouseX < 178 && mouseY > 308 && mouseY < 338){
+        mouse.state = 'text';
+        if(mouse.clicked){
+            this.typing = true;
+        }
     }
-    if(!(mouseX > 23 && mouseX < 178 && mouseY > 333 && mouseY < 363) && mouse.clicked){
+    if(!(mouseX > 23 && mouseX < 178 && mouseY > 308 && mouseY < 338) && mouse.clicked){
         this.typing = false;
     }
     textAlign(LEFT, CENTER);
@@ -892,57 +995,190 @@ Customize.prototype.draw = function() {
     textFont(fonts.thin, 20);
     text(this.name + (this.typing && frameCount % 50 < 25 ? '|' : ''), 30, 347);
     textAlign(CENTER, CENTER);
+    popMatrix();
+    
+    // Button
+    this.btn.draw();
+    if(scene === 'Customize' && trans.brightness < 10){
+        player.name = this.name;
+        this.snapshot = true;
+    }
 };
 var customize = new Customize();
 
 // Game
+var game;
 var Game = function(){
+    /* Local variables */
+    this.gameTimer = 0;
     
+    /* achievement checkers */
+    this.a = {
+        mission1: false, facebook: false, google: false, spotify: false, twitter: false, instagram: false, ka: false, snapchat: false, tiktok: false, yt: false
+    };
+    
+    this.drawArena = function(){
+        noStroke();
+        fill(245, 245, 245);
+        rect(0, -900, 740, 855);
+        fill(46, 69, 135);
+        rect(795, -762, 1265, 720);
+        fill(230, 28, 28);
+        rect(-945, 640, 930, 806);
+        fill(121, 135, 255);
+        rect(43, 640, 839, 1170);
+        fill(221, 235, 21);
+        rect(945, 825, 1051, 1041);
+        fill(15, 15, 15);
+        rect(945, 20, 870, 755);
+        fill(241, 242, 234);
+        rect(1875, 20, 871, 755);
+        fill(51, 214, 92);
+        rect(2053, 825, 565, 573);
+        fill(123, 198, 235);
+        rect(-870, -1260, 830, 910);
+        fill(0, 0, 0);
+        rect(-1686, -1443, 723, 1100);
+        image(images.insta, -914, -283, 870, 870);
+        image(images.instafront, -695, -45, 400, 400);
+        image(images.tweet, -685, -1015, 450, 450);
+        image(images.yt, -799, 735);
+        image(images.facebook, 1288, -560, 300, 300);
+        image(images.google, 209, -631, 300, 300);
+        image(images.spotify, 1254, 251, 300, 300);
+        image(images.discord, 167, 915);
+        image(images.snapchat, 1173, 1040);
+        image(images.amazon, 2015, 50);
+        image(images.ka, 2045, 814);
+        image(images.tiktok, -1610, -1188);
+    };
+    
+    /* Notification OOP */
+    this.notifNum = 0;
+    this.Notif = function(txt){
+        this.txt = txt;
+        this.sz = 1;
+        this.timer = 0;
+        this.added = false;
+    };
+    this.Notif.prototype.draw = function() {
+        textFont(fonts.i, 15);
+        
+        pushMatrix();
+        pushStyle();
+        translate(565, 30);
+        scale(1 - this.sz);
+        noStroke();
+        colorMode(HSB);
+        fill(frameCount % 255, 155, 205, 200 - (200 * this.sz));
+        beginShape();
+        vertex(-40, -20);
+        vertex(-17, 0);
+        vertex(-40, 20);
+        vertex(-textWidth(this.txt + 'kmmm') - 10, 20);
+        vertex(-textWidth(this.txt + 'kmmm') - 10, -20);
+        endShape(CLOSE);
+        fill(255, 0, 255, 255 - (255 * this.sz));
+        textAlign(RIGHT, CENTER);
+        text(this.txt, -45, 0);
+        popStyle();
+        popMatrix();
+        
+        this.timer ++;
+        if(this.timer < 300 && !game.updateBar.open){
+            this.sz /= 1.1;
+        } else {
+            this.sz += (1 - this.sz) / 10;
+        }
+    };
+    this.Notifs = [];
+    
+    /* Update bar OOP */
+    this.Update = function(title, txt, h){
+        this.y = 70;
+        this.h = h;
+        this.title = title;
+        this.txt = txt;
+        this.unread = true;
+        this.added = false;
+    };
+    this.Update.prototype.draw = function() {
+        pushMatrix();
+        translate(360, this.y);
+        pushStyle();
+        textAlign(LEFT, TOP);
+        
+        noStroke();
+        colorMode(HSB);
+        fill(this.unread ? color(frameCount * 2 % 255, 200, 200, 150) : color(255, 0, 255, 50));
+        (rect)(0, 0, 230, 43, 10, 10, 0, 0);
+        fill(255, 0, 255, 50);
+        (rect)(0, 43, 230, this.h - 43, 0, 0, 10, 10);
+        textFont(fonts.large, 25);
+        fill(255, 0, 255);
+        text(this.title, 15, 7);
+        rect(0, 42, 230, 2);
+        textFont(fonts.thin, 13);
+        text(this.txt, 15, 48, 200, this.h);
+        popStyle();
+        popMatrix();
+    };
+    this.Updates = [
+        //new this.Update('Welcome!', 'Welcome to Save the Internet! Move with the arrow keys. Go ahead and explore the arena, you\'ll receive your first mission soon enough.'),
+        
+        //new this.Update('Mission 1.0', 'Go plant a flag in each of the zones. Use the space bar to drop or pick up a flag. Be careful, though, you have a limited amount of flags!', 150),
+        
+        //new this.Update('Mission 2.0', 'Welcome to Save the Internet! Move with the arrow keys. Go ahead and explore the arena, you\'ll receive your first mission soon enough.'),
+    ];
+    this.updateBar = {
+        open: false,
+        x: 350,
+        y: 0,
+        addNewHeight: false,
+        trans: [0, 0],
+    };
+    
+    /* Check if the player is in a zone */
+    this.zoneCheck = function(left, right, top, bottom, notif, updateTitle, updateText, h){
+        this.left = left; this.right = right;
+        this.top = top; this.bottom = bottom;
+        this.notif = notif; this.updateTitle = updateTitle;
+        this.updateText = updateText; this.h = h;
+        
+        this.deleteMe = false;
+    };
+    this.zoneCheck.prototype.draw = function() {
+        if(player.x > this.left && player.x < this.right && player.y > this.top && player.y < this.bottom){
+            game.Notifs.push(new game.Notif(this.notif));
+            game.Updates.push(new game.Update(this.updateTitle, this.updateText, this.h));
+            
+            this.deleteMe = true;
+        }
+    };
+    this.zoneChecks = [
+        new this.zoneCheck(30, 740, -900, -45, 'Welcome to Google!', 'Google', 'You\'ve set foot in the best zone ;) Nice work!', 90),
+        new this.zoneCheck(765, 2010, -750, -43, 'Facebook welcomes you!', 'Facebook', 'Welcome to Facebook! We\'re sure you\'ll love it here! Keep exploring!', 110),
+        new this.zoneCheck(912, 1815, -25, 775, 'Spotify says hello!', 'Spotify', 'Hey there, ' + player.name + '! If you want some sick beats just stop by Spotify.', 95),
+        new this.zoneCheck(13, 882, 595, 1760, 'Hi from Discord!', 'Discord', 'Welcome to the Internet! Discord is glad you\'re here, you\'re going to have a lot of fun!', 110),
+        new this.zoneCheck(-930, -15, 595, 1760, 'Welcome from Team YouTube', 'YouTube', 'Hi there' + (player.name.length > 0 ? ', ' + player.name : '') + '! If you\'re ever bored be sure to stop into YouTube, we\'ve got countless videos for you to watch!', 130),
+        new this.zoneCheck(915, 1995, 780, 1815, 'Team Snapchat says hello!', 'Snapchat', 'What\'s up? We\'re so glad you decided to stop by Snapchat. It\'s so much fun here!!', 110),
+        new this.zoneCheck(-900, -44, -329, 543, 'Welcome to Instagram!', 'Instagram', 'Hello there! On behalf of all of Instagram, we\'re glad you\'re here! Keep exploring!', 110),
+    ];
 };
 Game.prototype.draw = function() {
+    // Background
     background(8, 8, 8);
     
+    // Draw arena
     pushMatrix();
     translate(Camera.x, Camera.y);
     
-    /* // use this to see whole screen
-    translate(150, 150);
-    scale(0.15); */
+    // use this to see whole screen
+    //translate(150, 150);
+    //scale(0.15);
     
     // bgs
-    noStroke();
-    fill(245, 245, 245);
-    rect(0, -900, 740, 855);
-    fill(46, 69, 135);
-    rect(795, -762, 1265, 720);
-    fill(230, 28, 28);
-    rect(-945, 640, 901, 806);
-    fill(121, 135, 255);
-    rect(43, 640, 839, 1170);
-    fill(221, 235, 21);
-    rect(945, 825, 1051, 1041);
-    fill(15, 15, 15);
-    rect(945, 20, 870, 755);
-    fill(241, 242, 234);
-    rect(1875, 20, 871, 755);
-    fill(51, 214, 92);
-    rect(2053, 825, 565, 573);
-    fill(123, 198, 235);
-    rect(-870, -1260, 830, 910);
-    fill(0, 0, 0);
-    rect(-1686, -1443, 723, 1100);
-    image(images.insta, -914, -283, 870, 870);
-    image(images.instafront, -695, -45, 400, 400);
-    image(images.tweet, -685, -1015, 450, 450);
-    image(images.yt, -799, 735);
-    image(images.facebook, 1288, -560, 300, 300);
-    image(images.google, 209, -631, 300, 300);
-    image(images.spotify, 1254, 251, 300, 300);
-    image(images.discord, 167, 915);
-    image(images.snapchat, 1173, 1040);
-    image(images.amazon, 2015, 50);
-    image(images.ka, 2045, 814);
-    image(images.tiktok, -1610, -1188);
+    this.drawArena();
     
     for(var i = Blocks.length - 1; i >= 0; i --){
         if(Blocks[i].x + Camera.x > -50 && Blocks[i].x + Camera.x < 650 && Blocks[i].y + Camera.y > -50 && Blocks[i].y + Camera.y < 650){
@@ -953,14 +1189,182 @@ Game.prototype.draw = function() {
     player.draw();
     popMatrix();
     
+    // Camera movement
     if(player.x > Camera.xMin && player.x < Camera.xMax){
         Camera.x -= player.xvel;
     }
     if(player.y > Camera.yMin && player.y < Camera.yMax){
         Camera.y -= player.yvel;
     }
+    
+    // Update bar
+    if(this.updateBar.x < 348){
+        pushMatrix();
+        translate(350 + this.updateBar.x, 0);
+        fill(255, 255, 255, 100);
+        rect(0, 0, 250, 600);
+        
+        // the actual updates
+        pushMatrix();
+        translate(0, this.updateBar.y);
+        if(this.Updates.length > 0){
+            for(var i = this.Updates.length - 1; i >= 0; i--){
+                pushMatrix();
+                translate(-350, 0);
+                this.Updates[i].draw();
+                popMatrix();
+            }
+        }
+        popMatrix();
+        
+        // scroll arrows
+        fill(0, 0, 0, this.updateBar.trans[0] - 155);
+        rect(0, 55, 250, 25);
+        fill(0, 0, 0, this.updateBar.trans[1] - 155);
+        rect(0, 575, 250, 25);
+        noFill();
+        stroke(237, 237, 237, this.updateBar.trans[0]);
+        strokeWeight(3);
+        line(126, 62, 145, 70);
+        line(124, 62, 105, 70);
+        stroke(237, 237, 237, this.updateBar.trans[1]);
+        line(126, 593, 145, 583);
+        line(124, 593, 105, 583);
+        
+        if(this.updateBar.y < 0){
+            if(mouseX > 350 && mouseY > 55 && mouseY < 80){
+                this.updateBar.y += 2;
+            }
+            this.updateBar.trans[0] += (255 - this.updateBar.trans[0]) / 5;
+        } else {
+            this.updateBar.trans[0] /= 1.15;
+        }
+        if(this.Updates[0]){
+            if(this.Updates[0].y + this.Updates[0].h + this.updateBar.y > 575){
+                if(mouseX > 350 && mouseY > 575){
+                    this.updateBar.y -= 2;
+                }
+                this.updateBar.trans[1] += (255 - this.updateBar.trans[1]) / 5;
+            } else {
+                this.updateBar.trans[1] /= 1.15;
+            }
+        }
+        
+        // title
+        noStroke();
+        fill(35);
+        rect(0, 0, 250, 56);
+        fill(255, 255, 255);
+        textFont(fonts.i, 30);
+        text('Updates', 80, 30);
+        
+        popMatrix();
+    }
+    
+    // Change positions of updates when one is added.
+    if(this.Updates.length > 0){
+        if(!this.Updates[this.Updates.length - 1].added){
+            for(var i = this.Updates.length - 1; i >= 0; i--){
+                if(i !== this.Updates.length - 1){
+                    this.Updates[i].y += this.Updates[this.Updates.length - 1].h + 15;
+                }
+            }
+            this.Updates[this.Updates.length - 1].added = true;
+        }
+    }
+    
+    // Update bar transition
+    if(this.updateBar.open){
+        this.updateBar.x /= 1.1;
+    } else {
+        if(this.updateBar.x > 300 && this.updateBar.x < 340){
+            for(var i = 0; i < this.Updates.length; i ++){
+                this.Updates[i].unread = false;
+            }
+        }
+        this.updateBar.x += (350 - this.updateBar.x) / 15;
+    }
+    
+    // Info card
+    pushMatrix();
+    translate(570, 30);
+    noStroke();
+    colorMode(HSB);
+    fill(this.notifNum <= 0 ? color(255, 0, 255, 150) : color(frameCount * 2 % 255, 200, 255, 150));
+    ellipse(0, 0, 30, 30);
+    colorMode(RGB);
+    textFont(fonts.large, 20);
+    fill(0);
+    text('i', 0, 0);
+    if(this.notifNum > 0){
+        fill(255);
+        ellipse(13, -10, 15, 15); 
+        fill(0);
+        textFont(fonts.thin, 10);
+        text(this.notifNum, 13, -10);
+    }
+    popMatrix();
+    
+    // Hovering over the info card
+    if(dist(mouseX, mouseY, 570, 30) < 15){
+        mouse.state = 'pointer';
+        if(mouse.clicked){
+            this.notifNum = 0;
+            this.updateBar.open = !this.updateBar.open;
+        }
+    }
+    
+    if(this.updateBar.open && mouseX < 350 && mouse.clicked){
+        this.updateBar.open = false;
+    }
+    
+    // Notifications
+    for(var i = 0; i < this.Notifs.length; i ++){
+        this.Notifs[i].draw();
+        if(!this.Notifs[i].added){
+            this.notifNum ++;
+            this.Notifs[i].added = true;
+        }
+        if(this.Notifs[i].timer > 50 && this.Notifs[i].sz > 0.8){
+            this.Notifs.splice(i, 1);
+        }
+    }
+    
+    if(this.gameTimer > 50 && this.Updates.length < 1){
+        this.Notifs.push(new this.Notif('Welcome!'));
+        this.Updates.push(new this.Update('Welcome!', 'Welcome to Save the Internet! Move with the arrow keys. Go ahead and explore the arena, you\'ll receive your first mission soon enough. \n\n[ Hit the i button or anywhere off the update bar to close ]', 200));
+    }
+    
+    if(this.Updates[0]){
+        if(!this.Updates[0].unread && this.updateBar.x > 340 && !this.a.mission1){
+            this.Notifs.push(new this.Notif('New Mission!'));
+            this.Updates.push(new this.Update('Mission 1.0', 'Your first mission is to explore the arena! You can see how many zones you\'ve visited in the bottom left corner. Once you enter every zone, come back to the center and you\'ll receive your next mission.', 185));
+        
+            this.a.mission1 = true;
+        }
+    }
+    
+    // Check for zone welcomes!
+    for(var i = this.zoneChecks.length - 1; i >= 0; i --){
+        this.zoneChecks[i].draw();
+        if(this.zoneChecks[i].deleteMe){
+            this.zoneChecks.splice(i, 1);
+        }
+    }
+    
+    this.gameTimer ++;
+    
+    // testing stuff
+    pushStyle();
+    textAlign(LEFT, CENTER);
+    fill(0, 0, 0, 50);
+    rect(20, 25, 102, 50, 10);
+    fill(255);
+    textFont(fonts.thin, 15);
+    text('player.x: ' + player.x.toFixed(0) + '\nplayer.y: ' + player.y.toFixed(0), 25, 50);
+    popStyle();
 };
-var game = new Game();
+game = new Game();
 
 /* Draw function */
 draw = function() {
@@ -976,6 +1380,12 @@ draw = function() {
             menu.bg();
             logo(300, 300, 2 + sin(frameCount * 20) / 40);
             break;
+        case 'About':
+            about.draw();
+            break;
+        case 'Story':
+            story.draw();
+            break;
         case 'Customize':
             customize.draw();
             break;
@@ -987,11 +1397,11 @@ draw = function() {
             break;
     }
     
-    cursor(mouse.state);
-    
-    if(!mouse.clicked){
-        background(0);
+    if(trans.active){
+        trans.run();
     }
+    
+    cursor(mouse.state);
     
     mouse.state = 'default';
     mouse.clicked = false;
@@ -1000,16 +1410,7 @@ draw = function() {
 /* Event handlers */
 keyPressed = function(){ 
     keys[keyCode] = true;
-    
-    if(scene === 'Customize' && customize.typing && keyCode !== SHIFT && keyCode !== 20 && keyCode !== UP && keyCode !== DOWN && keyCode !== LEFT && keyCode !== RIGHT && keyCode !== ENTER && keyCode !== CONTROL){
-        if(keyCode === BACKSPACE && customize.name.length > 0){
-            customize.name = customize.name.substring(0, customize.name.length - 1);
-        } else if (keyCode.toString === '"'){
-            customize.name += '\"';
-        } else if (textWidth(customize.name) < 130){
-            customize.name += key.toString();
-        }
-    }
+    customize.checkTyping();
 };
 keyReleased = function(){ 
     keys[keyCode] = false; 
