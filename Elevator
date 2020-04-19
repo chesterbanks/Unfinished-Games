@@ -1,7 +1,11 @@
 /**
  * Elevator
  * Chester Banks
- * May 16 2018
+ * April 20 2020
+ * 
+ * I started this game in 2018, but it unfortunately plummeted into my Abyss of WIPs. I decided to finish it up and release it! Enjoy!
+ * 
+ * I'm gonna try to release a game every Monday until this quarantine is over. I'm working on a big game - stay tuned!
 */
 
 /* 
@@ -44,8 +48,11 @@
 */
 
 // Variables
-var scene = 'Menu';
+var scene = 'Lose';
 var menuSz = 71;
+var lives = 3;
+var score = 55;
+var highScore = 250;
 
 // Transition object
 var trans = {
@@ -541,6 +548,7 @@ var Person = function(){
     this.shirt = random(255);
     
     this.delivered = 100;
+    this.counted = false;
 };
 Person.prototype.applyCollisions = function(xvel, yvel) {
     for (var i = 0; i < collisionBoxes.length; i++) {
@@ -557,9 +565,6 @@ Person.prototype.applyCollisions = function(xvel, yvel) {
     }
 };
 Person.prototype.draw = function() {
-    fill(0);
-    //rect(this.x, this.y, this.w, this.h);
-    
     noStroke();
     
     pushMatrix();
@@ -567,12 +572,17 @@ Person.prototype.draw = function() {
     fill(255, 255, 255, 150);
     if(this.delivered === 0){
         fill(250, 10, 26, 150);
+        if(!this.counted){
+            lives --;
+            this.counted = true;
+        }
     }
     if(this.delivered === 1){
         fill(61, 232, 9, 150);
-    }
-    if(this.x + this.w < 375 && this.x > 225 && (this.y < elevator.y - 20 || this.y > elevator.y + 200)){
-        fill(9, 0, 255);
+        if(!this.counted){
+            score += 10;
+            this.counted = true;
+        }
     }
     ellipse(15, -20, 30, 30);
     fill(0);
@@ -587,6 +597,10 @@ Person.prototype.draw = function() {
     if(this.xvel > 0){
         translate(-this.w, 0);
     }
+    
+    noStroke();
+    fill(0, 0, 0, 40);
+    ellipse(this.w / 2, 57, 35, 12);
     
     pushMatrix();
     translate(21, 42);
@@ -650,6 +664,10 @@ Person.prototype.draw = function() {
         } else {
             this.delivered = 0;
         }
+    }
+    
+    if(this.x > 100 && this.x < 500 && this.y > height){
+        lives = -1;
     }
 };
 var People = [];
@@ -870,6 +888,64 @@ draw = function() {
                 People.splice(i, 1);
             }
         }
+        
+        for(var i = 0; i < lives; i ++){
+            pushMatrix();
+            translate(575 - (i * 39), 34);
+            fill(255, 255, 255);
+            beginShape();
+            vertex(0, 15);
+            vertex(9, 2);
+            bezierVertex(27, -22, 4, -25, 0, -5);
+            bezierVertex(-4, -25, -27, -22,  -8, 4);
+            endShape();
+            popMatrix();
+        }
+        
+        if(lives < 0){
+            trans.active = true;
+            trans.nextScene = 'Lose';
+        }
+    }
+    
+    // Lose screen
+    if(scene === 'Lose'){
+        image(images.menuBG, 0, 0);
+        
+        noStroke();
+        myText('YOU LOST!', 58, 70, 44);
+        myText('CLICK TO PLAY AGAIN!', 85, 530, 20, true);
+        
+        rectMode(CENTER);
+        fill(0, 0, 0);
+        rect(300, 300, 200, 100, 10);
+        fill(242, 111, 209);
+        rect(300, 393, 171, 25, 5);
+        rect(300, 250, 160, 25, 5);
+        fill(255);
+        textSize(80);
+        text(score, 300, 300);
+        textSize(17);
+        text('HIGH SCORE: ' + highScore, 300, 393);
+        fill(0);
+        text('FINAL SCORE:', 300, 248);
+        rectMode(CORNER);
+        
+        if(clicked){ 
+            lives = 3;
+            elevator = new Elevator();
+            People = [];
+            score = 0;
+            
+            trans.active = true; 
+            trans.nextScene = 'Game';
+            clicked = false;
+        }
+    }
+    
+    // Check high score
+    if(score > highScore){
+        highScore = score;
     }
     
     // Transition
